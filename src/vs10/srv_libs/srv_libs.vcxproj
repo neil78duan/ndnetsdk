@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Unicode-d|Win32">
+      <Configuration>Unicode-d</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Unicode-d|x64">
+      <Configuration>Unicode-d</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Unicode-r|Win32">
+      <Configuration>Unicode-r</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Unicode-r|x64">
+      <Configuration>Unicode-r</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{EEED0DC2-2515-4263-93AA-D9670CD89ACC}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>srv_libs</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Unicode-d|Win32'">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unicode-d|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\..\..\lib\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\..\..\..\lib64\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)_dbg</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)_dbg</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\..\..\lib</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\..\..\..\lib64</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unicode-d|Win32'">
+    <OutDir>..\..\..\lib</OutDir>
+    <TargetName>$(ProjectName)_ud</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unicode-d|x64'">
+    <OutDir>..\..\..\lib</OutDir>
+    <TargetName>$(ProjectName)_ud</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>ND_DEBUG;BUILD_AS_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>X86_64;ND_DEBUG;BUILD_AS_STATIC_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>BUILD_AS_STATIC_LIB;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <PreprocessorDefinitions>X86_64;BUILD_AS_STATIC_LIB;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unicode-d|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../../include/</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ND_UNICODE;ND_DEBUG;BUILD_AS_STATIC_LIB;WIN32;_DEBUG;_LIB</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unicode-d|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../../include/</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ND_UNICODE;ND_DEBUG;BUILD_AS_STATIC_LIB;WIN32;_DEBUG;_LIB</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\nd_common\src\bintree.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\callstack.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\common.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_handle.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_mempool.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_static_alloc.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_str.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_timer.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_trace.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_unix.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_win.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_xml.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\node_mgr.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\recbuf.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\source_log.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\desc.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\digit.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\md2c.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\md5c.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\nn.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\prime.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\rsa.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\r_dh.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\r_encode.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\r_enhanc.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\r_keygen.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\r_random.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\rsa\r_stdlib.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\src\ndcrypt.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\src\ndrsa.c" />
+    <ClCompile Include="..\..\..\src\nd_crypt\src\tea.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\ipraw.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_msgentry.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_net.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_netobj.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_netui.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_socket.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_tcp.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_udp.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\net_srv.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\proxy_cli.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\udt_icmp.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\client_map.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\linux_listen.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_session.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thpoolio.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\srvcore.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_listen.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\thread_srv.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\udp_listen.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\thread_iocp.c" />
+    <ClCompile Include="..\..\nd_common\src\nddir.c" />
+    <ClCompile Include="..\..\nd_common\src\nd_mutex.c" />
+    <ClCompile Include="..\..\nd_crypt\src\nd_cryptfile.c" />
+    <ClCompile Include="..\..\nd_srvcore\src\nd_thmsg.c" />
+    <ClCompile Include="..\..\nd_srvcore\src\srv_nodemgr.c" />
+    <ClCompile Include="..\..\nd_vm\src\nd_asm.c" />
+    <ClCompile Include="..\..\nd_vm\src\nd_formula.c" />
+    <ClCompile Include="..\..\nd_vm\src\nd_vm.c" />
+    <ClCompile Include="..\..\nd_vm\src\nd_vmdbg.c" />
+    <ClCompile Include="..\..\nd_vm\src\nd_vmmain.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\nd_common\list.h" />
+    <ClInclude Include="..\..\..\include\nd_common\ndchar.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nddir.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_alloc.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_atomic.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_bintree.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_comcfg.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_comdef.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_common.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_dbg.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_define.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_handle.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_mempool.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_node_mgr.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_os.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_recbuf.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_static_alloc.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_str.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_timer.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_unix.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_win.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_xml.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\nd_crypt.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\nd_cryptfile.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\des.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\digit.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\global.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\md2.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\md5.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\nn.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\prime.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\rsa.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\rsaref.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\rsah\r_random.h" />
+    <ClInclude Include="..\..\..\include\nd_crypt\tea.h" />
+    <ClInclude Include="..\..\..\include\nd_net\byte_order.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_iphdr.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_msgentry.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_netcrypt.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_netioctl.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_netlib.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_netobj.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_netpack.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_netui.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_sock.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_srv.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_tcp.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_udp.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_udt.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_udthdr.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\client_map.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_listensrv.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_session.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_srvlib.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_thpool.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadmsgid.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadsrv.h" />
+    <ClInclude Include="..\..\..\include\nd_vm\nd_vm.h" />
+    <ClInclude Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

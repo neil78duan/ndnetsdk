@@ -1,0 +1,14 @@
+<connector name="config">
+	<logfile>clilog.log</logfile>
+	<callstack>ndclicall.log</callstack>
+	<remote_port>7828</remote_port>	
+	<connect_protocol desc="可以使用 udt-connector,tcp-connector">tcp-connector</connect_protocol>
+	<host name="远程主机">localhost</host>
+	<proxy name="代理服务器信息">
+		<proxy_type desc="0 noproxy, 1 socks4,2 sock4a, 3 socks5, 4 http">0</proxy_type>
+		<proxy_host>localhost</proxy_host>
+		<proxy_port>1080</proxy_port>
+		<proxy_user></proxy_user>
+		<proxy_password></proxy_password>
+	</proxy>
+</connector>

@@ -1,0 +1,33 @@
+
+//ÓÒ»÷Êó±ê
+void CReportCtrlTool::OnRclickTree(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	*pResult= 0;
+	
+	CWnd *pWnd = GetParent() ;
+	if(!pWnd) {
+		return ;
+	}
+
+	DWORD dwPos = GetMessagePos() ;
+	CPoint point(LOWORD(dwPos), HIWORD(dwPos));
+	m_tree.ScreenToClient(&point);
+	HTREEITEM hItem = m_tree.HitTest( point );
+	if (! hItem )	{
+		return ;
+	}
+	// Select item clicked on
+	m_tree.SelectItem( hItem );
+
+	int type = GetClickType(hItem) ;
+	if(ERESULT_TASK==type){
+		m_popmenu.ShowMenu(pWnd) ;
+	}
+	else if(EINPUT_INGREDIENT==type){
+		m_popIngred.ShowMenu(pWnd) ;
+	}
+	else{
+		m_popRenew.ShowMenu(pWnd) ;
+	}
+	
+}

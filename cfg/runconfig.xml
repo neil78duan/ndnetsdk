@@ -1,0 +1,16 @@
+<server_config name="config">
+	<run_config>
+		<logfile>srvlog.log</logfile>
+		<callstack>ndsrvcall.log</callstack>
+		<port>7828</port>
+		<listen_mod desc="可以使用 lieten-tcp, listen-ext, listen-udt">listen-tcp</listen_mod>
+		<max_connect name="最大连接数">2000</max_connect>
+	</run_config>	
+	<proxy name="代理服务器信息">
+		<proxy_type desc="0 noproxy, 1 socks4,2 sock4a, 3 socks5, 4 http">0</proxy_type>
+		<proxy_host>localhost</proxy_host>
+		<proxy_port>1080</proxy_port>
+		<proxy_user></proxy_user>
+		<proxy_password></proxy_password>
+	</proxy>
+</server_config>

@@ -1,0 +1,45 @@
+#nd vm asm spec
+
+指令 目的操作数, 源操作数 #目的操作数和 源操作数必须有一个是寄存器,另外一个可以是内存,stack和立即数
+
+内存寻址 [n] n为整数, 如果大于等于0表示内存寻址,如果小于0是堆栈寻址
+立即数不需要[]
+堆栈访问　[sp  n] n为整数
+
+寄存器 目前有 REG1 和REG2
+
+范例:
+NOP 					# 空操作
+MOV REG1, 10   			# reg1 = 10 ;
+MOV REG1, [10] 		# reg1 = memory[10] ;
+MOV REG1, [sp -1] 			# reg1 = stack[sp -1] ;
+MOV REG1, [sp 0] 			# reg1 = stack[0] ;
+MOV REG1, [sp 1] 			# reg1 = stack[1] ;
+MOV [ 10], REG1 		# memory[10] = reg1 ;
+ADD REG1 ,10			# reg1 += 10 ;
+ADD REG1 ,[-1]			# ret1+= stack[sp -1] ;
+ADD REG1 ,REG2 			# reg1 += reg2 ;
+
+SUB REG1 ,10 		# reg1 -= 10 ;
+MUL REG1 ,10		# reg1 *= 10 ;
+DIV REG1 ,10		# ret1 /= 10 ;
+
+PUSH REG1 			# stack[sp++] = reg1 ; 
+PUSH 10 			# stack[sp++] = 10 ;
+PUSH [ 10]		# stack[sp++] = memory[10];
+
+MAX n, m 		# reg1 = max(m,n) 		在mn之间取最大值 m,n 可以是立即数内存和寄存器
+MIN n, m 		# reg1 = min(m,n) 		在mn之间取最小值
+RAND n, m 		# reg1 = RAND(m,n) 		在mn之间取随机值
+
+LTZERO  m       #测试m是否小于0 if(m < 0){ reg1= 1} else {reg1 = 0} 
+
+PROB  m       #概率运算m = [0,1.0f] , 用随机数模拟概率,m =0.1 ,概率为10%,采样成功REG1=1, if(SUCCESS ){ reg1= 1} else {reg1 = 0} 
+
+SQRT m		#开方
+
+POP REG1			# reg1 = stack[sp--]; pop 只支持弹出到寄存去或者直接抛弃数据
+POP  				# --sp
+
+
+
