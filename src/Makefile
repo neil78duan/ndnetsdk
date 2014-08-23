@@ -4,7 +4,7 @@ VPATH = .
 
 include ./Rules.make
 
-SUBDIRS =  nd_common nd_crypt nd_net nd_srvcore 
+SUBDIRS =  nd_common nd_crypt nd_net nd_srvcore ndapplib
 
 all: subdirs
 

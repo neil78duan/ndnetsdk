@@ -774,6 +774,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__MAC_OS__,
 					ND_UNIX,
+					ND_IOS,
 					ND_DEBUG,
 					"$(inherited)",
 				);
@@ -786,9 +787,11 @@
 		0793190C19931665009C8BC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_NS_ASSERTIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__MAC_OS__,
 					ND_UNIX,
+					ND_IOS,
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
