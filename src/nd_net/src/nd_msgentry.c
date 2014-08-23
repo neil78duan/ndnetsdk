@@ -16,10 +16,6 @@ struct msg_entry_node
 {
 	NDUINT32			level:16 ;	//权限等级
 	NDUINT32			sys_msg:1 ;	//是否是系统消息
-#ifdef ND_UNSUPPORT_SCRIPT_MSG
-#else
-	char *				script_name ;	//脚本名字
-#endif 
 	nd_usermsg_func		entry ;	//入口函数
 };
 
@@ -36,10 +32,6 @@ struct msgentry_root
 	int	main_num ;			//包含多少个消息类别
 	int msgid_base ;		//主消息号起始地址
 	nd_usermsg_func		def_entry ;	//默认入口函数
-#ifdef ND_UNSUPPORT_SCRIPT_MSG
-#else 
-	nd_msg_script_func script_func;
-#endif
 	struct sub_msgentry sub_buf[0] ;
 };
 
@@ -135,96 +127,6 @@ void nd_msgtable_destroy(nd_handle handle, int flag)
 
 }
 
-#ifdef ND_UNSUPPORT_SCRIPT_MSG
-#else 
-//设置脚本引擎的入口
-int nd_set_script_engine(nd_handle handle, nd_msg_script_func script_entry) 
-{
-	struct msgentry_root *p = NULL ;
-	nd_assert(handle) ;
-
-
-	if(handle->type==NDHANDLE_TCPNODE){
-		p = (struct msgentry_root*) (((struct nd_tcp_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_UDPNODE) {
-		p = (struct msgentry_root*) (((nd_udt_node*)handle)->msg_handle ) ; 
-	}
-
-	else if(handle->type==NDHANDLE_LISTEN){
-		p = (struct msgentry_root *) (((struct nd_srv_node* )handle )->msg_handle ) ; 
-	}
-	else {
-		nd_object_seterror(handle, NDERR_INVALID_HANDLE) ;
-		return -1;
-	}
-
-	p->script_func = script_entry ;
-
-	return 0;
-
-}
-
-/*安装脚本方式的消息处理器*/
-int nd_msg_script_install(nd_handle  handle, char *script_name, ndmsgid_t maxid, ndmsgid_t minid,int level) 
-{
-	struct msgentry_root *root_entry= NULL;
-	nd_assert(handle) ;
-
-	if(handle->type==NDHANDLE_TCPNODE){
-		root_entry = (struct msgentry_root *) (((struct nd_tcp_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_UDPNODE){
-		root_entry = (struct msgentry_root *) (((nd_udt_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_LISTEN){
-		root_entry = (struct msgentry_root *) (((struct nd_srv_node* )handle )->msg_handle ) ; 
-	}
-	else {
-		nd_object_seterror(handle, NDERR_INVALID_HANDLE) ;
-		return -1;
-	}
-	if(root_entry) {
-		ndmsgid_t main_index =(ndmsgid_t) (maxid - root_entry->msgid_base );
-		if(main_index >= root_entry->main_num ) {
-			nd_logerror("MAIN MESSAGE ERROR input %d  limited %d\n"AND main_index AND root_entry->main_num ) ;
-			return -1 ;
-		}
-		if(minid>=SUB_MSG_NUM ){
-			nd_logerror("MIN MESSAGE ERROR input %d  limited %d\n"AND minid AND SUB_MSG_NUM ) ;
-			return -1 ;
-		}
-
-		if(script_name) {
-			int len = strlen(script_name) ;
-			if(len >MAX_SCRIPT_NAME){
-				nd_object_seterror(handle, NDERR_INVALID_INPUT) ;
-				return -1 ;
-			}
-
-			if(root_entry->sub_buf[main_index].msg_buf[minid].script_name) {
-				free(root_entry->sub_buf[main_index].msg_buf[minid].script_name) ;
-				root_entry->sub_buf[main_index].msg_buf[minid].script_name = NULL ;
-			}
-			root_entry->sub_buf[main_index].msg_buf[minid].script_name = malloc(len + 2)  ;
-			strncpy(root_entry->sub_buf[main_index].msg_buf[minid].script_name, script_name,len+1) ;
-
-		}
-		else {
-			if(root_entry->sub_buf[main_index].msg_buf[minid].script_name) {
-				free(root_entry->sub_buf[main_index].msg_buf[minid].script_name) ;
-				root_entry->sub_buf[main_index].msg_buf[minid].script_name = NULL ;
-			}
-		}
-		root_entry->sub_buf[main_index].msg_buf[minid].entry = 0 ;
-		root_entry->sub_buf[main_index].msg_buf[minid].level = level ;
-		return 0 ;
-	}
-	nd_object_seterror(handle, NDERR_NOSOURCE) ;
-	return -1;
-}
-
-#endif
 
 int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func) 
 {
@@ -317,11 +219,7 @@ int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_h
 
 		if(func)
 			ret = func(connect_handle,(nd_usermsgbuf_t*)usermsg,NULL) ;
-#ifndef ND_UNSUPPORT_SCRIPT_MSG
-		else if(root_entry->sub_buf[main_index].msg_buf[minid].script_name && root_entry->script_func) {
-			ret = root_entry->script_func(connect_handle,(nd_usermsgbuf_t*)usermsg,root_entry->sub_buf[main_index].msg_buf[minid].script_name,NULL) ;
-		}
-#endif
+
 		else if(root_entry->def_entry){
 			ret = root_entry->def_entry(connect_handle,(nd_usermsgbuf_t*)usermsg,NULL) ;
 		}
@@ -385,11 +283,7 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 		if(func) {
 			ret = func(connect_handle,(nd_usermsgbuf_t*)usermsg,listen_handle) ;
 		}
-#ifndef ND_UNSUPPORT_SCRIPT_MSG
-		else if(root_entry->sub_buf[main_index].msg_buf[minid].script_name && root_entry->script_func) {
-			ret = root_entry->script_func(connect_handle,(nd_usermsgbuf_t*)usermsg,root_entry->sub_buf[main_index].msg_buf[minid].script_name,listen_handle) ;
-		}
-#endif
+
 		else if(root_entry->def_entry){
 			ret = root_entry->def_entry(connect_handle,(nd_usermsgbuf_t*)usermsg,listen_handle) ;
 		}
