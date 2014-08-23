@@ -70,12 +70,12 @@ int is_function(char *src) ;
 
 int repace_param(char *param, char *buf, int size) ;
 
-static __INLINE__ init_funcdata(struct function_cmd *f_cmd)
+static __INLINE__ void init_funcdata(struct function_cmd *f_cmd)
 {
 	f_cmd->size = 0;
 }
 
-static __INLINE__ initOperateUnit(struct sOperateUnit *pOpUnit)
+static __INLINE__ void  initOperateUnit(struct sOperateUnit *pOpUnit)
 {
 	pOpUnit->op = ' ';
 	pOpUnit->is_function  = 0 ;
@@ -144,7 +144,7 @@ int GetOpLevel(char op)
 
 #define OPUNIT_NUM 1024
 struct sOperateUnit __opbuf[OPUNIT_NUM] ;
-LIST_HEAD(__free_operate) ;
+ND_LIST_HEAD(__free_operate) ;
 
 void init_operator_buf()
 {
@@ -563,7 +563,7 @@ size_t vm_parse_expression(char *textbuf, char *code_buf,size_t buf_size,vm_para
 {
 	int ret ;
 
-	LIST_HEAD(op_list) ;
+	ND_LIST_HEAD(op_list) ;
 
 	__asm_out.param_parse_func = func ;
 	__asm_out.buf_size = buf_size ;

@@ -6,11 +6,11 @@
  */ 
 
 #include "nd_common/nd_common.h"
-#include "ndapplib/nd_allocator.h"
+#include "ndstl/nd_allocator.h"
 #include "nd_common/nd_alloc.h"
 #include "ndapplib/nd_object.h"
 
-#include "ndapplib/nd_new.h"
+#include "ndstl/nd_new.h"
 
 static nd_handle s_stl_mmpool ;
 

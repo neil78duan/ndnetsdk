@@ -7,10 +7,7 @@
 
 //#include "nd_common/nd_common.h"
 #include <stdarg.h>
-#define PG_IMPLEMENTION_TIME
 #include "ndapplib/applib.h"
-
-#if defined(PG_INTERNAL_DEVELOP)
 
 
 time_t app_inst_delta = 0;
@@ -30,8 +27,6 @@ time_t app_inst_time(time_t* _t)
 	}
 	return cur;
 }
-
-#endif
 
 
 
@@ -173,7 +168,7 @@ void _error_exit(const char * file, int line, const char *stm,...)
 	done = vsnprintf (p, sizeof(buf),stm, arg);
 	va_end (arg);
 
-	fprintf(stderr, buf) ;	
+	fprintf(stderr, "%s",buf) ;	
 	printf("press ANY key to continue\n") ;
 	getch() ;
 	exit(1) ;

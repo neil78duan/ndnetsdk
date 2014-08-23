@@ -15,8 +15,8 @@
 // #include <exception>
 // #include <new>
 // #include <xutility>
-#include "ndapplib/nd_utility.h"
-#include "ndapplib/nd_object.h"
+#include "ndstl/nd_utility.h"
+//#include "ndstl/nd_object.h"
 #include <exception>
 
 void *_malloc_pool(size_t size, void *pool=NULL)  ;

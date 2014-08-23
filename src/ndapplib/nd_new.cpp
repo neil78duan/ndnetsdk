@@ -8,9 +8,9 @@
 
 #include "nd_common/nd_common.h"
 //#define ND_IMPLETE_MEMPOOL	1		//实现内存池的文件
-#include "ndapplib/nd_new.h"
+#include "ndstl/nd_new.h"
+#include "ndstl/nd_allocator.h"
 #include "ndapplib/nd_object.h"
-#include "ndapplib/nd_allocator.h"
 
 #ifdef _ND_MEMORY_H_
 //这里需要使用libc的malloc函数

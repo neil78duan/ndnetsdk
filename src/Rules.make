@@ -75,8 +75,8 @@ ifeq ($(USE_INTEL_CC),y)
 	AR = xiar rcs
 	LFLAGS += /usr/intel/cc/lib/libimf.a 
 else	
-	CC = gcc 
-	CPP = g++
+	CC = cc
+	CPP = c++
 	AR = ar  rv
 	LFLAGS += -lm 
 endif

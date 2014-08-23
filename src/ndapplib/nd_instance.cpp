@@ -297,24 +297,7 @@ bool NDInstanceBase::CheckReliableHost(ndip_t peerip)
 	for(int i=0; i<MAX_RELIABLE_HOST; i++) {
 		if(0==nd_sock_cmp_ip(m_config.reliable_hosts[i], peerip, m_config.reliable_ipmask[i]) )
 			return true ;
-// 		ndip_t val = m_config.reliable_hosts[i] ;
-// 		if (val)	{
-// 			ret = true ;
-// 			char *srcip = (char*)&peerip ;
-// 			char *destip = (char*)&val ;
-// 			for(int n=0; n<4; n++) {
-// 				if (destip[n] != 0xff){
-// 					if (destip[n] != srcip[n]){
-// 						ret = false ;
-// 						break ;
-// 					}
-// 				}
-// 			}
-// 			if ( ret )	{
-// 				return ret ;
-// 			}
-// 			ret = false ;
-// 		}
+
 	}
 	return false ;
 }
@@ -432,9 +415,7 @@ int NDInstanceBase::ReadConfig(const char *configname)
 	}
 
 	ndxml_destroy(&xmlfile);
-// #ifdef PG_INTERNAL_DEVELOP
-// 	m_config.l_cfg.max_connect = PG_INTERNAL_MAXPLAYER ;
-// #endif 
+    
 	return 0;
 
 }

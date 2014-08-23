@@ -13,6 +13,18 @@
 
 #include <cstddef>
 #include <new>
+
+#include "nd_common/nd_comcfg.h"
+
+#ifdef ND_CALLSTACK_TRACE
+#define ND_TRACE_FUNC() NDCallTrace _tmp_func_trace(__FUNC__)
+#define ND_TRACE_FUNC_EX(name) NDCallTrace name(__FUNC__)
+
+#else
+#define ND_TRACE_FUNC() //
+#define ND_TRACE_FUNC_EX(name) //
+#endif
+
 template<class T> inline
 	void _NDDestroy(T *p)
 {	

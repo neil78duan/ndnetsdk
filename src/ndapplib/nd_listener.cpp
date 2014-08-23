@@ -15,8 +15,6 @@
 
 static ndatomic_t __current_num = 0 ;
 
-static int on_init_soccion(nd_handle session, nd_handle h_listen);
-
 
 //通过监听句柄得到NDListener类
 NDListener *NDGetListener(nd_handle h_listen) 
@@ -179,12 +177,7 @@ int NDListener::Create(char *listen_name, int session_num, size_t session_size)
 		nd_logfatal((char*)"create object!\n") ;
 		return -1 ;
 	}
-// #ifdef PG_INTERNAL_DEVELOP
-// 	if (session_num != PG_INTERNAL_MAXPLAYER )	{
-// 		error_exit("内部数据错误\n") ;
-// 		return -1 ;
-// 	}
-//  #endif
+
 	ss = session_size + nd_getclient_hdr_size(((struct listen_contex*)listen_handle)->io_mod)  + 8;
 
 	if(-1==nd_listensrv_session_info(listen_handle, session_num, ss) ) {
