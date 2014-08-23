@@ -9,8 +9,8 @@
 
 //#include <stdexcept>
 #include "nd_common/nd_common.h"
-#include "ndapplib/nd_utility.h"
-#include "ndapplib/nd_new.h"
+#include "ndstl/nd_utility.h"
+#include "ndstl/nd_new.h"
 #include <sys/types.h>
 
 
@@ -69,14 +69,6 @@ private:
 	int m_ret ;
 };
 
-#ifdef ND_CALLSTACK_TRACE
-#define ND_TRACE_FUNC() NDCallTrace _tmp_func_trace(__FUNC__)
-#define ND_TRACE_FUNC_EX(name) NDCallTrace name(__FUNC__)
-
-#else 
-#define ND_TRACE_FUNC() //
-#define ND_TRACE_FUNC_EX(name) //
-#endif 
 //#pragma warning (pop)
 
 class nd_fectory_base : public NDObject

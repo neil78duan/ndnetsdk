@@ -9,7 +9,7 @@
 
 #include "nd_net/nd_netlib.h"
 #include "nd_common/nd_common.h"
-#include "ndapplib/nd_object.h"
+//#include "ndapplib/nd_object.h"
 
 class NDSendMsg 
 {
@@ -26,14 +26,14 @@ public:
 	//void SetLength(size_t s) {msg_hdr.packet_hdr.length = s ;	}
 	inline char *MsgData() {return _packet.data ;}
 	inline nd_usermsgbuf_t *GetMsgAddr() {return &_packet ;}
-	size_t GetSerialBin(void *buf, size_t bufsize) ;	//°ÑÏûÏ¢Êä³ö³É¶ş½øÖÆ
+	size_t GetSerialBin(void *buf, size_t bufsize) ;	//âˆâ€”Å“ËšÅ“Â¢Â â€°â‰¥Ë†â‰¥â€¦âˆ‚Ë›Î©Â¯Ã·âˆ†
 	
 protected:
 	nd_usermsgbuf_t  _packet ;
 };
 
 class NDIStreamMsg;
-//Êä³öÁ÷Ê½Ğ­Òé°ü
+//Â â€°â‰¥Ë†Â¡ËœÂ Î©â€“â‰ â€œÃˆâˆÂ¸
 class NDOStreamMsg :public NDSendMsg
 {
 public :
@@ -77,11 +77,11 @@ public:
 	inline char *MsgData() {return recv_packet->data ;}
 	inline nd_usermsgbuf_t *GetMsgAddr() {return recv_packet ;}
 
-	size_t GetSerialBin(void *buf, size_t bufsize) ;	//°ÑÏûÏ¢Êä³ö³É¶ş½øÖÆ
+	size_t GetSerialBin(void *buf, size_t bufsize) ;	//âˆâ€”Å“ËšÅ“Â¢Â â€°â‰¥Ë†â‰¥â€¦âˆ‚Ë›Î©Â¯Ã·âˆ†
 protected:
 	nd_usermsgbuf_t  *recv_packet ;
 };
-//ÊäÈëÁ÷Ê½Ğ­Òé°ü
+//Â â€°Â»ÃÂ¡ËœÂ Î©â€“â‰ â€œÃˆâˆÂ¸
 class NDIStreamMsg : public NDRecvMsg
 {
 public :

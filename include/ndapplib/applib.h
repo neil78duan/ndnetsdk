@@ -19,7 +19,9 @@
 #include "nd_crypt/nd_crypt.h"
 #include "nd_srvcore/nd_srvlib.h"
 
-#include "ndapplib/nd_allocator.h"
+#include "ndstl/nd_allocator.h"
+#include "ndstl/nd_new.h"
+
 #include "ndapplib/nd_lockhelper.h"
 #include "ndapplib/nd_cmmgr.h"
 #include "ndapplib/nd_connector.h"
@@ -31,7 +33,6 @@
 #include "ndapplib/nd_instance.h"
 #include "ndapplib/nd_affair.h"
 
-#include "ndapplib/nd_new.h"
 //#include "pg_config.h"
 
 typedef int (*exit_app_func)(int flag) ;
@@ -111,26 +112,8 @@ CPPAPI R_RSA_PRIVATE_KEY *GetPgsrvRsaPrivkey(void) ;
 		obj = 0 ;					\
 	}
 
-// ----------------------------------------------------------------------------
-
-#if PG_INTERNAL_DEVELOP
-
-    extern time_t app_inst_delta;
-    extern time_t app_inst_time(time_t* _t);
-	extern void	  app_inst_set_hm(int _h, int _m);
-
-#ifndef PG_IMPLEMENTION_TIME	//ÊµÏÖpg°æµÄTIME
-    #define time app_inst_time
-#endif
-// 
-// #else
-// 
-//     #define app_inst_time time
-    
-#endif
-
-// ----------------------------------------------------------------------------
-
+extern time_t app_inst_time(time_t* _t);
+extern void	  app_inst_set_hm(int _h, int _m);
 
 
 #endif

@@ -16,7 +16,7 @@
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_cmmgr.h"
 #include "ndapplib/readcfg.h"
-#include "nd_new.h"
+#include "ndstl/nd_new.h"
 
 #ifdef WIN32
 	#include "Psapi.h"
