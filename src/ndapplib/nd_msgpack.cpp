@@ -89,7 +89,7 @@ int NDOStreamMsg::Write(NDUINT16 a)
 int NDOStreamMsg::Write(NDUINT64 a) 
 {
 	if(_op_addr + sizeof(a) <= _end) {
-		*((NDUINT64*)_op_addr) = htonll(a) ;
+		*((NDUINT64*)_op_addr) = nd_hton64(a) ; //why  htonll is undefine?
 		MsgLength() += sizeof(a) ;
 		_op_addr+= sizeof(a) ;
 		return 0 ;
@@ -320,7 +320,7 @@ int NDIStreamMsg::Read (NDUINT64 &a)
 	if(_end >= _op_addr + sizeof(a) ) {
 
 		a =*((NDUINT64*) _op_addr) ;
-        a = ntohll(a) ;
+        a = nd_ntoh64(a) ;
 		_op_addr += sizeof(a) ;
 		return 0 ;
 
