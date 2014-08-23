@@ -99,23 +99,6 @@ ND_NET_API int nd_msgentry_install(nd_handle  handle, nd_usermsg_func, ndmsgid_t
 /* 设置默认消息处理函数*/
 ND_NET_API int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func)  ;
 
-#ifndef ND_UNSUPPORT_SCRIPT_MSG
-
-/*消息处理中执行脚本的函数
- * @handle_connect连接句柄或者绘画句柄
- * @msg消息
- * @script 脚本名字
- * 设置自己的脚本处理函数,但消息到来的时候就会用此函数去执行
- * 需要根据不同的消息注册不同的脚本名字,脚本解释器根据注册的名字区别不同的消息
- */
-
-typedef int (*nd_msg_script_func)(nd_handle  handle_connect ,nd_usermsgbuf_t *msg , char *script,nd_handle listener) ;
-//设置脚本引擎的入口
-ND_NET_API int nd_set_script_engine(nd_handle handle, nd_msg_script_func script_entry) ;
-
-/*安装脚本方式的消息处理器*/
-ND_NET_API int nd_msg_script_install(nd_handle  handle, char *script_name, ndmsgid_t maxid, ndmsgid_t minid,int level) ;
-#endif 
 
 /* 正常发送消息 */
 static __INLINE__ int nd_connectmsg_send(nd_handle  connector_handle, nd_usermsgbuf_t *msg ) 
