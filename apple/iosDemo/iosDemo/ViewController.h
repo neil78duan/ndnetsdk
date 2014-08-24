@@ -11,5 +11,11 @@
 @interface ViewController : UIViewController
 
 
+@property (strong, nonatomic) IBOutlet UIButton *connectButton;
+@property (strong, nonatomic) IBOutlet UITextField *tipText;
+
+
+- (IBAction)connectButtonHit:(id)sender;
+
 @end
 
