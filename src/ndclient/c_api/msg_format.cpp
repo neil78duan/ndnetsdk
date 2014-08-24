@@ -6,7 +6,7 @@
 //  Copyright (c) 2014年 duanxiuyun. All rights reserved.
 //
 
-#include "net_conn.h"
+#include "ndcli/nd_api_c.h"
 #include "nd_msgpacket.h"
 
 

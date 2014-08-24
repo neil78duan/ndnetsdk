@@ -92,6 +92,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0729DF9819A96BFC002F8A75 /* nd_api_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_api_c.h; sourceTree = "<group>"; };
+		0729DF9919A96BFC002F8A75 /* nd_iconn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconn.h; sourceTree = "<group>"; };
 		079318F619931665009C8BC5 /* libndclient_ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndclient_ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		079318F919931665009C8BC5 /* ndclient_ios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ndclient_ios.h; sourceTree = "<group>"; };
 		079318FB19931665009C8BC5 /* ndclient_ios.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ndclient_ios.m; sourceTree = "<group>"; };
@@ -202,9 +204,7 @@
 		07EBCE6B19A8CD3D00802576 /* nd_udthdr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_udthdr.h; sourceTree = "<group>"; };
 		07EBCE6E19A8CF6C00802576 /* msg_format.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = msg_format.cpp; sourceTree = "<group>"; };
 		07EBCE6F19A8CF6C00802576 /* nd_connector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_connector.c; sourceTree = "<group>"; };
-		07EBCE7019A8CF6C00802576 /* net_conn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = net_conn.h; sourceTree = "<group>"; };
 		07EBCE7419A8CF6C00802576 /* nd_connector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_connector.cpp; sourceTree = "<group>"; };
-		07EBCE7519A8CF6C00802576 /* nd_iconn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconn.h; sourceTree = "<group>"; };
 		07EBCE7B19A8D17E00802576 /* nd_msgpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nd_msgpack.cpp; path = ../../src/ndapplib/nd_msgpack.cpp; sourceTree = "<group>"; };
 		07EBCE7D19A8D19500802576 /* nd_msgpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nd_msgpacket.h; path = ../../include/ndapplib/nd_msgpacket.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -228,6 +228,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0729DF9719A96BFC002F8A75 /* ndcli */ = {
+			isa = PBXGroup;
+			children = (
+				0729DF9819A96BFC002F8A75 /* nd_api_c.h */,
+				0729DF9919A96BFC002F8A75 /* nd_iconn.h */,
+			);
+			name = ndcli;
+			path = ../../include/ndcli;
+			sourceTree = "<group>";
+		};
 		079318ED19931665009C8BC5 = {
 			isa = PBXGroup;
 			children = (
@@ -285,6 +295,7 @@
 		07EBCD7D19A8CC6300802576 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				0729DF9719A96BFC002F8A75 /* ndcli */,
 				07EBCE3519A8CD3D00802576 /* nd_common */,
 				07EBCE4C19A8CD3D00802576 /* nd_crypt */,
 				07EBCE5C19A8CD3D00802576 /* nd_net */,
@@ -509,7 +520,6 @@
 			children = (
 				07EBCE6E19A8CF6C00802576 /* msg_format.cpp */,
 				07EBCE6F19A8CF6C00802576 /* nd_connector.c */,
-				07EBCE7019A8CF6C00802576 /* net_conn.h */,
 			);
 			name = c_api;
 			path = ../../src/ndclient/c_api;
@@ -519,7 +529,6 @@
 			isa = PBXGroup;
 			children = (
 				07EBCE7419A8CF6C00802576 /* nd_connector.cpp */,
-				07EBCE7519A8CF6C00802576 /* nd_iconn.h */,
 			);
 			name = cpp_api;
 			path = ../../src/ndclient/cpp_api;

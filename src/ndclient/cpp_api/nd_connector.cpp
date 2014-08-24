@@ -25,7 +25,7 @@
 #include "ndapplib/nd_msgpacket.h"
 //#include "pg_loginmsg.h"
 
-#include "nd_iconn.h"
+#include "ndcli/nd_iconn.h"
 
 #define  WAITMSG_TIMEOUT 10000
 

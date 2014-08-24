@@ -7,7 +7,7 @@
 //
 
 
-#include "net_conn.h"
+#include "ndcli/nd_api_c.h"
 
 static nd_handle s_connObj ;
 

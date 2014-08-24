@@ -27,6 +27,17 @@ enum eNDMsgSys{
     ND_MSG_SYS_NUMBER
 };
 
+enum eNDmsgLogin{
+    EFRMSG_LOGIN,
+    EFRMSG_LOGOUT,
+    
+    EFRMSG_NUMBERS
+};
+
+#define USER_NAME_SIZE 128
+#define PASSWORD_SIZE 24
+
+
 #define INIT_MSG_HEADER(_mainid, _subid, _length) \
     maxid = _mainid; \
     minid =	_subid;  \

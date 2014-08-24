@@ -12,9 +12,6 @@
 #include "nd_common/nd_common.h"
 #include "nd_net/nd_netlib.h"
 #include "nd_crypt/nd_crypt.h"
-//#include "FRmsgdef.h"
-
-
 
 
 enum eStreamType{

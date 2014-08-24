@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:iosDemo/iosDemo.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:srvDemo/srvDemo.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:ndMacStatic/ndMacStatic.xcodeproj">
    </FileRef>
    <FileRef

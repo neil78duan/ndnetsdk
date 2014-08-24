@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#include "ndcli/nd_iconn.h"
 
 @interface ViewController (){
     bool inConnect;

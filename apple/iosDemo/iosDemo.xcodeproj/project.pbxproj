@@ -9,10 +9,11 @@
 /* Begin PBXBuildFile section */
 		0729DF7219A8ED3C002F8A75 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0729DF7119A8ED3C002F8A75 /* main.m */; };
 		0729DF7519A8ED3C002F8A75 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0729DF7419A8ED3C002F8A75 /* AppDelegate.m */; };
-		0729DF7819A8ED3D002F8A75 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0729DF7719A8ED3D002F8A75 /* ViewController.m */; };
+		0729DF7819A8ED3D002F8A75 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0729DF7719A8ED3D002F8A75 /* ViewController.mm */; };
 		0729DF7B19A8ED3D002F8A75 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0729DF7919A8ED3D002F8A75 /* Main.storyboard */; };
 		0729DF7D19A8ED3D002F8A75 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0729DF7C19A8ED3D002F8A75 /* Images.xcassets */; };
 		0729DF8919A8ED3D002F8A75 /* iosDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0729DF8819A8ED3D002F8A75 /* iosDemoTests.m */; };
+		0729DF9519A9683E002F8A75 /* libndclient_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0729DF9419A9683E002F8A75 /* libndclient_ios.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,12 +33,13 @@
 		0729DF7319A8ED3C002F8A75 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		0729DF7419A8ED3C002F8A75 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		0729DF7619A8ED3C002F8A75 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		0729DF7719A8ED3D002F8A75 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		0729DF7719A8ED3D002F8A75 /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		0729DF7A19A8ED3D002F8A75 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0729DF7C19A8ED3D002F8A75 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		0729DF8219A8ED3D002F8A75 /* iosDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0729DF8719A8ED3D002F8A75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0729DF8819A8ED3D002F8A75 /* iosDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iosDemoTests.m; sourceTree = "<group>"; };
+		0729DF9419A9683E002F8A75 /* libndclient_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libndclient_ios.a; path = "../../../../../Library/Developer/Xcode/DerivedData/ndsdkxcode-hcupniqwmhivkefcedgnfgupthhn/Build/Products/Debug-iphoneos/libndclient_ios.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0729DF9519A9683E002F8A75 /* libndclient_ios.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +64,7 @@
 		0729DF6319A8ED3C002F8A75 = {
 			isa = PBXGroup;
 			children = (
+				0729DF9419A9683E002F8A75 /* libndclient_ios.a */,
 				0729DF6E19A8ED3C002F8A75 /* iosDemo */,
 				0729DF8519A8ED3D002F8A75 /* iosDemoTests */,
 				0729DF6D19A8ED3C002F8A75 /* Products */,
@@ -82,7 +86,7 @@
 				0729DF7319A8ED3C002F8A75 /* AppDelegate.h */,
 				0729DF7419A8ED3C002F8A75 /* AppDelegate.m */,
 				0729DF7619A8ED3C002F8A75 /* ViewController.h */,
-				0729DF7719A8ED3D002F8A75 /* ViewController.m */,
+				0729DF7719A8ED3D002F8A75 /* ViewController.mm */,
 				0729DF7919A8ED3D002F8A75 /* Main.storyboard */,
 				0729DF7C19A8ED3D002F8A75 /* Images.xcassets */,
 				0729DF6F19A8ED3C002F8A75 /* Supporting Files */,
@@ -215,7 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0729DF7819A8ED3D002F8A75 /* ViewController.m in Sources */,
+				0729DF7819A8ED3D002F8A75 /* ViewController.mm in Sources */,
 				0729DF7519A8ED3C002F8A75 /* AppDelegate.m in Sources */,
 				0729DF7219A8ED3C002F8A75 /* main.m in Sources */,
 			);
@@ -344,6 +348,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = iosDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/ndsdkxcode-hcupniqwmhivkefcedgnfgupthhn/Build/Products/Debug-iphoneos",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -355,6 +363,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = iosDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/ndsdkxcode-hcupniqwmhivkefcedgnfgupthhn/Build/Products/Debug-iphoneos",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
