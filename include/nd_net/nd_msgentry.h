@@ -100,6 +100,8 @@ ND_NET_API int nd_msgentry_install(nd_handle  handle, nd_usermsg_func, ndmsgid_t
 ND_NET_API int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func)  ;
 
 
+ND_NET_API nd_handle nd_get_msg_hadle(nd_netui_handle handle) ;
+
 /* 正常发送消息 */
 static __INLINE__ int nd_connectmsg_send(nd_handle  connector_handle, nd_usermsgbuf_t *msg ) 
 {

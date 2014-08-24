@@ -12,6 +12,9 @@
 
 #include "nd_net/nd_netlib.h"
 
+#define ND_MAIN_MSG_CAPACITY 16
+#define ND_MSG_BASE_ID 0
+
 enum eNDMsgMainID{
     ND_MAIN_ID_SYS,
     ND_MAIN_ID_LOGIN,

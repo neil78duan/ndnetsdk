@@ -1,3 +1,4 @@
 # ignore obj 
 *.[odOD]
 obj
+*.log

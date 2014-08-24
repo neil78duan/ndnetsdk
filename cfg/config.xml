@@ -1,0 +1,33 @@
+<root name="configRoot" desc="root">
+	<base_port name="port start id" desc="port=protbase+port">7828</base_port>
+	<test_srv_config name="FlahsRouteServer" >
+		<logfile>frlog.log</logfile>
+		<callstack>FlashRoutecall.log</callstack>
+		<outputdump kinds="bool">1</outputdump>
+		<data_dir  kinds="dir" delete="no">../data</data_dir>
+		<inet_ip desc="internet ip address">127.0.0.1</inet_ip>
+		
+        <listen name="net socket listen info"  expand="yes" >
+			<port name="socket port">0</port>
+			<connected_tmout name="timeout" desc="close untill data coming">3600</connected_tmout>
+			<bindip desc="bind ip"/>
+			<listen_mod desc="lieten-tcp, listen-ext, listen-udt" kinds="hide" delete="no" >listen-ext</listen_mod>
+			<max_connect>32</max_connect>
+		</listen>
+        <reliable_host desc="from these host is reliable">
+            <host0>localhost</host0>
+            <host1>192.168.1.%</host1>
+            <host2>127.0.0.1</host2>
+        </reliable_host>
+		<connnector_db name="connector config of dbserver" expand="yes" >
+			<remote_port>4</remote_port>
+			<connect_protocol desc="udt-connector,tcp-connector" kinds="hide" delete="no">tcp-connector</connect_protocol>
+			<host>localhost</host>
+		</connnector_db>
+	</test_srv_config>
+	
+</root>
+
+<alias kinds="hide">
+	<logfile>LogFile</logfile>
+</alias>

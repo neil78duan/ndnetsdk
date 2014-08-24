@@ -128,6 +128,26 @@ void nd_msgtable_destroy(nd_handle handle, int flag)
 }
 
 
+nd_handle nd_get_msg_hadle(nd_netui_handle handle)
+{
+    struct msgentry_root *root_entry= NULL;
+    nd_assert(handle) ;
+    
+    if(handle->type==NDHANDLE_TCPNODE){
+        root_entry = (struct msgentry_root *) (((struct nd_tcp_node*)handle)->msg_handle ) ;
+    }
+    else if(handle->type==NDHANDLE_UDPNODE){
+        root_entry = (struct msgentry_root *) (((nd_udt_node*)handle)->msg_handle ) ;
+    }
+    else if(handle->type==NDHANDLE_LISTEN){
+        root_entry = (struct msgentry_root *) (((struct nd_srv_node* )handle )->msg_handle ) ;
+    }
+    else {
+        return NULL;
+    }
+    return (nd_handle) root_entry ;
+}
+
 int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func) 
 {
 	struct msgentry_root *root_entry= NULL;
