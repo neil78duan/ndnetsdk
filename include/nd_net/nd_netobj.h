@@ -55,6 +55,8 @@ typedef int (*net_update_entry)(nd_handle h) ;
 
 typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 
+typedef void *nd_userdata_t ;
+
 #define  ND_CONNECTOR_BASE \
 	NDUINT8		level ;			\
 	NDUINT8		read_again:4;	\
@@ -67,7 +69,7 @@ typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 	size_t		recv_len ;		\
 	nd_handle 	msg_handle ;	\
 	nd_handle 	srv_root;		\
-	void 		*user_data ;	\
+	nd_userdata_t 		user_data ;	\
 	nd_mutex			*send_lock;		\
 	packet_write_entry	write_entry;	\
 	socket_write_entry	sock_write;		\

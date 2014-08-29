@@ -185,7 +185,54 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
     case NDIOCTL_GET_LAST_RECV_TIME:
         *(ndtime_t*)val  = socket_node->last_recv ;
         break ;
+        
+    case NDIOCTL_GET_LAST_SEND_TIME:
+        *(ndtime_t*)val  = socket_node->last_push ;
+        break ;
+        
+    case NDIOCTL_GET_USERDATA:
+        *(nd_userdata_t*)val  = socket_node->user_data ;
+        break ;
+    case NDIOCTL_SET_USERDATA:
+        socket_node->user_data = val;
+        break ;
+        
+        ///
+        
+    case NDIOCTL_GET_PEER_IP:
+        *(ndip_t*) val = nd_net_peer_getip(socket_node);
+        break;
+        
+    case NDIOCTL_GET_PEER_PORT:
+        *(ndport_t*) val = nd_net_peer_getport(socket_node);
+        break;
 
+        
+    case NDIOCTL_HOOK_DATA:
+        nd_hook_data(socket_node,(data_in_entry) val ) ;
+        break ;
+        
+    case NDIOCTL_HOOK_PACKET:
+        nd_hook_packet(socket_node,(net_msg_entry) val ) ;
+        break ;
+        
+    case NDIOCTL_SET_UNREG_MSG_CLOSED: //close peers when received unregister message
+        nd_net_set_unregmsg_handler(socket_node, *(int*)val);
+
+        break ;
+    case NDIOCTL_SET_UNAUTHORIZE_CLOSE:
+        nd_net_set_unauthorize_handler(socket_node, *(int*)val);
+        break ;
+        
+
+    case NDIOCTL_SET_CRYPT_KEY:
+        nd_connector_set_crypt(socket_node,val, *size);
+        break ;
+    case NDIOCTL_GET_CRYPT_KEY:
+        *(nd_userdata_t*)val = nd_connector_get_crypt(socket_node, size) ;
+        break;
+        
+        
 	case NDIOCTL_SET_BLOCK:
 		ret = nd_socket_nonblock(socket_node->fd, 0) ;
 		break ;
