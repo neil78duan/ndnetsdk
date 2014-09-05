@@ -25,12 +25,12 @@ enum eStreamType{
     
 };
 
-nd_handle ndGetConnector() ;
-int SendFormat(int maxid, int minid, int argc, ...) ;
-void init_messageHandler() ;
+CPPAPI nd_handle ndGetConnector() ;
+CPPAPI int SendFormat(int maxid, int minid, int argc, ...) ;
+CPPAPI void init_messageHandler() ;
 
-int TestNet();
+CPPAPI int TestNet();
 
-int sendTest() ;
+CPPAPI int sendTest() ;
 
 #endif

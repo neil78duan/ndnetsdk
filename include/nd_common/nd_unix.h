@@ -92,7 +92,11 @@ ND_COMMON_API int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)  ;
 ND_COMMON_API void pthread_sleep(NDUINT32 msec) ;
 #define nd_sleep			pthread_sleep  		//Ë¯Ãß1/1000 second
 
+#ifdef ND_DEBUG
 #define nd_assert(a)		assert(a)
+#else 
+#define nd_assert(a)
+#endif
 
 
 #if	0
