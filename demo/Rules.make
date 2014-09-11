@@ -8,63 +8,62 @@
 #debug flag 
 DEBUG =y
 
-#define uincode
-UNICODE=n
 
-#define user intel c compile
-USE_INTEL_CC=n
+#profile , hot spot find
+PROFILE=y
 
 #ifeq ($(OSTYPE),linux)
 #	CFLAGS += -D__LINUX__
 #elifeq ($(OSTYPE),linux-gnu)
 #	CFLAGS += -D__LINUX__
 #else
-#	CFLAGS += -D__BSD__
+#	CFLAGS += -D_MAC_OS_ -D__BSD__
 #endif
 
-CFLAGS += -c -O -D__LINUX__ -DND_UNIX
-LFLAGS +=  -lpthread -lrt
+#CFLAGS += -c -w -O -D__LINUX__ -DND_UNIX -DBUILD_AS_STATIC_LIB -D_PG_SERVER_ -finput-charset=GBK -D_GNU_SOURCE
+
+# for mac os x
+CFLAGS += -c -w -O -D__MAC_OS__ -DND_UNIX -DBUILD_AS_STATIC_LIB -D_PG_SERVER_
+LFLAGS +=  -lpthread  -lm
 
 ifeq ($(DEBUG),y)
 	CFLAGS +=  -g -DDEBUG  -DND_DEBUG 
 	ifeq ($(PROFILE),y)
 		CFLAGS += -pg
 	else 
+	
 	endif
-	LFLAGS += -pg
+	
+#	LFLAGS += -
 else
 	CFLAGS += -DNDEBUG
 endif
 
-ifeq ($(UNICODE),y)
-	CFLAGS += -DND_UNICODE
-else
-endif
+PLATFORM_BITS =  $(shell  getconf LONG_BIT )
 
 
-TOPDIR = ../..
+
+TOPDIR = $(NDHOME)
 CURDIR = .
 SRCDIR = $(CURDIR)/src
 OBJDIR = $(CURDIR)/obj
-OUTDIR = $(TOPDIR)/obj
 
-ifeq ($(DEBUG),y)
-WORKDIR = $(TOPDIR)/bin
-LIBDIR = $(TOPDIR)/lib
+ifeq ($(PLATFORM_BITS),64)
+	CFLAGS += -DX86_64
+	WORKDIR = $(TOPDIR)/bin64
+	LIBDIR = $(TOPDIR)/lib64
 else
-WORKDIR = $(TOPDIR)/bin
-LIBDIR = $(TOPDIR)/lib
+	WORKDIR = $(TOPDIR)/bin
+	LIBDIR = $(TOPDIR)/lib
 endif
 
-ifeq ($(USE_INTEL_CC),y)
-	CC = icc 
-	CPP = i++
-	AR = xiar rcs
-	LFLAGS += /usr/intel/cc/lib/libimf.a 
-else	
-	CC = gcc 
-	CPP = g++
-	AR = ar  rv
-	LFLAGS += -lm 
-endif
+	
+TMPPARAM1 = $(shell  [ -d  $(WORKDIR) ] || mkdir $(WORKDIR))
+	
+TMPPARAM1 = $(shell  [ -d  $(LIBDIR) ] || mkdir $(LIBDIR))
+
+CC = cc
+CPP = c++
+AR = ar  rv
+
 

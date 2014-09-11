@@ -1,6 +1,5 @@
 
-
-SUBDIRS =  src 
+SUBDIRS = src 
 
 all: subdirs
 

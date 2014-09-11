@@ -112,7 +112,7 @@ int ndSendMsgEx(netObject netObj,struct ndMsgData *data, int flag)
 }
 
 
-int ndUpdateConnect(netObject netObj,unsigned int timeOutMS)
+int ndUpdateConnect(netObject netObj, int timeOutMS)
 {
     if (!nd_connector_valid((nd_netui_handle)netObj)) {
         return -1;

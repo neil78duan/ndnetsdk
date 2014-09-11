@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		073C46CC19C1636A0081D14F /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 073C46CA19C1636A0081D14F /* Makefile */; };
 		07931A4A19931C5A009C8BC5 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 079319D919931C5A009C8BC5 /* Makefile */; };
 		07931A4B19931C5A009C8BC5 /* bintree.c in Sources */ = {isa = PBXBuildFile; fileRef = 079319DC19931C5A009C8BC5 /* bintree.c */; };
 		07931A4C19931C5A009C8BC5 /* callstack.c in Sources */ = {isa = PBXBuildFile; fileRef = 079319DD19931C5A009C8BC5 /* callstack.c */; };
@@ -181,6 +182,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		073C46CA19C1636A0081D14F /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../src/Makefile; sourceTree = "<group>"; };
+		073C46CB19C1636A0081D14F /* Rules.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Rules.make; path = ../../src/Rules.make; sourceTree = "<group>"; };
 		0793191919931918009C8BC5 /* libndnetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndnetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		079319D919931C5A009C8BC5 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		079319DC19931C5A009C8BC5 /* bintree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bintree.c; sourceTree = "<group>"; };
@@ -387,6 +390,8 @@
 		0793192119931B3E009C8BC5 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				073C46CA19C1636A0081D14F /* Makefile */,
+				073C46CB19C1636A0081D14F /* Rules.make */,
 				079319D719931C5A009C8BC5 /* nd_common */,
 				079319ED19931C5A009C8BC5 /* nd_crypt */,
 				07931A0419931C5A009C8BC5 /* nd_net */,
@@ -910,6 +915,7 @@
 				07931A6719931C5A009C8BC5 /* r_random.c in Sources */,
 				07931A7C19931C5A009C8BC5 /* udt_socket.c in Sources */,
 				07931A8319931C5A009C8BC5 /* nd_thpoolio.c in Sources */,
+				073C46CC19C1636A0081D14F /* Makefile in Sources */,
 				07931A4D19931C5A009C8BC5 /* common.c in Sources */,
 				07931A8C19931C5A009C8BC5 /* Makefile in Sources */,
 				07931A8519931C5A009C8BC5 /* srv_nodemgr.c in Sources */,

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		073C46D019C18D450081D14F /* nd_api_c.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 07885A7119BED1F40075AF59 /* nd_api_c.h */; };
+		073C46D119C18D580081D14F /* libndclient_ios.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 079318F619931665009C8BC5 /* libndclient_ios.a */; };
 		079318FA19931665009C8BC5 /* ndclient_ios.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 079318F919931665009C8BC5 /* ndclient_ios.h */; };
 		079318FC19931665009C8BC5 /* ndclient_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 079318FB19931665009C8BC5 /* ndclient_ios.m */; };
 		0793190219931665009C8BC5 /* libndclient_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 079318F619931665009C8BC5 /* libndclient_ios.a */; };
@@ -79,6 +81,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		073C46CF19C18C780081D14F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /Users/duan/Documents/work/AtlatisRoot/trunk/Atlantis/Assets/Plugins/iOS;
+			dstSubfolderSpec = 0;
+			files = (
+				073C46D119C18D580081D14F /* libndclient_ios.a in CopyFiles */,
+				073C46D019C18D450081D14F /* nd_api_c.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		079318F419931665009C8BC5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -544,6 +557,7 @@
 				079318F219931665009C8BC5 /* Sources */,
 				079318F319931665009C8BC5 /* Frameworks */,
 				079318F419931665009C8BC5 /* CopyFiles */,
+				073C46CF19C18C780081D14F /* CopyFiles */,
 			);
 			buildRules = (
 			);

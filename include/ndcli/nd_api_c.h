@@ -6,6 +6,7 @@
 //  Copyright (c) 2014年 duanxiuyun. All rights reserved.
 //
 //  bridge ND module and others .
+// Can be used in unity3d or unreal and etc..
 //
 
 #ifndef _NET_CONN_H_
@@ -42,28 +43,37 @@ struct ndMsgData
 };
 
 
-//typedef int (*ndNetFunc)(netObject netObj, char *msg_buf , netObject* listener );
-typedef int (*ndNetFunc)(netObject netObj, char *data, int dataLen );
+typedef int (*ndNetFunc)(netObject netObj, unsigned char *data, int dataLen );
 
+//connect server
 CPPAPI netObject ndOpenConnect(const char *host, int port) ;
 CPPAPI void ndClostConnect(netObject netObj) ;
 
+//send message
+/* send message with format*/
 CPPAPI int ndSendMsg(netObject netObj,int maxid, int minid, int argc, ...) ;
+/* send data ,before send the data need to convert to net byte-order*/
 CPPAPI int ndSendData(netObject netObj, char *data, int dataLen, int flag) ;
+/* send struct message, ndMsgData::data need to convert to net byteoreder */
 CPPAPI int ndSendMsgEx(netObject netObj,struct ndMsgData *data, int flag) ;
 
+//install message handle functions
 CPPAPI int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID) ;
 CPPAPI int ndSetDftMsgHandler(netObject netObj,ndNetFunc dftFunc) ;
 
-CPPAPI int ndUpdateConnect(netObject netObj,unsigned int timeOutMS) ;
+//tic net message , maybe you need a single thread to call this function
+CPPAPI int ndUpdateConnect(netObject netObj, int timeOutMS) ;
+//wait net message untill timeout, when you get the data ,you need handle it yourself
 CPPAPI int ndWaitMsg(netObject netObj, char *buf, int timeOutMS) ;
+
+//init/deinit net 
+CPPAPI int ndInitNet() ;
+CPPAPI void ndDeinitNet() ;
 
 // for test
 CPPAPI int ndSentTest(netObject netObj) ;
 CPPAPI void ndMsgfuncInit(netObject netObj) ;
 
-CPPAPI int ndInitNet() ;
-CPPAPI void ndDeinitNet() ;
 
 /*
 CPPAPI netObject ndGetConnector() ;
