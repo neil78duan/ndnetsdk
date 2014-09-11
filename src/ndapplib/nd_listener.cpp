@@ -167,7 +167,7 @@ NDSession *NDListener::htoSession(nd_handle h_session)
 	return static_cast<NDSession*>(nd_session_getdata((nd_netui_handle )h_session))  ;
 }
 
-int NDListener::Create(char *listen_name, int session_num, size_t session_size)
+int NDListener::Create(const char *listen_name, int session_num, size_t session_size)
 {
 	ND_TRACE_FUNC() ;
 	size_t ss =0;

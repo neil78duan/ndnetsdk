@@ -88,13 +88,13 @@ ND_NET_API int nd_dft_packet_handler(nd_netui_handle node,void *data , size_t da
 			nd_connector_close(connector, 0 ) ; // or nd_object_destroy(connector) ;
 
  */
-ND_NET_API int nd_connector_open(nd_handle net_handle,char *host, int port, struct nd_proxy_info *proxy);
+ND_NET_API int nd_connector_open(nd_handle net_handle,const char *host, int port, struct nd_proxy_info *proxy);
 
 /*
  * 重新连接到一个新的服务器
  */
 ND_NET_API int nd_reconnect(nd_handle net_handle, ndip_t ip, int port, struct nd_proxy_info *proxy) ;
-ND_NET_API int nd_reconnectex(nd_handle net_handle, char *host, int port, struct nd_proxy_info *proxy) ;
+ND_NET_API int nd_reconnectex(nd_handle net_handle, const char *host, int port, struct nd_proxy_info *proxy) ;
 
 /*close connect (only used in client (connect)) */
 ND_NET_API int nd_connector_close(nd_handle net_handle, int force) ;

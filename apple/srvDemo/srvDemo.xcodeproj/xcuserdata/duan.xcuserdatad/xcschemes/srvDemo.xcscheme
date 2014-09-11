@@ -44,7 +44,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/duan/Documents/work/ndnetsdk/bin"
+      customWorkingDirectory = "/Users/duan/Documents/ndsdk.github/bin"
       buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
@@ -60,7 +60,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-f ../cfg/config.xml -c test_srv_config"
+            argument = "-f  ../cfg/config.xml -c test_srv_config"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

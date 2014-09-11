@@ -35,7 +35,7 @@ class NDConnector : public NDIConn
 public :		
 	void Destroy(int flag = 0);
 	int Create(char *protocol_name=NULL) ;
-	int Open(char*host, int port,char *protocol_name, pg_proxy_info *proxy=NULL);
+	int Open(char*host, int port,char *protocol_name, nd_proxy_info *proxy=NULL);
 	int Close(int force=0);
 
 	int Send(int maxid, int minid, void *data, size_t size) ;
@@ -48,12 +48,13 @@ public :
 	int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100);
 	int Update(ndtime_t wait_time);
 	void InstallMsgFunc(nd_iconn_func, ndmsgid_t maxid, ndmsgid_t minid);
-
+    void SetDftMsgHandler(nd_iconn_func func);
+    
 	NDConnector(int maxmsg_num =ND_MAIN_MSG_CAPACITY, int maxid_start=ND_MSG_BASE_ID) ;
 	void SetMsgNum(int maxmsg_num , int maxid_start=ND_MSG_BASE_ID) ;
 	virtual~NDConnector() ;
     
-	int Reconnect(ndip_t IP, int port,pg_proxy_info *proxy=NULL) ;//connect to another host
+	int Reconnect(ndip_t IP, int port,nd_proxy_info *proxy=NULL) ;//connect to another host
 
 	NDUINT32 GetID() {return m_id;}
 	void SetID(NDUINT32 id) {m_id = id;}
@@ -126,7 +127,7 @@ void NDConnector::SetMsgNum(int maxmsg_num , int maxid_start)
 	msg_base = maxid_start;
 }
 
-int NDConnector::Open(char *host, int port, char *protocol_name,pg_proxy_info *proxy)
+int NDConnector::Open(char *host, int port, char *protocol_name,nd_proxy_info *proxy)
 {
 	if(!m_objhandle) {
 		//return -1 ;
@@ -146,7 +147,7 @@ int NDConnector::Open(char *host, int port, char *protocol_name,pg_proxy_info *p
 
 }
 
-int NDConnector::Reconnect(ndip_t IP, int port,pg_proxy_info *proxy)
+int NDConnector::Reconnect(ndip_t IP, int port,nd_proxy_info *proxy)
 {
 	return ::nd_reconnect(m_objhandle,  IP,  port, (nd_proxy_info*)proxy) ;
 }
@@ -160,7 +161,7 @@ int NDConnector::Close(int force)
 	return -1 ;
 }
 
-int pg_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)  ;
+int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)  ;
 int NDConnector::Create(char *protocol_name) 
 {
 	//connect to host 
@@ -181,7 +182,7 @@ int NDConnector::Create(char *protocol_name)
 		if(-1==nd_msgtable_create(m_objhandle, msg_kinds, msg_base) ) {
 			nd_object_destroy(m_objhandle, 0) ;
 		}
-		nd_hook_packet(m_objhandle,(net_msg_entry )pg_translate_message);
+		nd_hook_packet(m_objhandle,(net_msg_entry )nd_translate_message);
 	}
 	return 0 ;
 
@@ -264,6 +265,13 @@ void NDConnector::InstallMsgFunc(nd_iconn_func func, ndmsgid_t maxid, ndmsgid_t 
 {
 	if(m_objhandle)
 		nd_msgentry_install(m_objhandle, (nd_usermsg_func)func,  maxid,  minid,EPL_CONNECT) ;
+}
+
+void NDConnector::SetDftMsgHandler(nd_iconn_func func)
+{
+    if(m_objhandle)
+        nd_msgentry_def_handler((nd_netui_handle)m_objhandle, (nd_usermsg_func)func) ;
+
 }
 
 int NDConnector::CheckValid()
@@ -397,8 +405,8 @@ void DestroyConnectorObj(NDIConn *pconn)
 
 int InitNet() 
 {
-	char *config_file = NULL ;
-	char *argv[] = {"pgnet"} ;
+	//char *config_file = NULL ;
+	const char *argv[] = {"pgnet"} ;
 	nd_arg(1, argv);
 
 	nd_common_init() ;
@@ -437,7 +445,7 @@ struct msgentry_root
 
 
 
-int pg_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle) 
+int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
 {
 	ENTER_FUNC()
 	int ret = 0 ;
@@ -463,10 +471,14 @@ int pg_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_h
 		}
 
 		func = root_entry->sub_buf[main_index].msg_buf[minid].entry ;
-
+        if(!func && root_entry->def_entry){
+            func = root_entry->def_entry ;
+        }
+        
 		if(func) {
 			NDIConn *pc = htoConnector((nd_handle)connect_handle);
-			ret = func((nd_handle)pc,(nd_usermsgbuf_t*)usermsg,NULL) ;
+            nd_iconn_func handler = (nd_iconn_func) func ;
+			ret = handler(pc, (nd_usermsgbuf_t*)usermsg) ;
 		}
 	}
 

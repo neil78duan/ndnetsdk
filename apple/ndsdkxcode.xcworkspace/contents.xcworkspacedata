@@ -11,9 +11,6 @@
       location = "group:ndMacStatic/ndMacStatic.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ndclient_ios/ndclient_ios.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:ndnetwork/ndnetwork.xcodeproj">
    </FileRef>
 </Workspace>

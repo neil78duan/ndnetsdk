@@ -175,8 +175,8 @@ size_t ndc_fwrite(const void *buf, size_t elementsize, size_t count,NDC_FILE *pf
 {
 	int i, j ;
 	char *src = (char*) buf ;
-	size_t buf_datalen  = 0 ;
-	size_t totalsize = elementsize * count ;
+	//size_t buf_datalen  = 0 ;
+	//size_t totalsize = elementsize * count ;
 	if(!pf || !pf->pf ) {
 		return 0 ;
 	}

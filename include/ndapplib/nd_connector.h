@@ -19,8 +19,8 @@ class NDConnector : public NDObject
 {
 public :		
 	void Destroy(int flag = 0);
-	int Create(char *protocol_name=NULL) ;
-	int Open(char*host, int port,char *protocol_name, struct nd_proxy_info *proxy=NULL);
+	int Create(const char *protocol_name=NULL) ;
+	int Open(const char*host, int port,const char *protocol_name, struct nd_proxy_info *proxy=NULL);
 	int Close(int force=0);
 
 	int SendMsg(NDSendMsg &msg, int flag=ESF_URGENCY);

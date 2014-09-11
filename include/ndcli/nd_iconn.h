@@ -45,22 +45,14 @@
 
 
 class NDIConn ;
-typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg , nd_handle listener);
+typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
 
-struct pg_proxy_info
-{
-	int proxy_type ;
-	short proxy_port;
-	char proxy_host[128];
-	char user[64];
-	char password[64] ;
-};
 
 //net connector 
 class NDIConn
 {
 public :		
-	virtual int Open(char*host, int port,char *protocol_name, pg_proxy_info *proxy=NULL) = 0;
+	virtual int Open(char*host, int port,char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
 	virtual int Close(int force=0) = 0;
 	virtual int Send(int maxid, int minid, void *data, size_t size)  = 0;
 	virtual int SendMsg(NDSendMsg &msg, int flag=0) = 0;
@@ -70,9 +62,10 @@ public :
 	virtual int CheckValid() = 0;
 	virtual int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100) = 0;
 	virtual int Update(ndtime_t wait_time) = 0;
-	virtual void InstallMsgFunc(nd_iconn_func, ndmsgid_t maxid, ndmsgid_t minid) = 0;
+    virtual void InstallMsgFunc(nd_iconn_func, ndmsgid_t maxid, ndmsgid_t minid) = 0;
+    virtual void SetDftMsgHandler(nd_iconn_func) = 0;
 	virtual void SetMsgNum(int maxmsg_num , int maxid_start)  = 0;
-	virtual int Reconnect(ndip_t IP, int port,pg_proxy_info *proxy=NULL) = 0 ;//connect to another host
+	virtual int Reconnect(ndip_t IP, int port,nd_proxy_info *proxy=NULL) = 0 ;//connect to another host
 	virtual NDUINT32 GetID()  = 0;
 	virtual void SetID(NDUINT32 id) = 0;
 	virtual NDUINT32 GetType()  = 0;

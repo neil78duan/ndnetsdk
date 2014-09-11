@@ -344,7 +344,7 @@ int set_maxopen_fd(int max_fd)
     return  getdtablesize() ;
 }
 
-int create_filemap( char *filename, size_t size,nd_filemap_t *out_handle) 
+int create_filemap(const char *filename, size_t size,nd_filemap_t *out_handle)
 {
 	int fd =-1,i;
 	char temp;
@@ -381,7 +381,7 @@ int close_filemap(nd_filemap_t *mapinfo)
 	return 0 ;	
 }
 
-int open_filemap(char *filename, nd_filemap_t *out_handle) 
+int open_filemap(const char *filename, nd_filemap_t *out_handle)
 {
 	int fd,i;
 	long start, end ;

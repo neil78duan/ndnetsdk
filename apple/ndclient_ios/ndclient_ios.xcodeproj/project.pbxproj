@@ -92,8 +92,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0729DF9819A96BFC002F8A75 /* nd_api_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_api_c.h; sourceTree = "<group>"; };
-		0729DF9919A96BFC002F8A75 /* nd_iconn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconn.h; sourceTree = "<group>"; };
+		07885A7119BED1F40075AF59 /* nd_api_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_api_c.h; sourceTree = "<group>"; };
+		07885A7219BED1F40075AF59 /* nd_iconn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconn.h; sourceTree = "<group>"; };
 		079318F619931665009C8BC5 /* libndclient_ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndclient_ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		079318F919931665009C8BC5 /* ndclient_ios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ndclient_ios.h; sourceTree = "<group>"; };
 		079318FB19931665009C8BC5 /* ndclient_ios.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ndclient_ios.m; sourceTree = "<group>"; };
@@ -228,11 +228,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0729DF9719A96BFC002F8A75 /* ndcli */ = {
+		07885A7019BED1F40075AF59 /* ndcli */ = {
 			isa = PBXGroup;
 			children = (
-				0729DF9819A96BFC002F8A75 /* nd_api_c.h */,
-				0729DF9919A96BFC002F8A75 /* nd_iconn.h */,
+				07885A7119BED1F40075AF59 /* nd_api_c.h */,
+				07885A7219BED1F40075AF59 /* nd_iconn.h */,
 			);
 			name = ndcli;
 			path = ../../include/ndcli;
@@ -295,7 +295,7 @@
 		07EBCD7D19A8CC6300802576 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				0729DF9719A96BFC002F8A75 /* ndcli */,
+				07885A7019BED1F40075AF59 /* ndcli */,
 				07EBCE3519A8CD3D00802576 /* nd_common */,
 				07EBCE4C19A8CD3D00802576 /* nd_crypt */,
 				07EBCE5C19A8CD3D00802576 /* nd_net */,
@@ -787,6 +787,7 @@
 					ND_DEBUG,
 					"$(inherited)",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -802,6 +803,7 @@
 					ND_UNIX,
 					ND_IOS,
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

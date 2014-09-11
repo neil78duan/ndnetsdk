@@ -225,8 +225,9 @@ int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_h
 
 	if(root_entry) {
 		ndmsgid_t main_index , minid;
-		int level = (int) nd_connect_level_get(connect_handle);
-			nd_netmsg_ntoh(usermsg) ;
+		//int level = (int) nd_connect_level_get(connect_handle);
+        
+        nd_netmsg_ntoh(usermsg) ;
 		main_index = usermsg->maxid - root_entry->msgid_base;
 		minid = usermsg->minid ;
 		if(main_index >= root_entry->main_num || minid>=SUB_MSG_NUM){

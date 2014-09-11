@@ -77,14 +77,14 @@ typedef struct nd_udp_node
 }nd_udp_node ;
 
 //open udp connect
-ND_NET_API int nd_udp_connect(nd_handle net_handle,char *host, int port,struct nd_proxy_info *proxy) ;
+ND_NET_API int nd_udp_connect(nd_handle net_handle,const char *host, int port,struct nd_proxy_info *proxy) ;
 
 //close udp connect
 ND_NET_API int nd_udp_close(nd_handle net_handle,int flag)  ;
 
-ND_NET_API int nd_udp_send(nd_handle net_handle,char *data, size_t len)  ;
-ND_NET_API int nd_udp_sendto(nd_handle net_handle,char *data, size_t len, SOCKADDR_IN* to_addr)  ;
-ND_NET_API int nd_udp_sendtoex(nd_handle net_handle,char *data, size_t len, char *host, int port)  ;
+ND_NET_API int nd_udp_send(nd_handle net_handle,const char *data, size_t len)  ;
+ND_NET_API int nd_udp_sendto(nd_handle net_handle,const char *data, size_t len, SOCKADDR_IN* to_addr)  ;
+ND_NET_API int nd_udp_sendtoex(nd_handle net_handle,const char *data, size_t len, char *host, int port)  ;
 ND_NET_API int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t outval) ;
 
 ND_NET_API int nd_udp_parse(nd_handle net_handle, char *buf,size_t len );

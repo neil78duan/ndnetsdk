@@ -33,12 +33,12 @@ class NDSafeListener;
 class NDInstanceBase : public NDObject
 {
 public :
-	int Create(int argc, char *argv[]) ;
+	int Create(int argc, const char *argv[]) ;
 	void Destroy(int flag) ;
 	virtual int Close(int flag=0) ;
 	virtual int Open(int session_size) ;
 
-	virtual int Start(int argc, char *argv[]) ;
+	virtual int Start(int argc,const char *argv[]) ;
 	virtual int End(int flag);
 
 	int WaitServer();
@@ -70,8 +70,8 @@ protected :
 	//nd_handle m_objhandle ;
 	int tminterval ;
 	server_config m_config ;
-	char *m_config_name ;
-	char *config_file ;
+	const char *m_config_name ;
+	const char *config_file ;
 	int m_un_develop ;
 	int m_bNormalExit ;
 public:
@@ -97,7 +97,7 @@ class nd_instance:public NDInstanceBase
 public:
 	nd_instance() {} ;
 	virtual ~nd_instance() {} 
-	int Start(int argc, char *argv[]) 
+	int Start(int argc, const char *argv[])
 	{
 		if(-1==NDInstanceBase::Create(argc, argv))
 			return -1 ;

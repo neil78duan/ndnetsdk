@@ -57,7 +57,7 @@ class NDCallTrace
 public:
 	NDCallTrace(const char *funcname) 
 	{
-		m_ret = push_func((char*)funcname) ;
+		m_ret = push_func(funcname) ;
 	}
 	~NDCallTrace() 
 	{

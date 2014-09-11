@@ -51,7 +51,7 @@ void tean(TEAint32 *k, TEAint32 *v, long N)
 /*generate tea crypt key */
 static void tea_init_rnd()
 {
-	static rnd_inited = 0 ;
+	static int rnd_inited = 0 ;
 	
 	
 	//long time();

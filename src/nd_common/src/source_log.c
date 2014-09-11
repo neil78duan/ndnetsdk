@@ -47,7 +47,7 @@ struct _Source_loginfo{
 	struct list_head __list ;
 };
 
-int _source_log(void *p ,char *operate,char *msg, char *file, int line)
+int _source_log(void *p ,const char *operate,const char *msg,const char *file, int line)
 {
 	if(__s_source_init==0){
 		nd_sourcelog_init() ;

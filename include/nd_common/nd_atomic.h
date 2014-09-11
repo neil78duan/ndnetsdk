@@ -266,7 +266,7 @@ typedef int ndatomic_t ;
 static inline  int nd_testandset(volatile ndatomic_t *p) {return !nd_compare_swap(p,0,1);}
 static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 {
-    register int oldval;
+    int oldval;
     do {
         oldval = *p ;
     }while (!nd_compare_swap(p, oldval, exch)) ;

@@ -29,7 +29,7 @@ int _socket_send(struct nd_tcp_node *node,void *data , size_t len)
 {
 	ENTER_FUNC()
 	int ret ;
-	ret = send(node->fd, data, (int)len, 0) ;
+	ret = (int) send(node->fd, data, len, 0) ;
 	if(ret > 0) {
 		node->send_len += ret ; 
 		node->last_push = nd_time() ;
@@ -119,7 +119,7 @@ RE_SEND:
 	}
 }
 //connect remote host
-int nd_tcpnode_connect(char *host, int port, struct nd_tcp_node *node,struct nd_proxy_info *proxy)
+int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node *node,struct nd_proxy_info *proxy)
 {
 	ENTER_FUNC()
 	nd_assert(node ) ;

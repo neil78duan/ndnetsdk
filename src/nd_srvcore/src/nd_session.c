@@ -156,15 +156,15 @@ int tryto_close_tcpsession(nd_session_handle nethandle, ndtime_t connect_tmout )
 	LEAVE_FUNC();
 	return ret ;
 }
-
-static void broadcast_callback(nd_handle session_handle, void *param)
-{
-	nd_assert(session_handle) ;
-	nd_assert(param) ;
-	nd_sessionmsg_send(session_handle,param) ;
-}
-
-int nd_session_broadcast(nd_handle listen_handle, nd_usermsghdr_t *msg) 
+//
+//static void broadcast_callback(nd_handle session_handle, void *param)
+//{
+//	nd_assert(session_handle) ;
+//	nd_assert(param) ;
+//	nd_sessionmsg_send(session_handle,param) ;
+//}
+//
+int nd_session_broadcast(nd_handle listen_handle, nd_usermsghdr_t *msg)
 {
 	return nd_session_broadcast_ex(listen_handle, msg, 0, 0) ;
 // 	ENTER_FUNC()

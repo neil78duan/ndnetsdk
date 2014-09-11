@@ -50,9 +50,9 @@ ND_COMMON_API int nd_common_init();
 ND_COMMON_API void nd_common_release();
 ND_COMMON_API int nd_common_isinit() ;
 
-ND_COMMON_API char *nd_process_name() ;
+ND_COMMON_API const char *nd_process_name() ;
 //ND_COMMON_API char *process_name();
-ND_COMMON_API int nd_arg(int argc, char *argv[]);
+ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
 #ifdef ND_FILE_TRACE	
 	#undef  fopen

@@ -312,7 +312,7 @@ void *nd_node_lock(struct node_root *root, NDUINT16 node_id)
 {
 #ifdef USER_SYS_LOCK
 	
-	register int looptimes = WAIT_LOOP_TIMES ;
+	//register int looptimes = WAIT_LOOP_TIMES ;
 
 	int index = node_id - root->base_id ;
 	struct node_info *node ;
@@ -475,7 +475,7 @@ void nd_node_unlock(struct node_root *root, NDUINT16 node_id)
 
 void nd_node_walk_node(struct node_root *root,node_walk_callback cb_entry, void *param)
 {
-	ndatomic_t v = 0 ;
+	//ndatomic_t v = 0 ;
 	int i;
 	struct node_info *node = root->connmgr_addr ;
 	int num = nd_atomic_read(&root->connect_num);
@@ -536,7 +536,7 @@ void nd_node_init(void *socket_node, nd_handle h)
 
 void* nd_node_lock_first(struct node_root *root,node_iterator *it)
 {
-	ndatomic_t v = 0 ;
+	//ndatomic_t v = 0 ;
 	int i ;
 	void *p ;
 	struct node_info *node;
@@ -585,7 +585,7 @@ void nd_node_unlock_iterator(struct node_root *root, node_iterator *it)
 void* nd_node_lock_next(struct node_root *root,node_iterator *it)
 {
 	void *p;
-	ndatomic_t v = 0 ;
+	//ndatomic_t v = 0 ;
 	int i = (it->node_id) - root->base_id ;
 
 	nd_assert(i>=0 && i<root->max_conn_num) ;

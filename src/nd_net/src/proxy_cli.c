@@ -20,10 +20,10 @@ enum prox_ack_code{
 };
 
 //Error codes
-int send_init_proxy(ndsocket_t fd,char *host, short port, struct nd_proxy_info *proxy, int is_udp,SOCKADDR_IN *proxy_addr) ;
+int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_info *proxy, int is_udp,SOCKADDR_IN *proxy_addr) ;
 int base64_encode( const char * source, int len, char * destination_string ) ;
 
-ndsocket_t nd_proxy_connect(char *host, short port,SOCKADDR_IN *out_addr, struct nd_proxy_info *proxy, int is_udp)  
+ndsocket_t nd_proxy_connect(const char *host, short port,SOCKADDR_IN *out_addr, struct nd_proxy_info *proxy, int is_udp)
 {
 	ndsocket_t fd;
 	SOCKADDR_IN proxy_addr ;
@@ -44,10 +44,10 @@ ndsocket_t nd_proxy_connect(char *host, short port,SOCKADDR_IN *out_addr, struct
 }
 
 
-int send_init_proxy(ndsocket_t fd,char *host, short port, struct nd_proxy_info *proxy, int is_udp,SOCKADDR_IN *proxy_addr) 
+int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_info *proxy, int is_udp,SOCKADDR_IN *proxy_addr)
 {
 	int len ,ret ;
-	unsigned  char command[1024] ;
+	char command[1024] ;
 	if (proxy->proxy_type==ND_PROXY_SOCKS4 || proxy->proxy_type==ND_PROXY_SOCKS4A) { 
 		 SOCKADDR_IN sock_addr ;
 		//SOCKS4 proxy
@@ -223,10 +223,10 @@ int send_init_proxy(ndsocket_t fd,char *host, short port, struct nd_proxy_info *
 }
 
 //send udp data through proxy
-int nd_proxy_sendtoex(ndsocket_t fd, char *data, size_t size,  char *remotehost, short port, SOCKADDR_IN *proxy)
+int nd_proxy_sendtoex(ndsocket_t fd, const char *data, size_t size, const char *remotehost, short port, SOCKADDR_IN *proxy)
 {
 	int len ;
-	unsigned char buf[MAX_UDP_LEN] ;
+	char buf[MAX_UDP_LEN] ;
 
 
 	buf[0] = buf[1] =buf[2] = 0 ;

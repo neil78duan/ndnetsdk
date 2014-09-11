@@ -10,7 +10,7 @@
 
 #define MAX_XMLNAME_SIZE 64
 
-typedef void (*xml_errlog) (char *errdesc) ;		//错误描述函数
+typedef void (*xml_errlog) (const char *errdesc) ;		//错误描述函数
 //typedef struct tagxml ndxml ;
 //xml 节点,可以单独操作
 typedef struct tagxml 
@@ -83,15 +83,15 @@ ND_COMMON_API xml_errlog nd_setxml_log(xml_errlog logfunc) ;
 ND_COMMON_API int ndxml_load(const char *file,ndxml_root *xmlroot) ;
 
 //查找到一个xml接点
-ND_COMMON_API ndxml *ndxml_getnode(ndxml_root *xmlroot, char *name) ;
+ND_COMMON_API ndxml *ndxml_getnode(ndxml_root *xmlroot, const char *name) ;
 ND_COMMON_API ndxml *ndxml_getnodei(ndxml_root *xmlroot, int index) ;
 
 ND_COMMON_API int ndxml_merge(ndxml_root *host, ndxml_root *merged) ;
 //添加一个xml节点
-ND_COMMON_API ndxml *ndxml_addnode(ndxml_root *xmlroot, char *name,char *value) ;
+ND_COMMON_API ndxml *ndxml_addnode(ndxml_root *xmlroot, const char *name,const char *value) ;
 
 //删除一个XML节点
-ND_COMMON_API int ndxml_delnode(ndxml_root *xmlroot, char *name) ;
+ND_COMMON_API int ndxml_delnode(ndxml_root *xmlroot, const char *name) ;
 ND_COMMON_API int ndxml_delnodei(ndxml_root *xmlroot, int index) ;
 
 //销毁这个xml集合
@@ -114,30 +114,30 @@ ND_COMMON_API char *ndxml_getval_buf(ndxml *node, char *buf, size_t size);
 ND_COMMON_API int ndxml_getval_int(ndxml *node);
 ND_COMMON_API float ndxml_getval_float(ndxml *node);
 //得到属性节点
-ND_COMMON_API struct ndxml_attr *ndxml_getattrib(ndxml *node , char *name);
+ND_COMMON_API struct ndxml_attr *ndxml_getattrib(ndxml *node , const char *name);
 ND_COMMON_API struct ndxml_attr  *ndxml_getattribi(ndxml *node, int index);
 
 //////////////////////////////////////////////////////////////////////////
 //给xml增加一个属性,
-ND_COMMON_API struct ndxml_attr  *ndxml_addattrib(ndxml *parent, char *name, char *value) ;
+ND_COMMON_API struct ndxml_attr  *ndxml_addattrib(ndxml *parent, const char *name, const char *value) ;
 
 //设置xml属性值
-ND_COMMON_API int ndxml_setattrval(ndxml *parent, char *name, char *value) ;
-ND_COMMON_API int ndxml_setattrvali(ndxml *parent, int index, char *value) ;
+ND_COMMON_API int ndxml_setattrval(ndxml *parent, const char *name,const char *value) ;
+ND_COMMON_API int ndxml_setattrvali(ndxml *parent, int index, const char *value) ;
 
 //给xml增加一个子节点需要输入新节点的名字和值,返回新节点地址
-ND_COMMON_API ndxml *ndxml_addsubnode(ndxml *parent, char *name, char *value) ;
+ND_COMMON_API ndxml *ndxml_addsubnode(ndxml *parent, const char *name, const char *value) ;
 //设置XML的值
-ND_COMMON_API int ndxml_setval(ndxml *node , char *val) ;
+ND_COMMON_API int ndxml_setval(ndxml *node , const char *val) ;
 //删除一个属性节点
-ND_COMMON_API int ndxml_delattrib(ndxml *parent, char *name) ;
+ND_COMMON_API int ndxml_delattrib(ndxml *parent, const char *name) ;
 ND_COMMON_API int ndxml_delattribi(ndxml *parent, int index) ;
 //删除一个子节点
-ND_COMMON_API int ndxml_delsubnode(ndxml *parent, char *name) ;
+ND_COMMON_API int ndxml_delsubnode(ndxml *parent, const char *name) ;
 ND_COMMON_API int ndxml_delsubnodei(ndxml *parent, int index) ;
 //////////////////////////////////////////////////////////////////////////
 
-static __INLINE__ char *ndxml_getname(ndxml *node)
+static __INLINE__ const char *ndxml_getname(ndxml *node)
 {
 	return node->name ;
 }
@@ -153,29 +153,29 @@ static __INLINE__ int ndxml_getsub_num(ndxml *node)
 {
 	return node->sub_num ;
 }
-static __INLINE__ char *ndxml_getattr_name(ndxml *node, int index )
+static __INLINE__ const char *ndxml_getattr_name(ndxml *node, int index )
 {
 	struct ndxml_attr  * attr =ndxml_getattribi(node,  index);
 	if(attr) {
-		return (char*) (attr+1) ;
+		return (const char*) (attr+1) ;
 	}
 	return NULL ;
 }
 
-static __INLINE__ char *ndxml_getattr_val(ndxml *node, char *name )
+static __INLINE__ const char *ndxml_getattr_val(ndxml *node, const char *name )
 {
 	struct ndxml_attr  * attr =ndxml_getattrib(node,  name);
 	if(attr) {
-		return  ((char*) (attr+1) ) + attr->name_size ;
+		return  ((const char*) (attr+1) ) + attr->name_size ;
 	}
 	return NULL;
 }
 
-static __INLINE__ char *ndxml_getattr_vali(ndxml *node, int index )
+static __INLINE__ const char *ndxml_getattr_vali(ndxml *node, int index )
 {
 	struct ndxml_attr  * attr =ndxml_getattribi(node,  index);
 	if(attr) {
-		return  ((char*) (attr+1) ) + attr->name_size ;
+		return  ((const char*) (attr+1) ) + attr->name_size ;
 	}
 	return NULL;
 }

@@ -25,7 +25,7 @@ NDInstanceBase &get_instance()
     return g_instance_srv ;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
     NDInstance &inst = g_instance_srv ;
     

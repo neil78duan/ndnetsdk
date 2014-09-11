@@ -366,7 +366,7 @@ static __INLINE__ size_t _get_max_free_chunk(nd_sub_allocator *sub)
 	return sub->end - sub->start ;
 }
 /*创建一个内存池,返回内存池地址*/
-nd_handle nd_pool_create(size_t maxsize ,char *name ) 
+nd_handle nd_pool_create(size_t maxsize ,const char *name )
 {
 	unsigned int _gran = 1;
 	allocheader_t size ;
@@ -1539,7 +1539,7 @@ nd_handle nd_global_mmpool()
 	return (nd_handle) &_static_pool ;
 }
 
-nd_handle nd_pool_create(size_t size,char *name )
+nd_handle nd_pool_create(size_t size,const char *name )
 {
 	struct nd_mm_pool *pool = malloc(sizeof(struct nd_mm_pool));
 	if (pool)	{

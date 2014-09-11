@@ -13,12 +13,12 @@
 #ifdef ND_UNIX
 #include <locale.h>
 #endif
-char *__g_process_name = NULL;			//进程名字
+const char *__g_process_name = NULL;			//进程名字
 static int __s_common_init = 0 ;
 static ndtime_t __s_common_init_base_tick = 0;
 static time_t	__s_common_init_base_time = 0;
 
-char *nd_process_name()
+const char *nd_process_name()
 {
 	static char s_proname[128] = {0};
 
@@ -26,8 +26,8 @@ char *nd_process_name()
 		return "nd_engine" ;
 	}
 	else if(0==s_proname[0]) {
-		size_t len = (int) strlen(__g_process_name) ;
-		char *p= __g_process_name + len;
+		size_t len = strlen(__g_process_name) ;
+		const char *p= __g_process_name + len;
 		char *desc =s_proname;
 		while(len-- > 0){
 			if(*p==0x2f || *p==0x5c) {
@@ -69,7 +69,7 @@ ndchar_t *nd_process_name()
 	
 }*/
 
-int nd_arg(int argc, char *argv[])
+int nd_arg(int argc, const char *argv[])
 {
 	__g_process_name = argv[0] ;
 	return 0;

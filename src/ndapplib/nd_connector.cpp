@@ -57,7 +57,7 @@ int NDConnector::_data_func(void *data, size_t size)
 	return 0;
 }
 
-int NDConnector::Open(char *host, int port, char *protocol_name,struct nd_proxy_info *proxy)
+int NDConnector::Open(const char *host, int port, const char *protocol_name,nd_proxy_info *proxy)
 {
 	ND_TRACE_FUNC();
 	if(!m_objhandle) {
@@ -100,7 +100,7 @@ int NDConnector::Close(int force)
 }
 
 
-int NDConnector::Create(char *protocol_name) 
+int NDConnector::Create(const char *protocol_name)
 {
 	ND_TRACE_FUNC();
 	//connect to host 

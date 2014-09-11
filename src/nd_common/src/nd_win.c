@@ -71,7 +71,7 @@ const char *nd_last_error()
 }
 
 #ifdef ND_OPEN_TRACE
-int MyDbgReport(char *file, int line, char *stm, ...)
+int MyDbgReport(const char *file, int line, const char *stm, ...)
 {
 	char buf[1024], *p = buf ;
 	va_list arg;

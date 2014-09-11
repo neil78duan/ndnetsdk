@@ -24,7 +24,7 @@
 #undef realloc
 
 
-static __INLINE__ void *nd_malloc(size_t size, char *file, int line)
+static __INLINE__ void *nd_malloc(size_t size, const char *file, int line)
 {
 #ifdef ND_MEM_CHECK
 	void *p = nd_alloc_check(nd_global_mmpool(),size,file, line, nd_pool_alloc_real )  ;

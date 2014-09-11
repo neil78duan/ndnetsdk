@@ -43,7 +43,7 @@ int udp_server_entry(struct listen_contex *listen_info)
 	nd_udtsrv *root = &listen_info->udt ;
 	udp_entry  udp_func ;
 
-	struct udp_thpool *pool=NULL;
+	//struct udp_thpool *pool=NULL;
 
 	SOCKADDR_IN  addr ;
 	char readbuf[ND_UDP_PACKET_SIZE] ;
@@ -86,7 +86,7 @@ int udp_server_entry(struct listen_contex *listen_info)
 #ifndef USE_UDP_THREAD_POOL 
 	while (nd_thsrv_msghandler(context) >= 0){
 		int read_len = 0 ;
-		int sock_len = sizeof(addr) ;
+		//int sock_len = sizeof(addr) ;
 
 		if (ret > 0){
 			read_len = read_datagram((struct nd_netsocket *)root, readbuf, sizeof(readbuf), &addr )  ;
@@ -194,7 +194,7 @@ int udp_data_handler(struct listen_contex *listen_info)
 
 	while (nd_thsrv_msghandler(context)>=0){
 		int read_len = 0 ;
-		int sock_len = sizeof(addr) ;
+		//int sock_len = sizeof(addr) ;
 		
 		nd_mutex_lock(&pool->fd_lock) ;		
 			while(pool->used && pool->isexit==0) 
@@ -289,10 +289,10 @@ int destroy_udp_thpool(struct listen_contex *listen_info,int flag)
 
 int read_datagram(struct nd_netsocket *node, char *buf, size_t buf_size, SOCKADDR_IN *addr )
 {
-	int sock_len = (int) sizeof(*addr) ;
+	socklen_t sock_len =  sizeof(*addr) ;
 	if(node->sock_type == SOCK_DGRAM)
-		return recvfrom(node->fd, buf,(int) buf_size, 0, (LPSOCKADDR)addr, &sock_len )  ;
+		return (int)recvfrom(node->fd, buf, buf_size, 0, (LPSOCKADDR)addr, &sock_len )  ;
 	else {
-		return icmp_socket_read((struct nd_netsocket*)node , buf, (int) buf_size, addr, node->bindip,node->port) ;
+		return (int)icmp_socket_read((struct nd_netsocket*)node , buf, buf_size, addr, node->bindip,node->port) ;
 	}
 }

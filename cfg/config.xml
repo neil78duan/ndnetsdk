@@ -1,8 +1,8 @@
 <root name="configRoot" desc="root">
 	<base_port name="port start id" desc="port=protbase+port">7828</base_port>
-	<test_srv_config name="FlahsRouteServer" >
-		<logfile>frlog.log</logfile>
-		<callstack>FlashRoutecall.log</callstack>
+	<test_srv_config name="TestForNdServer" >
+		<logfile>ndlog.log</logfile>
+		<callstack>ndcall.log</callstack>
 		<outputdump kinds="bool">1</outputdump>
 		<data_dir  kinds="dir" delete="no">../data</data_dir>
 		<inet_ip desc="internet ip address">127.0.0.1</inet_ip>

@@ -26,7 +26,7 @@ class NDListener : public NDObject
 public:
 	int Close(int force=0);
 	int Open(int port);
-	int Create(char *listen_name,int session_num, size_t session_size);
+	int Create(const char *listen_name,int session_num, size_t session_size);
 	void Destroy(int flag) ;
 	
 	int GetAllocatorFreenum();

@@ -70,10 +70,10 @@ int is_function(char *src) ;
 
 int repace_param(char *param, char *buf, int size) ;
 
-static __INLINE__ void init_funcdata(struct function_cmd *f_cmd)
-{
-	f_cmd->size = 0;
-}
+//static __INLINE__ void init_funcdata(struct function_cmd *f_cmd)
+//{
+//	f_cmd->size = 0;
+//}
 
 static __INLINE__ void  initOperateUnit(struct sOperateUnit *pOpUnit)
 {
@@ -300,7 +300,7 @@ int parse_express_2node(char *textBuf, struct list_head *header)
 	int bReadData = 1 ;		//读取类型,首先读取数值
 	int current_level = 0 ;
 	char *nextaddr = textBuf ;
-	struct sOperateUnit *opUnit ;
+	struct sOperateUnit *opUnit =0;
 
 	while (*nextaddr){
 		if(bReadData) {

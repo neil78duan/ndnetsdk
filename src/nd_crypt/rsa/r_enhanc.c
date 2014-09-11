@@ -747,9 +747,9 @@ R_RSA_PUBLIC_KEY *publicKey;                     /* signer's RSA public key */
       break;
     }
     
-    if (status = DecryptPEMUpdateFinal
+    if ((status = DecryptPEMUpdateFinal
         (&context, signature, &signatureLen, encryptedSignature,
-         encryptedSignatureLen)) {
+         encryptedSignatureLen))) {
       if ((status == RE_LEN || status == RE_ENCODING))
         status = RE_SIGNATURE_ENCODING;
       else
@@ -866,7 +866,7 @@ unsigned int *outputLen;                                /* length of output */
 unsigned char *input;                           /* encrypted, encoded block */
 unsigned int inputLen;                                            /* length */
 {
-  int status;
+  int status=0;
   unsigned char encryptedPart[24];
   unsigned int i, len;
   

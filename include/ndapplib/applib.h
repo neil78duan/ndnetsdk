@@ -46,7 +46,7 @@ static __INLINE__ void nd_pause()
 CPPAPI int nd_end_server(int force);
 
 CPPAPI int wait_services() ;
-CPPAPI int read_config(char *file, struct srv_config *readcfg) ;
+//CPPAPI int read_config(const char *file, struct srv_config *readcfg) ;
 
 CPPAPI void exit_instance(int flag) ;
 #ifdef ND_UNIX

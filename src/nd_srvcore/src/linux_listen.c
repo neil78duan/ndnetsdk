@@ -232,7 +232,7 @@ void update_epoll_event(struct kevent* ev_node,struct cm_manager *pmanger,struct
             tcp_client_close(client_map,1) ;
         }
         else if(ret>0){
-            nd_tcpnode_flush_sendbuf(&(client_map->connect_node)) ;
+            nd_tcpnode_flush_sendbuf((nd_netui_handle)&(client_map->connect_node)) ;
         }
     }
     pmanger->unlock(pmanger,session_id) ;
@@ -242,7 +242,7 @@ void update_epoll_event(struct kevent* ev_node,struct cm_manager *pmanger,struct
 int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_map)
 {
     //struct epoll_event ev_listen;
-    void *data = (NDUINT32)(client_map->connect_node.session_id) |(client_map->connect_node.fd)<<16 ;
+    void *data =(NDUINT32)(client_map->connect_node.session_id) |(client_map->connect_node.fd)<<16 ;
     return regeister_event(thip->iopc_handle, client_map->connect_node.fd, data) ;
     
 }

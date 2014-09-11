@@ -35,7 +35,7 @@ ND_COMMON_API int nd_mempool_root_init() ;
 ND_COMMON_API void nd_mempool_root_release();
 
 //内存池操作函数
-ND_COMMON_API nd_handle nd_pool_create(size_t size,char *name ) ;	//创建一个内存池,返回内存池地址
+ND_COMMON_API nd_handle nd_pool_create(size_t size,const char *name ) ;	//创建一个内存池,返回内存池地址
 ND_COMMON_API int nd_pool_destroy(nd_handle pool, int flag);		//销毁一个内存缓冲池
 ND_COMMON_API void *nd_pool_alloc_real(nd_handle pool , size_t size);	//从缓冲池中申请一个内存
 ND_COMMON_API void nd_pool_free_real(nd_handle pool ,void *addr) ;		//释放一个内存
@@ -101,7 +101,7 @@ typedef void (*memdestruct_entry)(nd_handle pool, void *addr) ;
 //内存池模块初始化/释放函数
 static __INLINE__ int nd_mempool_root_init() {return 0;}
 static __INLINE__ void nd_mempool_root_release(){} 
-ND_COMMON_API nd_handle nd_pool_create(size_t size,char *name );
+ND_COMMON_API nd_handle nd_pool_create(size_t size,const char *name );
 ND_COMMON_API  int nd_pool_destroy(nd_handle pool, int flag);
 ND_COMMON_API  void *nd_pool_alloc_real(nd_handle pool , size_t size);
 ND_COMMON_API void nd_pool_free_real(nd_handle pool ,void *addr) ;

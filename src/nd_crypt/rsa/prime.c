@@ -38,7 +38,7 @@ R_RANDOM_STRUCT *randomStruct;
 
   /* Generate random number between b and c.
    */
-  if (status = R_GenerateBytes (block, digits * NN_DIGIT_LEN, randomStruct))
+  if ((status = R_GenerateBytes (block, digits * NN_DIGIT_LEN, randomStruct)))
     return (status);
   NN_Decode (a, digits, block, digits * NN_DIGIT_LEN);
   NN_Sub (t, c, b, digits);

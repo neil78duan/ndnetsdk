@@ -71,7 +71,7 @@ struct tag_nd_handle
  * 返回对象的句柄
  * nd_object_create() 使用malloc函数申请了一块内存,但是并没有在
  */
-ND_COMMON_API nd_handle _object_create(char *name) ;
+ND_COMMON_API nd_handle _object_create(const char *name) ;
 
 /* 
  * 销毁一个句柄, 如果是用nd_object_create 函数创建的对象,则不需要自己释放内存
@@ -100,7 +100,7 @@ int destroy_object_register_manager(void) ;
 
 #ifdef ND_SOURCE_TRACE
 
-static __INLINE__ int nd_object_set_instname(nd_handle handle, char *name)
+static __INLINE__ int nd_object_set_instname(nd_handle handle, const char *name)
 {
 	struct tag_nd_handle *ptag = (struct tag_nd_handle *)handle ;
 	if (name && name[0]){
@@ -114,7 +114,7 @@ static __INLINE__ char* nd_object_get_instname(nd_handle handle)
 	return ((struct tag_nd_handle *)handle )->inst_name ;
 }
 
-static __INLINE__ nd_handle  object_create(char *name,char *file, int line) 
+static __INLINE__ nd_handle  object_create(const char *name,const char *file, int line)
 {	
 	nd_handle p = _object_create(name )  ;
 	if(p) {
@@ -139,7 +139,7 @@ static __INLINE__ int object_destroy(nd_handle handle, int force)
 #else 
 #define nd_object_create(name)		_object_create(name)
 #define nd_object_destroy(h,flag)	_object_destroy(h, flag)
-static __INLINE__ int nd_object_set_instname(nd_handle handle, char *name)
+static __INLINE__ int nd_object_set_instname(nd_handle handle, const char *name)
 {
 	return 0;
 }

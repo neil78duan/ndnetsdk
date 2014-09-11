@@ -45,7 +45,7 @@ public :
 	int Write(NDUINT16 ) ;
 	int Write(NDUINT64 ) ;
 	int Write(NDUINT8 ) ;
-	int Write(NDUINT8 *text ) ;
+	int Write(const NDUINT8 *text ) ;
 	int Write(float) ;
 	int Write(double ) ;
 	int WriteBin(void *data, size_t size) ;

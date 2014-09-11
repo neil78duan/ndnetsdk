@@ -34,7 +34,7 @@ static nd_mutex __alloced_lock ;
 static int __inited ;
 
 /*创建一个对象实例*/
-nd_handle _object_create(char *name) 
+nd_handle _object_create(const char *name)
 {
 	struct register_object_info *objlist ;
 	struct nd_handle_reginfo *reginfo = 0  ;
@@ -136,7 +136,7 @@ int nd_object_register(struct nd_handle_reginfo *reginfo)
 int destroy_object_register_manager(void) 
 {
 	struct register_object_info *objlist ;
-	struct nd_handle_reginfo *reginfo = 0  ;
+	//struct nd_handle_reginfo *reginfo = 0  ;
 	struct list_head *pos = __reg_list.next ;
 
 	while (pos != &__reg_list) {
@@ -194,7 +194,7 @@ int nd_object_check_error(nd_handle h)
 
 int nd_tryto_clear_err(nd_handle h)
 {
-	int ret = h->myerrno ;
+//	int ret = h->myerrno ;
 
 	if (h->myerrno ==NDERR_INVALID_HANDLE || 
 		h->myerrno==NDERR_TIMEOUT || 

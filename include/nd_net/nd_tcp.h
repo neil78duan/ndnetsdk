@@ -53,7 +53,7 @@ struct nd_tcp_node{
 #define check_connect_valid(node) (((struct nd_tcp_node*)(node))->fd > 0 && ((struct nd_tcp_node*)(node))->status==ETS_CONNECTED)
 
 //connect to host
-ND_NET_API int nd_tcpnode_connect(char *host, int port, struct nd_tcp_node *node,struct nd_proxy_info *proxy);	//连接到主机
+ND_NET_API int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node *node,struct nd_proxy_info *proxy);	//连接到主机
 ND_NET_API int nd_tcpnode_close(struct nd_tcp_node *node,int force);				//关闭连接
 ND_NET_API int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf, int flag) ;	//发送网络消息 flag ref send_flag
 ND_NET_API int nd_tcpnode_read(struct nd_tcp_node *node) ;		//读取数据,0 timeout ,-1 error or closed ,else datalen

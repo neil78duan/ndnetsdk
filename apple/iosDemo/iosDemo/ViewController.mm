@@ -7,12 +7,14 @@
 //
 
 #import "ViewController.h"
-#include "ndcli/nd_iconn.h"
+//#include "ndcli/nd_iconn.h"
+#include "ndcli/nd_api_c.h"
 #include "netmsgHandler.h"
 
 @interface ViewController (){
     bool inConnect;
-    NDIConn *conn ;
+    //NDIConn *conn ;
+    netObject hConn ;
     NSTimer *myTimer ;
 }
 
@@ -28,7 +30,7 @@
     [super viewDidLoad];
     InitNet() ;
     
-    conn = CreateConnectorObj("tcp-connector") ;
+    //conn = CreateConnectorObj("tcp-connector") ;
     
     myTimer =  [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(timerTick:) userInfo:nil repeats:YES];
     // Do any additional setup after loading the view, typically from a nib.
@@ -48,21 +50,28 @@
 
 
 - (IBAction)timerTick:(id)sender {
-    if (inConnect && conn) {
+    /*if (inConnect && hConn) {
         timeTick(conn) ;
         
         sendTest(conn) ;
+    }*/
+    if (hConn) {
+        ndUpdateConnect(hConn, 0);
+        ndSentTest(hConn);
     }
 }
 
 
 - (IBAction)connectButtonHit:(id)sender {
-    if (inConnect) {
-        conn->Close() ;
-        inConnect = false ;
+    if (hConn) {
+        ndClostConnect(hConn) ;
+        //conn->Close() ;
+        //inConnect = false ;
+        hConn = NULL ;
     }
     else {
-        if(!conn) {
+        hConn = ndOpenConnect("100.100.0.168", 7828) ;
+        /*if(!conn) {
             conn =  CreateConnectorObj("tcp-connector") ;
             if (!conn) {
                 return ;
@@ -71,7 +80,7 @@
         if(0==conn->Open("192.168.199.175", 7828,"tcp-connector",NULL) ){
             init_messageHandler(conn) ;
             inConnect = true ;
-        }
+        }*/
     }
 }
 

@@ -155,7 +155,7 @@ int NDOStreamMsg::Write(NDUINT8 a)
 	return -1 ;
 }
 
-int NDOStreamMsg::Write(NDUINT8 *text) 
+int NDOStreamMsg::Write(const NDUINT8 *text)
 {
 	size_t n ;
 	size_t free_size = 0 ;

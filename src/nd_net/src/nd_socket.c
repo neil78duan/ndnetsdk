@@ -31,7 +31,7 @@ int nd_socket_tcp_read(ndsocket_t fd, void *buf, size_t buflen)
 /* write data to net 
  * return value : write data len 
  */
-int nd_socket_udp_write(ndsocket_t fd, char* data, size_t data_len ,SOCKADDR_IN* to_addr)
+int nd_socket_udp_write(ndsocket_t fd, const char* data, size_t data_len ,SOCKADDR_IN* to_addr)
 {
 	int ret = 0 ;
 	nd_assert(data && data_len > 0 && to_addr) ;
@@ -94,7 +94,7 @@ void nd_socket_close(ndsocket_t s)
  * input host name in string (char*) and port
  * output socket address
  */
-int get_sockaddr_in(char *host_name, short port, SOCKADDR_IN* sock_addr)
+int get_sockaddr_in(const char *host_name, short port, SOCKADDR_IN* sock_addr)
 {
 	HOSTENT *host ;
 	
@@ -247,7 +247,7 @@ OPEN_ERROR:
  * @out put address of remote host
  * return -1 on error else return socket fd
  */
-ndsocket_t nd_socket_connect(char *host_name, short port,int sock_type, SOCKADDR_IN *out_addr)
+ndsocket_t nd_socket_connect(const char *host_name, short port,int sock_type, SOCKADDR_IN *out_addr)
 {
 	ENTER_FUNC()
 	ndsocket_t conn_sock ;
@@ -278,7 +278,7 @@ ndsocket_t nd_socket_connect(char *host_name, short port,int sock_type, SOCKADDR
  * udp connect do not real connect 
  * only create a socket !
  */
-ndsocket_t nd_socket_udp_connect(char *host_name, short port,SOCKADDR_IN *out_addr)
+ndsocket_t nd_socket_udp_connect(const char *host_name, short port,SOCKADDR_IN *out_addr)
 {	
 	ndsocket_t conn_sock ;
 
@@ -310,11 +310,11 @@ char *nd_inet_ntoa (unsigned int in, char *buffer)
 	return p ;
 }
 
-ndip_t nd_inet_aton(char *ipaddr) 
+ndip_t nd_inet_aton(const char *ipaddr)
 {
 	HOSTENT *host ;
 
-	host = gethostbyname((const char *)(ipaddr));
+	host = gethostbyname((ipaddr));
 	if(!host){
 		return 0 ;
 	}

@@ -114,7 +114,7 @@ ND_COMMON_API void nd_node_checkerror(struct node_root *root,NDUINT16 exceptid) 
 #endif
 
 #ifdef ND_SOURCE_TRACE
-static __INLINE__ int _node_mgr_create_ex(char *file, int line,struct node_root *root, int max_num, size_t node_size,NDUINT16 start_id,nd_handle mmpool )
+static __INLINE__ int _node_mgr_create_ex(const char *file, int line,struct node_root *root, int max_num, size_t node_size,NDUINT16 start_id,nd_handle mmpool )
 {
 	if(0==nd_node_create_ex(root,  max_num,  node_size, start_id, mmpool ) ) {
 		_source_log((void *)root ,"create node mgr","node mgr not release", file, line) ;

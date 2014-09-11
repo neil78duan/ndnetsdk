@@ -35,13 +35,13 @@ typedef enum _error_ID{
 
 typedef void (*logfunc)(const char* text) ;
 ND_COMMON_API void nd_setlog_func(logfunc f) ;
-ND_COMMON_API void set_log_file(char *file_name)  ;
+ND_COMMON_API void set_log_file(const char *file_name)  ;
 ND_COMMON_API void nd_output(const char *text)  ;
 //log file operate
 ND_COMMON_API int _logmsg(const char *func, const char *file, int line, int level, const char *stm,...) ;
-ND_COMMON_API char *nd_get_timestr(void);			//得到字符串形式的时间
-ND_COMMON_API char *nd_get_datastr(void);			//得到字符串形式的日期
-ND_COMMON_API char *nd_get_datatimestr(void);		//得到字符串形式的时间和日期
+ND_COMMON_API const char *nd_get_timestr(void);			//得到字符串形式的时间
+ND_COMMON_API const char *nd_get_datastr(void);			//得到字符串形式的日期
+ND_COMMON_API const char *nd_get_datatimestr(void);		//得到字符串形式的时间和日期
 
 #define AND ,
 
@@ -138,14 +138,14 @@ ND_COMMON_API char *nd_get_datatimestr(void);		//得到字符串形式的时间和日期
 
 
 #ifdef ND_FILE_TRACE
-	ND_COMMON_API FILE *nd_fopen_dbg( const char *filename, const char *mode ,char *file, int line);
+	ND_COMMON_API FILE *nd_fopen_dbg( const char *filename, const char *mode ,const char *file, int line);
 	ND_COMMON_API void nd_fclose_dbg(FILE *fp);	
 #else 
 #endif
 
 #ifdef ND_SOURCE_TRACE 
 ND_COMMON_API int nd_sourcelog_init() ;
-ND_COMMON_API int _source_log(void *p ,char *operate,char *msg, char *file, int line) ;
+ND_COMMON_API int _source_log(void *p ,const char *operate,const char *msg,const char *file, int line) ;
 ND_COMMON_API int _source_release(void *source) ;
 CPPAPI void nd_sourcelog_dump() ;
 #define nd_sourcelog(source, operatename,msg) \
@@ -174,9 +174,9 @@ CPPAPI void nd_sourcelog_dump() ;
 #endif	//ND_DEBUG
 
 //function call stack trace
-ND_COMMON_API int nd_callstack_init(char *filename) ;
+ND_COMMON_API int nd_callstack_init(const char *filename) ;
 ND_COMMON_API int nd_callstack_end() ;
-ND_COMMON_API int nd_callstack_monitor_init(char *filename) ;
+ND_COMMON_API int nd_callstack_monitor_init(const char *filename) ;
 ND_COMMON_API int nd_callstack_monitor_end() ;
 ND_COMMON_API int push_func(const char *funcname);
 ND_COMMON_API void pop_func();
@@ -194,7 +194,7 @@ ND_COMMON_API int nd_callstack_monitor_dump(nd_out_func func,FILE *outfile);
 
 #else 
 
-static int inline CALLSTACK_INIT(char *filename)
+static int inline CALLSTACK_INIT(const char *filename)
 {
 	return 0 ;
 };

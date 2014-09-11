@@ -14,13 +14,13 @@
 ndxml *parse_xmlbuf(char *xmlbuf, int size,char **parse_end, char **error_addr) ;
 ndxml *alloc_xml();
 void  dealloc_xml(ndxml *node );
-struct ndxml_attr *alloc_attrib_node(char *name, char *value);
+struct ndxml_attr *alloc_attrib_node(const char *name, const char *value);
 void dealloc_attrib_node(struct ndxml_attr *pnode);
 int xml_write(ndxml *xmlnode, FILE *fp , int deep) ;
-ndxml *_create_xmlnode(char *name, char *value)  ;
+ndxml *_create_xmlnode(const char *name, const char *value)  ;
 
-static void _errlog (char *errdesc) ;
-static void show_xmlerror(const char *file, char *error_addr, char *xmlbuf, size_t size) ;
+static void _errlog (const char *errdesc) ;
+static void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf, size_t size) ;
 
 static xml_errlog __xml_logfunc = _errlog ;
 
@@ -95,7 +95,7 @@ void ndxml_destroy(ndxml_root *xmlroot)
 }
 
 //显示xml错误
-void show_xmlerror(const char *file, char *error_addr, char *xmlbuf, size_t size)
+void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf, size_t size)
 {
 	int line = 0 ;
 	char *pline, *pnext ;
@@ -178,7 +178,7 @@ int ndxml_merge(ndxml_root *host, ndxml_root *merged)
 	return 0 ;
 }
 
-ndxml *ndxml_getnode(ndxml_root *xmlroot, char *name) 
+ndxml *ndxml_getnode(ndxml_root *xmlroot,const  char *name)
 {
 	ndxml *sub_xml; 
 	struct list_head *pos = xmlroot->lst_xml.next ;
@@ -208,7 +208,7 @@ ndxml *ndxml_getnodei(ndxml_root *xmlroot, int index)
 	return NULL ;
 }
 
-ndxml *ndxml_addnode(ndxml_root *xmlroot, char *name,char *value) 
+ndxml *ndxml_addnode(ndxml_root *xmlroot, const char *name,const char *value)
 {
 	ndxml *xmlnode = _create_xmlnode(name, value) ;
 	if(xmlnode){
@@ -218,7 +218,7 @@ ndxml *ndxml_addnode(ndxml_root *xmlroot, char *name,char *value)
 	return xmlnode ;
 }
 
-int ndxml_delnode(ndxml_root *xmlroot, char *name) 
+int ndxml_delnode(ndxml_root *xmlroot,const  char *name)
 {
 	ndxml *node = ndxml_getnode(xmlroot,name) ;
 	if(!node)
@@ -305,7 +305,7 @@ float ndxml_getval_float(ndxml *node)
 		return 0 ;
 }
 //得到属性值
-struct ndxml_attr *ndxml_getattrib(ndxml *node , char *name)
+struct ndxml_attr *ndxml_getattrib(ndxml *node ,const  char *name)
 {
 	struct ndxml_attr *attr ;
 	struct list_head *pos = node->lst_attr.next;
@@ -339,7 +339,7 @@ struct ndxml_attr  *ndxml_getattribi(ndxml *node, int index)
 
 //////////////////////////////////////////////////////////////////////////
 //给xml增加一个属性,
-struct ndxml_attr  *ndxml_addattrib(ndxml *parent, char *name, char *value) 
+struct ndxml_attr  *ndxml_addattrib(ndxml *parent, const char *name, const char *value)
 {
 	struct ndxml_attr *attrib_node;
 	if(!name || !value)
@@ -354,7 +354,7 @@ struct ndxml_attr  *ndxml_addattrib(ndxml *parent, char *name, char *value)
 }
 
 
-int ndxml_setattrval(ndxml *parent, char *name, char *value) 
+int ndxml_setattrval(ndxml *parent, const char *name, const char *value)
 {
 	int len ;
 	struct ndxml_attr  * attr ;
@@ -393,7 +393,7 @@ int ndxml_setattrval(ndxml *parent, char *name, char *value)
 	}
 	return 0;
 }
-int ndxml_setattrvali(ndxml *parent, int index, char *value) 
+int ndxml_setattrvali(ndxml *parent, int index, const char *value)
 {
 	
 	int len ;
@@ -431,7 +431,7 @@ int ndxml_setattrvali(ndxml *parent, int index, char *value)
 	return 0;
 }
 //给xml增加一个子节点需要输入新节点的名字和值,返回新节点地址
-ndxml *ndxml_addsubnode(ndxml *parent, char *name, char *value) 
+ndxml *ndxml_addsubnode(ndxml *parent, const char *name, const char *value)
 {
 	ndxml *xmlnode = _create_xmlnode(name, value) ;
 	if(xmlnode){
@@ -442,7 +442,7 @@ ndxml *ndxml_addsubnode(ndxml *parent, char *name, char *value)
 }
 
 //设置XML的值
-int ndxml_setval(ndxml *node , char *val) 
+int ndxml_setval(ndxml *node , const char *val)
 {
 	int len;
 	if(!val)
@@ -475,7 +475,7 @@ int ndxml_setval(ndxml *node , char *val)
 	return 0 ;
 }
 //删除一个属性节点
-int ndxml_delattrib(ndxml *parent, char *name) 
+int ndxml_delattrib(ndxml *parent, const char *name)
 {
 	struct ndxml_attr *attr= ndxml_getattrib(parent , name);
 	if(!attr)
@@ -497,7 +497,7 @@ int ndxml_delattribi(ndxml *parent, int index)
 	return 0 ;
 }
 //删除一个子节点
-int ndxml_delsubnode(ndxml *parent, char *name) 
+int ndxml_delsubnode(ndxml *parent, const char *name)
 {
 	ndxml *node = ndxml_refsub(parent,name) ;
 	if(!node)
@@ -770,7 +770,7 @@ void  dealloc_xml(ndxml *node )
 }
 
 //申请一个属性节点的内存
-struct ndxml_attr *alloc_attrib_node(char *name, char *value)
+struct ndxml_attr *alloc_attrib_node(const char *name, const char *value)
 {
 	char *p ;
 	struct ndxml_attr *pnode ;
@@ -812,7 +812,7 @@ void dealloc_attrib_node(struct ndxml_attr *pnode)
 }
 
 //create a xml node input name and value 
-ndxml *_create_xmlnode(char *name, char *value) 
+ndxml *_create_xmlnode(const char *name, const char *value)
 {
 	ndxml *xmlnode ;
 	
@@ -892,7 +892,7 @@ int xml_write(ndxml *xmlnode, FILE *fp , int deep)
 	return 0 ;
 }
 
-void _errlog (char *errdesc) 
+void _errlog (const char *errdesc)
 {
 	fprintf(stderr,"%s", errdesc) ;	
 }

@@ -99,7 +99,7 @@ NDInstanceBase::~NDInstanceBase()
 	g_base_inst = NULL ;
 }
 
-int NDInstanceBase::Create(int argc, char *argv[])
+int NDInstanceBase::Create(int argc,const char *argv[])
 {
 	int i ;
 
@@ -227,7 +227,7 @@ int NDInstanceBase::WaitServer()
 }
 
 
-int NDInstanceBase::Start(int argc, char *argv[]) 
+int NDInstanceBase::Start(int argc, const char *argv[])
 {
 	ND_TRACE_FUNC();
 	if(-1==NDInstanceBase::Create(argc, argv))

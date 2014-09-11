@@ -20,12 +20,12 @@
 
 #if defined(ND_UNIX) 
 
-extern	int create_filemap( char *filename, size_t size,nd_filemap_t *out_handle)  ;
+extern	int create_filemap( const char *filename, size_t size,nd_filemap_t *out_handle)  ;
 #else 
-extern	int create_filemap( char *filename,char *map_name, size_t size,nd_filemap_t *out_handle)  ;
+extern	int create_filemap( const char *filename,char *map_name, size_t size,nd_filemap_t *out_handle)  ;
 #endif
 extern	int close_filemap(nd_filemap_t *mapinfo) ;
-extern	int open_filemap(char *filename, nd_filemap_t *out_handle)  ;
+extern	int open_filemap(const char *filename, nd_filemap_t *out_handle)  ;
 
 typedef char functionname_t[FUNCTION_NAME_SIZE] ;
 struct callstack_info
@@ -40,7 +40,7 @@ struct callstack_info
 static nd_filemap_t g_callstack_map , g_monitor;
 
 
-int nd_callstack_init(char *filename) 
+int nd_callstack_init(const char *filename)
 {
 #if defined(ND_UNIX) 
 	if(-1==create_filemap( filename, CALLSTACK_MAP_SIZE,&g_callstack_map) ) {
@@ -66,7 +66,7 @@ int nd_callstack_end()
 	return 0;
 }
 
-int nd_callstack_monitor_init(char *filename) 
+int nd_callstack_monitor_init(const char *filename)
 {
 	return open_filemap( filename, &g_monitor)  ;
 }

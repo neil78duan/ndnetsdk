@@ -430,7 +430,7 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 		LEAVE_FUNC();
 		return -1;
 	}
-    
+    msg_buf->version = NDNETMSG_VERSION ;
 	if(flag & ESF_ENCRYPT ) {
 		nd_packetbuf_t crypt_buf ;
 		memcpy(&crypt_buf, msg_buf, nd_pack_len(msg_buf)) ;
@@ -488,7 +488,7 @@ int nd_reconnect(nd_netui_handle net_handle, ndip_t ip, int port, struct nd_prox
 /*
  * 重新连接到一个新的服务器
  */
-int nd_reconnectex(nd_netui_handle net_handle, char *host, int port, struct nd_proxy_info *proxy)
+int nd_reconnectex(nd_netui_handle net_handle, const char *host, int port, struct nd_proxy_info *proxy)
 {
 	ENTER_FUNC() 
 
@@ -511,7 +511,7 @@ int nd_reconnectex(nd_netui_handle net_handle, char *host, int port, struct nd_p
 }
 
 
-int nd_connector_open(nd_netui_handle net_handle,char *host, int port,struct nd_proxy_info *proxy)
+int nd_connector_open(nd_netui_handle net_handle,const char *host, int port,struct nd_proxy_info *proxy)
 {	
 	ENTER_FUNC()
 	int ret =0;

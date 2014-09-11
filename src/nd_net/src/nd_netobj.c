@@ -61,7 +61,7 @@ int nd_net_bind(int port, int listen_nums,nd_handle net_handle)
 {
 	ndsocket_t fd;
 	struct nd_netsocket *node = (struct nd_netsocket *)net_handle ;
-	SOCKADDR_IN *remote = NULL;
+	//SOCKADDR_IN *remote = NULL;
 
 	nd_assert(node) ;
 	node->myerrno = NDERR_SUCCESS ;

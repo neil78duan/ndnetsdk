@@ -47,7 +47,7 @@ ND_NET_API int nd_socket_tcp_read(ndsocket_t fd, void *buf, size_t buflen) ;
 /* write data to net 
  * return value : write data len 
  */
-ND_NET_API int nd_socket_udp_write(ndsocket_t fd, char* data, size_t data_len ,SOCKADDR_IN* to_addr);
+ND_NET_API int nd_socket_udp_write(ndsocket_t fd, const char* data, size_t data_len ,SOCKADDR_IN* to_addr);
 
 /* read date from net 
  * input : udp fd , date buffer address and buffer size 
@@ -59,7 +59,7 @@ ND_NET_API int nd_socket_udp_read(ndsocket_t fd ,char *buf, size_t size, SOCKADD
 
 
 /*get host address from host name*/
-ND_NET_API int get_sockaddr_in(char *host_name, short port, SOCKADDR_IN* sock_addr);
+ND_NET_API int get_sockaddr_in(const char *host_name, short port, SOCKADDR_IN* sock_addr);
 
 /* create a server socket and bind 
  * @port listened port
@@ -74,7 +74,7 @@ ND_NET_API ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t 
  * return -1 on error else return socket fd
  */
 
-ND_NET_API ndsocket_t nd_socket_connect(char *host_name, short port,int sock_type, SOCKADDR_IN *out_addr) ;
+ND_NET_API ndsocket_t nd_socket_connect(const char *host_name, short port,int sock_type, SOCKADDR_IN *out_addr) ;
 #define nd_socket_tcp_connect(h, p, addr) nd_socket_connect(h, p,SOCK_STREAM, addr)
 #define nd_socket_udp_connect(h, p, addr) nd_socket_connect(h, p,SOCK_DGRAM, addr)
 //ND_NET_API ndsocket_t nd_socket_udp_connect(char *host_name, short port,SOCKADDR_IN *out_addr);
@@ -100,7 +100,7 @@ static __INLINE__ int nd_sockadd_in_cmp(SOCKADDR_IN *src_addr, SOCKADDR_IN *desc
 ND_NET_API int nd_socket_nonblock(ndsocket_t fd, int cmd) ; //set socket nonblock or blocl
 
 ND_NET_API char *nd_inet_ntoa (unsigned int in, char *buff) ;
-ND_NET_API ndip_t nd_inet_aton(char *ipaddr) ;
+ND_NET_API ndip_t nd_inet_aton(const char *ipaddr) ;
 
 ND_NET_API NDUINT64 nd_hton64(NDUINT64 h) ;
 ND_NET_API NDUINT64 nd_ntoh64(NDUINT64 h) ;
@@ -159,10 +159,10 @@ struct nd_proxy_info
 	char password[PROXY_USER_SIZE] ;
 };
 
-ND_NET_API ndsocket_t nd_proxy_connect(char *host, short port,SOCKADDR_IN *out_addr, struct nd_proxy_info *proxy, int is_udp)  ;
+ND_NET_API ndsocket_t nd_proxy_connect(const char *host, short port,SOCKADDR_IN *out_addr, struct nd_proxy_info *proxy, int is_udp)  ;
 
 //send udp data through proxy
-ND_NET_API int nd_proxy_sendtoex(ndsocket_t fd, char *data, size_t size,  char *remotehost, short port,SOCKADDR_IN *proxy);
+ND_NET_API int nd_proxy_sendtoex(ndsocket_t fd, const char *data, size_t size, const char *remotehost, short port,SOCKADDR_IN *proxy);
 
 ND_NET_API int nd_proxy_sendto(ndsocket_t fd, void *data, size_t size,  SOCKADDR_IN *remoteaddr,SOCKADDR_IN *proxy);
 

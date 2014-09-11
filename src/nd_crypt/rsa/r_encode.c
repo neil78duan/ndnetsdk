@@ -100,10 +100,10 @@ unsigned int encodedBlockLen;                    /* length of encoded block */
   }
   
   for (i = 0; i < (encodedBlockLen-1)/4; i++)
-    if (status = DecodeQuantum (&block[3*i], &encodedBlock[4*i]))
+    if ((status = DecodeQuantum (&block[3*i], &encodedBlock[4*i])))
       return (status);
     
-  if (status = DecodeLastQuantum (&block[3*i], &lastLen, &encodedBlock[4*i]))
+  if ((status = DecodeLastQuantum (&block[3*i], &lastLen, &encodedBlock[4*i])))
     return (status);
 
   *blockLen = 3*i + lastLen;

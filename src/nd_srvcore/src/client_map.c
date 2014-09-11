@@ -68,7 +68,7 @@ void udt_icmp_cm_init(struct nd_udtcli_map *node, nd_handle h_listen)
 	memset(node, 0, sizeof(*node )) ;
 	//udt_icmp_init(&node->connect_node);
 
-	_udticmp_connector_init(node);
+	_udticmp_connector_init((nd_udt_node*)node);
 
 	INIT_SESSION_BUFF(node) ;
 

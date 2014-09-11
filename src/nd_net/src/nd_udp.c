@@ -14,12 +14,12 @@ typedef struct nd_udp_node *nd_handle;
 //#include "nd_common/nd_alloc.h"
 #include "nd_net/nd_netlib.h"
 
-static int udp_node_rawsend(struct nd_udp_node*node,char *data, size_t len)
-{
-	return  sendto(node->fd, data, (int)len,0,(LPSOCKADDR)&node->remote_addr, (int)sizeof(node->remote_addr)) ;
-}
+//static int udp_node_rawsend(struct nd_udp_node*node,char *data, size_t len)
+//{
+//	return  sendto(node->fd, data, (int)len,0,(LPSOCKADDR)&node->remote_addr, sizeof(node->remote_addr)) ;
+//}
 
-int nd_udp_connect(struct nd_udp_node*node,char *host, int port,struct nd_proxy_info *proxy) 
+int nd_udp_connect(struct nd_udp_node*node,const char *host, int port,struct nd_proxy_info *proxy)
 {
 	if (proxy && proxy->proxy_type) {
 		short tmp_port ;
@@ -85,7 +85,7 @@ int nd_udp_close(struct nd_udp_node*node,int flag)
 }
 
 
-int nd_udp_send(struct nd_udp_node*node,char *data, size_t len)  
+int nd_udp_send(struct nd_udp_node*node,const char *data, size_t len)  
 {
 	int ret =0;
 	if (node->protocol != PROTOCOL_OTHER ){
@@ -124,7 +124,7 @@ int nd_udp_send(struct nd_udp_node*node,char *data, size_t len)
 	return ret;
 }
 
-int nd_udp_sendto(struct nd_udp_node*node,char *data, size_t len, SOCKADDR_IN* to_addr)  
+int nd_udp_sendto(struct nd_udp_node*node,const char *data, size_t len, SOCKADDR_IN* to_addr)
 {
 	int ret ;
 
@@ -150,7 +150,7 @@ int nd_udp_sendto(struct nd_udp_node*node,char *data, size_t len, SOCKADDR_IN* t
 	return ret;
 }
 
-int nd_udp_sendtoex(struct nd_udp_node*node,char *data, size_t len, char *host, int port)  
+int nd_udp_sendtoex(struct nd_udp_node*node,const char *data, size_t len, char *host, int port)
 {
 	int ret ;
 	if (!node->prox_info){

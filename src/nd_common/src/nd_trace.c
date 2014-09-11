@@ -23,7 +23,7 @@ void nd_setlog_func(logfunc f)
 	__log_func = f ;
 }
 
-void set_log_file(char *file_name) 
+void set_log_file(const char *file_name)
 {
 	strncpy(__log_filename, file_name,128) ;
 }
@@ -62,7 +62,7 @@ static __INLINE__ const char *log_level_str(int level)
 //static nd_mutex 		log_mutex  ;
 
 //得到字符串形式的时间
-char *nd_get_timestr(void)
+const char *nd_get_timestr(void)
 {
 	static __ndthread  char timebuf[64] ;
 	time_t nowtm ;
@@ -73,10 +73,10 @@ char *nd_get_timestr(void)
 
 	snprintf(timebuf, 64, "%d:%d:%d", gtm->tm_hour,
 		gtm->tm_min,gtm->tm_sec) ;
-	return timebuf ;
+	return (const char *)timebuf ;
 }
 //得到字符串形式的日期
-char *nd_get_datastr(void)
+const char *nd_get_datastr(void)
 {
 	static __ndthread  char datebuf[64] ;
 	time_t nowtm ;
@@ -87,10 +87,10 @@ char *nd_get_datastr(void)
 
 	snprintf(datebuf, 64, "%d-%d-%d", gtm->tm_year+1900,gtm->tm_mon+1,
 		gtm->tm_mday) ;
-	return datebuf ;
+	return (const char *)datebuf ;
 }
 //得到字符串形式的时间和日期
-char *nd_get_datatimestr(void)
+const char *nd_get_datatimestr(void)
 {
 	static __ndthread  char timebuf[64] ;
 	time_t nowtm ;
@@ -102,7 +102,7 @@ char *nd_get_datatimestr(void)
 	snprintf(timebuf, 64, "%d-%d-%d %d:%d:%d", 
 		gtm->tm_year+1900,gtm->tm_mon+1,gtm->tm_mday,
 		gtm->tm_hour,gtm->tm_min,gtm->tm_sec) ;
-	return timebuf ;
+	return (const char *)timebuf ;
 }
 
 int nd_time_day_interval(time_t end_tm, time_t start_tm) 
@@ -163,7 +163,7 @@ int _logmsg(const char *func, const char *file, int line, int level, const char 
 #ifdef _ND_COMMON_H_
 #error not include nd_common.h
 #endif
-FILE *nd_fopen_dbg( const char *filename, const char *mode ,char *file, int line)
+FILE *nd_fopen_dbg( const char *filename, const char *mode ,const char *file, int line)
 {
 	FILE *fp = fopen(filename,mode) ;
 	_source_log(fp, "fopen ", "file not closed", file, line) ;
