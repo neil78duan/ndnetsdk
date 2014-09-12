@@ -1,0 +1,133 @@
+file: client_c_api_desc.txt
+
+关于 ansi c 客户端接口说明，把所有和ndsdk相关的细节隔离。
+
+数据类型： 为了在不同模块，语言之间通讯，本接口尽可能的只使用c的基础数据类型。
+返回值：如果是获得长度，或者读起数据类型的，一般会返回int 。如果无需返回就是void
+    其他情况下返回类型是int 的 返回 0表示成功， －1 表示失败
+
+
+1. 网络初始化
+    在程序启动和结束时调用
+    CPPAPI int ndInitNet() ;
+    CPPAPI void ndDeinitNet() ;
+
+2。 连接／断开远程主机
+
+    CPPAPI netObject ndOpenConnect(const char *host, int port) ;
+    CPPAPI void ndClostConnect(netObject netObj) ;
+    返回值为网络句柄，多数情况下你可以认为是void* ,但是不要随意改动内部数据。
+
+3. 发送
+
+    在ndsdk中发送和接收都使用统一的格式：
+struct ndMsgData
+{
+    unsigned short length;
+    unsigned char version;
+    unsigned char reserved;
+
+    unsigned char maxID;
+    unsigned char minID;
+    unsigned char data[0xfffa] ;
+};
+    @length 消息包长度
+    @version 版本信息
+    @reserved 内部保留，初始化时设为0
+    @maxID minID 消息号
+    @data 消息包中包含的数据，如有int short long 等类型，需要显示转化成网络字节顺序
+        如果data中包含有float，double转换时要特别注意，很多系统会抛出未对齐的异常。
+
+    ndMsgData 必须是一个字节对齐
+
+    返回值： 所有发送函数的返回值都是实际发送数据的长度，如果返回－1 则出错，一般情况下只需简单断开连接。
+
+    3.1 发送格式化消息
+    CPPAPI int ndSendFormat(netObject netObj,int maxid, int minid, int argc, ...) ;
+    为了避免使用ndMsgData 结构和字节顺序的转化，而提供的接口，但是很多语言本身并不支持可变参数，或者支持不到位。
+
+    @flag 按位运算， 参考eNDSendFlag
+
+enum eNDSendFlag {
+    ND_ESF_NORMAL = 0 ,		// normal
+    ND_ESF_WRITEBUF =1,		// write buf
+    ND_ESF_URGENCY = 2,		// send right now
+    ND_ESF_POST	= 4,		// normal send, if buffer full the data will lost
+    ND_ESF_ENCRYPT = 8			// encrypt
+};
+
+
+    3.2 发送字节化的消息
+    CPPAPI int ndSendData(netObject netObj, char *data, int dataLen, int flag) ;
+    把ndMsgData通过主机－网络字节顺序转化以后可以使用此函数发送
+
+    3.3 直接发送一个ndMsgData 消息结构
+
+    CPPAPI int ndSendMsg(netObject netObj,struct ndMsgData *data, int flag) ;
+    ndMsgData::data 中包含的int short long 等类型，需要显示转化成网络字节顺序 必须转化成网络自己。
+
+    3.4 发送一个经过包装的数据
+
+    CPPAPI int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag) ;
+    参考消息封装
+
+    3.5 发送任意数据
+    CPPAPI int ndSendRaw(netObject netObj,char *data, int size) ;
+    ndSendRaw()不会对发送的数据做任何处理， 可以用来发送其他协议的数据，比如 http协议。
+
+4. 消息接收
+    ndsdk对所有数据的发送和接收都是采用异步方式。当数据没有处理完时会保存在缓冲中，需要在下一帧来处理。
+    因此我强烈推荐使用以下方式处理数据：
+        a 安装消息处理行数
+            CPPAPI int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID) ;
+        b 定期调用update处理未发送和待接收的数据
+            CPPAPI int ndUpdateConnect(netObject netObj, int timeOutMS) ;
+            @timeOutMS 阻塞时间 ms
+            如果主线程不会长时间的阻塞，（比如load场景超过1分钟） 那么只需要在主线程中美妙至少调2次ndUpdateConnect 函数即可。
+            如果有消息到来 ndUpdateConnect 会调用ndNetFuncInstall（） 中安装的消息处理函数。
+
+    特殊情况下需要使用同步消息处理机制比如登录，可以在发送了登录消息以后使用
+        CPPAPI int ndWaitMsg(netObject netObj, char *buf, int timeOutMS) ;
+    函数来等待服务器返回。但是需要自己判断服务器返回的消息，可能不是你想要的。
+
+    接收消息处理的回调函数
+        typedef int (*ndNetFunc)(netObject netObj, unsigned char *data, int dataLen );
+
+5. 消息封装
+    很多语言和引擎不支持原生的c结构体，或者和c语言有差异，所有我提供了一个c语言封装ndMsgData消息结构的接口，包括了读和写。
+    5.1 输入消息封装
+    CPPAPI netObject ndMsgInputWrapperCreate(unsigned char *data, int dataLen);
+    CPPAPI int ndMsgInputWrapperDestroy(netObject msgWrapper , int flag);
+    把消息处理函数中的data和dataLen 作为参数给ndMsgInputWrapperCreate 函数即可。
+
+
+    从封装包中读取数据
+    CPPAPI unsigned char ndMsgWrapperReadInt8(netObject msgWrapper) ;
+    CPPAPI unsigned short ndMsgWrapperReadInt16(netObject msgWrapper) ;
+    CPPAPI unsigned int ndMsgWrapperReadInt32(netObject msgWrapper) ;
+    CPPAPI unsigned long long ndMsgWrapperReadInt64(netObject msgWrapper) ;
+    CPPAPI float ndMsgWrapperReadFloat(netObject msgWrapper) ;
+    CPPAPI double ndMsgWrapperReadDouble(netObject msgWrapper) ;
+    CPPAPI unsigned int ndMsgWrapperReadText(netObject msgWrapper, unsigned char *buf, int size) ;
+    CPPAPI unsigned int ndMsgWrapperReadBin (netObject msgWrapper, unsigned char *buf, int size_buf) ;
+
+    5.2 发送消息封装
+    生成一个消息对象
+    CPPAPI netObject ndMsgOutputWrapperCreate(int maxID, int minID);
+    CPPAPI int ndMsgOuputWrapperDestroy(netObject msgWrapper , int flag);
+
+    写入数据
+    CPPAPI int ndMsgWrapperWriteInt8(netObject msgWrapper,unsigned char val);
+    CPPAPI int ndMsgWrapperWriteInt16(netObject msgWrapper,unsigned short val);
+    CPPAPI int ndMsgWrapperWriteInt32(netObject msgWrapper,unsigned int val);
+    CPPAPI int ndMsgWrapperWriteInt64(netObject msgWrapper,unsigned long long val);
+    CPPAPI int ndMsgWrapperWriteFloat(netObject msgWrapper,float val);
+    CPPAPI int ndMsgWrapperWriteDouble(netObject msgWrapper,double val);
+    CPPAPI int ndMsgWrapperWriteText(netObject msgWrapper, const char *text);
+    CPPAPI int ndMsgWrapperWriteBin (netObject msgWrapper,  char *buf, int size_buf);
+
+    数据写入完以后可以直接用ndSendWrapMsg（）函数发送。
+
+6. 补充说明
+    unity3d中使用了内部插件功能，所以只能在真机器上调试。同时为了提高程序运行效率我建议unity中使用ndSendData()
+函数发送数据，在unity中生成ndMsgData 数据结构，然后转换成网络字节顺序在发送，可以避免在托管和非托管之间频繁切换。
