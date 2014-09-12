@@ -18,6 +18,13 @@ typedef void* netObject ;
 #define CPPAPI extern "C" 
 #endif 
 
+enum eNDSendFlag {
+    ND_ESF_NORMAL = 0 ,		// normal
+    ND_ESF_WRITEBUF =1,		// write buf
+    ND_ESF_URGENCY = 2,		// send right now
+    ND_ESF_POST	= 4,		// normal send, if buffer full the data will lost
+    ND_ESF_ENCRYPT = 8			// encrypt
+};
 
 
 enum eStreamType{
@@ -51,11 +58,15 @@ CPPAPI void ndClostConnect(netObject netObj) ;
 
 //send message
 /* send message with format*/
-CPPAPI int ndSendMsg(netObject netObj,int maxid, int minid, int argc, ...) ;
+CPPAPI int ndSendFormat(netObject netObj,int maxid, int minid, int argc, ...) ;
 /* send data ,before send the data need to convert to net byte-order*/
 CPPAPI int ndSendData(netObject netObj, char *data, int dataLen, int flag) ;
 /* send struct message, ndMsgData::data need to convert to net byteoreder */
-CPPAPI int ndSendMsgEx(netObject netObj,struct ndMsgData *data, int flag) ;
+CPPAPI int ndSendMsg(netObject netObj,struct ndMsgData *data, int flag) ;
+/* send raw data , this function do not convert or format data */
+CPPAPI int ndSendRaw(netObject netObj,char *data, int size) ;
+/* send a wrapped message */
+CPPAPI int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag) ;
 
 //install message handle functions
 CPPAPI int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID) ;
@@ -69,6 +80,34 @@ CPPAPI int ndWaitMsg(netObject netObj, char *buf, int timeOutMS) ;
 //init/deinit net 
 CPPAPI int ndInitNet() ;
 CPPAPI void ndDeinitNet() ;
+
+//create message wrapper
+CPPAPI netObject ndMsgInputWrapperCreate(unsigned char *data, int dataLen);
+CPPAPI int ndMsgInputWrapperDestroy(netObject msgWrapper , int flag);
+
+// message read wrapper
+CPPAPI unsigned char ndMsgWrapperReadInt8(netObject msgWrapper) ;
+CPPAPI unsigned short ndMsgWrapperReadInt16(netObject msgWrapper) ;
+CPPAPI unsigned int ndMsgWrapperReadInt32(netObject msgWrapper) ;
+CPPAPI unsigned long long ndMsgWrapperReadInt64(netObject msgWrapper) ;
+CPPAPI float ndMsgWrapperReadFloat(netObject msgWrapper) ;
+CPPAPI double ndMsgWrapperReadDouble(netObject msgWrapper) ;
+CPPAPI unsigned int ndMsgWrapperReadText(netObject msgWrapper, unsigned char *buf, int size) ;
+CPPAPI unsigned int ndMsgWrapperReadBin (netObject msgWrapper, unsigned char *buf, int size_buf) ;
+
+//output Message wrapper
+
+CPPAPI netObject ndMsgOutputWrapperCreate(int maxID, int minID);
+CPPAPI int ndMsgOuputWrapperDestroy(netObject msgWrapper , int flag);
+
+CPPAPI int ndMsgWrapperWriteInt8(netObject msgWrapper,unsigned char val);
+CPPAPI int ndMsgWrapperWriteInt16(netObject msgWrapper,unsigned short val);
+CPPAPI int ndMsgWrapperWriteInt32(netObject msgWrapper,unsigned int val);
+CPPAPI int ndMsgWrapperWriteInt64(netObject msgWrapper,unsigned long long val);
+CPPAPI int ndMsgWrapperWriteFloat(netObject msgWrapper,float val);
+CPPAPI int ndMsgWrapperWriteDouble(netObject msgWrapper,double val);
+CPPAPI int ndMsgWrapperWriteText(netObject msgWrapper, const char *text);
+CPPAPI int ndMsgWrapperWriteBin (netObject msgWrapper,  char *buf, int size_buf);
 
 // for test
 CPPAPI int ndSentTest(netObject netObj) ;

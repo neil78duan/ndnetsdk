@@ -16,7 +16,7 @@
 #include "nd_msg.h"
 
 
-int ndSendMsg(netObject netObj,int maxid, int minid,int argc, ...)
+int ndSendFormat(netObject netObj,int maxid, int minid,int argc, ...)
 {
     int i=0;
     NDOStreamMsg omsg ;
@@ -73,6 +73,254 @@ int ndSendMsg(netObject netObj,int maxid, int minid,int argc, ...)
     return nd_connector_send((nd_handle)netObj,(nd_packhdr_t*) (omsg.GetMsgAddr()), ESF_URGENCY) ;
     
 }
+
+struct nd_message_wrapper
+{
+    ND_OBJ_BASE ;
+    NDIStreamMsg *inStream ;
+    nd_usermsgbuf_t *msgdata ;
+    
+};
+
+//create message wrapper
+netObject ndMsgInputWrapperCreate(unsigned char *data, int dataLen)
+{
+    nd_message_wrapper *pwrapper = new nd_message_wrapper ;
+    if (!pwrapper) {
+        return NULL;
+    }
+    nd_usermsgbuf_t *pMsg = (nd_usermsgbuf_t*) data ;
+    size_t size = (size_t) ND_USERMSG_LEN(pMsg) ;
+    nd_assert((size_t)dataLen==size) ;
+    
+    pwrapper->size = sizeof(nd_message_wrapper);
+    pwrapper->type = NDHANDLE_USER1 + 1;
+    pwrapper->myerrno = NDERR_SUCCESS;
+    pwrapper->close_entry = ndMsgInputWrapperDestroy;
+    
+    pwrapper->msgdata = (nd_usermsgbuf_t*)malloc(size) ;
+    
+    memcpy(pwrapper->msgdata, data, size) ;
+    
+    pwrapper->inStream = new NDIStreamMsg(pwrapper->msgdata) ;
+    //packet_hton(&crypt_buf) ;
+    return (netObject) pwrapper ;
+}
+
+int ndMsgInputWrapperDestroy(netObject msgWrapper , int flag)
+{
+    nd_message_wrapper *pwapper = (nd_message_wrapper*)msgWrapper ;
+    if (pwapper) {
+        nd_assert(pwapper->size == sizeof(nd_message_wrapper));
+        nd_assert(pwapper->type == NDHANDLE_USER1 + 1);
+        
+        if (pwapper->inStream) {
+            delete pwapper->inStream ;
+            pwapper->inStream = 0 ;
+        }
+        if (pwapper->msgdata) {
+            free(pwapper->msgdata) ;
+            pwapper->msgdata = 0;
+        }
+        pwapper->type = 0 ;
+        delete pwapper ;
+        return  0;
+    }
+    return -1;
+}
+
+#define READ_DATA_FROM_WRAPPER(_type , _objectWrapper)  \
+    _type a=0;        \
+    nd_message_wrapper *pwapper = (nd_message_wrapper*)_objectWrapper ; \
+    nd_assert(pwapper->size == sizeof(nd_message_wrapper)); \
+    nd_assert(pwapper->type == NDHANDLE_USER1 + 1);         \
+    if (pwapper->myerrno) {         \
+        return  -1 ;                \
+    }                               \
+    if (pwapper->inStream->Read(a)==0) {    \
+        return a ;                  \
+    }                               \
+    pwapper->myerrno = NDERR_READ;  \
+    return 0
+
+unsigned char ndMsgWrapperReadInt8(netObject msgWrapper)
+{
+    READ_DATA_FROM_WRAPPER(NDUINT8, msgWrapper) ;
+}
+
+unsigned short ndMsgWrapperReadInt16(netObject msgWrapper)
+{
+    READ_DATA_FROM_WRAPPER(NDUINT16, msgWrapper) ;
+}
+
+unsigned int ndMsgWrapperReadInt32(netObject msgWrapper)
+{
+    READ_DATA_FROM_WRAPPER(NDUINT32, msgWrapper) ;
+}
+unsigned long long ndMsgWrapperReadInt64(netObject msgWrapper)
+{
+    READ_DATA_FROM_WRAPPER(NDUINT64, msgWrapper) ;
+    
+}
+float ndMsgWrapperReadFloat(netObject msgWrapper)
+{
+    READ_DATA_FROM_WRAPPER(float, msgWrapper) ;
+    
+}
+double ndMsgWrapperReadDouble(netObject msgWrapper)
+{
+    READ_DATA_FROM_WRAPPER(double, msgWrapper) ;
+}
+
+unsigned int ndMsgWrapperReadText(netObject msgWrapper, unsigned char *buf, int size)
+{
+    size_t readLen ;
+    nd_message_wrapper *pwapper = (nd_message_wrapper*)msgWrapper ;
+    nd_assert(pwapper->size == sizeof(nd_message_wrapper));
+    nd_assert(pwapper->type == NDHANDLE_USER1 + 1);
+    if (pwapper->myerrno) {
+        return  -1 ;
+    }
+    readLen = pwapper->inStream->Read((NDUINT8*)buf, (size_t) size);
+    if (readLen) {
+        return (unsigned int)readLen ;
+    }
+    pwapper->myerrno = NDERR_READ;
+    return 0;
+
+}
+
+unsigned int ndMsgWrapperReadBin (netObject msgWrapper, unsigned char *buf, int size_buf)
+{
+    size_t readLen ;
+    nd_message_wrapper *pwapper = (nd_message_wrapper*)msgWrapper ;
+    nd_assert(pwapper->size == sizeof(nd_message_wrapper));
+    nd_assert(pwapper->type == NDHANDLE_USER1 + 1);
+    if (pwapper->myerrno) {
+        return  -1 ;
+    }
+    readLen = pwapper->inStream->ReadBin(buf, (size_t) size_buf);
+    if (readLen) {
+        return (unsigned int)readLen ;
+    }
+    pwapper->myerrno = NDERR_READ;
+    return 0;
+}
+
+// output message wrapper
+
+struct nd_message_out_wrapper
+{
+    ND_OBJ_BASE ;
+    NDOStreamMsg outStream ;
+};
+
+netObject ndMsgOutputWrapperCreate(int maxID, int minID)
+{
+    nd_message_out_wrapper *poutWrapper = new nd_message_out_wrapper ;
+    if (!poutWrapper) {
+        return NULL;
+    }
+    
+    poutWrapper->size = sizeof(nd_message_out_wrapper);
+    poutWrapper->type = NDHANDLE_USER1 + 2;
+    poutWrapper->myerrno = NDERR_SUCCESS;
+    poutWrapper->close_entry = ndMsgOuputWrapperDestroy;
+    
+    poutWrapper->outStream.SetID(maxID, minID) ;
+    //packet_hton(&crypt_buf) ;
+    return (netObject) poutWrapper ;
+}
+
+
+int ndMsgOuputWrapperDestroy(netObject msgWrapper , int flag)
+{
+    nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)msgWrapper ;
+    if (pwapper) {
+        nd_assert(pwapper->size == sizeof(nd_message_out_wrapper));
+        nd_assert(pwapper->type == NDHANDLE_USER1 + 2);
+        
+        delete pwapper ;
+        return  0;
+    }
+    return -1;
+}
+
+#define WRITE_DATA_TO_WRAPPER(_type, _wrapper, _val) \
+    nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)_wrapper ; \
+    nd_assert(pwapper) ;    \
+    nd_assert(pwapper->size == sizeof(nd_message_out_wrapper)); \
+    nd_assert(pwapper->type == NDHANDLE_USER1 + 2);\
+    if(0==pwapper->outStream.Write((_type)_val) ) { \
+        return 0;   \
+    }               \
+    pwapper->myerrno = NDERR_WRITE ;    \
+    return -1
+
+
+int ndMsgWrapperWriteInt8(netObject msgWrapper,unsigned char val)
+{
+    WRITE_DATA_TO_WRAPPER(NDUINT8, msgWrapper,val) ;
+}
+
+int ndMsgWrapperWriteInt16(netObject msgWrapper,unsigned short val)
+{
+    WRITE_DATA_TO_WRAPPER(NDUINT16, msgWrapper,val) ;
+}
+
+int ndMsgWrapperWriteInt32(netObject msgWrapper,unsigned int val)
+{
+   WRITE_DATA_TO_WRAPPER(NDUINT32, msgWrapper,val) ;
+}
+int ndMsgWrapperWriteInt64(netObject msgWrapper,unsigned long long val)
+{
+    WRITE_DATA_TO_WRAPPER(NDUINT64, msgWrapper,val) ;
+    
+}
+int ndMsgWrapperWriteFloat(netObject msgWrapper,float val)
+{
+    WRITE_DATA_TO_WRAPPER(float, msgWrapper,val) ;
+    
+}
+int ndMsgWrapperWriteDouble(netObject msgWrapper,double val)
+{
+    WRITE_DATA_TO_WRAPPER(double, msgWrapper,val) ;
+}
+
+
+int ndMsgWrapperWriteText(netObject msgWrapper, const char *text)
+{
+    WRITE_DATA_TO_WRAPPER(const NDUINT8*, msgWrapper,text) ;
+    
+}
+
+int ndMsgWrapperWriteBin (netObject msgWrapper,  char *buf, int size_buf)
+{
+    nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)msgWrapper ;
+    nd_assert(pwapper) ;
+    nd_assert(pwapper->size == sizeof(nd_message_out_wrapper));
+    nd_assert(pwapper->type == NDHANDLE_USER1 + 2);
+    if(0==pwapper->outStream.WriteBin((void*)buf, (size_t) size_buf ) ) {
+        return 0;
+    }
+    pwapper->myerrno = NDERR_WRITE ;
+    return -1;
+    
+}
+
+int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag)
+{
+    nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)msgObj ;
+    nd_assert(pwapper) ;
+    nd_assert(pwapper->size == sizeof(nd_message_out_wrapper));
+    nd_assert(pwapper->type == NDHANDLE_USER1 + 2);
+    
+    return nd_connector_send((nd_handle)netObj,(nd_packhdr_t*) (pwapper->outStream.GetMsgAddr()), flag) ;
+    
+    
+}
+
+/////////
 
 // for test
 

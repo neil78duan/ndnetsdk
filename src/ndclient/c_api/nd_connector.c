@@ -96,15 +96,14 @@ int ndSendData(netObject netObj, char *data, int dataLen, int flag)
     packet_hton(&msghdr) ;
     return ret ;
 }
-//
-//int ndSendRawData(netObject netObj,char *data, int size)
-//{
-//    return  nd_connector_raw_write((nd_handle) netObj , data, (size_t) size) ;
-//    
-//}
-//
-//
-int ndSendMsgEx(netObject netObj,struct ndMsgData *data, int flag)
+
+int ndSendRaw(netObject netObj,char *data, int size)
+{
+    return  nd_connector_raw_write((nd_handle) netObj , data, (size_t) size) ;
+}
+
+
+int ndSendMsg(netObject netObj,struct ndMsgData *data, int flag)
 {
     data->reserved = 0 ;
     return nd_connector_send((nd_handle) netObj, (nd_packhdr_t *)data, flag) ;
