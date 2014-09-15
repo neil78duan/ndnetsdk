@@ -15,11 +15,12 @@
 #if defined __LINUX__
 /*static inline void prefetch(const void *x) {;}*/
 /* Prefetch instructions for Pentium III, IIII and AMD Athlon */
-static __inline__ void prefetch(const void *x)
-{
-	__asm__ __volatile__ ("prefetchnta (%0)" : : "r"(x));
-}
-#else 
+//static __inline__ void prefetch(const void *x)
+//{
+//	__asm__ __volatile__ ("prefetchnta (%0)" : : "r"(x));
+//}
+#define prefetch(a) 	(a)
+#else
 #define prefetch(a) 	(a) 
 #define __inline__  __inline
 /*

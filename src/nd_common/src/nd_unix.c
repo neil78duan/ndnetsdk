@@ -144,7 +144,7 @@ int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)
 		
 		struct timespec ts ;
 		
-		if (nd_clock_gettime(, &ts) == -1) {
+		if (nd_clock_gettime(&ts) == -1) {
 			return -1 ;
 		}
 		ts.tv_sec += waittime /1000 ;
@@ -254,7 +254,12 @@ int nd_waitthread(ndth_handle handle)
 
 int nd_terminal_thread(ndth_handle handle,int exit_code)
 {
+#ifdef __LINUX__
+    return -1;
+#else
 	return pthread_cancel(handle) ;
+#endif
+    //return  0;
 }
 
 #include <sys/ioctl.h>

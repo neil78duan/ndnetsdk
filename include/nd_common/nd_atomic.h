@@ -108,7 +108,7 @@ __INLINE__ int nd_compare_swap(ndatomic_t *lpDest,ndatomic_t lComp,ndatomic_t lE
 #elif defined(__LINUX__)
 typedef int ndatomic_t ;
 
-#ifdef X86_64
+#if 1
 
 #define nd_atomic_inc(x) __sync_add_and_fetch((x),1)  
 #define nd_atomic_dec(x) __sync_sub_and_fetch((x),1)  
