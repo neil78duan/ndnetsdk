@@ -12,9 +12,9 @@ workDir=`pwd`
 create_ndhome() {
     cd $HOME
     if [ -f .bash_profile ]; then
-        echo "export NDHOME=\"$HOME/Documents/ndsdk.github\"" >> .bash_profile
+        echo "export NDHOME=\"$workDir\"" >> .bash_profile
     elif [ -f .profile ]; then
-        echo "export NDHOME=\"$HOME/Documents/ndsdk.github\"" >> .profile
+        echo "export NDHOME=\"$workDir\"" >> .profile
     else
         echo "could not create NDHOME "
         echo "PLEASE set evn $NDHOME "

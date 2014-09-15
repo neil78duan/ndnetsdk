@@ -105,6 +105,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		074B3FA019C2F1BB000C6C52 /* client_c_api_desc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = client_c_api_desc.txt; path = ../../doc/client_c_api_desc.txt; sourceTree = "<group>"; };
 		07885A7119BED1F40075AF59 /* nd_api_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_api_c.h; sourceTree = "<group>"; };
 		07885A7219BED1F40075AF59 /* nd_iconn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconn.h; sourceTree = "<group>"; };
 		079318F619931665009C8BC5 /* libndclient_ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndclient_ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -254,6 +255,7 @@
 		079318ED19931665009C8BC5 = {
 			isa = PBXGroup;
 			children = (
+				074B3FA019C2F1BB000C6C52 /* client_c_api_desc.txt */,
 				07EBCE6C19A8CF4100802576 /* netapi */,
 				07EBCD7C19A8CC5500802576 /* ndsdk */,
 				079318F819931665009C8BC5 /* ndclient_ios */,

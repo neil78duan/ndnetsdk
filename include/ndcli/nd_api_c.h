@@ -38,6 +38,9 @@ enum eStreamType{
     
 };
 
+
+#pragma pack(push, 1)
+
 struct ndMsgData
 {
     unsigned short length;
@@ -49,6 +52,7 @@ struct ndMsgData
     unsigned char data[0xfffa] ;
 };
 
+#pragma pack(pop)
 
 typedef int (*ndNetFunc)(netObject netObj, unsigned char *data, int dataLen );
 
