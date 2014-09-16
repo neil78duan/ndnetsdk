@@ -10,7 +10,7 @@
 #include "nd_net/nd_netlib.h"
 #include "nd_crypt/nd_crypt.h"
 
-#include "nd_msgpacket.h"
+#include "ndapplib/nd_msgpacket.h"
 #include "ndcli/nd_api_c.h"
 
 #include "nd_msg.h"

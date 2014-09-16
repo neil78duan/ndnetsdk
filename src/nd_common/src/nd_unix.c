@@ -254,7 +254,7 @@ int nd_waitthread(ndth_handle handle)
 
 int nd_terminal_thread(ndth_handle handle,int exit_code)
 {
-#ifdef __LINUX__
+#ifdef ND_ANDROID
     return -1;
 #else
 	return pthread_cancel(handle) ;

@@ -57,11 +57,13 @@ LOCAL_SRC_FILES := test-libstl.cpp \
 ../../src/nd_crypt/rsa/r_random.c \
 ../../src/nd_crypt/rsa/r_stdlib.c \
 ../../src/nd_crypt/rsa/rsa.c \
+../../src/ndclient/c_api/msg_format.cpp \
+../../src/ndclient/c_api/nd_connector.c \
+../../src/ndapplib/nd_msgpack.cpp \
 
 
-
-LOCAL_CFLAGS := --debug -DDEBUG -DND_DEBUG -D__LINUX__ -DND_UNIX 
-LOCAL_CPPFLAGS:= --debug -DDEBUG -DND_DEBUG -D__LINUX__ -DND_UNIX 
+LOCAL_CFLAGS := --debug -DDEBUG -DND_DEBUG -D__LINUX__ -DND_UNIX -DND_ANDROID
+LOCAL_CPPFLAGS:= --debug -DDEBUG -DND_DEBUG -D__LINUX__ -DND_UNIX -DND_ANDROID -frtti 
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../include
 
