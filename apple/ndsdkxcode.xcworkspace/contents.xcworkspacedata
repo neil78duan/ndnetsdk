@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ndcli_unity_mac/ndcli_unity_mac.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ndclient_mac/ndclient_mac.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:ndclient_ios/ndclient_ios.xcodeproj">
    </FileRef>
    <FileRef
