@@ -48,18 +48,30 @@ CURDIR = .
 SRCDIR = $(CURDIR)/src
 OBJDIR = $(CURDIR)/obj
 
-ifeq ($(PLATFORM_BITS),64)
-	CFLAGS += -DX86_64
-	WORKDIR = $(TOPDIR)/bin64
-	LIBDIR = $(TOPDIR)/lib64
-else
-	WORKDIR = $(TOPDIR)/bin
-	LIBDIR = $(TOPDIR)/lib
-endif
+#ifeq ($(PLATFORM_BITS),64)
+#	CFLAGS += -DX86_64
+#	WORKDIR = $(TOPDIR)/bin64
+#	LIBDIR = $(TOPDIR)/lib64
+#else
+#	WORKDIR = $(TOPDIR)/bin
+#	LIBDIR = $(TOPDIR)/lib
+#endif
 
-	
+ARCH_MACHINE = $(shell uname -m)
+
+OS_kernel = $(shell uname -s)
+
+AIM_NAME = $(OS_kernel)_$(ARCH_MACHINE)
+
+TMPPARAM1 = $(shell  [ -d  $(TOPDIR)/lib ] || mkdir $(TOPDIR)/lib )
+TMPPARAM1 = $(shell  [ -d  $(TOPDIR)/bin ] || mkdir $(TOPDIR)/bin )
+
+WORKDIR = $(TOPDIR)/bin/$(AIM_NAME)
+LIBDIR = $(TOPDIR)/lib/$(AIM_NAME)
+
+LIBOUTPUT = $(TOPDIR)/lib
+
 TMPPARAM1 = $(shell  [ -d  $(WORKDIR) ] || mkdir $(WORKDIR))
-	
 TMPPARAM1 = $(shell  [ -d  $(LIBDIR) ] || mkdir $(LIBDIR))
 
 CC = cc

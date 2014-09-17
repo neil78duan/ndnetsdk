@@ -33,13 +33,18 @@ fi
 # create output dir
 PLATFORM_BITS=`getconf LONG_BIT`
 
-if [ $PLATFORM_BITS -eq 64 ]; then
-    [ -d bin64 ] || mkdir bin64
-    [ -d lib64 ] || mkdir lib64
-else
-    [ -d bin ] || mkdir bin
-    [ -d lib ] || mkdir lib
-fi
+[ -d bin ] || mkdir bin
+[ -d lib ] || mkdir lib
+
+
+ARCH_MACHINE=`uname -m`
+OS_kernel=`uname -s`
+
+WORKDIR="./bin/"$OS_kernel"_"$ARCH_MACHINE
+LIBDIR="./lib/"$OS_kernel"_"$ARCH_MACHINE
+
+[ -d  $WORKDIR ] || mkdir $WORKDIR
+[ -d  $LIBDIR ] || mkdir $LIBDIR
 
 echo "config SUCCESS "
 

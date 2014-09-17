@@ -11,12 +11,14 @@ endif
 
 ##############set flag
 
-CFLAGS += -I$(TOPDIR)/include -I$(PG_INC) -I$(TOPDIR)/ndsdk/include
+CFLAGS += -I$(TOPDIR)/include 
 
 ifeq ($(DEBUG),y)
-   PROJS = $(LIBDIR)/libndapplib_dbg.a
+    PROJS = $(LIBDIR)/libndapplib_dbg.a
+    PROJ_CLIENT=$(LIBDIR)/libndclient_pack_dbg.a
 else 
-   PROJS = $(LIBDIR)/libndapplib.a
+    PROJS = $(LIBDIR)/libndapplib.a
+    PROJ_CLIENT=$(LIBDIR)/libndclient_pack.a
 endif
 
 ######################
@@ -37,11 +39,13 @@ PathSRC := $(SRC)  $(SRC_C)
 ##############################################################
 
 
-all: $(PROJS)
+all: $(PROJS) $(PROJ_CLIENT)
 	
 $(PROJS): $(OBJS)
 	$(AR) $(PROJS)  $(PathOBJS) $(LibFLAGS) 
-	
+
+$(PROJ_CLIENT):$(OBJDIR)/nd_msgpack.o
+	$(AR) $(PROJ_CLIENT)  $(OBJDIR)/nd_msgpack.o $(LibFLAGS)
                 
 .c.o:
 	$(CC) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<

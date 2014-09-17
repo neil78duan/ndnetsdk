@@ -4,12 +4,15 @@ VPATH = .
 
 include ./Rules.make
 
-SUBDIRS =  nd_common nd_crypt nd_net nd_srvcore ndapplib
+
+SUBDIRS =  nd_common nd_crypt nd_net nd_srvcore ndapplib ndclient
 
 all: subdirs
 
 subdirs:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n || exit 1; done
+	cp -f $(TOPDIR)/src/build-lib $(LIBDIR)/Makefile; cd $(LIBDIR) ; make
+
 
 cleangame:
 	rm -f *. 

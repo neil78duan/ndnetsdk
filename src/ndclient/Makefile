@@ -18,7 +18,7 @@ endif
 
 ##############set flag
 
-CFLAGS += -I$(TOPDIR)/include -I$(TOPDIR)/include/nd_crypt/rsah -I$(TOPDIR)/include/nd_crypt
+CFLAGS += -I$(TOPDIR)/include 
 
 ifeq ($(DEBUG),y)
    PROJS = $(LIBDIR)/libndclient_dbg.a
@@ -34,8 +34,8 @@ VPATH :=  ./c_api ./cpp_api
 #OBJS := $(patsubst %.c, %.o,$(SRC) )  $(patsubst %.cpp, %.o,$(SRC) )
 #PathOBJS :=$(patsubst %.c, $(OBJDIR)/%.o, $(SRC) )
 
-OBJS := msg_format.o nd_commector.o nd_connector.o
-PathOBJS := $(OBJDIR)/msg_format.o $(OBJDIR)/nd_commector.o $(OBJDIR)/nd_connector.o
+OBJS := msg_format.o nd_client.o nd_connector.o
+PathOBJS := $(OBJDIR)/msg_format.o $(OBJDIR)/nd_client.o $(OBJDIR)/nd_connector.o
 #####################
 
 #SRCrsa := $(shell cd ./cpp_api; ls | grep .c	)
@@ -58,8 +58,8 @@ $(PROJS): $(OBJS)
 	
 .c.o:
 	$(CC) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
-#.cpp.o:
-#	$(GPP) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
+.cpp.o:
+	$(CPP) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
 	
 clean:
 	rm -f $(PROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
@@ -69,7 +69,7 @@ clean:
 .PHONY: clean
 
 #PathSRC :=$(patsubst %.c, ./src/%.c, $(SRC) )
-PathSRC := c_api/msg_format.cpp c_api/nd_commector.c cpp_api/nd_connector.cpp
+PathSRC := c_api/msg_format.cpp c_api/nd_connector.c cpp_api/nd_client.cpp
 
 include $(PathOBJS:.o=.d)
 
