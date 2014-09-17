@@ -1,0 +1,47 @@
+#make file 
+
+include $(NDHOME)/src/Rules.make
+
+
+##############set flag
+
+ifeq ($(DEBUG),y)
+    PROJ_CLIENT = $(LIBOUTPUT)/libndclient_$(AIM_NAME)_d.a
+    PROJ_SRV = $(LIBOUTPUT)/libndsdk_$(AIM_NAME)_d.a
+
+    OBJ_CLIENT := libnd_common_dbg.a libndclient_pack_dbg.a libnd_crypt_dbg.a libnd_net_dbg.a libndclient_dbg.a
+    
+    OBJ_SRV := libnd_common_dbg.a  libnd_crypt_dbg.a libnd_net_dbg.a libnd_srvcore_dbg.a libndapplib_dbg.a
+else
+    PROJ_CLIENT = $(LIBOUTPUT)/libndclient_$(AIM_NAME).a
+    PROJ_SRV = $(LIBOUTPUT)/libndsdk_$(AIM_NAME).a
+
+    OBJ_CLIENT := libnd_common.a libndclient_pack.a libnd_crypt.a libnd_net.a libndclient.a
+    
+    OBJ_SRV := libnd_common.a  libnd_crypt.a libnd_net.a libnd_srvcore.a libndapplib.a
+    
+endif
+
+######################
+
+VPATH :=  $(SRCDIR)  $(OBJDIR)
+
+##########make 
+##############################################################
+
+
+all: $(PROJ_SRV) $(PROJ_CLIENT)
+	
+$(PROJ_SRV): $(OBJ_SRV)
+	$(AR) $(PROJ_SRV)  $(OBJ_SRV) $(LibFLAGS)
+
+$(PROJ_CLIENT): $(OBJ_CLIENT)
+	$(AR) $(PROJ_CLIENT)  $(OBJ_CLIENT) $(LibFLAGS)
+clean:
+	rm -f $(PROJ_SRV) $(PROJ_CLIENT)
+	
+
+###############create dependence file #############
+.PHONY: clean
+
+#############################################################
