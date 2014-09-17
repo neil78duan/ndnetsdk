@@ -13,8 +13,10 @@ create_ndhome() {
     cd $HOME
     if [ -f .bash_profile ]; then
         echo "export NDHOME=\"$workDir\"" >> .bash_profile
+        source .bash_profile
     elif [ -f .profile ]; then
         echo "export NDHOME=\"$workDir\"" >> .profile
+        source .profile
     else
         echo "could not create NDHOME "
         echo "PLEASE set evn $NDHOME "
@@ -38,7 +40,7 @@ PLATFORM_BITS=`getconf LONG_BIT`
 
 
 ARCH_MACHINE=`uname -m`
-OS_kernel=`uname -s`
+OS_kernel=`uname -s |  tr '[A-Z]' '[a-z]'`
 
 WORKDIR="./bin/"$OS_kernel"_"$ARCH_MACHINE
 LIBDIR="./lib/"$OS_kernel"_"$ARCH_MACHINE

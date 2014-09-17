@@ -272,6 +272,7 @@
 		07931A4619931C5A009C8BC5 /* nd_stlalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_stlalloc.cpp; sourceTree = "<group>"; };
 		07931A4719931C5A009C8BC5 /* readcfg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = readcfg.cpp; sourceTree = "<group>"; };
 		07931A4819931C5A009C8BC5 /* unix_sig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unix_sig.c; sourceTree = "<group>"; };
+		07CBF85E19C995C7002EE541 /* build-lib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "build-lib"; path = "../../src/build-lib"; sourceTree = "<group>"; };
 		07EBCCCB19A8B6AD00802576 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
 		07EBCCCC19A8B6AD00802576 /* nd_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_alloc.h; sourceTree = "<group>"; };
 		07EBCCCD19A8B6AD00802576 /* nd_atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_atomic.h; sourceTree = "<group>"; };
@@ -390,6 +391,7 @@
 		0793192119931B3E009C8BC5 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				07CBF85E19C995C7002EE541 /* build-lib */,
 				073C46CA19C1636A0081D14F /* Makefile */,
 				073C46CB19C1636A0081D14F /* Rules.make */,
 				079319D719931C5A009C8BC5 /* nd_common */,

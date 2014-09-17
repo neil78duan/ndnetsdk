@@ -2,29 +2,45 @@
 
 include $(NDHOME)/src/Rules.make
 
+obj1 = $(shell ls $(TOPDIR)/src/nd_common/obj | grep '\.o\>')
+OBJS_SRV := $(addprefix $(TOPDIR)/src/nd_common/obj/,$(obj1) )
+OBJ_CLIENT := $(addprefix $(TOPDIR)/src/nd_common/obj/,$(obj1) )
+
+obj1 = $(shell ls $(TOPDIR)/src/nd_net/obj | grep '\.o\>')
+OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_net/obj/,$(obj1) )
+OBJ_CLIENT += $(addprefix $(TOPDIR)/src/nd_net/obj/,$(obj1) )
+
+obj1 = $(shell ls $(TOPDIR)/src/nd_crypt/obj | grep '\.o\>')
+OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_crypt/obj/,$(obj1) )
+OBJ_CLIENT += $(addprefix $(TOPDIR)/src/nd_crypt/obj/,$(obj1) )
+
+obj1 = $(shell ls $(TOPDIR)/src/nd_srvcore/obj | grep '\.o\>')
+OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_srvcore/obj/,$(obj1) )
+
+obj1 = $(shell ls $(TOPDIR)/src/nd_vm/obj | grep '\.o\>')
+OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_vm/obj/,$(obj1) )
+
+obj1 = $(shell ls $(TOPDIR)/src/ndapplib/obj | grep '\.o\>')
+OBJS_SRV += $(addprefix $(TOPDIR)/src/ndapplib/obj/,$(obj1) )
+
+obj1 = $(shell ls $(TOPDIR)/src/ndclient/obj | grep '\.o\>')
+OBJ_CLIENT += $(addprefix $(TOPDIR)/src/ndclient/obj/,$(obj1) )
+
+OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_msgpack.o
 
 ##############set flag
 
 ifeq ($(DEBUG),y)
     PROJ_CLIENT = $(LIBOUTPUT)/libndclient_$(AIM_NAME)_d.a
     PROJ_SRV = $(LIBOUTPUT)/libndsdk_$(AIM_NAME)_d.a
-
-    OBJ_CLIENT := libnd_common_dbg.a libndclient_pack_dbg.a libnd_crypt_dbg.a libnd_net_dbg.a libndclient_dbg.a
-    
-    OBJ_SRV := libnd_common_dbg.a  libnd_crypt_dbg.a libnd_net_dbg.a libnd_srvcore_dbg.a libndapplib_dbg.a
 else
     PROJ_CLIENT = $(LIBOUTPUT)/libndclient_$(AIM_NAME).a
     PROJ_SRV = $(LIBOUTPUT)/libndsdk_$(AIM_NAME).a
 
-    OBJ_CLIENT := libnd_common.a libndclient_pack.a libnd_crypt.a libnd_net.a libndclient.a
-    
-    OBJ_SRV := libnd_common.a  libnd_crypt.a libnd_net.a libnd_srvcore.a libndapplib.a
-    
 endif
 
 ######################
 
-VPATH :=  $(SRCDIR)  $(OBJDIR)
 
 ##########make 
 ##############################################################
@@ -32,11 +48,12 @@ VPATH :=  $(SRCDIR)  $(OBJDIR)
 
 all: $(PROJ_SRV) $(PROJ_CLIENT)
 	
-$(PROJ_SRV): $(OBJ_SRV)
-	$(AR) $(PROJ_SRV)  $(OBJ_SRV) $(LibFLAGS)
+$(PROJ_SRV): $(OBJS_SRV)
+	$(AR) $(PROJ_SRV)  $(OBJS_SRV) $(LibFLAGS)
 
 $(PROJ_CLIENT): $(OBJ_CLIENT)
 	$(AR) $(PROJ_CLIENT)  $(OBJ_CLIENT) $(LibFLAGS)
+
 clean:
 	rm -f $(PROJ_SRV) $(PROJ_CLIENT)
 	

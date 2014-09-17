@@ -12,18 +12,20 @@ DEBUG =y
 #profile , hot spot find
 PROFILE=y
 
-#ifeq ($(OSTYPE),linux)
-#	CFLAGS += -D__LINUX__
-#elifeq ($(OSTYPE),linux-gnu)
-#	CFLAGS += -D__LINUX__
-#else
-#	CFLAGS += -D_MAC_OS_ -D__BSD__
-#endif
+ARCH_MACHINE = $(shell uname -m)
+OS_kernel = $(shell uname -s | tr '[A-Z]' '[a-z]')
 
-#CFLAGS += -c -w -O -D__LINUX__ -DND_UNIX -DBUILD_AS_STATIC_LIB -D_PG_SERVER_ -finput-charset=GBK -D_GNU_SOURCE
+AIM_NAME = $(OS_kernel)_$(ARCH_MACHINE)
 
-# for mac os x
-CFLAGS += -c -w -O -D__MAC_OS__ -DND_UNIX -DBUILD_AS_STATIC_LIB -D_PG_SERVER_
+ifeq ($(OS_kernel),linux)
+	CFLAGS += -D__LINUX__
+endif
+
+ifeq ($(OS_kernel),darwin)
+    CFLAGS += -D__MAC_OS__
+endif
+
+CFLAGS += -c -w -O  -DND_UNIX
 LFLAGS +=  -lpthread  -lm
 
 ifeq ($(DEBUG),y)
@@ -39,14 +41,18 @@ else
 	CFLAGS += -DNDEBUG
 endif
 
-PLATFORM_BITS =  $(shell  getconf LONG_BIT )
-
+#PLATFORM_BITS =  $(shell  getconf LONG_BIT )
 
 
 TOPDIR = $(NDHOME)
 CURDIR = .
 SRCDIR = $(CURDIR)/src
 OBJDIR = $(CURDIR)/obj
+
+WORKDIR = $(TOPDIR)/bin/$(AIM_NAME)
+LIBDIR = $(TOPDIR)/lib/$(AIM_NAME)
+LIBOUTPUT = $(TOPDIR)/lib
+
 
 #ifeq ($(PLATFORM_BITS),64)
 #	CFLAGS += -DX86_64
@@ -57,25 +63,17 @@ OBJDIR = $(CURDIR)/obj
 #	LIBDIR = $(TOPDIR)/lib
 #endif
 
-ARCH_MACHINE = $(shell uname -m)
 
-OS_kernel = $(shell uname -s)
-
-AIM_NAME = $(OS_kernel)_$(ARCH_MACHINE)
+#create objdir
 
 TMPPARAM1 = $(shell  [ -d  $(TOPDIR)/lib ] || mkdir $(TOPDIR)/lib )
 TMPPARAM1 = $(shell  [ -d  $(TOPDIR)/bin ] || mkdir $(TOPDIR)/bin )
-
-WORKDIR = $(TOPDIR)/bin/$(AIM_NAME)
-LIBDIR = $(TOPDIR)/lib/$(AIM_NAME)
-
-LIBOUTPUT = $(TOPDIR)/lib
 
 TMPPARAM1 = $(shell  [ -d  $(WORKDIR) ] || mkdir $(WORKDIR))
 TMPPARAM1 = $(shell  [ -d  $(LIBDIR) ] || mkdir $(LIBDIR))
 
 CC = cc
 CPP = c++
-AR = ar  rv
+AR = ar rv
 
 
