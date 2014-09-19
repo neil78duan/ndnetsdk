@@ -277,7 +277,7 @@ static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 
 
 #define nd_atomic_inc(p) OSAtomicIncrement32(p)
-#define nd_atomic_dec(p) OSAtomicIncrement32(p)
+#define nd_atomic_dec(p) OSAtomicDecrement32(p)
 
 static inline void nd_atomic_set(volatile ndatomic_t *p, ndatomic_t val)
 {
