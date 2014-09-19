@@ -79,7 +79,7 @@ void *func1(void *param)
 	
 }
 
-void test_atomic()
+void _test_atomic()
 {
 
 	int i ;
@@ -158,14 +158,14 @@ void nd_atomic_add(ndatomic_t *p,int step) ;
 void nd_atomic_sub(ndatomic_t *p,int step);
 int  nd_atomic_swap(ndatomic_t *p, ndatomic_tval);
 */
-int atomic_test()
+int test_atomic()
 {
 
 	
 	ndthread_t thid ,thid1;
 	ndth_handle h ,h1 ;
 	
-	test_atomic() ;
+	_test_atomic() ;
 	
 	h = nd_createthread(func, NULL, &thid, 0) ;
 	
@@ -181,6 +181,6 @@ int atomic_test()
 	ndprintf(_NDT("fast lockend \n\ttest ok %d!, at = %d\nPress ANYKEY to continue!"),_sum,_atomic_op );
 	nd_assert(_sum==0);
 
-	getch() ;
+	//getch() ;
 	return 0;
 }

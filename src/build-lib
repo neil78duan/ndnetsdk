@@ -30,14 +30,8 @@ OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_msgpack.o
 
 ##############set flag
 
-ifeq ($(DEBUG),y)
-    PROJ_CLIENT = $(LIBOUTPUT)/libndclient_$(AIM_NAME)_d.a
-    PROJ_SRV = $(LIBOUTPUT)/libndsdk_$(AIM_NAME)_d.a
-else
-    PROJ_CLIENT = $(LIBOUTPUT)/libndclient_$(AIM_NAME).a
-    PROJ_SRV = $(LIBOUTPUT)/libndsdk_$(AIM_NAME).a
-
-endif
+PROJ_CLIENT = $(LIBOUTPUT)/lib$(CLIENT_LIB).a
+PROJ_SRV = $(LIBOUTPUT)/lib$(SRV_LIB).a
 
 ######################
 

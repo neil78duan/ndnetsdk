@@ -16,13 +16,23 @@
 #include "nd_msg.h"
 
 
+int ndSend(netObject netObj,int maxid, int minid, void *data, unsigned int size)
+{
+    NDOStreamMsg omsg(maxid, minid) ;
+    if(-1==omsg.WriteBin(data, (size_t) size) ) {
+        return -1 ;
+    }
+    
+    return nd_connector_send((nd_handle)netObj,(nd_packhdr_t*) (omsg.GetMsgAddr()), ESF_URGENCY) ;
+}
+
 int ndSendFormat(netObject netObj,int maxid, int minid,int argc, ...)
 {
     int i=0;
-    NDOStreamMsg omsg ;
+    NDOStreamMsg omsg(maxid, minid) ;
     va_list arg;
     
-    omsg.SetID(maxid, minid) ;
+    //omsg.SetID(maxid, minid) ;
     
 #define ARG_2_STREAM(_arg, _stream, _type) \
 {\

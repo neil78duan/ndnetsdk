@@ -52,7 +52,7 @@ typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
 class NDIConn
 {
 public :		
-	virtual int Open(char*host, int port,char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
+	virtual int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
 	virtual int Close(int force=0) = 0;
 	virtual int Send(int maxid, int minid, void *data, size_t size)  = 0;
 	virtual int SendMsg(NDSendMsg &msg, int flag=0) = 0;
@@ -82,7 +82,7 @@ protected:
 
 ND_CONNCLI_API int InitNet() ;
 ND_CONNCLI_API void DeinitNet() ;
-ND_CONNCLI_API NDIConn* CreateConnectorObj(char *protocol_name) ;
+ND_CONNCLI_API NDIConn* CreateConnectorObj(const char *protocol_name) ;
 ND_CONNCLI_API void DestroyConnectorObj(NDIConn *pconn) ;
 ND_CONNCLI_API NDIConn * htoConnector(nd_handle h);
 

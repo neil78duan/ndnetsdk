@@ -1,5 +1,5 @@
 
-SUBDIRS = src 
+SUBDIRS = src demo
 
 all: subdirs
 

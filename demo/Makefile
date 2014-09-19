@@ -1,10 +1,10 @@
 
-topdir=(shell pwd)
+#topdir=(shell pwd)
 VPATH = .
 
-include ./Rules.make
+include $(NDHOME)/src/Rules.make
 
-SUBDIRS =  test_srv ndclient test tool
+SUBDIRS =  srvDemo ndclient tool test
 
 all: subdirs
 

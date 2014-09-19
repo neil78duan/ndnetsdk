@@ -34,8 +34,8 @@ class NDConnector : public NDIConn
 {
 public :		
 	void Destroy(int flag = 0);
-	int Create(char *protocol_name=NULL) ;
-	int Open(char*host, int port,char *protocol_name, nd_proxy_info *proxy=NULL);
+	int Create(const char *protocol_name=NULL) ;
+	int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL);
 	int Close(int force=0);
 
 	int Send(int maxid, int minid, void *data, size_t size) ;
@@ -127,7 +127,7 @@ void NDConnector::SetMsgNum(int maxmsg_num , int maxid_start)
 	msg_base = maxid_start;
 }
 
-int NDConnector::Open(char *host, int port, char *protocol_name,nd_proxy_info *proxy)
+int NDConnector::Open(const char *host, int port,const char *protocol_name,nd_proxy_info *proxy)
 {
 	if(!m_objhandle) {
 		//return -1 ;
@@ -162,17 +162,17 @@ int NDConnector::Close(int force)
 }
 
 int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)  ;
-int NDConnector::Create(char *protocol_name) 
+int NDConnector::Create(const char *protocol_name)
 {
 	//connect to host 
 	if (m_objhandle) {
 		Destroy() ;
 		m_objhandle = NULL;
 	}
-	m_objhandle = nd_object_create(protocol_name? protocol_name: (char*)"tcp-connector"  ) ;
+	m_objhandle = nd_object_create(protocol_name? protocol_name: "tcp-connector"  ) ;
 
 	if(!m_objhandle){		
-		nd_logerror((char*)"connect error :%s!" AND nd_last_error()) ;
+		nd_logerror("connect error :%s!" AND nd_last_error()) ;
 		return -1;
 	}
 	((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
@@ -383,7 +383,7 @@ NDIConn * htoConnector(nd_handle h)
 }
 
 
-NDIConn* CreateConnectorObj(char *protocol_name) 
+NDIConn* CreateConnectorObj(const char *protocol_name)
 {
 	NDConnector *pConn = new NDConnector() ;
 	if(!pConn) {
@@ -406,7 +406,7 @@ void DestroyConnectorObj(NDIConn *pconn)
 int InitNet() 
 {
 	//char *config_file = NULL ;
-	const char *argv[] = {"pgnet"} ;
+	const char *argv[] = {"ndclient"} ;
 	nd_arg(1, argv);
 
 	nd_common_init() ;

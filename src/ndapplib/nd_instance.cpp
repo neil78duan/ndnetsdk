@@ -41,7 +41,7 @@ static NDInstanceBase *g_base_inst = NULL ;
 
 //srv_config NDInstanceBase::srvcfg ={0};
 
-#define HANDLE_UNIX_SIGNAL 1        //handle unix signal
+//#define HANDLE_UNIX_SIGNAL 1        //handle unix signal
 
 class NDStaticInitHelper{
 public:
@@ -323,7 +323,6 @@ void NDInstanceBase::EndStaticsMem2()
 
 	long long _Delta = (long long)Stat.WorkingSetSize - (long long)m_Stat.WorkingSetSize;
 
-	printf("内存增减了 %lld字节\n", _Delta);
 #endif
 }
 

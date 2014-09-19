@@ -8,8 +8,8 @@
 #include "nd_common/nd_alloc.h"
 #include "nd_common/nd_common.h"
 
-#define READ_FILE "3.rar"
-#define WRITE_FILE "4.rar"
+#define READ_FILE "input.dmg"
+#define WRITE_FILE "output.dmg"
 
 #define SUMSIZE 100000000
 #define BUFSIZE 8

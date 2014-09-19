@@ -23,7 +23,11 @@ typedef struct nd_mm_pool *nd_handle ;
 
 #define _ND_ALINE(_size, _aline) (((_size)+(_aline)-1) & (~((_aline)-1)))
 
+#define ND_DEFAULT_ALINE_SIZE	8
+#define MIN_SIZE				16
+#define ALIGN_SIZE				16
 
+/*
 #ifdef X86_64
 #define ND_DEFAULT_ALINE_SIZE	8
 #define MIN_SIZE				16
@@ -33,6 +37,7 @@ typedef struct nd_mm_pool *nd_handle ;
 #define ND_DEFAULT_ALINE_SIZE	8
 #define ALIGN_SIZE				8
 #endif
+*/
 
 #define SIZE_ALINE(s)			max(_ND_ALINE(s,ALIGN_SIZE), MIN_SIZE)
 
@@ -60,6 +65,7 @@ typedef struct nd_mm_pool *nd_handle ;
 typedef size_t allocheader_t ;
 
 #define UNLIMITED_SIZE		((allocheader_t)-1)
+
 #pragma pack(push, ND_DEFAULT_ALINE_SIZE)
 
 
@@ -228,6 +234,7 @@ static void* __sys_page_alloc(size_t size)
 	struct alloc_node *ret ;
 	size = PAGE_ALINE(size) ;
 	ret = (struct alloc_node *) nd_mmap( size ) ;
+    //ret = (struct alloc_node *) malloc( size ) ;
 	if (!ret){
 		NDUINT32 lsterr = nd_last_errno() ;
 		nd_logerror("VirtualAlloc(%x) ,errcode =%d :%s\n" AND size AND lsterr AND nd_str_error(lsterr)) ;
@@ -242,6 +249,7 @@ static void __sys_page_free(void *addr)
 {
 	struct alloc_node *p = (struct alloc_node *)addr ;
 	nd_munmap(p,p->size) ;
+    //free(p) ;
 }
 
 

@@ -38,46 +38,50 @@
  */
 
 #define TEST_ENTRY(name)						\
-extern int name();					\
-int main()										\
-{											\
-	nd_common_init() ;							\
-	printf("start " #name " test!\n") ;			\
-	if(name () )printf("test " #name " error!\n");			\
-	else printf("test " #name " OK!\n") ;			\
-	nd_common_release() ;							\
-	printf("press any key to continue!\n") ;	\
-	getch() ;									\
-	exit(0);									\
+    extern int name();                          \
+    fprintf(stderr, "start " #name " test!\n") ;			\
+    if(name () ) {fprintf(stderr, "test " #name " error!\n"); return -1;}\
+    else fprintf(stderr, "test " #name " OK!\n")
+
+void inst_init()
+{
+    // #if defined( ND_USE_GPERF)
+    // 		__tcmalloc() ;
+    // #endif
+    nd_common_init() ;
+    nd_net_init() ;
+    nd_srvcore_init() ;
+    
+    //nd_log_screen("init common lib end\n") ;
 }
 
-int test_bit()
+void inst_deinit()
 {
-	int a ;
-	union{
-		struct {
-			char a : 3 ;
-			char b: 4 ;
-		};
-		char c ;
-	}t ;
+    nd_srvcore_destroy() ;
+    nd_net_destroy() ;
+    
+    nd_common_release() ;
+    //nd_log_screen("RELEASE common lib end\n") ;
+}
 
-	t.c = 0 ;
-	t.a = 2 ;
-	t.b =1 ;
-	a = t.c ;
-	printf(" %d\n" , t.c) ;
-	return 0 ;
-}
-TEST_ENTRY(run_test_pool)
-//TEST_ENTRY(xml_test)
-/*int main() 
+int run_test ()
 {
-	while (!nd_key_esc()){
-		nd_sleep(100) ;
-		ndprintf("please hit!\n") ;	
-	}
-	ndprintf("you are hitting ESC!\n") ;
-	getch() ;
+    TEST_ENTRY(test_atomic);
+    //TEST_ENTRY(mutex_test) ;
+    TEST_ENTRY(test_alloc) ;
+    TEST_ENTRY(crypt_test) ;
+    TEST_ENTRY(thmsg_test) ;
+    TEST_ENTRY(thsrv_test) ;
+    return 0;
 }
-*/
+int main()
+{
+    inst_init() ;
+    
+    run_test () ;
+    inst_deinit() ;
+    printf("press any key to continue!\n") ;
+    getch() ;
+    exit(0) ;
+}
+

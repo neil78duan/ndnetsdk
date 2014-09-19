@@ -61,6 +61,8 @@ CPPAPI netObject ndOpenConnect(const char *host, int port) ;
 CPPAPI void ndClostConnect(netObject netObj) ;
 
 //send message
+/* send message and data */
+CPPAPI int ndSend(netObject netObj,int maxid, int minid, void *data, unsigned int size) ;
 /* send message with format*/
 CPPAPI int ndSendFormat(netObject netObj,int maxid, int minid, int argc, ...) ;
 /* send data ,before send the data need to convert to net byte-order*/

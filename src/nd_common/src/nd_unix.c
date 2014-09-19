@@ -83,7 +83,7 @@ void pthread_sleep(NDUINT32 msec)
     usleep(t) ;
 }
 
-int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)
+int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)
 {
     int times = waittime / 10 ;
     int ret ;
@@ -112,14 +112,18 @@ int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)
 
 int _nd_sem_open(ndsem_t *sem, int pshared, unsigned int value)
 {
+    sem_t *p_sem ;
     static int _s_sem_index = 0 ;
     char sem_name[64] ;
-    snprintf(sem_name, sizeof(sem_name), "ndsem%d", _s_sem_index) ;
-    _s_sem_index++;
-    *sem = sem_open( sem_name, O_CREAT, 0644, value );
-    if (*sem==NULL) {
+    int sem_id = nd_atomic_inc(&_s_sem_index);
+    snprintf(sem_name, sizeof(sem_name), "ndsem%d", sem_id) ;
+    //_s_sem_index++;
+    *sem = (ndsem_t) sem_open( sem_name, O_CREAT, 0644, value );
+    if (p_sem==SEM_FAILED) {
+        nd_logerror("sem_open() : %s\n" AND nd_last_error() ) ;
         return -1 ;
     }
+    
     return 0;
 }
 

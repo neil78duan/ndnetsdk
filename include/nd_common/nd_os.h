@@ -80,8 +80,6 @@ typedef struct _sND_condvar
 	ndsem_t hSig ;
 }NDCondVar ;
 
-typedef NDMutex					nd_mutex ;
-typedef NDCondVar 				nd_cond ;
 
 /*define mutex operation*/
 ND_COMMON_API int initNDMutex(NDMutex *m) ;
@@ -98,6 +96,11 @@ ND_COMMON_API int signalCondVar(NDCondVar *v);
 ND_COMMON_API int destoryCondVar(NDCondVar *v);
 ND_COMMON_API int broadcastCondVar(NDCondVar *v) ;
 
+#ifdef _MSC_VER
+
+typedef NDMutex					nd_mutex ;
+typedef NDCondVar 				nd_cond ;
+
 //定义互斥接口
 #define nd_mutex_init(m)	initNDMutex(m)	//初始化互斥
 #define nd_mutex_lock(m) 	entryMutex(m)	//lock
@@ -112,6 +115,9 @@ ND_COMMON_API int broadcastCondVar(NDCondVar *v) ;
 #define nd_cond_timewait(c,m, ms)	timewaitCondVar(c,m,ms)
 #define nd_cond_signal(v)			signalCondVar(v) 
 #define nd_cond_broadcast(v)		broadcastCondVar(v) 
+
+#else
+#endif
 
 typedef struct ndfast_lock
 {

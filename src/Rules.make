@@ -17,32 +17,6 @@ OS_kernel = $(shell uname -s | tr '[A-Z]' '[a-z]')
 
 AIM_NAME = $(OS_kernel)_$(ARCH_MACHINE)
 
-ifeq ($(OS_kernel),linux)
-	CFLAGS += -D__LINUX__
-endif
-
-ifeq ($(OS_kernel),darwin)
-    CFLAGS += -D__MAC_OS__
-endif
-
-CFLAGS += -c -w -O  -DND_UNIX
-LFLAGS +=  -lpthread  -lm
-
-ifeq ($(DEBUG),y)
-	CFLAGS +=  -g -DDEBUG  -DND_DEBUG 
-	ifeq ($(PROFILE),y)
-		CFLAGS += -pg
-	else 
-	
-	endif
-	
-#	LFLAGS += -
-else
-	CFLAGS += -DNDEBUG
-endif
-
-#PLATFORM_BITS =  $(shell  getconf LONG_BIT )
-
 
 TOPDIR = $(NDHOME)
 CURDIR = .
@@ -53,15 +27,38 @@ WORKDIR = $(TOPDIR)/bin/$(AIM_NAME)
 LIBDIR = $(TOPDIR)/lib/$(AIM_NAME)
 LIBOUTPUT = $(TOPDIR)/lib
 
+ifeq ($(OS_kernel),linux)
+    CFLAGS += -D__LINUX__
+endif
+ifeq ($(OS_kernel),darwin)
+    CFLAGS += -D__MAC_OS__
+endif
 
-#ifeq ($(PLATFORM_BITS),64)
-#	CFLAGS += -DX86_64
-#	WORKDIR = $(TOPDIR)/bin64
-#	LIBDIR = $(TOPDIR)/lib64
-#else
-#	WORKDIR = $(TOPDIR)/bin
-#	LIBDIR = $(TOPDIR)/lib
-#endif
+CFLAGS += -c -w -O  -DND_UNIX
+LFLAGS +=  -lpthread  -lm
+
+
+ifeq ($(DEBUG),y)
+    CFLAGS +=  -g -DDEBUG  -DND_DEBUG
+    ifeq ($(PROFILE),y)
+        CFLAGS += -pg
+    else
+    endif
+
+    CLIENT_LIB := ndclient_$(AIM_NAME)_d
+    SRV_LIB := ndsdk_$(AIM_NAME)_d
+else
+    CFLAGS += -DNDEBUG
+    CLIENT_LIB := ndclient_$(AIM_NAME)
+    SRV_LIB := ndsdk_$(AIM_NAME)
+endif
+
+PLATFORM_BITS =  $(shell  getconf LONG_BIT )
+
+ifeq ($(PLATFORM_BITS),64)
+	CFLAGS += -DX86_64
+else
+endif
 
 
 #create objdir
