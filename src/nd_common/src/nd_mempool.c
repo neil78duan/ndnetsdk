@@ -233,8 +233,8 @@ static void* __sys_page_alloc(size_t size)
 {
 	struct alloc_node *ret ;
 	size = PAGE_ALINE(size) ;
-	ret = (struct alloc_node *) nd_mmap( size ) ;
-    //ret = (struct alloc_node *) malloc( size ) ;
+	//ret = (struct alloc_node *) nd_mmap( size ) ;
+    ret = (struct alloc_node *) malloc( size ) ;
 	if (!ret){
 		NDUINT32 lsterr = nd_last_errno() ;
 		nd_logerror("VirtualAlloc(%x) ,errcode =%d :%s\n" AND size AND lsterr AND nd_str_error(lsterr)) ;
@@ -248,8 +248,8 @@ static void* __sys_page_alloc(size_t size)
 static void __sys_page_free(void *addr)
 {
 	struct alloc_node *p = (struct alloc_node *)addr ;
-	nd_munmap(p,p->size) ;
-    //free(p) ;
+	//nd_munmap(p,p->size) ;
+    free(p) ;
 }
 
 
@@ -1046,7 +1046,9 @@ void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 
 	// that may be unfortunate, just in case
 	__real_p->__magic=__deleted_magic;
-	memset((char*)__p, __release_byte, __real_p->_M_size*sizeof(char));
+	//memset((char*)__p, __release_byte, __real_p->_M_size*sizeof(char));
+    
+    memset((char*)__real_p,__release_byte, __real_n) ;
 	freefn(_pool, __real_p);
 }
 /*

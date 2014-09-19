@@ -69,8 +69,8 @@ int run_test ()
     TEST_ENTRY(test_atomic);
     //TEST_ENTRY(mutex_test) ;
     TEST_ENTRY(test_alloc) ;
-    TEST_ENTRY(crypt_test) ;
-    TEST_ENTRY(thmsg_test) ;
+    //TEST_ENTRY(crypt_test) ;
+    //TEST_ENTRY(thmsg_test) ;
     TEST_ENTRY(thsrv_test) ;
     return 0;
 }

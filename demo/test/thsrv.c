@@ -170,6 +170,6 @@ int thsrv_test()
 	nd_timer_destroy(__r_timer,0) ;
 //	nd_common_release() ;
 	
-	getch();
+	//getch();
 	return 0;
 }

@@ -8,8 +8,8 @@
 #include "nd_common/nd_common.h"
 #include "nd_srvcore/nd_srvlib.h"
 
-#define READ_FILE "3.zip"
-#define WRITE_FILE "4.zip"
+#define READ_FILE "input.pkg"
+#define WRITE_FILE "output.pkg"
 
 
 nd_thsrvid_t _recv_id, _send_id ;
@@ -40,7 +40,7 @@ static int sender(void *p)
 
 		send_len += nReadNum ;
 		ret = nd_thsrv_send(_recv_id,1,buf, nReadNum) ;
-		nd_assert(ret==0) ;
+		//nd_assert(ret==0) ;
 		//nd_sleep(10) ;
 		nReadNum = rand() %1000 + 10;
 		++times ;
@@ -127,6 +127,6 @@ int thmsg_test()
 	nd_timer_destroy(__r_timer,0) ;
 //	nd_common_release() ;
 	
-	getch();
+//	getch();
 	return 0;
 }

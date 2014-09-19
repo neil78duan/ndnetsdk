@@ -103,7 +103,7 @@ void *alloc_entry(void *param)
 	return NULL ;
 }
 
-#define _TMAX_TH 1
+#define _TMAX_TH 4
 int alloc_test()
 {
 
@@ -151,7 +151,7 @@ int run_test_pool()
 		return  1;
 	}
 
-	for (i=0; i<10000; i++)
+	for (i=0; i<100; i++)
 	{	
 		total_size = 0 ;
 		while( (p=nd_pool_alloc(pool,size))!=NULL) {
@@ -241,7 +241,7 @@ int static_alloc_test()
 int test_alloc()
 {
     alloc_test();
-    pool_test();
+    //pool_test();
     static_alloc_test();
     return  0;
 }

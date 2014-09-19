@@ -62,7 +62,6 @@ ND_COMMON_API int kbhit ( void );
 #define NDSEM_TIMEOUT		1
 #define INFINITE            0xFFFFFFFF
 
-/*
 #ifdef __MAC_OS__
 typedef sem_t* 				ndsem_t ;
 ND_COMMON_API int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)  ;
@@ -75,24 +74,16 @@ ND_COMMON_API int _nd_sem_open(ndsem_t *sem, int pshared, unsigned int value) ;
 
 #else
 
-#endif
-*/
-
 typedef sem_t 				ndsem_t ;			//信号变量
 ND_COMMON_API int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)  ;
 
 #define nd_sem_wait(s, timeout)		_unix_sem_timewait(&(s), timeout) //sem_wait(&(s))		//等待信号
 #define nd_sem_post(s)		sem_post(&(s))		//发送信号
+#define nd_sem_init(s)		sem_init(&(s),0,0)	//initilize semahpore resource, return 0 on success , error r
 #define nd_sem_destroy(s)   sem_destroy(&(s)) 		//destroy semahpore resource
 
-
-#ifdef __MAC_OS__
-ND_COMMON_API int _nd_sem_open(ndsem_t *sem, int pshared, unsigned int value) ;
-#define nd_sem_init(s)		_nd_sem_open(&(s),0,0)	//initilize semahpore resource, return 0 on success , error r
-
-#else
-#define nd_sem_init(s)		sem_init(&(s),0,0)	//initilize semahpore resource, return 0 on success , error r
 #endif
+
 
 
 #define nd_thread_self()	pthread_self()		//得到现成自己的id
