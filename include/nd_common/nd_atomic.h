@@ -84,10 +84,6 @@ typedef  LONG ndatomic_t ;
 //atomic operate
 __INLINE__ int nd_compare_swap(ndatomic_t *lpDest,ndatomic_t lComp,ndatomic_t lExchange)
 {
-	//ndatomic_t last = *lpDest ;
-//#ifdef InterlockedCompareExchangePointer
-//	return (InterlockedCompareExchange(lpDest, lExchange,lComp)==last);
-//#else 
 #if _MSC_VER < 1300 // 1200 == VC++ 6.0
 	return (int) (lComp==(LONG)InterlockedCompareExchange((PVOID*)lpDest, (PVOID)lExchange,(PVOID)lComp) );
 #else 
@@ -112,17 +108,17 @@ typedef int ndatomic_t ;
 
 #define nd_atomic_inc(x) __sync_add_and_fetch((x),1)  
 #define nd_atomic_dec(x) __sync_sub_and_fetch((x),1)  
-#define nd_atomic_add(x,y) __sync_add_and_fetch((x),(y))  
-#define nd_atomic_sub(x,y) __sync_sub_and_fetch((x),(y)) 
+#define nd_atomic_add(x,y) __sync_fetch_and_add((x),(y))
+#define nd_atomic_sub(x,y) __sync_fetch_and_sub((x),(y))
 #define nd_compare_swap(dest, cmp, exchval) (int)__sync_bool_compare_and_swap(dest, cmp, exchval)
-static __INLINE__ ndatomic_t nd_atomic_swap(ndatomic_t *ptr, ndatomic_t exval)
+static __INLINE__ ndatomic_t nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 {
-	ndatomic_t cmpval = *ptr ;
-	while(!nd_compare_swap(ptr, cmpval,exval)) {
-		cmpval = *ptr ;
-	}
-	return cmpval ;
-};
+    int oldval;
+    do {
+        oldval = *p ;
+    }while (!nd_compare_swap(p, oldval, exch)) ;
+    return oldval ;
+}
 #define nd_testandset(p) __sync_fetch_and_add((p),1)
 #define nd_atomic_set(p, val)    nd_atomic_swap(p,val)
 #define nd_atomic_read(p)        (*(p))
@@ -237,7 +233,7 @@ typedef int ndatomic_t ;
 
 #include <sys/types.h>
 #include <machine/atomic.h>
-//#define nd_atomic_swap(p, val) (atomic_store_rel_int(p,val),*(p)) 
+
 static inline  int nd_testandset(volatile int *p) {return !atomic_cmpset_rel_int(p,0,1);}
 #define nd_compare_swap(p,compare,exchange) atomic_cmpset_rel_int(p,compare,exchange)
 static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
@@ -272,8 +268,26 @@ static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
     }while (!nd_compare_swap(p, oldval, exch)) ;
     return oldval ;
 }
-#define nd_atomic_add(p, val)  OSAtomicAdd32(val, p)
-#define nd_atomic_sub(p,val)  OSAtomicAdd32(-val, p)
+
+static inline int nd_atomic_add(volatile ndatomic_t *p, int nstep)
+{
+    ndatomic_t oldval;
+    do {
+        oldval = *p ;
+    }while (!nd_compare_swap(p, oldval, oldval+nstep)) ;
+    return oldval;
+}
+
+static inline int nd_atomic_sub(volatile ndatomic_t *p, int nstep)
+{
+    ndatomic_t oldval;
+    do {
+        oldval = *p ;
+    }while (!nd_compare_swap(p, oldval, oldval-nstep)) ;
+    return oldval;
+}
+//#define nd_atomic_add(p, val)  OSAtomicAdd32(val, p)
+//#define nd_atomic_sub(p,val)  OSAtomicAdd32(-val, p)
 
 
 #define nd_atomic_inc(p) OSAtomicIncrement32(p)

@@ -144,6 +144,7 @@ ND_COMMON_API int mythread_cond_timewait(pthread_cond_t *cond,
 							pthread_mutex_t *mutex, 
 							unsigned long mseconds);
 
+/*
 typedef pthread_mutex_t		nd_mutex ;
 typedef pthread_cond_t		nd_cond;
 
@@ -159,7 +160,7 @@ typedef pthread_cond_t		nd_cond;
 #define nd_cond_timewait(c,m, ms) 	mythread_cond_timewait(c,m,ms)
 #define nd_cond_signal(v)			pthread_cond_signal(v) 
 #define nd_cond_broadcast(v)		pthread_cond_broadcast(v)
-
+*/
 //file map 
 typedef struct nd_filemap_t
 {

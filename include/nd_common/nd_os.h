@@ -96,7 +96,7 @@ ND_COMMON_API int signalCondVar(NDCondVar *v);
 ND_COMMON_API int destoryCondVar(NDCondVar *v);
 ND_COMMON_API int broadcastCondVar(NDCondVar *v) ;
 
-#ifdef _MSC_VER
+//#ifdef _MSC_VER
 
 typedef NDMutex					nd_mutex ;
 typedef NDCondVar 				nd_cond ;
@@ -116,8 +116,8 @@ typedef NDCondVar 				nd_cond ;
 #define nd_cond_signal(v)			signalCondVar(v) 
 #define nd_cond_broadcast(v)		broadcastCondVar(v) 
 
-#else
-#endif
+//#else
+//#endif
 
 typedef struct ndfast_lock
 {
