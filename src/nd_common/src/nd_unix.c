@@ -111,19 +111,26 @@ int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)
 }
 
 
-int _nd_sem_open(ndsem_t *sem, int pshared, unsigned int value)
+int _nd_sem_open(ndsem_t *sem, unsigned int value)
 {
-    static int _s_sem_index = 0 ;
+    static ndatomic_t _s_sem_index = 0 ;
     char sem_name[64] ;
-    snprintf(sem_name, sizeof(sem_name), "ndsem%d", _s_sem_index) ;
-    _s_sem_index++;
-    *sem = sem_open( sem_name, O_CREAT, 0644, value );
-    if (*sem==NULL) {
-        return -1 ;
-    }
+    
+    do {
+        snprintf(sem_name, sizeof(sem_name), "nd_sem_%d", nd_atomic_dec( &_s_sem_index)) ;
+        
+        *sem = sem_open( sem_name, O_CREAT|O_EXCL, 0644, value );
+        if (*sem== SEM_FAILED) {
+            nd_logerror("sem_open : %s", nd_last_error()) ;
+            if (errno != EEXIST) {
+                return -1 ;
+            }
+            
+        }
+        
+    }while (*sem==SEM_FAILED && errno==EEXIST) ;
     return 0;
 }
-
 
 #else
 
