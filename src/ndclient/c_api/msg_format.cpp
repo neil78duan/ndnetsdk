@@ -14,7 +14,7 @@
 #include "ndcli/nd_api_c.h"
 
 #include "nd_msg.h"
-
+#include <stdarg.h>
 
 int ndSend(netObject netObj,int maxid, int minid, void *data, unsigned int size)
 {
