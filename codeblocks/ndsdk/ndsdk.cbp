@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ndsdk" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/ndsdk" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Debug/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DND_DEBUG" />
+					<Add directory="../../include" />
+				</Compiler>
+				<Linker>
+					<Add directory="../../lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/ndsdk" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-DX86_64" />
+			<Add option="-DND_UNIX" />
+			<Add option="-D__LINUX__" />
+		</Compiler>
+		<Unit filename="../../include/nd_common/list.h" />
+		<Unit filename="../../include/nd_common/nd_alloc.h" />
+		<Unit filename="../../include/nd_common/nd_atomic.h" />
+		<Unit filename="../../include/nd_common/nd_bintree.h" />
+		<Unit filename="../../include/nd_common/nd_comcfg.h" />
+		<Unit filename="../../include/nd_common/nd_comdef.h" />
+		<Unit filename="../../include/nd_common/nd_common.h" />
+		<Unit filename="../../include/nd_common/nd_dbg.h" />
+		<Unit filename="../../include/nd_common/nd_define.h" />
+		<Unit filename="../../include/nd_common/nd_handle.h" />
+		<Unit filename="../../include/nd_common/nd_mempool.h" />
+		<Unit filename="../../include/nd_common/nd_node_mgr.h" />
+		<Unit filename="../../include/nd_common/nd_os.h" />
+		<Unit filename="../../include/nd_common/nd_recbuf.h" />
+		<Unit filename="../../include/nd_common/nd_static_alloc.h" />
+		<Unit filename="../../include/nd_common/nd_str.h" />
+		<Unit filename="../../include/nd_common/nd_timer.h" />
+		<Unit filename="../../include/nd_common/nd_unix.h" />
+		<Unit filename="../../include/nd_common/nd_win.h" />
+		<Unit filename="../../include/nd_common/nd_xml.h" />
+		<Unit filename="../../include/nd_common/ndchar.h" />
+		<Unit filename="../../include/nd_common/nddir.h" />
+		<Unit filename="../../include/nd_crypt/nd_crypt.h" />
+		<Unit filename="../../include/nd_crypt/nd_cryptfile.h" />
+		<Unit filename="../../include/nd_crypt/nd_pubkey.h" />
+		<Unit filename="../../include/nd_crypt/rsah/des.h" />
+		<Unit filename="../../include/nd_crypt/rsah/digit.h" />
+		<Unit filename="../../include/nd_crypt/rsah/global.h" />
+		<Unit filename="../../include/nd_crypt/rsah/md2.h" />
+		<Unit filename="../../include/nd_crypt/rsah/md5.h" />
+		<Unit filename="../../include/nd_crypt/rsah/nn.h" />
+		<Unit filename="../../include/nd_crypt/rsah/prime.h" />
+		<Unit filename="../../include/nd_crypt/rsah/r_random.h" />
+		<Unit filename="../../include/nd_crypt/rsah/rsa.h" />
+		<Unit filename="../../include/nd_crypt/rsah/rsaref.h" />
+		<Unit filename="../../include/nd_crypt/tea.h" />
+		<Unit filename="../../include/nd_msg.h" />
+		<Unit filename="../../include/nd_net/byte_order.h" />
+		<Unit filename="../../include/nd_net/nd_iphdr.h" />
+		<Unit filename="../../include/nd_net/nd_msgentry.h" />
+		<Unit filename="../../include/nd_net/nd_netcrypt.h" />
+		<Unit filename="../../include/nd_net/nd_netioctl.h" />
+		<Unit filename="../../include/nd_net/nd_netlib.h" />
+		<Unit filename="../../include/nd_net/nd_netobj.h" />
+		<Unit filename="../../include/nd_net/nd_netpack.h" />
+		<Unit filename="../../include/nd_net/nd_netui.h" />
+		<Unit filename="../../include/nd_net/nd_sock.h" />
+		<Unit filename="../../include/nd_net/nd_srv.h" />
+		<Unit filename="../../include/nd_net/nd_tcp.h" />
+		<Unit filename="../../include/nd_net/nd_udp.h" />
+		<Unit filename="../../include/nd_net/nd_udt.h" />
+		<Unit filename="../../include/nd_net/nd_udthdr.h" />
+		<Unit filename="../../include/nd_srvcore/client_map.h" />
+		<Unit filename="../../include/nd_srvcore/nd_listensrv.h" />
+		<Unit filename="../../include/nd_srvcore/nd_session.h" />
+		<Unit filename="../../include/nd_srvcore/nd_srvlib.h" />
+		<Unit filename="../../include/nd_srvcore/nd_thpool.h" />
+		<Unit filename="../../include/nd_srvcore/nd_threadmsgid.h" />
+		<Unit filename="../../include/nd_srvcore/nd_threadsrv.h" />
+		<Unit filename="../../include/nd_vm/nd_vm.h" />
+		<Unit filename="../../include/ndapplib/applib.h" />
+		<Unit filename="../../include/ndapplib/nd_affair.h" />
+		<Unit filename="../../include/ndapplib/nd_cmmgr.h" />
+		<Unit filename="../../include/ndapplib/nd_connector.h" />
+		<Unit filename="../../include/ndapplib/nd_containerXL.h" />
+		<Unit filename="../../include/ndapplib/nd_instance.h" />
+		<Unit filename="../../include/ndapplib/nd_listener.h" />
+		<Unit filename="../../include/ndapplib/nd_lockhelper.h" />
+		<Unit filename="../../include/ndapplib/nd_msgpacket.h" />
+		<Unit filename="../../include/ndapplib/nd_object.h" />
+		<Unit filename="../../include/ndapplib/nd_objmgr.h" />
+		<Unit filename="../../include/ndapplib/nd_session.h" />
+		<Unit filename="../../include/ndapplib/readcfg.h" />
+		<Unit filename="../../include/ndcli/nd_api_c.h" />
+		<Unit filename="../../include/ndcli/nd_iconn.h" />
+		<Unit filename="../../include/ndstl/nd_allocator.h" />
+		<Unit filename="../../include/ndstl/nd_array.h" />
+		<Unit filename="../../include/ndstl/nd_new.h" />
+		<Unit filename="../../include/ndstl/nd_rbtree.h" />
+		<Unit filename="../../include/ndstl/nd_reftree.h" />
+		<Unit filename="../../include/ndstl/nd_safemap.h" />
+		<Unit filename="../../include/ndstl/nd_stllist.h" />
+		<Unit filename="../../include/ndstl/nd_stlmap.h" />
+		<Unit filename="../../include/ndstl/nd_stlset.h" />
+		<Unit filename="../../include/ndstl/nd_text.h" />
+		<Unit filename="../../include/ndstl/nd_utility.h" />
+		<Unit filename="../../include/ndstl/nd_vector.h" />
+		<Unit filename="../../src/nd_common/dllmain.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/bintree.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/callstack.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/common.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_handle.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_mempool.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_mutex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_static_alloc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_str.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_timer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_trace.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_unix.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_win.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nd_xml.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/nddir.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/node_mgr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/recbuf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_common/src/source_log.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/desc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/digit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/md2c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/md5c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/nn.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/prime.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/r_dh.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/r_encode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/r_enhanc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/r_keygen.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/r_random.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/r_stdlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/rsa/rsa.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/src/nd_cryptfile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/src/nd_pubkey.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/src/ndcrypt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/src/ndrsa.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_crypt/src/tea.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/ipraw.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/nd_msgentry.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/nd_net.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/nd_netobj.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/nd_netui.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/nd_socket.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/nd_tcp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/nd_udp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/net_srv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/proxy_cli.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/udt_icmp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/udt_net.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/udt_socket.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_net/src/udt_srv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/client_map.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/linux_listen.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/nd_session.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/nd_thmsg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/nd_thpoolio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/srv_listen.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/srv_nodemgr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/srvcore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/thread_srv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_srvcore/src/udp_listen.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_vm/src/nd_asm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_vm/src/nd_formula.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_vm/src/nd_vm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_vm/src/nd_vmdbg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_vm/src/nd_vmmain.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/nd_vm/vmdebug/nd_vmmain.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/ndapplib/misc.cpp" />
+		<Unit filename="../../src/ndapplib/nd_affair.cpp" />
+		<Unit filename="../../src/ndapplib/nd_cmmgr.cpp" />
+		<Unit filename="../../src/ndapplib/nd_connector.cpp" />
+		<Unit filename="../../src/ndapplib/nd_instance.cpp" />
+		<Unit filename="../../src/ndapplib/nd_listener.cpp" />
+		<Unit filename="../../src/ndapplib/nd_msgpack.cpp" />
+		<Unit filename="../../src/ndapplib/nd_new.cpp" />
+		<Unit filename="../../src/ndapplib/nd_object.cpp" />
+		<Unit filename="../../src/ndapplib/nd_objmgr.cpp" />
+		<Unit filename="../../src/ndapplib/nd_privkey.cpp" />
+		<Unit filename="../../src/ndapplib/nd_session.cpp" />
+		<Unit filename="../../src/ndapplib/nd_stlalloc.cpp" />
+		<Unit filename="../../src/ndapplib/readcfg.cpp" />
+		<Unit filename="../../src/ndapplib/unix_sig.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

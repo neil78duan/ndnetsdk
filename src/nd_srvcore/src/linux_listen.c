@@ -382,6 +382,11 @@ LISTEN_EXIT:
     return 0 ;
 }
 
+int create_event_fd( int maxnumber )
+{
+    return kqueue();
+}
+
 #define epoll_sub kqueue_sub
 #define epoll_main kqueue_main
 
@@ -389,10 +394,6 @@ LISTEN_EXIT:
 
 #if defined(ND_UNIX)
 
-int create_event_fd( int maxnumber )
-{
-    return kqueue();
-}
 
 int thpoolex_create(struct listen_contex *handle, int pre_thnum, int session_num)
 {
