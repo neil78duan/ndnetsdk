@@ -1,6 +1,6 @@
-  /* file : linux_listen.c 
- * listen service on linux platform 
- * 
+  /* file : linux_listen.c
+ * listen service on linux platform
+ *
  * all right reserved by neil duan 2007
  * 2007-10-22
  */
@@ -28,7 +28,7 @@ int epoll_main(struct thread_pool_info *thip)
 	ndsocket_t listen_fd ;
 	int  event_num;
 	struct epoll_event ev_listen, *ev_buf ;
-	
+
 	nd_handle thread_handle = nd_thsrv_gethandle(0)  ;
 	struct listen_contex *listen_info = (struct listen_contex *)thip->lh ;
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;
@@ -43,33 +43,33 @@ int epoll_main(struct thread_pool_info *thip)
 		LEAVE_FUNC();
 		return -1 ;
 	}
-		
+
 	ev_listen.data.u32 = (__uint32_t)0 ;
-	ev_listen.events = EPOLLIN | EPOLLET;
+	ev_listen.events = EPOLLIN ;
 
 	if(-1==epoll_ctl(thip->iopc_handle,EPOLL_CTL_ADD, listen_fd,&ev_listen) ) {
 		nd_logerror("epoll ctrl error :%s" AND nd_last_error()) ;
 		goto LISTEN_EXIT ;
 	}
-	
+
 	while (!nd_thsrv_isexit(thread_handle)){
         int i;
         int msgret ;
         int nfds ;
-        
+
         if (listen_info->pre_update){
-            listen_info->pre_update((nd_handle)listen_info, context) ;
+            listen_info->pre_update((nd_handle)listen_info, thread_handle) ;
         }
-        msgret = nd_thsrv_msghandler(context) ;
+        msgret = nd_thsrv_msghandler(thread_handle) ;
         if(-1== msgret) {
             if (listen_info->end_update){
-                listen_info->end_update((nd_handle)listen_info, context) ;
+                listen_info->end_update((nd_handle)listen_info, thread_handle) ;
             }
             break ;
         }
-        
+
         nfds = epoll_wait(thip->iopc_handle,ev_buf,event_num,50) ;
-        
+
 		for (i=0; i<nfds; i++){
 			if(ev_buf[i].data.u32==(__uint32_t)0) {
 				struct nd_client_map *client_map = accetp_client_connect(listen_info) ;
@@ -87,12 +87,12 @@ int epoll_main(struct thread_pool_info *thip)
 		}			//end for
 
 		epoll_update_session(pmanger,thip) ;
-        
+
         if (listen_info->end_update){
-            listen_info->end_update((nd_handle)listen_info, context) ;
+            listen_info->end_update((nd_handle)listen_info, thread_handle) ;
         }
 	}					//end while
-	
+
 LISTEN_EXIT:
 	//close_session_in_thread(thip) ;
 	close(thip->iopc_handle) ;
@@ -124,27 +124,27 @@ int epoll_sub(struct thread_pool_info *thip)
 		int i;
         int msgret ;
         int nfds ;
-        
+
         if (listen_info->pre_update){
-            listen_info->pre_update((nd_handle)listen_info, context) ;
+            listen_info->pre_update((nd_handle)listen_info, thread_handle) ;
         }
-        msgret = nd_thsrv_msghandler(context) ;
+        msgret = nd_thsrv_msghandler(thread_handle) ;
         if(-1== msgret) {
             if (listen_info->end_update){
-                listen_info->end_update((nd_handle)listen_info, context) ;
+                listen_info->end_update((nd_handle)listen_info, thread_handle) ;
             }
             break ;
         }
-        
+
 		nfds = epoll_wait(thip->iopc_handle,ev_buf,event_num,50) ;
 		for (i=0; i<nfds; i++){
 			update_epoll_event(&ev_buf[i],pmanger,thip);
 		}			//end for
 		epoll_update_session(pmanger,thip) ;
-        
-        
+
+
         if (listen_info->end_update){
-            listen_info->end_update((nd_handle)listen_info, context) ;
+            listen_info->end_update((nd_handle)listen_info, thread_handle) ;
         }
 	}					//end while
 
@@ -158,7 +158,7 @@ LISTEN_EXIT:
 
 void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,struct thread_pool_info *thip)
 {
-	struct nd_client_map *client_map; 
+	struct nd_client_map *client_map;
 	int fd_tmp =(ev_node->data.u32 >> 16) & 0xffff;
 	NDUINT16 session_id =(NDUINT16) (ev_node->data.u32) & 0xffff;
 
@@ -170,16 +170,19 @@ void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,s
 		tcp_client_close(client_map,1) ;
 	}
 	else  if(ev_node->events & EPOLLIN){
-		int ret = nd_do_netmsg(client_map, &thip->lh->tcp) ;					
+		int ret = nd_do_netmsg(client_map, &thip->lh->tcp) ;
 		if(ret ==-1){
 			tcp_client_close(client_map,1) ;
 		}
 		else if(ret>0){
-			nd_tcpnode_flush_sendbuf(&(client_map->connect_node)) ; 
+			nd_tcpnode_flush_sendbuf(&(client_map->connect_node)) ;
 		}
-	}				
+	}
+	else if(ev_node->events & EPOLLOUT) {
+        nd_tcpnode_flush_sendbuf(&(client_map->connect_node)) ;
+	}
 	else if(ev_node->events & (EPOLLERR + EPOLLHUP) ) {
-		if (ETS_DEAD!=TCPNODE_STATUS(client_map) )	{						
+		if (ETS_DEAD!=TCPNODE_STATUS(client_map) )	{
 			tcp_client_close(client_map,1) ;
 		}
 		else {
@@ -190,11 +193,11 @@ void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,s
 }
 
 
-int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_map) 
+int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_map)
 {
 	struct epoll_event ev_listen;
 
-	ev_listen.events = EPOLLIN | EPOLLET | EPOLLERR | EPOLLHUP ;
+	ev_listen.events = EPOLLIN | EPOLLERR | EPOLLHUP| EPOLLRDHUP ;
 	ev_listen.data.u32 =(__uint32_t)(client_map->connect_node.session_id) |(client_map->connect_node.fd)<<16 ;
 	if (epoll_ctl(thip->iopc_handle, EPOLL_CTL_ADD, client_map->connect_node.fd, &ev_listen) < 0) {
 		return -1 ;
@@ -202,7 +205,7 @@ int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_
 	return 0 ;
 }
 
-int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *client_map) 
+int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *client_map)
 {
 	struct epoll_event ev_listen;
 	epoll_ctl(thip->iopc_handle, EPOLL_CTL_DEL, client_map->connect_node.fd, &ev_listen);
@@ -212,7 +215,7 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
 int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thpi)
 {
 	int i ,sleep=0;
-	struct nd_client_map  *client;	
+	struct nd_client_map  *client;
 
 	//flush send buffer
 	for (i=thpi->session_num-1; i>=0;i-- ) {
@@ -244,7 +247,7 @@ int regeister_event(int event_id, int regid,void *udata)
     EV_SET(&changes[0], regid, EVFILT_READ, EV_ADD, 0, 0, NULL);
     changes[0].udata = udata ;
     return kevent(event_id, changes, 1, NULL, 0, NULL);
-    
+
 }
 
 void update_epoll_event(struct kevent* ev_node,struct cm_manager *pmanger,struct thread_pool_info *thip)
@@ -252,14 +255,14 @@ void update_epoll_event(struct kevent* ev_node,struct cm_manager *pmanger,struct
     struct nd_client_map *client_map;
     NDUINT32 udata = (NDUINT32) ev_node->udata ;
     intptr_t len = ev_node->data;
-    
+
     int fd_tmp =(udata >> 16) & 0xffff;
     NDUINT16 session_id =(NDUINT16) (udata & 0xffff);
-    
+
     client_map = pmanger->lock(pmanger,session_id) ;
     if(!client_map )
         return ;
-    
+
     if(0==len || TCPNODE_CHECK_CLOSED(client_map)|| !check_connect_valid(& (client_map->connect_node))) {
         tcp_client_close(client_map,1) ;
     }
@@ -281,7 +284,7 @@ int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_
     //struct epoll_event ev_listen;
     void *data =(NDUINT32)(client_map->connect_node.session_id) |(client_map->connect_node.fd)<<16 ;
     return regeister_event(thip->iopc_handle, client_map->connect_node.fd, data) ;
-    
+
 }
 
 int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *client_map)
@@ -290,14 +293,14 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
     struct kevent changes[1];
     EV_SET(&changes[0], fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     return kevent(thip->iopc_handle, changes, 1, NULL, 0, NULL);
-    
+
 }
 
 int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thpi)
 {
     int i ,sleep=0;
-    struct nd_client_map  *client;	
-    
+    struct nd_client_map  *client;
+
     //flush send buffer
     for (i=thpi->session_num-1; i>=0;i-- ) {
         NDUINT16 session_id = thpi->sid_buf[i];
@@ -323,33 +326,33 @@ int kqueue_main(struct thread_pool_info *thip)
     ndsocket_t listen_fd ;
     int  event_num;
     struct kevent  *ev_buf ;
-    
+
     nd_handle thread_handle = nd_thsrv_gethandle(0)  ;
     struct listen_contex *listen_info = (struct listen_contex *)thip->lh ;
     struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;
-    
+
     nd_assert(thread_handle) ;
     listen_fd = get_listen_fd(listen_info);
     event_num = thip->max_sessions + 1;
-    
+
     ev_buf = (struct kevent *)malloc(event_num * sizeof(*ev_buf)) ;
     if(!ev_buf){
         nd_logerror("alloc memory ") ;
         LEAVE_FUNC();
         return -1 ;
     }
-    
+
     //register
     if (-1==regeister_event(thip->iopc_handle, listen_fd,NULL)) {
         nd_logerror("kqueue register fd ") ;
         return -1;
     }
-    
-    
+
+
     while (!nd_thsrv_isexit(thread_handle)){
         struct timespec tmsp = {0, 50 *1000000} ;
         int i,msgret ,nfds ;
-        
+
         if (listen_info->pre_update){
             listen_info->pre_update((nd_handle)listen_info, thread_handle) ;
         }
@@ -360,13 +363,13 @@ int kqueue_main(struct thread_pool_info *thip)
             }
             break ;
         }
-        
+
         nfds = kevent(thip->iopc_handle, NULL, 0, ev_buf, event_num, &tmsp);
-        
+
         for (i=0; i<nfds; i++){
             uintptr_t sock = ev_buf[i].ident;
             //intptr_t data = ev_buf[i].data;
-            
+
             if(sock==listen_fd) {
                 struct nd_client_map *client_map = accetp_client_connect(listen_info) ;
                 if(client_map && client_map->connect_node.session_id) {
@@ -381,14 +384,14 @@ int kqueue_main(struct thread_pool_info *thip)
                 update_epoll_event(&ev_buf[i],pmanger,thip);
             }		//end if
         }			//end for
-        
+
         epoll_update_session(pmanger,thip) ;
-        
+
         if (listen_info->end_update){
             listen_info->end_update((nd_handle)listen_info, thread_handle) ;
         }
     }					//end while
-    
+
 LISTEN_EXIT:
     //close_session_in_thread(thip) ;
     close(thip->iopc_handle) ;
@@ -405,21 +408,21 @@ int kqueue_sub(struct thread_pool_info *thip)
     nd_handle thread_handle = nd_thsrv_gethandle(0)  ;
     struct listen_contex *listen_info = (struct listen_contex *)thip->lh ;
     struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;
-    
+
     nd_assert(thread_handle) ;
     event_num = thip->max_sessions + 1;
-    
+
     ev_buf = (struct kevent*)malloc(event_num * sizeof(*ev_buf)) ;
     if(!ev_buf){
         nd_logerror("alloc memory ") ;
         LEAVE_FUNC();
         return -1 ;
     }
-    
+
     while (!nd_thsrv_isexit(thread_handle)){
         struct timespec tmsp = {0, 50 *1000000} ;
         int i,msgret ,nfds ;
-        
+
         if (listen_info->pre_update){
             listen_info->pre_update((nd_handle)listen_info, thread_handle) ;
         }
@@ -430,20 +433,20 @@ int kqueue_sub(struct thread_pool_info *thip)
             }
             break ;
         }
-        
+
         nfds = kevent(thip->iopc_handle, NULL, 0, ev_buf, event_num, &tmsp);
-        
-        
+
+
         for (i=0; i<nfds; i++){
             update_epoll_event(&ev_buf[i],pmanger,thip);
         }			//end for
         epoll_update_session(pmanger,thip) ;
-        
+
         if (listen_info->end_update){
             listen_info->end_update((nd_handle)listen_info, thread_handle) ;
         }
     }					//end while
-    
+
 LISTEN_EXIT:
     //close_session_in_thread(thip) ;
     close(thip->iopc_handle) ;
@@ -470,29 +473,29 @@ int thpoolex_create(struct listen_contex *handle, int pre_thnum, int session_num
     int i ;
     struct thread_pool_info  *piocp ;
     struct list_head *pos ;
-    
+
     for(i=0; i<pre_thnum; i++) {
         if(0==nd_open_listen_thread((nd_listen_handle) handle, session_num) ) {
             break ;
         }
     }
-    
+
     pos = handle->list_thread.next;
     if(pos == &handle->list_thread) {
         return -1 ;
     }
     piocp = list_entry(pos,struct thread_pool_info,list) ;
     //handle->listen_id = piocp->thid ;
-    
+
     nd_thsrv_timer(piocp->thid,(nd_timer_entry)update_connector_hub, handle,10, ETT_LOOP) ;
     do 	{
         pos = pos->next ;
         nd_thsrv_resume(piocp->thid) ;
         piocp = list_entry(pos,struct thread_pool_info,list) ;;
     } while (pos != &handle->list_thread);
-    
+
     return 0;
-    
+
 }
 
 int listen_thread_createex(struct thread_pool_info *ic)
@@ -503,7 +506,7 @@ int listen_thread_createex(struct thread_pool_info *ic)
         nd_showerror() ;
         return -1;
     }
-    
+
     ic->iopc_handle = epoll_fd;
     nd_threadsrv_entry th_func = (nd_threadsrv_entry)(ic->lh->listen_id ?epoll_sub:epoll_main);
     return listen_thread_create(ic,th_func);
