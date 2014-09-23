@@ -23,7 +23,7 @@ typedef struct nd_mm_pool *nd_handle ;
 
 #define _ND_ALINE(_size, _aline) (((_size)+(_aline)-1) & (~((_aline)-1)))
 
-#define ND_DEFAULT_ALINE_SIZE	8
+#define ND_DEFAULT_ALINE_SIZE	16
 #define MIN_SIZE				16
 #define ALIGN_SIZE				16
 
@@ -92,10 +92,10 @@ struct free_node {
 //sub allocator
 typedef struct mm_sub_allocator
 {
-	NDUINT32 size ;
+	allocheader_t size ;
 	NDUINT16 type ;
 	NDUINT16 myerrno;
-	NDUINT32 allocated_size ;					//已经分配的内存大小
+	allocheader_t allocated_size ;					//已经分配的内存大小
 	struct nd_mm_pool *parent ;					//
 	char *start, *end ;									//当前可以分配的内存起始地址
 	struct list_head self_list;							//在内存池中的列表(父级内存池使用)
@@ -155,7 +155,6 @@ nd_mmpool_t *nd_global_mmpool()
 {
 	if (!s_common_mmpool){
 		nd_mempool_root_init() ;
-        nd_logdebug("page size = %d getgranularity=%d", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
 	}
     
 	return s_common_mmpool ;
@@ -177,6 +176,24 @@ static void *_get_user_addr(nd_mmpool_t *pool, void *p) ;
 struct alloc_node *_user_addr_2sys( void *useraddr, size_t *user_len, size_t *alloc_len) ;
 static size_t __get_real_size(struct alloc_node *alloc_addr) ;
 static size_t __get_need_size(size_t user_size);
+
+#ifdef ND_DEBUG
+static __INLINE__ void freeFillMem(void *p, size_t size)
+{
+    memset(p, 'c', size) ;
+}
+static __INLINE__ void allocFillMem(void *p, size_t size)
+{
+    memset(p, 0, size) ;
+}
+#else
+static __INLINE__ void allocFillMem(void *p, size_t size)
+{
+}
+static __INLINE__ void freeFillMem(void *p, size_t size)
+{
+}
+#endif
 
 #ifdef _MSC_VER
 #define nd_mmap(s)     VirtualAlloc(NULL, (s) ,MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE) ;
@@ -227,8 +244,16 @@ static void __sys_free(void *addr)
 #define nd_mmap(s)     mmap(0, (s), PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0)
 #define nd_munmap(p,s) munmap((p), (s))
 int getgranularity() {	return (64*1024) ;}
-static void *__sys_alloc(size_t size ) {	return malloc(size) ;}
-static void __sys_free(void *p) {	free(p) ;}
+static void *__sys_alloc(size_t size )
+{
+    void *p = malloc(size) ;
+    allocFillMem(p, size) ;
+    return  p ;
+}
+static void __sys_free(void *p)
+{
+    free(p) ;
+}
 
 #endif
 // page alloc / free
@@ -243,15 +268,23 @@ static void* __sys_page_alloc(size_t size)
 		nd_logerror("VirtualAlloc(%x) ,errcode =%d :%s\n" AND size AND lsterr AND nd_str_error(lsterr)) ;
 	}
 	else {
+        allocFillMem(ret, size) ;
 		ret->size = size ;
 	}
+    nd_assert(0==((size_t)ret & ALLOCATOR_PAGE_BITMASK)) ;
+    
 	return ret ;
 }
 
 static void __sys_page_free(void *addr)
 {
 	struct alloc_node *p = (struct alloc_node *)addr ;
-	nd_munmap(p,p->size) ;
+    size_t size = p->size ;
+    freeFillMem(addr, size) ;
+    
+	nd_munmap(p,size) ;
+    
+    nd_assert(0==((size_t)p & ALLOCATOR_PAGE_BITMASK)) ;
     //free(p) ;
 }
 
@@ -261,6 +294,9 @@ int nd_mempool_root_init()
 {
 	if(	__mem_root.init )
 		return 0 ;
+    
+    nd_logdebug("page size = %d getgranularity=%d \n", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
+    
 	INIT_LIST_HEAD(&__mem_root.inuser_list) ;
 	//INIT_LIST_HEAD(&__mem_root.free_page);
 	nd_mutex_init(&__mem_root.lock) ;
@@ -646,6 +682,7 @@ static void __alloc_addr_size2index(nd_sub_allocator *sub_allocator, struct allo
 		size = CHUNK_INDEX(size) ;
 		size = size<<3 ;
 	}
+    nd_assert(0==(size & (~((size_t) ALLOCATOR_PAGE_BITMASK)) ));
 	alloc_addr->size = index | (size & (size_t) ALLOCATOR_PAGE_BITMASK) ;
 
 }
@@ -1171,8 +1208,10 @@ void _dump_trunk_leak(nd_mmpool_t *pool, void *startaddr, size_t size)
 // 		return ;
 // 	}
 	p = (struct __alloc_header*)startaddr ;
+#ifdef ND_SOURCE_TRACE
 	_logmsg(__FUNC__,p->file, p->line, ND_ERROR,"%s MEMORY LEAK size=%d\n", pool->inst_name[0]?pool->inst_name:"unknow_pool" AND p->_M_size) ;
-
+#endif
+    
 // 	char tmp ;
 // 	NDUINT32 *p =  (NDUINT32*) startaddr ;
 // 	NDUINT32 line =  *p++ ;
