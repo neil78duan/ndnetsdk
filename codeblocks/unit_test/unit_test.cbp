@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="unit_test" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/unit_test" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/unit_test" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="../../demo/test/alloc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/atomic.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/buffer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/checksum.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/crypt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/maintest.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/mutex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/test_udp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/test_xml.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/thmsg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../demo/test/thsrv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

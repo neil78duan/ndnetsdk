@@ -31,7 +31,7 @@ enum eObjectClose{
 #ifdef ND_SOURCE_TRACE
 
 #define ND_OBJ_BASE \
-	NDUINT32 size ;	\
+	size_t size ;	\
 	NDUINT16 type ;	\
 	NDUINT16 myerrno;	\
 	nd_close_callback close_entry ;\
@@ -42,7 +42,7 @@ enum eObjectClose{
 #else 
 
 #define ND_OBJ_BASE \
-	NDUINT32 size ;	\
+	size_t size ;	\
 	NDUINT16 type ;	\
 	NDUINT16 myerrno;	\
 	nd_close_callback close_entry ;\

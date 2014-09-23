@@ -1,7 +1,7 @@
 /* fiel nd_mempool.c
- * define a simple memory pool 
- * version 1.0 
- * neil duan 
+ * define a simple memory pool
+ * version 1.0
+ * neil duan
  * 2008-9
  */
 
@@ -23,7 +23,7 @@ typedef struct nd_mm_pool *nd_handle ;
 
 #define _ND_ALINE(_size, _aline) (((_size)+(_aline)-1) & (~((_aline)-1)))
 
-#define ND_DEFAULT_ALINE_SIZE	8
+#define ND_DEFAULT_ALINE_SIZE	16
 #define MIN_SIZE				16
 #define ALIGN_SIZE				16
 
@@ -32,7 +32,7 @@ typedef struct nd_mm_pool *nd_handle ;
 #define ND_DEFAULT_ALINE_SIZE	8
 #define MIN_SIZE				16
 #define ALIGN_SIZE				16
-#else 
+#else
 #define MIN_SIZE				8
 #define ND_DEFAULT_ALINE_SIZE	8
 #define ALIGN_SIZE				8
@@ -47,7 +47,7 @@ typedef struct nd_mm_pool *nd_handle ;
 #define GET_LITTLE_SIZE(index)	(((index)+1) *ALIGN_SIZE + MIN_SIZE-ALIGN_SIZE)
 #define LITTLE_ROUND_LOWWER(size)	((size) & ~(ALIGN_SIZE-1))
 
-#define BIG_CHUNK_NUM			64	//大块内存数组的个数 (1k , 2k ..., 16k) 
+#define BIG_CHUNK_NUM			64	//大块内存数组的个数 (1k , 2k ..., 16k)
 #define BIG_ALINE(size)			max(_ND_ALINE(size,BIG_SIZE), BIG_SIZE)
 #define BIG_INDEX(size)			(size /(BIG_SIZE) -1 )	//得到索引
 #define GET_BIG_SIZE(index)		(((index)+1) *BIG_SIZE)
@@ -57,8 +57,8 @@ typedef struct nd_mm_pool *nd_handle ;
 #define POOL_SIZE_BITS			16			//低16位不用
 
 #define DEFAULT_PAGE_SIZE		getgranularity()  //(1024*32)
-#define MIN_PAGE_SIZE			getgranularity() 
-#define SYS_PAGE_SIZE			getpagesize() 
+#define MIN_PAGE_SIZE			getgranularity()
+#define SYS_PAGE_SIZE			getpagesize()
 #define ROUND_PAGE_SIZE(s)		((s) + MIN_PAGE_SIZE -1) & (~((size_t)MIN_PAGE_SIZE-1))
 #define PAGE_ALINE(s)			max(_ND_ALINE(s,SYS_PAGE_SIZE), MIN_PAGE_SIZE)
 #define DIRECT_ALLOC_SIZE		(MIN_PAGE_SIZE-SYS_PAGE_SIZE)
@@ -89,13 +89,13 @@ struct free_node {
 	struct free_node *next ;
 };
  struct nd_mm_pool ;
-//sub allocator 
+//sub allocator
 typedef struct mm_sub_allocator
 {
-	NDUINT32 size ;
-	NDUINT16 type ;	
+	allocheader_t size ;
+	NDUINT16 type ;
 	NDUINT16 myerrno;
-	NDUINT32 allocated_size ;					//已经分配的内存大小
+	allocheader_t allocated_size ;					//已经分配的内存大小
 	struct nd_mm_pool *parent ;					//
 	char *start, *end ;									//当前可以分配的内存起始地址
 	struct list_head self_list;							//在内存池中的列表(父级内存池使用)
@@ -114,7 +114,7 @@ typedef struct nd_mm_pool
 	unsigned int free_allocator_num:8 ;					//空闲的分配器个数
 	//unsigned int trace_mem:1 ;							//跟踪每个被申请的内存
 	unsigned int in_used:1 ;							//没有申请过内存
-//#endif 
+//#endif
 	memdestruct_entry destruct_func ;					//内存虚构函数
 	struct list_head self_list;							//在内存池中的列表(父级内存池使用)
 	struct list_head allocator_list;					//using sub allocator
@@ -130,12 +130,12 @@ typedef struct nd_mm_pool
 #pragma pack(pop)
 
 struct pool_root_allocator{
-	int init ;		
+	int init ;
 	nd_mutex lock ;										//是否初始化
 	size_t free_size ;
 	struct list_head inuser_list;						//使用中的内存池
 } ;
-nd_mmpool_t *s_common_mmpool ;						//公共内存池 
+nd_mmpool_t *s_common_mmpool ;						//公共内存池
 static struct pool_root_allocator  __mem_root ;		//内存分配器,系统分配内存的函数
 //nd_mmpool_t *s_pool_for_static;						//如果程序还没有进入main 也就是没有调用nd_common_init之前使用的内存池
 
@@ -143,18 +143,20 @@ static struct pool_root_allocator  __mem_root ;		//内存分配器,系统分配内存的函数
 void _erase_mmstatics(void *addr) ;
 void _insertinto_mmstatics(nd_handle pool, void *addr, size_t size )  ;
 void remove_statics(nd_mmpool_t *pool) ;
-#define TRYTO_MMSTATIC(_pool, _addr, _size)	_insertinto_mmstatics(_pool, _addr, _size) 
+#define TRYTO_MMSTATIC(_pool, _addr, _size)	_insertinto_mmstatics(_pool, _addr, _size)
 #define ERASE_MMSTATICS(_addr) _erase_mmstatics(_addr)
-#else 
+#else
 #define TRYTO_MMSTATIC(_pool, _addr, _size) (void) 0
 #define ERASE_MMSTATICS(_addr)  (void) 0
 #endif
+
 
 nd_mmpool_t *nd_global_mmpool()
 {
 	if (!s_common_mmpool){
 		nd_mempool_root_init() ;
 	}
+    
 	return s_common_mmpool ;
 }
 
@@ -164,10 +166,10 @@ static void _walk_alloced_inpool(nd_mmpool_t *pool, walk_trunk_node func ) ;
 //调用所有内存块的析构函数
 //static void safe_destruct(nd_mmpool_t *pool) ;
 static void destruct_mm_entry(nd_mmpool_t *pool, void *startaddr, size_t size) ;
-#define safe_destruct(_pool) _walk_alloced_inpool(_pool,destruct_mm_entry) 
+#define safe_destruct(_pool) _walk_alloced_inpool(_pool,destruct_mm_entry)
 //输出内存泄露
 static void _dump_trunk_leak(nd_mmpool_t *pool, void *startaddr, size_t size) ;
-#define dump_memleak(_pool) _walk_alloced_inpool(_pool,_dump_trunk_leak) 
+#define dump_memleak(_pool) _walk_alloced_inpool(_pool,_dump_trunk_leak)
 
 //static void dump_memleak(nd_mmpool_t *pool) ;
 static void *_get_user_addr(nd_mmpool_t *pool, void *p) ;
@@ -175,10 +177,28 @@ struct alloc_node *_user_addr_2sys( void *useraddr, size_t *user_len, size_t *al
 static size_t __get_real_size(struct alloc_node *alloc_addr) ;
 static size_t __get_need_size(size_t user_size);
 
+#ifdef ND_DEBUG
+static __INLINE__ void freeFillMem(void *p, size_t size)
+{
+    memset(p, 'c', size) ;
+}
+static __INLINE__ void allocFillMem(void *p, size_t size)
+{
+    memset(p, 0, size) ;
+}
+#else
+static __INLINE__ void allocFillMem(void *p, size_t size)
+{
+}
+static __INLINE__ void freeFillMem(void *p, size_t size)
+{
+}
+#endif
+
 #ifdef _MSC_VER
 #define nd_mmap(s)     VirtualAlloc(NULL, (s) ,MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE) ;
 #define nd_munmap(p,s)	VirtualFree((p),0, MEM_RELEASE);
-int getgranularity() 
+int getgranularity()
 {
 	static int granularity = 0;
 	if (granularity == 0) {
@@ -188,7 +208,7 @@ int getgranularity()
 	}
 	return granularity;
 }
-int getpagesize() 
+int getpagesize()
 {
 	static int pagesize = 0;
 	if (pagesize == 0) {
@@ -200,7 +220,7 @@ int getpagesize()
 }
 static void * __sys_alloc(size_t size)
 {
-	void *ret = HeapAlloc(GetProcessHeap(), 0, (DWORD)size); 
+	void *ret = HeapAlloc(GetProcessHeap(), 0, (DWORD)size);
 	if (!ret){
 		NDUINT32 lsterr = nd_last_errno() ;
 		nd_logerror("HeapAlloc(%d) ,errcode =%d :%s\n" AND size AND lsterr AND nd_str_error(lsterr)) ;
@@ -214,7 +234,7 @@ static void __sys_free(void *addr)
 	}
 }
 
-#else 
+#else
 #include <sys/mman.h>
 
 #ifdef __MAC_OS__
@@ -224,8 +244,16 @@ static void __sys_free(void *addr)
 #define nd_mmap(s)     mmap(0, (s), PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0)
 #define nd_munmap(p,s) munmap((p), (s))
 int getgranularity() {	return (64*1024) ;}
-static void *__sys_alloc(size_t size ) {	return malloc(size) ;}
-static void __sys_free(void *p) {	free(p) ;}
+static void *__sys_alloc(size_t size )
+{
+    void *p = malloc(size) ;
+    allocFillMem(p, size) ;
+    return  p ;
+}
+static void __sys_free(void *p)
+{
+    free(p) ;
+}
 
 #endif
 // page alloc / free
@@ -233,23 +261,31 @@ static void* __sys_page_alloc(size_t size)
 {
 	struct alloc_node *ret ;
 	size = PAGE_ALINE(size) ;
-	//ret = (struct alloc_node *) nd_mmap( size ) ;
-    ret = (struct alloc_node *) malloc( size ) ;
+	ret = (struct alloc_node *) nd_mmap( size ) ;
+    //ret = (struct alloc_node *) malloc( size ) ;
 	if (!ret){
 		NDUINT32 lsterr = nd_last_errno() ;
 		nd_logerror("VirtualAlloc(%x) ,errcode =%d :%s\n" AND size AND lsterr AND nd_str_error(lsterr)) ;
 	}
 	else {
+        allocFillMem(ret, size) ;
 		ret->size = size ;
 	}
+    nd_assert(0==((size_t)ret & ALLOCATOR_PAGE_BITMASK)) ;
+    
 	return ret ;
 }
 
 static void __sys_page_free(void *addr)
 {
 	struct alloc_node *p = (struct alloc_node *)addr ;
-	//nd_munmap(p,p->size) ;
-    free(p) ;
+    size_t size = p->size ;
+    freeFillMem(addr, size) ;
+    
+	nd_munmap(p,size) ;
+    
+    nd_assert(0==((size_t)p & ALLOCATOR_PAGE_BITMASK)) ;
+    //free(p) ;
 }
 
 
@@ -258,9 +294,12 @@ int nd_mempool_root_init()
 {
 	if(	__mem_root.init )
 		return 0 ;
+    
+    nd_logdebug("page size = %d getgranularity=%d \n", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
+    
 	INIT_LIST_HEAD(&__mem_root.inuser_list) ;
 	//INIT_LIST_HEAD(&__mem_root.free_page);
-	nd_mutex_init(&__mem_root.lock) ;	
+	nd_mutex_init(&__mem_root.lock) ;
 	__mem_root.init = 1 ;
 
 	s_common_mmpool = nd_pool_create(EMEMPOOL_UNLIMIT,"nd_global_pool") ;
@@ -268,8 +307,8 @@ int nd_mempool_root_init()
 
 	if(!s_common_mmpool) {
 		nd_mutex_destroy(&__mem_root.lock) ;
-		__mem_root.init = 0 ;	
-		return -1 ;	
+		__mem_root.init = 0 ;
+		return -1 ;
 	}
 	nd_pool_set_trace(s_common_mmpool,1) ;
 	return 0 ;
@@ -279,15 +318,15 @@ int nd_mempool_root_init()
 void nd_mempool_root_release()
 {
 	struct list_head *pos, *next ;
-	nd_mmpool_t *pool; 
+	nd_mmpool_t *pool;
 	if (__mem_root.init==0){
 		return ;
 	}
 	list_for_each_safe(pos,next,&__mem_root.inuser_list) {
 		pool = list_entry(pos,struct nd_mm_pool, self_list ) ;
 		nd_pool_destroy(pool,0) ;
-	}	
-	
+	}
+
 	nd_mutex_destroy(&__mem_root.lock) ;
 	__mem_root.init = 0 ;
 }
@@ -301,7 +340,7 @@ static __INLINE__ void __adjust_freeaddr(nd_sub_allocator *sub_allocator)
 	}
 }
 
-int __sub_allocator_init(nd_sub_allocator *pool, size_t size, nd_mmpool_t *parent) 
+int __sub_allocator_init(nd_sub_allocator *pool, size_t size, nd_mmpool_t *parent)
 {
 	pool->size = (NDUINT32)size  ;
 	pool->myerrno = 0 ;
@@ -320,7 +359,7 @@ int __sub_allocator_init(nd_sub_allocator *pool, size_t size, nd_mmpool_t *paren
 	return 0;
 }
 
-static nd_sub_allocator* __alloc_sub_allocator(nd_mmpool_t *pool,size_t size) 
+static nd_sub_allocator* __alloc_sub_allocator(nd_mmpool_t *pool,size_t size)
 {
 	size_t alloc_size = 0;
 	nd_sub_allocator *p = 0 ;
@@ -340,7 +379,7 @@ RE_ALLOC:
 	}
 	else {
 		struct list_head *pos = pool->free_allocator.next ;
-		list_del_init(pos) ;		
+		list_del_init(pos) ;
 		p = list_entry(pos, struct mm_sub_allocator ,self_list );
 		--pool->free_allocator_num ;
 		alloc_size = p->size ;
@@ -358,7 +397,7 @@ static void __free_sub_allocator(nd_mmpool_t *pool, nd_sub_allocator* sub_alloca
 	else {
 		list_add(&sub_allocator->self_list,&pool->free_allocator) ;
 		++(pool->free_allocator_num) ;
-	}	
+	}
 }
 
 static int __check_in_sub(nd_sub_allocator *sub,void *p)
@@ -379,7 +418,7 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 	unsigned int _gran = 1;
 	allocheader_t size ;
 	nd_handle pool ;
-	
+
 	if(	!__mem_root.init ){
 		nd_mempool_root_init() ;
 	}
@@ -409,7 +448,7 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 		return NULL ;
 	}
 
-	pool->type = NDHANDLE_MMPOOL;	
+	pool->type = NDHANDLE_MMPOOL;
 	pool->size = (NDUINT32) size ;
 	pool->capacity = (allocheader_t)maxsize ;
 	pool->allocated_size = size ;
@@ -420,7 +459,7 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 //#ifdef ND_MEM_CHECK
 	//pool->trace_mem =1 ;										//跟踪每个被申请的内存
 	pool->in_used = 0 ;
-//#endif 
+//#endif
 	nd_object_set_instname(pool,name? name: "unknow_pool") ;
 
 	nd_mutex_init(&pool->lock) ;
@@ -434,7 +473,7 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 	__sub_allocator_init(pool->_allocator, size-sizeof(*pool),pool);
 	pool->cur_allocator = pool->_allocator;
 
-	//add memory allocator root 
+	//add memory allocator root
 	nd_mutex_lock(&__mem_root.lock) ;
 		list_add(&pool->self_list, &__mem_root.inuser_list) ;
 	nd_mutex_unlock(&__mem_root.lock) ;
@@ -451,7 +490,7 @@ int nd_pool_destroy(nd_mmpool_t *pool, int flag)
 	nd_pool_reset(pool) ;
 
 	nd_mutex_lock(&__mem_root.lock) ;
-		list_del_init(&pool->self_list) ; 
+		list_del_init(&pool->self_list) ;
 	nd_mutex_unlock(&__mem_root.lock) ;
 
 	nd_mutex_destroy(&pool->lock);
@@ -463,11 +502,11 @@ int nd_pool_destroy(nd_mmpool_t *pool, int flag)
 	return 0 ;
 }
 
-void* nd_pool_realloc(nd_mmpool_t *pool ,void *oldaddr, size_t newsize) 
+void* nd_pool_realloc(nd_mmpool_t *pool ,void *oldaddr, size_t newsize)
 {
 	size_t user_len =0, alloc_len = 0, size ;
 	struct alloc_node *allocaddr ;
-	
+
 	if(! ND_ALLOC_MM_VALID (oldaddr) ) {
 		return NULL;
 	}
@@ -502,14 +541,14 @@ void nd_pool_reset(nd_mmpool_t *pool)
 	remove_statics(pool) ;
 #endif
 
-	nd_mutex_lock(&pool->lock); 
+	nd_mutex_lock(&pool->lock);
 
 #ifdef ND_MEM_CHECK
 	if (/*pool->trace_mem &&*/pool->in_used){
 		//dump memory leak
 		dump_memleak(pool);
 	}
-#endif 	
+#endif
 	if (pool->destruct_func && pool->in_used){
 		safe_destruct(pool);
 	}
@@ -526,8 +565,8 @@ void nd_pool_reset(nd_mmpool_t *pool)
 	__sub_allocator_init(pool->_allocator, pool->size - sizeof(*pool),pool);
 	pool->cur_allocator = pool->_allocator;
 
-	nd_mutex_unlock(&pool->lock); 
-	
+	nd_mutex_unlock(&pool->lock);
+
 	list_for_each_safe(pos,list_next, &sub_list) {
 		struct mm_sub_allocator *chunk = list_entry(pos,struct mm_sub_allocator, self_list) ;
 		if (chunk == pool->_allocator )	{
@@ -544,13 +583,13 @@ void nd_pool_reset(nd_mmpool_t *pool)
 
 
 //把一内存块添加到空闲队列
-static void pool_add_free(nd_sub_allocator *pool , struct free_node *insert_node) 
+static void pool_add_free(nd_sub_allocator *pool , struct free_node *insert_node)
 {
 	size_t index ;
 	size_t size =insert_node->size & ~3 ;
 	// find from free list
 	insert_node->size |= 1 ;
-	
+
 	if ( size >= BIG_SIZE) {
 		size = BIG_ROUND_LOWWER(size) ;
 
@@ -595,7 +634,7 @@ static struct free_node *_find_free_chunk(nd_sub_allocator *pool , size_t min_si
 {
 	int i;
 	size_t chunk_size ;
-	struct free_node  **chunk_root=0; 
+	struct free_node  **chunk_root=0;
 	// find from free list
 
 	for( i=BIG_CHUNK_NUM-1; i>=0; i--) {
@@ -609,7 +648,7 @@ static struct free_node *_find_free_chunk(nd_sub_allocator *pool , size_t min_si
 		}
 	}
 	if (!chunk_root && min_size <BIG_SIZE){
-		
+
 		for( i=LITTLE_CHUNK_NUM-1; i>=0; i--) {
 			chunk_size = GET_LITTLE_SIZE(i) ;
 			if (chunk_size < min_size) {
@@ -630,7 +669,7 @@ static struct free_node *_find_free_chunk(nd_sub_allocator *pool , size_t min_si
 	return NULL ;
 }
 
-static void __alloc_addr_size2index(nd_sub_allocator *sub_allocator, struct alloc_node *alloc_addr) 
+static void __alloc_addr_size2index(nd_sub_allocator *sub_allocator, struct alloc_node *alloc_addr)
 {
 	size_t index = ((size_t)sub_allocator) & (~((size_t) ALLOCATOR_PAGE_BITMASK));
 	size_t size = alloc_addr->size ;
@@ -643,6 +682,7 @@ static void __alloc_addr_size2index(nd_sub_allocator *sub_allocator, struct allo
 		size = CHUNK_INDEX(size) ;
 		size = size<<3 ;
 	}
+    nd_assert(0==(size & (~((size_t) ALLOCATOR_PAGE_BITMASK)) ));
 	alloc_addr->size = index | (size & (size_t) ALLOCATOR_PAGE_BITMASK) ;
 
 }
@@ -665,14 +705,14 @@ static nd_sub_allocator * __index2_alloc_size(struct alloc_node *alloc_addr)
 		nd_mmpool_t *pool = (nd_mmpool_t *)sub_allocator ;
 		sub_allocator = pool->_allocator;
 	}
-	nd_assert(sub_allocator->type==NDHANDLE_SUB_ALLOCATOR ) ;	
+	nd_assert(sub_allocator->type==NDHANDLE_SUB_ALLOCATOR ) ;
 	return sub_allocator ;
 }
 
 size_t __get_real_size(struct alloc_node *alloc_addr)
 {
 	size_t ret = 0;
-	struct alloc_node tmp = *alloc_addr ;	
+	struct alloc_node tmp = *alloc_addr ;
 	__index2_alloc_size(alloc_addr) ;
 	ret = alloc_addr->size ;
 	*alloc_addr = tmp ;
@@ -701,9 +741,9 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 	size_t index  ;
 	size_t  free_size,size;
 	struct alloc_node *alloc_addr;
-	struct free_node  **chunk_root=0; 
+	struct free_node  **chunk_root=0;
 	nd_sub_allocator *pool = sub_allocator ;
-	
+
 	alloc_size += sizeof(struct alloc_node) ;
 	size = SIZE_ALINE(alloc_size) ;
 
@@ -731,9 +771,9 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 		return alloc_addr ;
 	}
 
-	free_size = pool->end - pool->start ;	
-	if(free_size < size){			//剩余未分配内存块不够大	
-		
+	free_size = pool->end - pool->start ;
+	if(free_size < size){			//剩余未分配内存块不够大
+
 		struct free_node *chunk = _find_free_chunk(pool,size) ;
 		if(chunk) {
 			nd_assert(chunk->size>=size+1) ;
@@ -744,8 +784,8 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 			chunk->size = (chunk->size & ~3) ;
 			pool->start = (char*)chunk ;
 			pool->end = chunk->size + pool->start ;
-		}		
-		else {		
+		}
+		else {
 			return NULL;
 		}
 	}
@@ -757,7 +797,7 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 	free_size = pool->end - pool->start ;
 // 	if(free_size<MIN_SIZE) {
 // 		alloc_addr->size += free_size ; //直接丢弃
-// 		pool->start = pool->end; 
+// 		pool->start = pool->end;
 // 	}
 	nd_assert(alloc_addr->size >= size) ;
 	//return (void*)(alloc_addr->data) ;
@@ -765,7 +805,7 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 }
 
 //释放一个内存块
-static void __allocator_free(nd_sub_allocator *pool , struct free_node *chunk) 
+static void __allocator_free(nd_sub_allocator *pool , struct free_node *chunk)
 {
 	allocheader_t free_size ;
 
@@ -773,7 +813,7 @@ static void __allocator_free(nd_sub_allocator *pool , struct free_node *chunk)
 
 	char *p = ((char*)chunk) + size;
 	nd_assert(chunk->size > 0) ;
-	
+
 	if (p == pool->start){
 		pool->start = (char *) chunk ;
 		return ;
@@ -822,7 +862,7 @@ int nd_allocator_free(nd_sub_allocator *sub_allocator, struct alloc_node*free_ad
 
 void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 {
-	void *addr =0; 
+	void *addr =0;
 	nd_assert(pool) ;
 	nd_assert(size>0) ;
 	if (!ND_ALLOC_MM_VALID(pool)){
@@ -838,7 +878,7 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 		pool->myerrno = NDERR_NOSOURCE ;
 		return 0;
 	}
-	
+
 	if ((size + sizeof(struct alloc_node) ) > DIRECT_ALLOC_SIZE ){
 		//大块内存直接从系统分配
 		size_t alloc_size ;
@@ -855,13 +895,13 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 		alloc_addr->pool = pool;
 		INIT_LIST_HEAD(&alloc_addr->list);
 
-		nd_mutex_lock(&pool->lock); 
+		nd_mutex_lock(&pool->lock);
 			pool->allocated_size += alloc_addr->size ;
 			alloc_addr->size |= 2 ;
 			addr = alloc_addr->data ;
 			list_add(&alloc_addr->list, &pool->page_list) ;
 			pool->in_used = 1;
-		nd_mutex_unlock(&pool->lock); 
+		nd_mutex_unlock(&pool->lock);
 	}
 	else {
 		nd_mutex_lock(&pool->lock);
@@ -881,8 +921,8 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 					break ;
 				}
 			}
-		}	
-		
+		}
+
 		if (!addr){
 			struct mm_sub_allocator *sub = __alloc_sub_allocator(pool,size) ;
 			if (sub){
@@ -897,7 +937,7 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 	}
 
 	//TRYTO_MMSTATIC(pool, addr, size) ;
-	
+
 	return addr ;
 }
 
@@ -912,7 +952,7 @@ void _pool_free_real(/*nd_mmpool_t *pool ,*/void *addr)
 	}
 
 	free_addr = ((struct alloc_node *)addr ) -1 ;
-	
+
 	if (free_addr->size & 2){
 		size_t size = free_addr->size & ~3;
 		struct big_chunk_list *chunk = (struct big_chunk_list *)addr ;
@@ -924,11 +964,11 @@ void _pool_free_real(/*nd_mmpool_t *pool ,*/void *addr)
 			return ;
 		}
 
-		nd_atomic_sub((ndatomic_t*)&pool->allocated_size,(ndatomic_t)(size)) ;	
-					
-		nd_mutex_lock(&pool->lock); 
+		nd_atomic_sub((ndatomic_t*)&pool->allocated_size,(ndatomic_t)(size)) ;
+
+		nd_mutex_lock(&pool->lock);
 			list_del_init(&chunk->list) ;
-		nd_mutex_unlock(&pool->lock); 
+		nd_mutex_unlock(&pool->lock);
 
 		free_addr = (struct alloc_node *)chunk;
 		free_addr->size = size + sizeof(struct big_chunk_list) - sizeof(allocheader_t) ;
@@ -937,7 +977,7 @@ void _pool_free_real(/*nd_mmpool_t *pool ,*/void *addr)
 	else {
 		nd_sub_allocator *sub_alloc = __index2_alloc_size(free_addr) ;
 		nd_assert(ND_ALLOC_MM_VALID(sub_alloc)) ;
-		nd_assert(__check_in_sub(sub_alloc,addr)) ;		
+		nd_assert(__check_in_sub(sub_alloc,addr)) ;
 		if (!ND_ALLOC_MM_VALID(sub_alloc)|| !__check_in_sub(sub_alloc,addr)) {
 			return ;
 		}
@@ -986,12 +1026,12 @@ enum { __pad=8, __magic=0xdeba, __deleted_magic = 0xdebd,
 enum { __extra_before = 64, __extra_after = 8 };
 
 // nd_alloc_check nd_free_check  主要是检查allocfn函数分配的内存内存有没有越界
-void *nd_alloc_check(nd_handle _pool,size_t __n,const char *file, int line, nd_alloc_func allocfn) 
+void *nd_alloc_check(nd_handle _pool,size_t __n,const char *file, int line, nd_alloc_func allocfn)
 {
 	size_t filesize ;
 	char *pfile ;
 	size_t __real_n = __n + __extra_before + __extra_after;
-	struct __alloc_header *__result = 
+	struct __alloc_header *__result =
 		(struct __alloc_header *)allocfn(_pool,__real_n);
 	if(__result) {
 		memset((char*)__result, __shred_byte, __real_n*sizeof(char));
@@ -1014,8 +1054,8 @@ void *nd_alloc_check(nd_handle _pool,size_t __n,const char *file, int line, nd_a
 	}
 }
 
-//debug 版本的 _destroy_chunkpool 
-void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn) 
+//debug 版本的 _destroy_chunkpool
+void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 {
 	unsigned char* __tmp;
 	struct __alloc_header * __real_p ;
@@ -1024,9 +1064,9 @@ void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 		nd_assert(0) ;
 		return ;
 	}
-	
+
 	__real_p = (struct __alloc_header*)((char *)__p -(long)__extra_before);
-	
+
 	__real_n= __real_p->_M_size + __extra_before + __extra_after;
 	// check integrity
 	nd_assert(__real_p->__magic != __deleted_magic) ;
@@ -1034,7 +1074,7 @@ void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 	nd_assert(__real_p->__type_size == 1);
 	//nd_assert(__real_p->_M_size == __n);
 	// check pads on both sides
-	for (__tmp= (unsigned char*)(__real_p+1); __tmp < (unsigned char*)__p; __tmp++) {  
+	for (__tmp= (unsigned char*)(__real_p+1); __tmp < (unsigned char*)__p; __tmp++) {
 		nd_assert(*__tmp==__shred_byte) ;
 	}
 
@@ -1047,7 +1087,7 @@ void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 	// that may be unfortunate, just in case
 	__real_p->__magic=__deleted_magic;
 	//memset((char*)__p, __release_byte, __real_p->_M_size*sizeof(char));
-    
+
     memset((char*)__real_p,__release_byte, __real_n) ;
 	freefn(_pool, __real_p);
 }
@@ -1064,8 +1104,8 @@ void *nd_pool_alloc_trace(nd_mmpool_t *pool , size_t size, char *file, int line)
 		len = 255 ;
 	}
 	file_size = (len + 3) & (~3) ;
-	
-	
+
+
 	paddr = nd_pool_alloc_real( pool ,  size + file_size + 12 );
 	if (!paddr)	{
 		return NULL ;
@@ -1101,9 +1141,9 @@ void nd_pool_free_trace(nd_mmpool_t *pool , void *p)
 	paddr -= file_size + sizeof(NDUINT32)  ;
 
 	nd_assert(file_size == *(NDUINT32*)paddr ) ;
-	paddr -= sizeof(NDUINT32)  ; 
+	paddr -= sizeof(NDUINT32)  ;
 
-	nd_pool_free_real(pool,paddr) ;	
+	nd_pool_free_real(pool,paddr) ;
 }
 */
 //得到分配给用户的内存地址
@@ -1115,7 +1155,7 @@ void *_get_user_addr(nd_mmpool_t *pool, void *p)
 // 	user_addr = (char*) p  + sizeof(NDUINT32);
 // 	fill_size = *(NDUINT32*)user_addr ;
 // 	user_addr +=  fill_size + 8 ;
-	return user_addr + __extra_before; 
+	return user_addr + __extra_before;
 }
 
 //通过用户输入地址获得实际申请地址
@@ -1140,17 +1180,17 @@ struct alloc_node *_user_addr_2sys( void *useraddr, size_t *user_len, size_t *al
 	--p ;
 	p = (NDUINT32*) ((char*)p -  *p) ;//file test
 	--p ; //file size ;
-	--p ; //line 
+	--p ; //line
 	ret = (struct alloc_node *) p ;
 
 	--ret ;
-	
+
 	if (ret->size & 2){
 		*alloc_len = ret->size & ~3 ;
 		*user_len = *alloc_len - ((char*)useraddr - (char*)ret) - __extra_after;
-		ret = (struct alloc_node *) ((char*)ret - sizeof(struct big_chunk_list) + sizeof(allocheader_t) );		
+		ret = (struct alloc_node *) ((char*)ret - sizeof(struct big_chunk_list) + sizeof(allocheader_t) );
 	}
-	else {		
+	else {
 		*alloc_len =  __get_real_size(ret);
 		*user_len = *alloc_len - ((char*)useraddr - (char*)ret) - __extra_after;
 	}
@@ -1168,21 +1208,23 @@ void _dump_trunk_leak(nd_mmpool_t *pool, void *startaddr, size_t size)
 // 		return ;
 // 	}
 	p = (struct __alloc_header*)startaddr ;
+#ifdef ND_SOURCE_TRACE
 	_logmsg(__FUNC__,p->file, p->line, ND_ERROR,"%s MEMORY LEAK size=%d\n", pool->inst_name[0]?pool->inst_name:"unknow_pool" AND p->_M_size) ;
-
+#endif
+    
 // 	char tmp ;
 // 	NDUINT32 *p =  (NDUINT32*) startaddr ;
 // 	NDUINT32 line =  *p++ ;
-// 	NDUINT32 filename_l = *p++ ;			
+// 	NDUINT32 filename_l = *p++ ;
 // 	char *file =(char*) p ;
-// 
+//
 // 	tmp = file[filename_l] ;
 // 	file[filename_l] = 0 ;
 // 	_logmsg(__FUNC__,file, (int)line, ND_ERROR,"%s MEMORY LEAK\n", pool->inst_name[0]?pool->inst_name:"unknow_pool") ;
 // 	file[filename_l] = tmp ;
 }
 
-#else 
+#else
 void *_get_user_addr(nd_mmpool_t *pool, void *p)
 {
 	return p;
@@ -1206,14 +1248,14 @@ struct alloc_node *_user_addr_2sys( void *useraddr, size_t *user_len, size_t *al
 }
 
 #endif
-// 
+//
 // size_t nd_pool_freespace(nd_mmpool_t *pool)
 // {
 // 	return pool->end - pool->start ;
 // }
 
 
-void nd_pool_destruct_entry(nd_mmpool_t *pool , memdestruct_entry func) 
+void nd_pool_destruct_entry(nd_mmpool_t *pool , memdestruct_entry func)
 {
 	pool->destruct_func = func ;
 }
@@ -1319,7 +1361,7 @@ struct mmstatics_header
 	char func_stack[1] ;//include '\0'
 };
 
-struct mmstatics_root 
+struct mmstatics_root
 {
 	//struct list_head header ;
 	struct nd_rb_root tree_header ;
@@ -1328,7 +1370,7 @@ struct mmstatics_root
 
 static ndatomic_t _s_mmstatic_created =0 ;
 static struct mmstatics_root *_s_mmstatics ;
-int nd_mm_statics_start() 
+int nd_mm_statics_start()
 {
 	struct mmstatics_root *proot ;
 	if (0!=nd_testandset(&_s_mmstatic_created)){
@@ -1347,7 +1389,7 @@ int nd_mm_statics_start()
 	return 0;
 }
 
-int nd_mm_statics_end() 
+int nd_mm_statics_end()
 {
 	struct mmstatics_root *proot ;
 
@@ -1359,7 +1401,7 @@ int nd_mm_statics_end()
 		return -1;
 	}
 	nd_mutex_lock(&_s_mmstatics->lock) ;
-	
+
 	proot = _s_mmstatics ;
 
 	if (proot->tree_header.rb_node){
@@ -1368,22 +1410,22 @@ int nd_mm_statics_end()
 			struct mmstatics_header *node  = rb_entry(cur_node, struct mmstatics_header, tree) ;
 			cur_node = rb_next(cur_node) ;
 			nd_assert(node) ;
-			nd_logwarn("memleak addr=%d size=%d in %s pool | stack %s\n" AND node->mmaddr AND node->size 
+			nd_logwarn("memleak addr=%d size=%d in %s pool | stack %s\n" AND node->mmaddr AND node->size
 				AND node->pool_name AND node->func_stack) ;
 			rb_erase(&node->tree,&proot->tree_header ) ;
 			__sys_free(node) ;
-		} 
+		}
 		proot->tree_header.rb_node = 0;
 	}
 	_s_mmstatics = 0 ;
 	nd_mutex_unlock(&proot->lock) ;
 	nd_mutex_destroy(&proot->lock) ;
-	
+
 	__sys_free(proot) ;
 	return 0;
 }
 
-void _insertinto_mmstatics(nd_handle pool, void *addr, size_t size ) 
+void _insertinto_mmstatics(nd_handle pool, void *addr, size_t size )
 {
 	int len ;
 	struct mmstatics_header *node ;
@@ -1393,7 +1435,7 @@ void _insertinto_mmstatics(nd_handle pool, void *addr, size_t size )
 	}
 
 	if(nd_get_callstack_desc(callstack,sizeof(callstack)) ) {
-		len = (int) strlen(callstack) + 1;	
+		len = (int) strlen(callstack) + 1;
 	}
 	else {
 		strncpy(callstack, "unknow_stack", 1024) ;
@@ -1413,18 +1455,18 @@ void _insertinto_mmstatics(nd_handle pool, void *addr, size_t size )
 	node->pool = pool ;
 #ifdef ND_SOURCE_TRACE
 	strncpy(node->pool_name, pool->inst_name, sizeof(node->pool_name)) ;
-#else 
+#else
 	strncpy(node->pool_name, "mmpool", sizeof(node->pool_name)) ;
-#endif 
+#endif
 	strncpy(node->func_stack, callstack, len) ;
 
 	nd_mutex_lock(&_s_mmstatics->lock) ;
 	{
 		struct nd_rb_root *root = &_s_mmstatics->tree_header;
 		struct nd_rb_node **new_node = &(root->rb_node), *parent = NULL;
-		
+
 		while (*new_node) {
-			struct mmstatics_header *cur_node = rb_entry(*new_node,struct mmstatics_header, tree);			
+			struct mmstatics_header *cur_node = rb_entry(*new_node,struct mmstatics_header, tree);
 			parent = *new_node;
 			if (addr < cur_node->mmaddr )
 				new_node = &((*new_node)->rb_left);
@@ -1460,11 +1502,11 @@ static struct mmstatics_header *find_mmstatics(void *key)
 	return NULL ;
 }
 
-void _erase_mmstatics(void *addr) 
+void _erase_mmstatics(void *addr)
 {
 	//struct list_head *pos,*next ;
 	struct mmstatics_header *node ;
-	
+
 	if(nd_atomic_read(&_s_mmstatic_created)==0 || !_s_mmstatics) {
 		return ;
 	}
@@ -1484,7 +1526,7 @@ void _erase_mmstatics(void *addr)
 // 	}
 	nd_mutex_unlock(&_s_mmstatics->lock) ;
 }
-void _erase_statics_entry(nd_mmpool_t *pool, void *startaddr, size_t size) 
+void _erase_statics_entry(nd_mmpool_t *pool, void *startaddr, size_t size)
 {
 	_erase_mmstatics(startaddr) ;
 }
@@ -1510,7 +1552,7 @@ void nd_mmpool_dump()
 	}
 	nd_mutex_unlock(&__mem_root.lock) ;
 }
-#endif 
+#endif
 
 
 #else //不使用内存池
@@ -1529,7 +1571,7 @@ typedef struct nd_mm_pool *nd_handle ;
 nd_handle __pool_create(size_t size,char *name,struct nd_mm_pool *pool )
 {
 	memset(pool, 0, sizeof(*pool) ) ;
-	pool->type = NDHANDLE_MMPOOL;	
+	pool->type = NDHANDLE_MMPOOL;
 	pool->size = (NDUINT32) size ;
 	pool->myerrno = 0 ;
 	pool->__created = 1 ;
@@ -1541,7 +1583,7 @@ nd_handle __pool_create(size_t size,char *name,struct nd_mm_pool *pool )
 }
 
 static struct nd_mm_pool  _static_pool  ;
-nd_handle nd_global_mmpool() 
+nd_handle nd_global_mmpool()
 {
 	if (!_static_pool.__created){
 		__pool_create(-1,"global_mmpool",&_static_pool ) ;
@@ -1577,7 +1619,7 @@ void *nd_pool_alloc_real(nd_handle pool , size_t size)
 // 	if (!pool->destruct_func){
 // 		return malloc(size) ;
 // 	}
-// 	else 
+// 	else
 	{
 		struct list_head* header = malloc(size+sizeof(struct list_head)) ;
 		if(header) {
@@ -1590,7 +1632,7 @@ void *nd_pool_alloc_real(nd_handle pool , size_t size)
 		return NULL ;
 	}
 }
-void nd_pool_free_real(nd_handle pool ,void *addr) 
+void nd_pool_free_real(nd_handle pool ,void *addr)
 {
 	if (!ND_ALLOC_MM_VALID(pool) ){
 		return ;
@@ -1601,7 +1643,7 @@ void nd_pool_free_real(nd_handle pool ,void *addr)
 // 	if (!pool->destruct_func){
 // 		free(addr) ;
 // 	}
-// 	else 
+// 	else
 	{
 		struct list_head* header = ((struct list_head* )addr ) - 1;
 		if (!ND_ALLOC_MM_VALID(header) || !ND_ALLOC_MM_VALID(header->next) || !ND_ALLOC_MM_VALID(header->prev) ){
@@ -1616,7 +1658,7 @@ void nd_pool_free_real(nd_handle pool ,void *addr)
 	}
 }
 
-void nd_pool_reset(nd_handle pool) 
+void nd_pool_reset(nd_handle pool)
 {
 	struct list_head *pos, *next ;
 	//if (pool->destruct_func)
@@ -1634,27 +1676,27 @@ void nd_pool_reset(nd_handle pool)
 		pool->destruct_func = 0;
 	}
 }
-void nd_pool_destruct_entry(nd_handle pool , memdestruct_entry func) 
+void nd_pool_destruct_entry(nd_handle pool , memdestruct_entry func)
 {
 	nd_assert(pool) ;
 // 	if (pool->destruct_func && !func){
 // 		nd_mutex_destroy(&pool->lock );
 // 	}
-// 	else 
+// 	else
 // 	if(!pool->destruct_func) {
 // 		nd_mutex_init(&pool->lock );
 // 	}
-	pool->destruct_func = func ; 
-	
+	pool->destruct_func = func ;
+
 }
 
 #if  defined(ND_SOURCE_TRACE) && defined(ND_UNUSE_STDC_ALLOC)
 void nd_mmpool_dump()
 {
 }
-#endif 
+#endif
 
-#endif 
+#endif
 
 #undef ND_IMPLEMENT_HANDLE
 
@@ -1669,16 +1711,16 @@ int nd_addr_checkvalid(void *addr)
 	else if (addr >(void*)0x7FFFFFFFFFF) {
 		return 0 ;
 	}
-#else 
+#else
 	else if (addr >(void*)0x7FFFFFFF) {
 		return 0 ;
 	}
-#endif 
+#endif
 	return 1;
 }
 #elif defined(__LINUX__)
 int nd_addr_checkvalid(void *addr)
-{	
+{
 	if (addr <(void*) 0x10000)	{
 		return 0;
 	}
@@ -1686,14 +1728,14 @@ int nd_addr_checkvalid(void *addr)
 	else if (addr >(void*)0x7fffffffffff) {
 		return 0;
 	}
-#else 
+#else
 	else if (addr >(void*)0xC0000000) {
 		return 0;
 	}
-#endif 
+#endif
 	return 1 ;
 }
-#else 
+#else
 
 inline int nd_addr_checkvalid(void *addr)
 {

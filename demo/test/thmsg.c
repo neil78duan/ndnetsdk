@@ -8,8 +8,9 @@
 #include "nd_common/nd_common.h"
 #include "nd_srvcore/nd_srvlib.h"
 
-#define READ_FILE "input.pkg"
-#define WRITE_FILE "output.pkg"
+
+#define READ_FILE "client_test"
+#define WRITE_FILE "client_test-out-msg"
 
 
 nd_thsrvid_t _recv_id, _send_id ;

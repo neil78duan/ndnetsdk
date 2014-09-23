@@ -8,8 +8,8 @@
 #include "nd_common/nd_alloc.h"
 #include "nd_common/nd_common.h"
 
-#define READ_FILE "input.pkg"
-#define WRITE_FILE "output.pkg"
+#define READ_FILE "client_test"
+#define WRITE_FILE "client_test-out"
 
 #define SUMSIZE 100000000
 #define BUFSIZE 8

@@ -7,8 +7,9 @@
 #include "nd_common/nd_common.h"
 
 #define _READ_SIZE 128
-#define _INPUT_FILE "3.zip" 
-#define _OUTPUT_FILE "4.zip"
+
+#define _INPUT_FILE "client_test"
+#define _OUTPUT_FILE "client_test-test_buf"
 
 int cbuf_test()
 {

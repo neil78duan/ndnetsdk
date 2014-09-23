@@ -24,7 +24,7 @@ int malloc_func(void *p_addr[], int num)
 			sz *= BIG_GRANULARITY ;
 		}
 		else */{
-			sz = rand() +1 ;
+			sz = rand() + 16 ;
 			sz = sz & 0xffff ;
 		}
 		
@@ -103,7 +103,7 @@ void *alloc_entry(void *param)
 	return NULL ;
 }
 
-#define _TMAX_TH 4
+#define _TMAX_TH 1
 int alloc_test()
 {
 
