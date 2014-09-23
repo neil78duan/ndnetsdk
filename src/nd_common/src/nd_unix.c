@@ -83,8 +83,9 @@ void pthread_sleep(NDUINT32 msec)
     usleep(t) ;
 }
 
-int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)
+int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
 {
+    sem_t *sem = pSem->_sem ;
     int times = waittime / 10 ;
     int ret ;
     if(ND_INFINITE==waittime) {
@@ -114,22 +115,33 @@ int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)
 int _nd_sem_open(ndsem_t *sem, unsigned int value)
 {
     static ndatomic_t _s_sem_index = 0 ;
-    char sem_name[64] ;
-    
+    //char sem_name[64] ;
+    ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_mac_sem) );
     do {
-        snprintf(sem_name, sizeof(sem_name), "nd_sem_%d", nd_atomic_dec( &_s_sem_index)) ;
+        snprintf(psem->_name, sizeof(psem->_name), "ndsem%d", nd_atomic_dec( &_s_sem_index)) ;
         
-        *sem = sem_open( sem_name, O_CREAT|O_EXCL, 0644, value );
-        if (*sem== SEM_FAILED) {
-            nd_logerror("sem_open : %s", nd_last_error()) ;
+        psem->_sem = sem_open( psem->_name, O_CREAT|O_EXCL, 0644, value );
+        if (psem->_sem== SEM_FAILED) {
+            nd_logerror("sem_open(%s) : %s\n",psem->_name, nd_last_error()) ;
             if (errno != EEXIST) {
+                free(psem) ;
                 return -1 ;
             }
             
         }
         
-    }while (*sem==SEM_FAILED && errno==EEXIST) ;
+    }while (psem->_sem==SEM_FAILED && errno==EEXIST) ;
+    *sem = psem ;
     return 0;
+}
+
+
+int _nd_sem_close(ndsem_t sem)
+{
+    sem_close(sem->_sem) ;
+    sem_unlink(sem->_name) ;
+    free(sem) ;
+    return  0;
 }
 
 #else

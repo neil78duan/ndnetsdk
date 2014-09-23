@@ -44,7 +44,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/duan/Documents/work/ndnetsdk/bin/darwin_x86_64"
+      customWorkingDirectory = "/Users/duan/Documents/ndsdk.github/bin/darwin_x86_64"
       buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"

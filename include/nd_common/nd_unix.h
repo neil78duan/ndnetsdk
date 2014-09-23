@@ -63,22 +63,30 @@ ND_COMMON_API int kbhit ( void );
 #define INFINITE            0xFFFFFFFF
 
 #ifdef __MAC_OS__
-typedef sem_t* 				ndsem_t ;
+
+#define ND_SEM_NAME_SIZE 16
+typedef struct nd_mac_sem
+{
+    sem_t *_sem ;
+    char _name[ND_SEM_NAME_SIZE] ;
+} *ndsem_t ;
+//typedef sem_t* 				ndsem_t ;
 ND_COMMON_API int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)  ;
 ND_COMMON_API int _nd_sem_open(ndsem_t *sem,  unsigned int value) ;
+ND_COMMON_API int _nd_sem_close(ndsem_t sem) ;
 
-#define nd_sem_wait(s, timeout)		_unix_sem_timewait(s, timeout) //sem_wait(&(s))		//µÈ´ıĞÅºÅ
-#define nd_sem_post(s)		sem_post(s)		//·¢ËÍĞÅºÅ
+#define nd_sem_wait(s, timeout)		_unix_sem_timewait(s, timeout) //sem_wait(&(s))		//ÂµÂ»Â¥Ëâ€“â‰ˆâˆ«â‰ˆ
+#define nd_sem_post(s)		sem_post((s)->_sem)		//âˆ‘Â¢Ã€Ã•â€“â‰ˆâˆ«â‰ˆ
 #define nd_sem_init(s)		_nd_sem_open(&(s),0)	//initilize semahpore resource, return 0 on success , error r
-#define nd_sem_destroy(s)   sem_close(s) 		//destroy semahpore resource
+#define nd_sem_destroy(s)   _nd_sem_close(s) 		//destroy semahpore resource
 
 #else
 
-typedef sem_t 				ndsem_t ;			//ĞÅºÅ±äÁ¿
+typedef sem_t 				ndsem_t ;			//â€“â‰ˆâˆ«â‰ˆÂ±â€°Â¡Ã¸
 ND_COMMON_API int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)  ;
 
-#define nd_sem_wait(s, timeout)		_unix_sem_timewait(&(s), timeout) //sem_wait(&(s))		//µÈ´ıĞÅºÅ
-#define nd_sem_post(s)		sem_post(&(s))		//·¢ËÍĞÅºÅ
+#define nd_sem_wait(s, timeout)		_unix_sem_timewait(&(s), timeout) //sem_wait(&(s))		//ÂµÂ»Â¥Ëâ€“â‰ˆâˆ«â‰ˆ
+#define nd_sem_post(s)		sem_post(&(s))		//âˆ‘Â¢Ã€Ã•â€“â‰ˆâˆ«â‰ˆ
 #define nd_sem_init(s)		sem_init(&(s),0,0)	//initilize semahpore resource, return 0 on success , error r
 #define nd_sem_destroy(s)   sem_destroy(&(s)) 		//destroy semahpore resource
 
@@ -86,12 +94,12 @@ ND_COMMON_API int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)  ;
 
 
 
-#define nd_thread_self()	pthread_self()		//µÃµ½ÏÖ³É×Ô¼ºµÄid
-#define nd_processid()		getpid()			//µÃµ½½ø³ÌID
+#define nd_thread_self()	pthread_self()		//ÂµâˆšÂµÎ©Å“Ã·â‰¥â€¦â—Šâ€˜Âºâˆ«ÂµÆ’id
+#define nd_processid()		getpid()			//ÂµâˆšÂµÎ©Î©Â¯â‰¥ÃƒID
 
 
 ND_COMMON_API void pthread_sleep(NDUINT32 msec) ;
-#define nd_sleep			pthread_sleep  		//Ë¯Ãß1/1000 second
+#define nd_sleep			pthread_sleep  		//Ã€Ã˜âˆšï¬‚1/1000 second
 
 #ifdef ND_DEBUG
 #define nd_assert(a)		assert(a)

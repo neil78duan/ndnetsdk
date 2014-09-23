@@ -150,11 +150,14 @@ void remove_statics(nd_mmpool_t *pool) ;
 #define ERASE_MMSTATICS(_addr)  (void) 0
 #endif
 
+
 nd_mmpool_t *nd_global_mmpool()
 {
 	if (!s_common_mmpool){
 		nd_mempool_root_init() ;
+        nd_logdebug("page size = %d getgranularity=%d", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
 	}
+    
 	return s_common_mmpool ;
 }
 
