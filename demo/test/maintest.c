@@ -20,7 +20,7 @@
 #pragma comment(lib,"nd_srvcore.lib")
 #endif
 
-#else 
+#else
 #if defined(ND_DEBUG)
 #pragma comment(lib,"srv_libs_dbg.lib")
 #else
@@ -31,7 +31,7 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-/* file : maintest.c 
+/* file : maintest.c
  * test entry
  * 2007-10
  * author : neil
@@ -51,7 +51,7 @@ void inst_init()
     nd_common_init() ;
     nd_net_init() ;
     nd_srvcore_init() ;
-    
+
     //nd_log_screen("init common lib end\n") ;
 }
 
@@ -59,7 +59,7 @@ void inst_deinit()
 {
     nd_srvcore_destroy() ;
     nd_net_destroy() ;
-    
+
     nd_common_release() ;
     //nd_log_screen("RELEASE common lib end\n") ;
 }
@@ -67,7 +67,7 @@ void inst_deinit()
 int run_test ()
 {
     TEST_ENTRY(test_atomic);
-    TEST_ENTRY(mutex_test) ;
+    //TEST_ENTRY(mutex_test) ;
     TEST_ENTRY(test_alloc) ;
     //TEST_ENTRY(crypt_test) ;
     //TEST_ENTRY(thmsg_test) ;
@@ -77,7 +77,7 @@ int run_test ()
 int main()
 {
     inst_init() ;
-    
+
     run_test () ;
     inst_deinit() ;
     printf("press any key to continue!\n") ;
