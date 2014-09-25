@@ -81,7 +81,7 @@ int main()
     run_test () ;
     inst_deinit() ;
     printf("press any key to continue!\n") ;
-    getch() ;
+    //getch() ;
     exit(0) ;
 }
 

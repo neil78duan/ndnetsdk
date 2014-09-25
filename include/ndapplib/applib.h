@@ -45,25 +45,33 @@ static __INLINE__ void nd_pause()
 
 CPPAPI int nd_end_server(int force);
 
+CPPAPI int system_signals_init() ;
 CPPAPI int wait_services() ;
 //CPPAPI int read_config(const char *file, struct srv_config *readcfg) ;
 
 CPPAPI void exit_instance(int flag) ;
 #ifdef ND_UNIX
-CPPAPI int installed_sig_handle(void);
-CPPAPI int wait_signal_entry();
-CPPAPI int block_signal(void) ;
-char *get_signal_desc(int signo);
-CPPAPI int unblock_signal(void) ;
-CPPAPI int ignore_all_signal(void) ;
+//CPPAPI int installed_sig_handle(void);
+//CPPAPI int wait_signal_entry();
+//CPPAPI int block_signal(void) ;
+//char *get_signal_desc(int signo);
+//CPPAPI int unblock_signal(void) ;
+//CPPAPI int ignore_all_signal(void) ;
+
+CPPAPI int nd_wait_terminate_signals();
+CPPAPI int nd_signals_init();
+
 #else
 CPPAPI BOOL WINAPI winclose_entry(DWORD dwevent);
 #endif //_WINDOWS
 
 //set user appliction exit function
-CPPAPI void app_exit_entry(exit_app_func func) ;
+//CPPAPI void app_exit_entry(exit_app_func func) ;
 CPPAPI void _error_exit(const char *file, int line,const char *stm,...) ;
-CPPAPI void nd_set_exit(exit_app_func func) ;
+CPPAPI void nd_set_exit_callback(exit_app_func func) ;
+CPPAPI void nd_instance_exit(int flag);
+
+CPPAPI void nd_sys_exit(int exitcode) ;
 
 
 #if defined(_MSC_VER)

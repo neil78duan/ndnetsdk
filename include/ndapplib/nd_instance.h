@@ -38,10 +38,7 @@ public :
 	virtual int Close(int flag=0) ;
 	virtual int Open(int session_size) ;
 
-	virtual int Start(int argc,const char *argv[]) ;
-	virtual int End(int flag);
-
-	int WaitServer();
+    int WaitServer();
 	
 	NDListener *GetDeftListener() {return pListen ;	}	//µÃµ½Ä¬ÈÏ¼àÌýÆ÷
 	
@@ -58,8 +55,9 @@ public :
 	virtual bool CheckIsDeveVer() ;
 	bool CheckNormalExit() {return m_bNormalExit==0 ? true : false ;}
 	void SetExitCode(int exitcode = 0) {m_bNormalExit = exitcode ;}
+    
 protected :
-	void OnCreate() ;
+    
 	int ReadConfig(const char *configname) ;		//read config from file
 	virtual NDListener*ConstructListener() ;
 	virtual void DestructListener() ;
@@ -91,6 +89,7 @@ public:
 #endif
 };
 
+CPPAPI void nd_instance_exit(int flag);
 template < class TSession,class TListener=NDListener>
 class nd_instance:public NDInstanceBase
 {
@@ -99,21 +98,21 @@ public:
 	virtual ~nd_instance() {} 
 	int Start(int argc, const char *argv[])
 	{
-		if(-1==NDInstanceBase::Create(argc, argv))
+		if(-1==Create(argc, argv))
 			return -1 ;
 		return Open(sizeof(TSession)) ;
 	}
-// 	int End(int flag)
-// 	{
-// 		if(NDInstanceBase::Close(flag)==-1) {
-// 			return -1 ;
-// 		}
-// 		DestructListener() ;
-// 		NDInstanceBase::Destroy(flag) ;
-// 
-// 		return 0;
-// 	}
-	TListener*ConstructListener() 
+    
+ 	int End(int flag)
+ 	{
+ 		NDInstanceBase::Destroy(flag) ;
+        
+        nd_instance_exit(flag) ;
+ 
+ 		return 0;
+ 	}
+    
+	TListener*ConstructListener()
 	{	
 		return new TListener(new nd_fectory<TSession>()) ;	
 	}

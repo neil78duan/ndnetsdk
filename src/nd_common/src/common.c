@@ -90,7 +90,7 @@ int nd_common_init()
 		return 0 ;
 	}
 	nd_setxml_log(nd_output) ;
-	NDTRAC("common init\n") ;
+	NDTRAC("%s common init\n", nd_process_name() ) ;
 #ifdef ND_UNIX
 	setlocale(LC_CTYPE, "zh-CN.UTF-8");  //支持中文
 #else 

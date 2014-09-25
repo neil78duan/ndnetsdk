@@ -51,4 +51,5 @@ typedef unsigned char 		BYTE ;
 typedef unsigned short		WORD ;
 #endif
 
+#define ND_ELEMENTS_NUM(a) (sizeof(a)/sizeof(a[0]))
 #endif
