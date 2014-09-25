@@ -13,7 +13,14 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-DND_UNIX" />
+					<Add option="-DND_DEBUG" />
+					<Add option="-D__LINUX__" />
 				</Compiler>
+				<Linker>
+					<Add option="-lpthread" />
+					<Add library="../ndsdk/bin/Debug/libndsdk.a" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/unit_test" prefix_auto="1" extension_auto="1" />
@@ -31,7 +38,11 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add directory="../../include" />
 		</Compiler>
+		<Linker>
+			<Add library="../ndsdk/bin/Debug/libndsdk.a" />
+		</Linker>
 		<Unit filename="../../demo/test/alloc.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -131,9 +131,6 @@
 		<Unit filename="../../include/ndstl/nd_text.h" />
 		<Unit filename="../../include/ndstl/nd_utility.h" />
 		<Unit filename="../../include/ndstl/nd_vector.h" />
-		<Unit filename="../../src/nd_common/dllmain.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../src/nd_common/src/bintree.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -309,24 +306,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../src/nd_srvcore/src/udp_listen.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../src/nd_vm/src/nd_asm.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../src/nd_vm/src/nd_formula.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../src/nd_vm/src/nd_vm.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../src/nd_vm/src/nd_vmdbg.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../src/nd_vm/src/nd_vmmain.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../src/nd_vm/vmdebug/nd_vmmain.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../src/ndapplib/misc.cpp" />
