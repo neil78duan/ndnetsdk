@@ -75,6 +75,8 @@ public :
 	virtual int LastError()=0 ;
 	virtual void SetLastError(NDUINT32 errcode) =0;
 	virtual const char *ErrorDesc() =0;
+    virtual void *GetUserData() = 0;
+    virtual void SetUserData(void *pData) = 0;
 protected:
 	NDIConn() {} 
 	virtual~NDIConn() {}

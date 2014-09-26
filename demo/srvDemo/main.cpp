@@ -80,7 +80,15 @@ MSG_ENTRY_INSTANCE(echo_handler)
 
 MSG_ENTRY_INSTANCE(broadcast_handler)
 {
-    //ND_BROAD_CAST(nethandle,(nd_usermsghdr_t *)msg,ESF_URGENCY,0) ;
+    ND_BROAD_CAST( h_listen,(nd_usermsghdr_t *)msg);
+    
+    NDIStreamMsg inmsg(msg) ;
+    NDUINT8 buf[1024] ;
+    buf[0] = 0 ;
+    inmsg.Read(buf,sizeof(buf)) ;
+    printf("recv (%d,%d) : %s \n",inmsg.MsgMaxid(), inmsg.MsgMinid(), buf ) ;
+
+    
     return 0 ;
 }
 

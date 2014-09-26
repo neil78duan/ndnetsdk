@@ -54,7 +54,9 @@ int open_net()
         if (__conn_buf[i]) {
             __conn_buf[i]->InstallMsgFunc(msg_br_handler, ND_MAIN_ID_SYS, ND_MSG_SYS_BROADCAST);
             
+            __conn_buf[i]->SetUserData((void*) 0) ;
             __conn_buf[i]->Open(__host, __port, "tcp-connector", NULL) ;
+            printf("create connect success %d \n", i);
             
         }
     }
@@ -65,9 +67,24 @@ int open_net()
 int sent_echo()
 {
     NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_BROADCAST) ;
-    omsg.Write((NDUINT8*)"hello world!") ;
+    char buf[1024] ;
     
     for (int i=0; i<__real_conn_num; i++) {
+        if (!__conn_buf[i]->CheckValid()) {
+            continue ;
+        }
+        else {
+            printf("connect invalid %d \n", i) ;
+        }
+
+        size_t udata = (size_t) __conn_buf[i]->GetUserData() ;
+        
+        snprintf(buf, sizeof(buf), "[%d] send %zu : hello world !", i, udata ) ;
+        
+        ++udata ;
+        __conn_buf[i]->SetUserData((void*) udata);
+        omsg.Write((NDUINT8*)buf) ;
+        
         __conn_buf[i]->SendMsg(omsg) ;
     }
     return 0;
@@ -76,10 +93,11 @@ int sent_echo()
 
 int updateConnect()
 {
+    sent_echo();
+    
     for (int i=0; i<__real_conn_num; i++) {
         if (__conn_buf[i]->CheckValid()) {
-            sent_echo();
-            __conn_buf[i]->Update(0) ;
+            __conn_buf[i]->Update(30) ;
         }
         else {
             __conn_buf[i]->Open(__host, __port, "tcp-connector", NULL) ;
@@ -115,7 +133,7 @@ int wait_exit()
         }
         else {
             updateConnect() ;
-            nd_sleep(500) ;
+            //nd_sleep(500) ;
         }
         index++ ;
     }

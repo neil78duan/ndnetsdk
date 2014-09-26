@@ -67,6 +67,9 @@ public :
 	void SetLastError(NDUINT32 errcode);
 	const char *ErrorDesc() ;
 
+    void *GetUserData() { return __userData ;}
+    void SetUserData(void *pData){ __userData = pData ;}
+    
 private:
 	//nd_handle m_objhandle ;
 	int msg_kinds ;
@@ -76,6 +79,7 @@ private:
 	NDUINT32 m_type ;			//¿‡–Õ
 	nd_handle m_objhandle ;
 
+    void *__userData ;
 	//crypt key
 	int __pki_ok ;
 	char __rsa_digest[16] ;
@@ -91,6 +95,7 @@ NDConnector::NDConnector(int maxmsg_num , int maxid_start)
 	msg_base = maxid_start;
 	m_id = 0 ;				//id
 	m_type  = 0;			//¿‡–Õ
+    __userData = 0 ;
 }
 
 NDConnector::~NDConnector() 

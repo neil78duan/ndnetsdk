@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "localhost 7828 1"
+            argument = "localhost 7828 2"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

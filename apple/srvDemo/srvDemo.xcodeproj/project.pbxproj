@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0729DF9319A8EE75002F8A75 /* libndMacStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0729DF9219A8EE75002F8A75 /* libndMacStatic.a */; };
-		07EBD08E19A8EADF00802576 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EBD08D19A8EADF00802576 /* main.cpp */; };
+		07AE602B19D567390067A2EA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07AE602719D567390067A2EA /* main.cpp */; };
+		07AE602E19D567390067A2EA /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07AE602A19D567390067A2EA /* Makefile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,8 +26,9 @@
 
 /* Begin PBXFileReference section */
 		0729DF9219A8EE75002F8A75 /* libndMacStatic.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libndMacStatic.a; path = "../../../../../Library/Developer/Xcode/DerivedData/ndsdkxcode-hcupniqwmhivkefcedgnfgupthhn/Build/Products/Debug/libndMacStatic.a"; sourceTree = "<group>"; };
+		07AE602719D567390067A2EA /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		07AE602A19D567390067A2EA /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		07EBD08A19A8EADF00802576 /* srvDemo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = srvDemo; sourceTree = BUILT_PRODUCTS_DIR; };
-		07EBD08D19A8EADF00802576 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,11 +43,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		07AE602619D567390067A2EA /* srvDemo */ = {
+			isa = PBXGroup;
+			children = (
+				07AE602719D567390067A2EA /* main.cpp */,
+				07AE602A19D567390067A2EA /* Makefile */,
+			);
+			name = srvDemo;
+			path = ../../demo/srvDemo;
+			sourceTree = "<group>";
+		};
 		07EBD08119A8EADF00802576 = {
 			isa = PBXGroup;
 			children = (
+				07AE602619D567390067A2EA /* srvDemo */,
 				0729DF9219A8EE75002F8A75 /* libndMacStatic.a */,
-				07EBD08C19A8EADF00802576 /* srvDemo */,
 				07EBD08B19A8EADF00802576 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,14 +68,6 @@
 				07EBD08A19A8EADF00802576 /* srvDemo */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		07EBD08C19A8EADF00802576 /* srvDemo */ = {
-			isa = PBXGroup;
-			children = (
-				07EBD08D19A8EADF00802576 /* main.cpp */,
-			);
-			path = srvDemo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -122,7 +126,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07EBD08E19A8EADF00802576 /* main.cpp in Sources */,
+				07AE602E19D567390067A2EA /* Makefile in Sources */,
+				07AE602B19D567390067A2EA /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
