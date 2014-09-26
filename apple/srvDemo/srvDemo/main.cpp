@@ -80,7 +80,7 @@ MSG_ENTRY_INSTANCE(echo_handler)
 
 MSG_ENTRY_INSTANCE(broadcast_handler)
 {
-    //ND_BROAD_CAST(nethandle,(nd_usermsghdr_t *)msg,ESF_URGENCY,0) ;
+    ND_BROAD_CAST( h_listen,(nd_usermsghdr_t *)msg);
     return 0 ;
 }
 

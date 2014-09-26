@@ -10,65 +10,94 @@
 #include "ndcli/nd_iconn.h"
 #include "nd_msg.h"
 
+#define  MAX_CONNECTOR_NUM 1024
 int volatile __exit;
 
 char *__host;
 int __port ;
 
-int ParseArg(int argc, char *argv[]) {
-    if (argc < 3) {
+NDIConn *__conn_buf[MAX_CONNECTOR_NUM] ;
+int __real_conn_num = 1;
+
+int ParseArg(int argc, char *argv[])
+{
+    if (argc < 4) {
     ERROR_EXIT:
-        printf("USAGE: %s host port \n" , argv[0]) ;
+        printf("USAGE: %s host port connector_number \n" , argv[0]) ;
                       
-        return -1 ;
+        exit(1);
     }
     
     __host = argv[1] ;
     __port = atoi(argv[2]) ;
+    __real_conn_num = atoi(argv[3]) ;
     
     return 0;
 }
 
 
-NDIConn *pconnector ;
+int msg_br_handler(NDIConn* pconn, nd_usermsgbuf_t *msg )
+{
+    NDIStreamMsg inmsg(msg) ;
+    NDUINT8 buf[1024] ;
+    buf[0] = 0 ;
+    inmsg.Read(buf,sizeof(buf)) ;
+    printf("recv (%d,%d) : %s \n",inmsg.MsgMaxid(), inmsg.MsgMinid(), buf ) ;
+    return 0;
+}
+
 
 int open_net()
 {
-    pconnector = CreateConnectorObj(NULL);
-    if (pconnector) {
-        return pconnector->Open(__host, __port, "tcp-connector", NULL) ;
+    for (int i=0; i<__real_conn_num; i++) {
+        __conn_buf[i] = CreateConnectorObj(NULL);
+        if (__conn_buf[i]) {
+            __conn_buf[i]->InstallMsgFunc(msg_br_handler, ND_MAIN_ID_SYS, ND_MSG_SYS_BROADCAST);
+            
+            __conn_buf[i]->Open(__host, __port, "tcp-connector", NULL) ;
+            
+        }
     }
-    return -1;
+    return 0;
+    
 }
 
 int sent_echo()
 {
-    NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_ECHO) ;
+    NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_BROADCAST) ;
     omsg.Write((NDUINT8*)"hello world!") ;
     
-    if(pconnector) {
-        return pconnector->SendMsg(omsg);
+    for (int i=0; i<__real_conn_num; i++) {
+        __conn_buf[i]->SendMsg(omsg) ;
     }
-    return -1 ;
+    return 0;
+
 }
 
 int updateConnect()
 {
-    if (pconnector) {
-        sent_echo();
-        pconnector->Update(100) ;
+    for (int i=0; i<__real_conn_num; i++) {
+        if (__conn_buf[i]->CheckValid()) {
+            sent_echo();
+            __conn_buf[i]->Update(0) ;
+        }
+        else {
+            __conn_buf[i]->Open(__host, __port, "tcp-connector", NULL) ;
+        }
     }
     return 0;
 }
 
 int close_net()
 {
-    if (pconnector) {
-        pconnector->Close(0) ;
-        DestroyConnectorObj(pconnector) ;
-        pconnector = 0 ;
+    for (int i=0; i<__real_conn_num; i++) {
+        __conn_buf[i]->Close(0) ;
+        DestroyConnectorObj(__conn_buf[i]) ;
+        __conn_buf[i] = 0 ;
+
     }
-    return 0 ;
+    return 0;
+
 }
 
 int wait_exit()
@@ -95,16 +124,19 @@ int wait_exit()
 
 
 int main(int argc , char *argv[])
-{	
+{
+    
+    ParseArg( argc, argv) ;
+    
     if(InitNet()){
         ndprintf(_NDT("connect error :%s!"), nd_last_error()) ;
-        getch();
+        //getch();
         exit(1);
     }
     
     if(-1==open_net()  ) {
         ndprintf(_NDT("open net error \n press any key to exit")) ;
-        getch();
+        //getch();
         exit(1);
     }
     
@@ -115,6 +147,6 @@ int main(int argc , char *argv[])
     DeinitNet();
     
     fprintf(stderr, "client test exit!\n") ;
-    getch();
+    //getch();
     return 0;
 }

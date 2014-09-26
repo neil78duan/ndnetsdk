@@ -161,7 +161,7 @@ int NDConnector::Close(int force)
 	return -1 ;
 }
 
-int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)  ;
+static int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)  ;
 int NDConnector::Create(const char *protocol_name)
 {
 	//connect to host 
@@ -182,7 +182,7 @@ int NDConnector::Create(const char *protocol_name)
 		if(-1==nd_msgtable_create(m_objhandle, msg_kinds, msg_base) ) {
 			nd_object_destroy(m_objhandle, 0) ;
 		}
-		nd_hook_packet(m_objhandle,(net_msg_entry )nd_translate_message);
+		nd_hook_packet(m_objhandle,(net_msg_entry )cliconn_translate_message);
 	}
 	return 0 ;
 
@@ -242,7 +242,7 @@ RE_WAIT:
 		ret = nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)&msg_recv,wait_time);
 		if(ret > 0) {			
 			//msg_entry(connect_handle, &msg_recv) ;
-			nd_translate_message(m_objhandle, (nd_packhdr_t*)&msg_recv, 0) ;
+			cliconn_translate_message((nd_netui_handle)m_objhandle, (nd_packhdr_t*)&msg_recv, 0) ;
 			wait_time = 0;
 			goto RE_WAIT;
 			//return 0;
@@ -389,11 +389,11 @@ NDIConn* CreateConnectorObj(const char *protocol_name)
 	if(!pConn) {
 		return NULL ;
 	}
-// 
-// 	if(-1==pConn->Create(protocol_name)) {
-// 		delete pConn ;
-// 		return NULL ;
-// 	}
+ 
+ 	if(-1==pConn->Create(protocol_name)) {
+ 		delete pConn ;
+ 		return NULL ;
+ 	}
 	return pConn ;
 }
 
@@ -445,7 +445,7 @@ struct msgentry_root
 
 
 
-int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
+int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
 {
 	ENTER_FUNC()
 	int ret = 0 ;

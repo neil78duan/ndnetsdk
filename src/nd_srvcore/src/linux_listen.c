@@ -53,9 +53,23 @@ int epoll_main(struct thread_pool_info *thip)
 	}
 	
 	while (!nd_thsrv_isexit(thread_handle)){
-		int i ;
-		int nfds = epoll_wait(thip->iopc_handle,ev_buf,event_num,50) ;
-		
+        int i;
+        int msgret ;
+        int nfds ;
+        
+        if (listen_info->pre_update){
+            listen_info->pre_update((nd_handle)listen_info, context) ;
+        }
+        msgret = nd_thsrv_msghandler(context) ;
+        if(-1== msgret) {
+            if (listen_info->end_update){
+                listen_info->end_update((nd_handle)listen_info, context) ;
+            }
+            break ;
+        }
+        
+        nfds = epoll_wait(thip->iopc_handle,ev_buf,event_num,50) ;
+        
 		for (i=0; i<nfds; i++){
 			if(ev_buf[i].data.u32==(__uint32_t)0) {
 				struct nd_client_map *client_map = accetp_client_connect(listen_info) ;
@@ -73,6 +87,10 @@ int epoll_main(struct thread_pool_info *thip)
 		}			//end for
 
 		epoll_update_session(pmanger,thip) ;
+        
+        if (listen_info->end_update){
+            listen_info->end_update((nd_handle)listen_info, context) ;
+        }
 	}					//end while
 	
 LISTEN_EXIT:
@@ -104,11 +122,30 @@ int epoll_sub(struct thread_pool_info *thip)
 
 	while (!nd_thsrv_isexit(thread_handle)){
 		int i;
-		int nfds = epoll_wait(thip->iopc_handle,ev_buf,event_num,50) ;
+        int msgret ;
+        int nfds ;
+        
+        if (listen_info->pre_update){
+            listen_info->pre_update((nd_handle)listen_info, context) ;
+        }
+        msgret = nd_thsrv_msghandler(context) ;
+        if(-1== msgret) {
+            if (listen_info->end_update){
+                listen_info->end_update((nd_handle)listen_info, context) ;
+            }
+            break ;
+        }
+        
+		nfds = epoll_wait(thip->iopc_handle,ev_buf,event_num,50) ;
 		for (i=0; i<nfds; i++){
 			update_epoll_event(&ev_buf[i],pmanger,thip);
 		}			//end for
 		epoll_update_session(pmanger,thip) ;
+        
+        
+        if (listen_info->end_update){
+            listen_info->end_update((nd_handle)listen_info, context) ;
+        }
 	}					//end while
 
 LISTEN_EXIT:
@@ -311,8 +348,20 @@ int kqueue_main(struct thread_pool_info *thip)
     
     while (!nd_thsrv_isexit(thread_handle)){
         struct timespec tmsp = {0, 50 *1000000} ;
-        int i ;
-        int nfds = kevent(thip->iopc_handle, NULL, 0, ev_buf, event_num, &tmsp);
+        int i,msgret ,nfds ;
+        
+        if (listen_info->pre_update){
+            listen_info->pre_update((nd_handle)listen_info, thread_handle) ;
+        }
+        msgret = nd_thsrv_msghandler(thread_handle) ;
+        if(-1== msgret) {
+            if (listen_info->end_update){
+                listen_info->end_update((nd_handle)listen_info, thread_handle) ;
+            }
+            break ;
+        }
+        
+        nfds = kevent(thip->iopc_handle, NULL, 0, ev_buf, event_num, &tmsp);
         
         for (i=0; i<nfds; i++){
             uintptr_t sock = ev_buf[i].ident;
@@ -334,6 +383,10 @@ int kqueue_main(struct thread_pool_info *thip)
         }			//end for
         
         epoll_update_session(pmanger,thip) ;
+        
+        if (listen_info->end_update){
+            listen_info->end_update((nd_handle)listen_info, thread_handle) ;
+        }
     }					//end while
     
 LISTEN_EXIT:
@@ -365,13 +418,30 @@ int kqueue_sub(struct thread_pool_info *thip)
     
     while (!nd_thsrv_isexit(thread_handle)){
         struct timespec tmsp = {0, 50 *1000000} ;
-        int i ;
-        int nfds = kevent(thip->iopc_handle, NULL, 0, ev_buf, event_num, &tmsp);
+        int i,msgret ,nfds ;
+        
+        if (listen_info->pre_update){
+            listen_info->pre_update((nd_handle)listen_info, thread_handle) ;
+        }
+        msgret = nd_thsrv_msghandler(thread_handle) ;
+        if(-1== msgret) {
+            if (listen_info->end_update){
+                listen_info->end_update((nd_handle)listen_info, thread_handle) ;
+            }
+            break ;
+        }
+        
+        nfds = kevent(thip->iopc_handle, NULL, 0, ev_buf, event_num, &tmsp);
+        
         
         for (i=0; i<nfds; i++){
             update_epoll_event(&ev_buf[i],pmanger,thip);
         }			//end for
         epoll_update_session(pmanger,thip) ;
+        
+        if (listen_info->end_update){
+            listen_info->end_update((nd_handle)listen_info, thread_handle) ;
+        }
     }					//end while
     
 LISTEN_EXIT:

@@ -52,22 +52,6 @@ protected:
 	nd_handle m_objhandle ;
 };
 
-class NDCallTrace
-{
-public:
-	NDCallTrace(const char *funcname) 
-	{
-		m_ret = push_func(funcname) ;
-	}
-	~NDCallTrace() 
-	{
-		if(m_ret==0) {
-			pop_func() ;
-		}
-	}
-private:
-	int m_ret ;
-};
 
 //#pragma warning (pop)
 
