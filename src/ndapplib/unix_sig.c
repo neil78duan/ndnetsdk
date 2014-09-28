@@ -10,7 +10,10 @@
 //#include "nd_app.h"
 #include <signal.h>
 
-char *get_signal_desc(int signo) ;
+
+extern void nd_instance_exit(int flag) ;
+
+extern void nd_sys_exit(int exitcode) ;
 char *sig_desc[] = {
 								 " ",
 /*#define	SIGHUP		1	*/   " Hangup (POSIX).  ",
@@ -49,6 +52,14 @@ char *sig_desc[] = {
 
 };
 
+char *get_signal_desc(int signo)
+{
+    char *p = "undefined message " ;
+    if( signo <= 31 && signo >=0)
+        return sig_desc[signo] ;
+    else
+        return p ;
+}
 
 /* if server program received a signal 
  * it will run here 
@@ -58,9 +69,97 @@ void _terminate_server(int signo)
 {
 	char *msg = get_signal_desc(signo);
 	
-	nd_logmsg("received signed %s server exit\n",msg);
+	nd_logmsg("sigaction() -> _terminate_server() received signed %s server exit\n",msg);
 	
-	exit_instance(0) ;
+	nd_instance_exit(0) ;
+}
+
+static int _s_terminate_sigs[] = {SIGHUP,SIGINT,SIGQUIT,SIGTERM, SIGQUIT,SIGTSTP} ;
+#define terminate_sigs_num  ND_ELEMENTS_NUM(_s_terminate_sigs) 
+
+static int _s_ignore_sigs[] = {SIGALRM,SIGCHLD,SIGIO,SIGCONT,SIGVTALRM,SIGUSR1,SIGUSR2} ;
+#define ignore_sigs_num      ND_ELEMENTS_NUM(_s_ignore_sigs)
+
+int nd_signals_init()
+{
+    ENTER_FUNC()
+    int i ;
+    sigset_t blockmask, oldmask  ;
+    struct sigaction sact ,oldact;
+    
+    sigemptyset(&blockmask);
+    sigemptyset(&oldmask);
+    
+    sigaddset(&blockmask, SIGINT);
+    sigaddset(&blockmask, SIGTERM);
+    
+    sact.sa_handler = _terminate_server ;
+    
+    sigemptyset(&sact.sa_mask );
+    sigaddset(&sact.sa_mask, SIGINT);
+    
+    sigprocmask(SIG_BLOCK ,&blockmask, &oldmask );
+    
+    //set terminate function
+    for(i=0; i<terminate_sigs_num; i++){
+        if(-1==sigaction(_s_terminate_sigs[i], &sact, &oldact))	{
+            nd_logmsg("Installed %d signal function error!", _s_terminate_sigs[i] );
+            //LEAVE_FUNC();
+            //return -1 ;
+        }
+    }
+    
+    sact.sa_handler = SIG_IGN ;
+    //ignore signals
+    for(i=0; i<ignore_sigs_num; i++){
+        if(-1==sigaction(_s_ignore_sigs[i], &sact, &oldact))	{
+        //if(-1== signal(_s_ignore_sigs[i], SIG_IGN)) {
+            nd_logmsg("sigaction() Installed %d signal function error!", _s_terminate_sigs[i] );
+            //LEAVE_FUNC();
+            //return -1 ;
+        }
+    }
+    
+    sigprocmask(SIG_SETMASK ,&blockmask, NULL );
+    LEAVE_FUNC();
+    
+    return  0;
+}
+
+int nd_wait_terminate_signals()
+{
+    ENTER_FUNC()
+    int i = 0 , intmask=-1, ret=-1;
+    sigset_t blockmask ;
+    
+    sigemptyset(&blockmask) ;
+    
+    for(i=0; i<terminate_sigs_num; i++){
+        sigaddset(&blockmask,_s_terminate_sigs[i]) ;
+    }
+    
+    ret = sigwait(&blockmask, &intmask) ;
+    if (ret == 0) {
+        nd_logmsg("sigwait() received %d signed %s program would exit\n"  AND  intmask AND get_signal_desc(intmask));
+        if(intmask <=0 || intmask > 32){
+            LEAVE_FUNC();
+            return 0;
+        }
+    }
+    else {
+        nd_logerror("sigwait() : %s", nd_last_error()) ;
+        LEAVE_FUNC();
+        nd_sys_exit(1) ;
+    }
+    
+    LEAVE_FUNC();
+    return -1;
+}
+#if 0
+int nd_sig_handler_install(void)
+{
+    //ignore
+    return 0;
 }
 /* install signal handle function 
  * because server program must backup user data
@@ -215,13 +314,5 @@ int unblock_signal(void)
 	return 0;
 }
 
-
-char *get_signal_desc(int signo)
-{
-	char *p = "undefined message " ;
-	if( signo <= 31 && signo >=0)
-		return sig_desc[signo] ;
-	else 
-		return p ;
-}
+#endif // 0
 #endif

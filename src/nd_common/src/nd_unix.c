@@ -122,7 +122,7 @@ int _nd_sem_open(ndsem_t *sem, unsigned int value)
         
         psem->_sem = sem_open( psem->_name, O_CREAT|O_EXCL, 0644, value );
         if (psem->_sem== SEM_FAILED) {
-            nd_logerror("sem_open(%s) : %s\n",psem->_name, nd_last_error()) ;
+            //nd_logerror("sem_open(%s) : %s\n",psem->_name, nd_last_error()) ;
             if (errno != EEXIST) {
                 free(psem) ;
                 return -1 ;

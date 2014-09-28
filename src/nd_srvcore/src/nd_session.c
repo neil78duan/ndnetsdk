@@ -188,6 +188,8 @@ int nd_session_broadcast_ex(nd_handle listen_handle, nd_usermsghdr_t *msg, NDUIN
 	struct listen_contex *plc = (struct listen_contex*)listen_handle ;	
 	nd_handle client;
 	struct cm_manager *pmanger  ;
+    
+    nd_assert(NDHANDLE_LISTEN==listen_handle->type) ;
 	pmanger = nd_listensrv_get_cmmamager(listen_handle) ;
 	nd_assert(pmanger);
 

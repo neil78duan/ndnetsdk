@@ -18,6 +18,7 @@
 #include "ndstl/nd_utility.h"
 //#include "ndstl/nd_object.h"
 #include <exception>
+#include "nd_common/nd_common.h"
 
 void *_malloc_pool(size_t size, void *pool=NULL)  ;
 void _free_pool(void *p,void *pool=NULL) ;

@@ -36,7 +36,7 @@ int nd_unhandler_except(struct _EXCEPTION_POINTERS *lpExceptionInfo) ;
 
 extern int create_stl_allocator() ;
 extern  void destroy_stl_allocator() ;
-static int applib_exit(int flag) ;
+static int applib_exit_callback(int flag) ;
 static NDInstanceBase *g_base_inst = NULL ;
 
 //srv_config NDInstanceBase::srvcfg ={0};
@@ -103,27 +103,8 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 {
 	int i ;
 
-	
-#ifdef ND_UNIX
-#ifdef  HANDLE_UNIX_SIGNAL
-	block_signal() ;
-#endif 
-#else 
-	if (!SetConsoleCtrlHandler((PHANDLER_ROUTINE)winclose_entry,TRUE)) {
-		nd_logfatal("install close callback function error\n") ;
-	}
-#ifdef ND_DEBUG
-	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-// 
-// 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
-// 	_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
-// 	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
-// 	_CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDOUT);
-// 	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
-// 	_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDOUT);
-
-#endif
-#endif	
+    system_signals_init() ;
+    
 	nd_arg(argc, argv);	
 	
 	//get config file 	
@@ -152,7 +133,7 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 		exit(1) ;
 	}
 	
-	nd_set_exit(applib_exit) ;
+	nd_set_exit_callback(applib_exit_callback) ;
 
 #ifndef ND_UNIX
 	if (m_config.i_cfg.open_dump){
@@ -184,10 +165,14 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 
 void NDInstanceBase::Destroy(int flag)
 {
-
 	OnDestroy();
-	nd_end_server(flag) ;
-	
+    
+    nd_host_eixt() ;
+    if(NDInstanceBase::Close(flag)==-1) {
+        return  ;
+    }
+    DestructListener() ;
+
 }
 
 int NDInstanceBase::Open(int session_size )
@@ -223,28 +208,9 @@ int NDInstanceBase::Open(int session_size )
 int NDInstanceBase::WaitServer()
 {
 	ND_TRACE_FUNC() ;	
-	return wait_services() ;
-}
-
-
-int NDInstanceBase::Start(int argc, const char *argv[])
-{
-	ND_TRACE_FUNC();
-	if(-1==NDInstanceBase::Create(argc, argv))
-		return -1 ;
-	return Open(sizeof(NDSession)) ;
-}
-
-int NDInstanceBase::End(int flag)
-{
-	ND_TRACE_FUNC();
-	nd_host_eixt() ;
-	if(NDInstanceBase::Close(flag)==-1) {
-		return -1 ;
-	}
-	DestructListener() ;
-	NDInstanceBase::Destroy(flag) ;
-	return 0;
+	int ret = wait_services() ;
+    SetExitCode(0) ;
+    return  ret ;
 }
 
 
@@ -252,13 +218,11 @@ int NDInstanceBase::Close(int force)
 {
 	ND_TRACE_FUNC() ;
 
-	nd_host_eixt() ;
-
 	if(timer_thid) {
 		nd_thsrv_destroy(timer_thid, force) ;
 		timer_thid = 0 ;
 	}
-	nd_thsrv_release_all() ;
+	//nd_thsrv_release_all() ;
 
 	OnClose();
 	if (pListen){
@@ -378,12 +342,6 @@ void NDInstanceBase::DelTimer(int timerid)
 		return ;
 	}
 	nd_listensrv_del_timer(hl,timerid );
-}
-void NDInstanceBase::OnCreate() 
-{
-// 	if(-1==ReadConfig( (const char*)m_config_name) ) {
-// 		error_exit("read config %s error" AND m_config_name) ;
-// 	}
 }
 
 
@@ -580,10 +538,10 @@ int ipaddr_mac_cmp(const char *input_addr)
 }
 #endif
 
-int applib_exit(int flag)
+int applib_exit_callback(int flag)
 {
 	if (g_base_inst){
-		g_base_inst->End(flag) ;
+		g_base_inst->Destroy(flag) ;
 	}
 	return 0;
 }

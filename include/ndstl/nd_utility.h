@@ -17,6 +17,24 @@
 #include "nd_common/nd_comcfg.h"
 
 #ifdef ND_CALLSTACK_TRACE
+
+class NDCallTrace
+{
+public:
+    NDCallTrace(const char *funcname)
+    {
+        m_ret = push_func(funcname) ;
+    }
+    ~NDCallTrace()
+    {
+        if(m_ret==0) {
+            pop_func() ;
+        }
+    }
+private:
+    int m_ret ;
+};
+
 #define ND_TRACE_FUNC() NDCallTrace _tmp_func_trace(__FUNC__)
 #define ND_TRACE_FUNC_EX(name) NDCallTrace name(__FUNC__)
 

@@ -36,8 +36,6 @@ public:
 	void InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level=EPL_CONNECT);
 	virtual int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
 	
-	//virtual NDSession *ConstructSession(void *addr) { return new(addr) NDSession ;}
-	//virtual void DestructSession(NDSession *psession) { delete psession ;}
 	NDSession *ConstructSession(void *addr);
 	void DestructSession(NDSession *psession);
 

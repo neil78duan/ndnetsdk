@@ -45,25 +45,33 @@ static __INLINE__ void nd_pause()
 
 CPPAPI int nd_end_server(int force);
 
+CPPAPI int system_signals_init() ;
 CPPAPI int wait_services() ;
 //CPPAPI int read_config(const char *file, struct srv_config *readcfg) ;
 
 CPPAPI void exit_instance(int flag) ;
 #ifdef ND_UNIX
-CPPAPI int installed_sig_handle(void);
-CPPAPI int wait_signal_entry();
-CPPAPI int block_signal(void) ;
-char *get_signal_desc(int signo);
-CPPAPI int unblock_signal(void) ;
-CPPAPI int ignore_all_signal(void) ;
+//CPPAPI int installed_sig_handle(void);
+//CPPAPI int wait_signal_entry();
+//CPPAPI int block_signal(void) ;
+//char *get_signal_desc(int signo);
+//CPPAPI int unblock_signal(void) ;
+//CPPAPI int ignore_all_signal(void) ;
+
+CPPAPI int nd_wait_terminate_signals();
+CPPAPI int nd_signals_init();
+
 #else
 CPPAPI BOOL WINAPI winclose_entry(DWORD dwevent);
 #endif //_WINDOWS
 
 //set user appliction exit function
-CPPAPI void app_exit_entry(exit_app_func func) ;
+//CPPAPI void app_exit_entry(exit_app_func func) ;
 CPPAPI void _error_exit(const char *file, int line,const char *stm,...) ;
-CPPAPI void nd_set_exit(exit_app_func func) ;
+CPPAPI void nd_set_exit_callback(exit_app_func func) ;
+CPPAPI void nd_instance_exit(int flag);
+
+CPPAPI void nd_sys_exit(int exitcode) ;
 
 
 #if defined(_MSC_VER)
@@ -84,7 +92,7 @@ CPPAPI int set_mp() ;
 #define ND_CLOSE(nethandle, flag, h_listen)		nd_session_close(nethandle, flag ) 
 #define ND_INSTALL_HANDLER						nd_msgentry_install
 #define SET_CRYPT( sid, k,  size, h)			nd_connector_set_crypt( sid, k,  size)
-#define ND_BROAD_CAST(h_listen, msg, hsession)	nd_session_broadcast(h_listen, (nd_usermsghdr_t *)(msg), ((nd_netui_handle)hsession)->session_id) 
+#define ND_BROAD_CAST(h_listen, msg)	nd_session_broadcast(h_listen, (nd_usermsghdr_t *)(msg)) 
 #define ND_SET_ONCONNECT_ENTRY(h, in,  out)		nd_listensrv_set_entry(h, (accept_callback)in,  (deaccept_callback)out)
 
 #define USER_NETMSG_FUNC	nd_usermsg_func		

@@ -390,7 +390,10 @@ int addto_thread_pool(struct nd_client_map *client, struct thread_pool_info * pt
 	}	
 	pthinfo->sid_buf[pthinfo->session_num++] = client->connect_node.session_id ;
 #ifdef ND_UNIX
-	attach_to_listen(pthinfo,client) ;
+    if (pthinfo->lh->io_mod ==ND_LISTEN_OS_EXT) {
+        attach_to_listen(pthinfo,client) ;
+    }
+	
 #endif 
 	return 0 ;
 }
@@ -417,6 +420,16 @@ int _delfrom_thread_pool(NDUINT16 sid, struct thread_pool_info * pthinfo)
 }
 int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo) 
 {
+    if(0==_delfrom_thread_pool(client->connect_node.session_id, pthinfo) ) {
+        
+#ifdef ND_UNIX
+        if (pthinfo->lh->io_mod ==ND_LISTEN_OS_EXT) {
+            deattach_from_listen(pthinfo,client) ;
+        }
+#endif
+        return 0 ;
+    }
+    /*
 	int i ;
 	for(i=0; i<pthinfo->session_num; i++) {
 		if (pthinfo->sid_buf[i]==client->connect_node.session_id )	{
@@ -432,11 +445,8 @@ int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * 
 		pthinfo->sid_buf[i] = pthinfo->sid_buf[i+1] ;
 	}
 	--(pthinfo->session_num) ;
-
-#ifdef ND_UNIX
-	deattach_from_listen(pthinfo,client) ;
-#endif 
-	return 0 ;
+     */
+	return -1 ;
 }
 
 
