@@ -14,7 +14,7 @@
 #pragma warning (disable : 4200)
 
 
-#include "nd_safemap.h"
+#include "ndstl/nd_safemap.h"
 #include "ndapplib/applib.h"
 template<class _Tkey, class _Ttype>
 class NDContainerXL: public nd_safemap<_Tkey,_Ttype>

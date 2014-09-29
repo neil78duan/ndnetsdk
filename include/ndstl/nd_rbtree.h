@@ -63,7 +63,7 @@ public:
 	rbtree_iterator(const _Mybase &it):_Mybase(it) {}
 	_Myiter& operator++()
 	{
-		rb_node  *node = rb_next(&_Mybase::treenode->hdr) ;
+		nd_rb_node  *node = rb_next(&_Mybase::treenode->hdr) ;
 		if (node){
 			_Mybase::treenode = _Mybase::treenode->get_entry(node);//rb_entry(node,struct rbtree_node, hdr) ;
 		}else {
@@ -98,7 +98,7 @@ public:
 	const_rbtree_iterator(const _Mybase &it):_Mybase(it) {}
 	_Myiter& operator++() 
 	{
-		rb_node  *node = rb_next(&_Mybase::treenode->hdr) ;
+		nd_rb_node  *node = rb_next(&_Mybase::treenode->hdr) ;
 		if (node){
 			_Mybase::treenode = _Mybase::treenode->get_entry(node);//rb_entry(node,struct rbtree_node, hdr) ;
 		}else {
@@ -132,7 +132,7 @@ public:
 	rbtree_reverse_iterator(value_node *it):_Mybase(it) {}
 	_Myiter& operator++()
 	{
-		rb_node  *node = rb_prev(&_Mybase::treenode->hdr) ;
+		nd_rb_node  *node = rb_prev(&_Mybase::treenode->hdr) ;
 		if (node){
 			_Mybase::treenode = _Mybase::treenode->get_entry(node);//rb_entry(node,struct rbtree_node, hdr) ;
 		}else {
@@ -167,7 +167,7 @@ public:
 	const_rbtree_reverse_iterator(value_node *it):_Mybase(it) {}
 	_Myiter& operator++() 
 	{
-		rb_node  *node = rb_prev(&_Mybase::treenode->hdr) ;
+		nd_rb_node  *node = rb_prev(&_Mybase::treenode->hdr) ;
 		if (node){
 			_Mybase::treenode = _Mybase::treenode->get_entry(node);//rb_entry(node,struct rbtree_node, hdr) ;
 		}else {
@@ -199,7 +199,7 @@ public:
 	typedef ptrdiff_t			difference_type;
 	typedef _nd_rbtree<_Ttype> _Myt ;
 	struct rbtree_node {
-		rb_node hdr ;
+		nd_rb_node hdr ;
 		value_type _value;
 		rbtree_node()
 		{
@@ -209,7 +209,7 @@ public:
 		{
 			rb_init_node(&hdr);
 		}
-		struct rbtree_node *get_entry(rb_node  *node)
+		struct rbtree_node *get_entry(nd_rb_node  *node)
 		{
 			return rb_entry(node,struct rbtree_node, hdr) ; 
 		}
@@ -268,7 +268,7 @@ public:
 	{
 		ND_TRACE_FUNC() ;
 		value_node *_addr = erase_it.get_addr() ;
-		rb_node *node = rb_next(&_addr->hdr) ;
+		nd_rb_node *node = rb_next(&_addr->hdr) ;
 		rb_erase(&_addr->hdr,&m_header ) ;
 		--m_count;
 		if (node) {
@@ -281,7 +281,7 @@ public:
 	{
 		ND_TRACE_FUNC() ;
 		value_node *_addr = erase_it.get_addr() ;
-		rb_node *node = rb_prev(&_addr->hdr) ;
+		nd_rb_node *node = rb_prev(&_addr->hdr) ;
 		rb_erase(&_addr->hdr,&m_header ) ;
 		--m_count;
 		if (node) {
@@ -295,7 +295,7 @@ public:
 	iterator begin() 
 	{
 		ND_TRACE_FUNC() ;
-		rb_node *node = rb_first(&m_header) ;
+		nd_rb_node *node = rb_first(&m_header) ;
 		if (node)
 			return iterator(rb_entry(node, struct rbtree_node, hdr)) ;
 		else 
@@ -305,7 +305,7 @@ public:
 	reverse_iterator rbegin() 
 	{
 		ND_TRACE_FUNC() ;
-		rb_node *node = rb_last(&m_header) ;
+		nd_rb_node *node = rb_last(&m_header) ;
 		if (node)
 			return reverse_iterator(rb_entry(node, struct rbtree_node, hdr)) ;
 		else 
@@ -316,7 +316,7 @@ public:
 	const_iterator begin() const
 	{
 		ND_TRACE_FUNC() ;
-		rb_node *node = rb_first(&m_header) ;
+		nd_rb_node *node = rb_first(&m_header) ;
 		if (node)
 			return const_iterator(rb_entry(node, struct rbtree_node, hdr)) ;
 		else 
@@ -326,7 +326,7 @@ public:
 	const_reverse_iterator rbegin()const 
 	{
 		ND_TRACE_FUNC() ;
-		rb_node *node = rb_last(&m_header) ;
+		nd_rb_node *node = rb_last(&m_header) ;
 		if (node)
 			return const_reverse_iterator(rb_entry(node, struct rbtree_node, hdr)) ;
 		else 
@@ -343,7 +343,7 @@ public:
 	virtual ~_nd_rbtree(){}
 protected:
 	int m_count;
-	rb_root m_header;
+	nd_rb_root m_header;
 };
 /*
 //base rb tree without allocator

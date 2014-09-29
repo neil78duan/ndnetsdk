@@ -11,7 +11,7 @@
 
 #include "nd_common/nd_common.h"
 #include "nd_allocator.h"
-#include "ndapplib/nd_rbtree.h"
+#include "ndstl/nd_rbtree.h"
 
 #ifdef ND_MULTI_THREAD_GAME
 typedef nd_rbnode_locker savemap_locker_t ;

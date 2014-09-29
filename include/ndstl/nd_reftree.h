@@ -199,7 +199,7 @@ public:
 		}
 		_Mybase::parent->_lock();
 		_Mybase::parent->dec_ref(_Mybase::treenode) ;
-		rb_node  *node = &_Mybase::treenode->hdr ;
+		nd_rb_node  *node = &_Mybase::treenode->hdr ;
 		_Mybase::treenode = NULL ;
 		while ((node=rb_next(node)) != NULL) 	{
 			_Mybase::treenode = rb_entry(node,value_node, hdr) ;
@@ -241,7 +241,7 @@ public:
 		}
 		_Mybase::parent->_lock();
 		_Mybase::parent->dec_ref(_Mybase::treenode) ;
-		rb_node  *node = &_Mybase::treenode->hdr ;
+		nd_rb_node  *node = &_Mybase::treenode->hdr ;
 		_Mybase::treenode = NULL ;
 		while ((node=rb_prev(node)) != NULL) 	{
 			_Mybase::treenode = rb_entry(node,value_node, hdr) ;
@@ -282,7 +282,7 @@ public:
 	typedef nd_refcount_rbtree<_Tfirst, _Ttype,clr_func,_TLock> _Myt ;
 
 	struct rbtree_node {
-		rb_node hdr ;
+		nd_rb_node hdr ;
 		ndatomic_t ref_count ;
 		size_t next_del ;//delete list
 		value_type _data;
@@ -403,7 +403,7 @@ public:
 	{
 		ND_TRACE_FUNC() ;
 		_lock() ;
-		rb_node *next_node = rb_next(&(erase_it._getaddr()->hdr)) ;
+		nd_rb_node *next_node = rb_next(&(erase_it._getaddr()->hdr)) ;
 		_unlock() ;
 		_set_erase_node(erase_it._getaddr()) ;
 		
@@ -416,7 +416,7 @@ public:
 	{
 		ND_TRACE_FUNC() ;
 		_lock() ;
-		rb_node *next_node = rb_prev(&(erase_it._getaddr()->hdr)) ;
+		nd_rb_node *next_node = rb_prev(&(erase_it._getaddr()->hdr)) ;
 		_unlock() ;
 
 		_set_erase_node(erase_it._getaddr()) ;
@@ -431,7 +431,7 @@ public:
 	{
 		ND_TRACE_FUNC() ;
 		_lock() ;
-		rb_node *next_node = rb_next(&(erase_it._getaddr()->hdr)) ;
+		nd_rb_node *next_node = rb_next(&(erase_it._getaddr()->hdr)) ;
 		_unlock() ;
 		_set_erase_node(&*erase_it) ;
 
@@ -444,7 +444,7 @@ public:
 	{
 		ND_TRACE_FUNC() ;
 		_lock() ;
-		rb_node *next_node = rb_prev(&(erase_it._getaddr()->hdr)) ;
+		nd_rb_node *next_node = rb_prev(&(erase_it._getaddr()->hdr)) ;
 		_unlock() ;
 		_set_erase_node(&*erase_it) ;
 
@@ -457,7 +457,7 @@ public:
 	{
 		ND_TRACE_FUNC() ;
 		TREE_LOCK() ;
-		rb_node *cur_node = rb_first(&m_header) ;
+		nd_rb_node *cur_node = rb_first(&m_header) ;
 
 		while ( cur_node) {
 			value_node *del_data = rb_entry(cur_node, struct rbtree_node, hdr) ;
@@ -474,7 +474,7 @@ public:
 		inc_self_ref();
 		struct rbtree_node *treedata = NULL ;
 		TREE_LOCK() ;
-		rb_node *node = rb_first(&m_header) ;		
+		nd_rb_node *node = rb_first(&m_header) ;
 		while (node) 	{
 			treedata = rb_entry(node,struct rbtree_node, hdr) ;
 			if (inc_ref(treedata))	{
@@ -499,7 +499,7 @@ public:
 		inc_self_ref();
 		TREE_LOCK() ;
 		struct rbtree_node *treedata = NULL ;
-		rb_node *node = rb_last(&m_header) ;		
+		nd_rb_node *node = rb_last(&m_header) ;		
 		while (node) 	{
 			treedata = rb_entry(node,struct rbtree_node, hdr) ;
 			if (inc_ref(treedata))	{
@@ -752,7 +752,7 @@ protected:
 
 	ndatomic_t m_self_ref ; //被引用次数
 	int m_count;
-	rb_root m_header;
+	nd_rb_root m_header;
 	struct rbtree_node* m_del_list ;//delete list
 	clr_func m_clean_func;
 	_TLock m_lcok_hpl;

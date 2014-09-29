@@ -32,6 +32,8 @@ enum END_ERROR_TYPE
 	NDERR_UNKNOW			//unknowwing error
 };
 
+#define NDERR_USERDEFINE 1024 
+
 //定义句柄类型
 enum END_OBJECT_TYPE
 {
