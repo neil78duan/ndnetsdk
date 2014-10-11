@@ -12,6 +12,10 @@
 	<dict>
 		<key>25D6EC0C77C89BD90FA34F787672A1EFC7388E9B</key>
 		<string>https://github.com/neil78duan/ndnetsdk.git</string>
+		<key>4780d4bc-840c-4250-ae15-7b1b9ba6ab21</key>
+		<string>https://xp-dev.com/svn/Atlantis</string>
+		<key>4780d4bc-840c-4250-ae15-7b1b9ba6ab21++8115</key>
+		<string>https://xp-dev.com/svn/Atlantis/trunk/servers/ndsdk</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>apple/ndsdkxcode.xcworkspace</string>
@@ -19,6 +23,15 @@
 	<dict>
 		<key>25D6EC0C77C89BD90FA34F787672A1EFC7388E9B</key>
 		<string>../..</string>
+		<key>4780d4bc-840c-4250-ae15-7b1b9ba6ab21</key>
+		<string>../../../../..</string>
+		<key>4780d4bc-840c-4250-ae15-7b1b9ba6ab21++8115</key>
+		<string>../../../ndsdk</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>4780d4bc-840c-4250-ae15-7b1b9ba6ab21++8115</key>
+		<string>https://xp-dev.com/svn/Atlantis</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/neil78duan/ndnetsdk.git</string>
@@ -30,11 +43,27 @@
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>4780d4bc-840c-4250-ae15-7b1b9ba6ab21</string>
+			<key>IDESourceControlWCCName</key>
+			<string>..</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>25D6EC0C77C89BD90FA34F787672A1EFC7388E9B</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ndnetsdk</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>4780d4bc-840c-4250-ae15-7b1b9ba6ab21++8115</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ndsdk</string>
 		</dict>
 	</array>
 </dict>

@@ -231,8 +231,16 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
     case NDIOCTL_GET_CRYPT_KEY:
         *(nd_userdata_t*)val = nd_connector_get_crypt(socket_node, size) ;
         break;
-        
-        
+            
+    case NDIOCTL_SET_LEVEL:
+        socket_node->level = (NDUINT8) (*(int*)val ) ;
+        break;
+            
+    case NDIOCTL_GET_LEVEL:
+        *(int*)val = socket_node->level ;
+        break;
+            
+            
 	case NDIOCTL_SET_BLOCK:
 		ret = nd_socket_nonblock(socket_node->fd, 0) ;
 		break ;

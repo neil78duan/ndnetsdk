@@ -600,7 +600,7 @@ public:
 	{
 		ND_TRACE_FUNC() ;
 		TREE_LOCK() ;
-		struct rb_node *node = m_header.rb_node;
+		struct nd_rb_node *node = m_header.rb_node;
 		while (node) {
 			comp_type &data = ((rbtree_node*)node)->_data.first ;
 			if (key < data)

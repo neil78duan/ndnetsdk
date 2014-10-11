@@ -32,6 +32,7 @@
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_instance.h"
 #include "ndapplib/nd_affair.h"
+#include "ndapplib/nd_alarms.h"
 
 //#include "pg_config.h"
 

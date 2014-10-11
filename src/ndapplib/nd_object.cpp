@@ -62,7 +62,9 @@ void NDObject::operator delete[](void *p) throw()
 #endif 
 
 NDObject::NDObject() :m_objhandle(NULL)
-{	
+{
+    m_bPoolOwner = NULL;
+    m_pool = 0;
 }
 
 NDObject* NDObject::GetParent() 
@@ -93,13 +95,50 @@ void NDObject::SetLastError(NDUINT32 errcode)
 		nd_object_seterror(h,errcode) ;
 }
 
-int NDObject::Create(char *name) 
+nd_handle NDObject::GetMmpool()
+{
+    if (m_pool) {
+        return m_pool ;
+    }
+    return nd_global_mmpool() ;
+}
+int NDObject::SetMmpool(nd_handle pool)
+{
+    if (pool) {
+        
+        if (m_bPoolOwner && m_pool ) {
+            nd_pool_destroy(m_pool, 0) ;
+            m_bPoolOwner = 0 ;
+            m_pool = 0 ;
+        }
+        
+        m_pool = pool ;
+        m_bPoolOwner = 0 ;
+        return 0;
+    }
+    else {
+        m_pool = nd_pool_create(EMEMPOOL_UNLIMIT, NULL);
+        if (m_pool) {
+            m_bPoolOwner = 1 ;
+            return 0 ;
+        }
+        return -1;
+    }
+}
+
+
+
+int NDObject::Create(char *name)
 {
 	return 0 ;
 }
 void NDObject::Destroy(int flag) 
 {
-
+    if (m_bPoolOwner) {
+        nd_pool_destroy(m_pool, flag) ;
+        m_bPoolOwner = 0 ;
+        m_pool = 0 ;
+    }
 }
 void NDObject::OnCreate() 
 {
@@ -124,9 +163,21 @@ void NDObject::OnClose()
 }
 
 
-int NDObject::Update()
+int NDObject::Update(ndtime_t tminterval)
 {
 	return 0 ;
+}
+int NDObject::UpdateSecond()
+{
+    return 0;
+}
+int NDObject::UpdateMinute()
+{
+    return 0;
+}
+int NDObject::UpdateHour()
+{
+    return 0;
 }
 
 void NDObject::OnInitilize()

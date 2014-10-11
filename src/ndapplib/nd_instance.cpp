@@ -118,18 +118,29 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 		else if(0==strcmp(argv[i],"-nodev")) {
 			m_un_develop = 1;
 		}
+        else if(0==strcmp(argv[i],"-pid") && i<argc -1){
+            FILE *pf = fopen(argv[i+1], "w") ;
+            if (pf) {
+                fprintf(pf, "%d", nd_processid()) ;
+                fclose(pf) ;
+            }
+            else {
+                printf("write pid error %s file not exist\n", argv[i+1]) ;
+                exit(1) ;
+            }
+        }
 	}
 
 	if(!config_file|| !m_config_name) {
 		printf("usage: -f config-file -c config-name\n press ANY key to continue\n") ;
-		getch() ;
+		//getch() ;
 		exit(1) ;
 		//return -1 ;
 	}
 
 	if(-1==ReadConfig(m_config_name) ) {
 		printf("Read config %s file error \n press ANY key to continue\n", m_config_name) ;
-		getch() ;
+		//getch() ;
 		exit(1) ;
 	}
 	

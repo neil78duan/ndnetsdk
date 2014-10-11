@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07D47C5119D9694A00D08BB6 /* nd_alarms.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D47C5019D9694A00D08BB6 /* nd_alarms.h */; };
+		07D47C5319D9695A00D08BB6 /* nd_alarms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07D47C5219D9695A00D08BB6 /* nd_alarms.cpp */; };
 		07EBCF3B19A8DFCD00802576 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCE9219A8DFCD00802576 /* Makefile */; };
 		07EBCF5E19A8DFCD00802576 /* bintree.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEB719A8DFCD00802576 /* bintree.c */; };
 		07EBCF5F19A8DFCD00802576 /* callstack.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEB819A8DFCD00802576 /* callstack.c */; };
@@ -181,6 +183,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		07D47C5019D9694A00D08BB6 /* nd_alarms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_alarms.h; sourceTree = "<group>"; };
+		07D47C5219D9695A00D08BB6 /* nd_alarms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_alarms.cpp; sourceTree = "<group>"; };
 		07EBCE8719A8DEFC00802576 /* libndMacStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndMacStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		07EBCE9219A8DFCD00802576 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		07EBCEB719A8DFCD00802576 /* bintree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bintree.c; sourceTree = "<group>"; };
@@ -582,6 +586,7 @@
 		07EBCF1019A8DFCD00802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				07D47C5219D9695A00D08BB6 /* nd_alarms.cpp */,
 				07EBCF1119A8DFCD00802576 /* Makefile */,
 				07EBCF1219A8DFCD00802576 /* misc.cpp */,
 				07EBCF1319A8DFCD00802576 /* nd_affair.cpp */,
@@ -713,6 +718,7 @@
 		07EBD01119A8E01500802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				07D47C5019D9694A00D08BB6 /* nd_alarms.h */,
 				07EBD01219A8E01500802576 /* applib.h */,
 				07EBD01319A8E01500802576 /* nd_affair.h */,
 				07EBD01419A8E01500802576 /* nd_cmmgr.h */,
@@ -780,6 +786,7 @@
 				07EBD07919A8E01500802576 /* nd_reftree.h in Headers */,
 				07EBD06819A8E01500802576 /* applib.h in Headers */,
 				07EBD02C19A8E01500802576 /* list.h in Headers */,
+				07D47C5119D9694A00D08BB6 /* nd_alarms.h in Headers */,
 				07EBD04F19A8E01500802576 /* tea.h in Headers */,
 				07EBD05019A8E01500802576 /* nd_msg.h in Headers */,
 				07EBD06119A8E01500802576 /* nd_listensrv.h in Headers */,
@@ -977,6 +984,7 @@
 				07EBCF8119A8DFCD00802576 /* tea.c in Sources */,
 				07EBCF6B19A8DFCD00802576 /* nddir.c in Sources */,
 				07EBCFB119A8DFCD00802576 /* nd_msgpack.cpp in Sources */,
+				07D47C5319D9695A00D08BB6 /* nd_alarms.cpp in Sources */,
 				07EBCF7E19A8DFCD00802576 /* nd_pubkey.c in Sources */,
 				07EBCFA819A8DFCD00802576 /* nd_vmmain.c in Sources */,
 				07EBCF8D19A8DFCD00802576 /* udt_icmp.c in Sources */,
