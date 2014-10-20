@@ -251,7 +251,7 @@ public:
 	iterator search(const _Ttype& key)
 	{
 		ND_TRACE_FUNC() ;
-		struct rb_node *node = m_header.rb_node;
+		struct nd_rb_node *node = m_header.rb_node;
 		while (node) {
 			const_reference data = ((rbtree_node*)node)->_value ;
 			if (key < data)
