@@ -37,6 +37,8 @@ int nd_unhandler_except(struct _EXCEPTION_POINTERS *lpExceptionInfo) ;
 extern int create_stl_allocator() ;
 extern  void destroy_stl_allocator() ;
 static int applib_exit_callback(int flag) ;
+
+int instance_tick_entry(void *param) ;
 static NDInstanceBase *g_base_inst = NULL ;
 
 //srv_config NDInstanceBase::srvcfg ={0};
@@ -84,13 +86,13 @@ NDInstanceBase::NDInstanceBase()
 {
 	tminterval = 100 ;
 	pListen = 0;
-	timer_thid = 0 ;
 	m_config_name = 0;
 	config_file = 0 ;
 	m_un_develop = 0 ;
 	memset(&m_config,0, sizeof(m_config));	
 	m_bNormalExit = 1;
 	g_base_inst = this ;
+    m_alarm_id = -1 ;
 	//char *configname ;
 }
 
@@ -229,12 +231,6 @@ int NDInstanceBase::Close(int force)
 {
 	ND_TRACE_FUNC() ;
 
-	if(timer_thid) {
-		nd_thsrv_destroy(timer_thid, force) ;
-		timer_thid = 0 ;
-	}
-	//nd_thsrv_release_all() ;
-
 	OnClose();
 	if (pListen){
 		pListen->Close(force) ;
@@ -338,7 +334,7 @@ void NDInstanceBase::EndStaticsMem()
 #endif 
 
 //添加一个定时器到监听主线程
-int NDInstanceBase::AddTimer(nd_timer_entry tmfunc, void *param, ndtime_t interval ) 
+int NDInstanceBase::AddSysTimer(nd_timer_entry tmfunc, void *param, ndtime_t interval )
 {
 	nd_handle hl= GetDeftListener()->GetHandle() ;
 	if (!hl){
@@ -346,7 +342,7 @@ int NDInstanceBase::AddTimer(nd_timer_entry tmfunc, void *param, ndtime_t interv
 	}
 	return nd_listensrv_timer(hl,tmfunc,param,interval,ETT_LOOP ) ? 0 : -1;
 }
-void NDInstanceBase::DelTimer(int timerid) 
+void NDInstanceBase::DelSysTimer(int timerid)
 {
 	nd_handle hl= GetDeftListener()->GetHandle() ;
 	if (!hl){
@@ -355,6 +351,24 @@ void NDInstanceBase::DelTimer(int timerid)
 	nd_listensrv_del_timer(hl,timerid );
 }
 
+
+int NDInstanceBase::EnableAlarm(bool bEnable )
+{
+    if (bEnable) {
+        if (m_alarm_id ==-1) {
+            NDAlarm::Create() ;
+            m_alarm_id = AddSysTimer(instance_tick_entry, this, 100) ;
+        }
+    }
+    else {
+        if (m_alarm_id != -1) {
+            DelSysTimer(m_alarm_id) ;
+            NDAlarm::Destroy() ;
+            m_alarm_id = -1 ;
+        }
+    }
+    return 0;
+}
 
 //read config from file
 int NDInstanceBase::ReadConfig(const char *configname) 
@@ -555,6 +569,17 @@ int applib_exit_callback(int flag)
 		g_base_inst->Destroy(flag) ;
 	}
 	return 0;
+}
+
+
+int instance_tick_entry(void *param)
+{
+    ND_TRACE_FUNC() ;
+    if(nd_host_check_exit())
+        return -1;
+    NDInstanceBase *pInst = (NDInstanceBase*) param ;
+    pInst->Update() ;
+    return 0;
 }
 
 

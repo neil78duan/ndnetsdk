@@ -15,6 +15,9 @@
 class NDAlarm : public NDObject
 {
 public:
+    
+    virtual int Update() ;
+    
 	virtual int Update(ndtime_t tminterval) ;	//update per frame
 	virtual int UpdateSecond() ;				//update per second
 	virtual int UpdateMinute() ;				//update minute
@@ -27,12 +30,13 @@ public:
 
 	void SetDailyTime(int hour_index,int minute_index=0) ;
     void SetWeekTime(int day_index,int hour_index, int minute_index = 0 ) ;
-    nd_handle addTimer(NDObject *target, NDTimerFunc func, ndtime_t delay) ;
-    int removeTimer(nd_handle hTimer) ;
+    nd_handle addAlarm(NDObject *target, NDObjectFunc func, ndtime_t delay) ; //add timer run one
+    int removeAlarm(nd_handle hAlarm) ;
     
-	NDAlarm(NDObject *hostObj=NULL) ;
+	NDAlarm() ;
 	virtual ~NDAlarm() ;
 private:
+    int tick(ndtime_t tminterval) ;
 	void update_alarm() ;
     void update_timer(ndtime_t tminterval) ;
 	//int m_alarm_serial ;
@@ -45,11 +49,12 @@ private:
 	NDUINT8 m_week_minute;
 	NDUINT32 m_week_last_runweek;
 protected:
+    ndtime_t m_lastTickTm ;
 	ndtime_t m_tminterval ;
 	ndtime_t m_tick_minute ,m_tick_sec;
 	NDUINT32 m_tick_index, m_second_index , m_minute_index ;
     
-    NDObject *m_hostObject ;
+    //NDObject *m_hostObject ;
     struct list_head sub_list ;
 
 };

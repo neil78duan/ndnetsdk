@@ -356,8 +356,8 @@ public:
 	{
 		ND_TRACE_FUNC() ;
 		TREE_LOCK() ;
-		struct rb_root *root = &m_header;
-		struct rb_node **new_node = &(root->rb_node), *parent = NULL;
+		struct nd_rb_root *root = &m_header;
+		struct nd_rb_node **new_node = &(root->rb_node), *parent = NULL;
 
 		inc_self_ref() ;
 		//Figure out where to put new node 

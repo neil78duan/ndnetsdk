@@ -7,7 +7,7 @@
  *
  */
 
-#include "nd_alarms.h"
+#include "ndapplib/nd_alarms.h"
 
 #include "ndapplib/applib.h"
 
@@ -18,14 +18,15 @@ struct alarm_node
     struct list_head list ;
     NDINT32 timeval ;
     NDObject *target ;
-    NDTimerFunc timer_func ;
+    NDObjectFunc timer_func ;
 };
 
 
-NDAlarm::NDAlarm(NDObject *host) : m_hostObject(host)
+NDAlarm::NDAlarm()
 {
 	ND_TRACE_FUNC() ;
-	m_tminterval =0 ;
+    m_lastTickTm = nd_time() ;
+    m_tminterval =0 ;
 	m_tick_minute = 0;
 	m_tick_sec = 0;
 	m_second_index = 0;
@@ -42,6 +43,7 @@ NDAlarm::NDAlarm(NDObject *host) : m_hostObject(host)
 
 	m_daily_minute = 0 ;
 	m_week_minute = 0;
+    
 
     INIT_LIST_HEAD(&sub_list) ;
 	Create() ;
@@ -81,12 +83,12 @@ void NDAlarm::Destroy()
     struct list_head *pos, *next ;
     list_for_each_safe(pos,next, &sub_list) {
         alarm_node *node = list_entry(pos,alarm_node, list) ;
-        removeTimer((nd_handle)node) ;
+        removeAlarm((nd_handle)node) ;
     }
     INIT_LIST_HEAD(&sub_list) ;
 }
 
-nd_handle NDAlarm::addTimer(NDObject *target, NDTimerFunc func, ndtime_t delay)
+nd_handle NDAlarm::addAlarm(NDObject *target, NDObjectFunc func, ndtime_t delay)
 {
     nd_handle pool = GetMmpool()  ;
     alarm_node *node = (alarm_node *)nd_pool_alloc(pool, sizeof(alarm_node) );
@@ -108,7 +110,7 @@ nd_handle NDAlarm::addTimer(NDObject *target, NDTimerFunc func, ndtime_t delay)
     return (nd_handle) node ;
     
 }
-int NDAlarm::removeTimer(nd_handle hTimer)
+int NDAlarm::removeAlarm(nd_handle hTimer)
 {
     nd_handle pool = GetMmpool() ;
     alarm_node *node = (alarm_node *) hTimer ;
@@ -121,41 +123,54 @@ int NDAlarm::removeTimer(nd_handle hTimer)
     return 0;
 }
 
-int NDAlarm::Update(ndtime_t tminterval)
+int NDAlarm::Update()
 {
-	ND_TRACE_FUNC() ;
-	m_tminterval = tminterval ;
+    ND_TRACE_FUNC() ;
+    ndtime_t now = nd_time() ;
+    ndtime_t tminterval = now - m_lastTickTm ;
+    
+    m_lastTickTm = now ;
+    
+    return tick(tminterval);
+    
+}
 
-	m_tick_minute += tminterval ;
-	m_tick_sec += tminterval ;
-	++m_tick_index ;
-	if (m_tick_sec >= 1000){
-		if(-1==UpdateSecond())
-			return -1 ;
-
-		if (m_tick_sec > 2000)	{
-			m_tick_sec = 0 ;
-		}
-		else {
-			m_tick_sec -= 1000 ;
-		}
-		++m_second_index ;
-		if (m_tick_minute >= 1000 * 60) {			
-			if(-1==UpdateMinute() )
-				return -1;
-
-			++m_minute_index ;
-			m_tick_minute -= 1000*60 ;
-			update_alarm() ;
-
-		}
-
-	}
+int NDAlarm::tick(ndtime_t tminterval)
+{
+    ND_TRACE_FUNC() ;
+    m_tminterval = tminterval ;
+    
+    m_tick_minute += tminterval ;
+    m_tick_sec += tminterval ;
+    ++m_tick_index ;
+    Update(tminterval) ;
+    if (m_tick_sec >= 1000){
+        if(-1==UpdateSecond())
+            return -1 ;
+        
+        if (m_tick_sec > 2000)	{
+            m_tick_sec = 0 ;
+        }
+        else {
+            m_tick_sec -= 1000 ;
+        }
+        ++m_second_index ;
+        if (m_tick_minute >= 1000 * 60) {
+            if(-1==UpdateMinute() )
+                return -1;
+            
+            ++m_minute_index ;
+            m_tick_minute -= 1000*60 ;
+            update_alarm() ;
+            
+        }
+        
+    }
     
     if (list_empty(&sub_list)) {
         update_timer(tminterval);
     }
-	return 0;
+    return 0;
 }
 
 
@@ -170,7 +185,7 @@ void NDAlarm::update_timer(ndtime_t tminterval)
         if (node->timeval <= 1) {
             NDObject *obj = node->target ;
             (obj->*(node->timer_func)) () ;
-            removeTimer((nd_handle) node);
+            removeAlarm((nd_handle) node);
         }
         
     }
@@ -208,28 +223,23 @@ void NDAlarm::update_alarm()
 	}
 }
 
+int NDAlarm::Update(ndtime_t tminterval)
+{
+    return 0;
+}
+
 int NDAlarm::UpdateSecond( )
 {
-    if (m_hostObject) {
-        return m_hostObject->UpdateSecond() ;
-    }
 	return 0;
 }
 
 int NDAlarm::UpdateMinute()
 {
-    if (m_hostObject) {
-        return m_hostObject->UpdateMinute() ;
-    }
-    
 	return 0;
 }
 
 int NDAlarm::UpdateHour()
 {
-    if (m_hostObject) {
-        return m_hostObject->UpdateHour() ;
-    }
 	return 0;
 }
 

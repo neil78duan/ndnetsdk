@@ -9,7 +9,7 @@
 #ifndef _ND_INSTANCE_H_
 #define _ND_INSTANCE_H_
 
-#include "ndapplib/nd_object.h"
+#include "ndapplib/nd_alarms.h"
 
 #include "ndapplib/nd_listener.h"
 #include "ndapplib/nd_msgpacket.h"
@@ -30,7 +30,7 @@ class NDSafeListener;
 //·þÎñÆ÷ÊµÀý
 
 
-class NDInstanceBase : public NDObject
+class NDInstanceBase : public NDAlarm
 {
 public :
 	int Create(int argc, const char *argv[]) ;
@@ -46,8 +46,11 @@ public :
 	virtual ~NDInstanceBase() ;
 
 	//int CreateTimer(int tmval=100);
-	int AddTimer(nd_timer_entry tmfunc, void *param, ndtime_t interval ) ;
-	void DelTimer(int timerid) ;
+	int AddSysTimer(nd_timer_entry tmfunc, void *param, ndtime_t interval ) ;
+	void DelSysTimer(int timerid) ;
+    
+    int EnableAlarm(bool bEnable =true) ;
+    
 	server_config *GetInstConfig() {return &m_config;}
 	bool CheckReliableHost(ndip_t peerip) ;
 	bool CheckReliable(NDSession *psession) ;
@@ -63,8 +66,7 @@ protected :
 	virtual void DestructListener() ;
 	
 	NDListener *pListen ;
-	nd_thsrvid_t timer_thid ;
-
+	
 	//nd_handle m_objhandle ;
 	int tminterval ;
 	server_config m_config ;
@@ -72,6 +74,7 @@ protected :
 	const char *config_file ;
 	int m_un_develop ;
 	int m_bNormalExit ;
+    int m_alarm_id ;
 public:
 	void StartStaticsMem() ;
 	void EndStaticsMem() ;

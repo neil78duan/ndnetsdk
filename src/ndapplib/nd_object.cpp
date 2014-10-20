@@ -163,22 +163,11 @@ void NDObject::OnClose()
 }
 
 
-int NDObject::Update(ndtime_t tminterval)
+int NDObject::Update()
 {
 	return 0 ;
 }
-int NDObject::UpdateSecond()
-{
-    return 0;
-}
-int NDObject::UpdateMinute()
-{
-    return 0;
-}
-int NDObject::UpdateHour()
-{
-    return 0;
-}
+
 
 void NDObject::OnInitilize()
 {

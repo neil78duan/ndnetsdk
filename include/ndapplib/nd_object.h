@@ -48,10 +48,7 @@ public :
 	virtual void OnClose() ;
 	virtual void OnInitilize() ;		// call on open
 	
-    virtual int Update(ndtime_t tminterval);
-    virtual int UpdateSecond() ;				//update per second
-    virtual int UpdateMinute() ;				//update minute
-    virtual int UpdateHour() ;				//update hour
+    virtual int Update() ;
     
     virtual nd_handle GetMmpool() ;
     virtual int SetMmpool(nd_handle pool) ;
@@ -63,7 +60,7 @@ protected:
     nd_handle m_objhandle ;
 };
 
-typedef void (NDObject::*NDTimerFunc)();
+typedef void (NDObject::*NDObjectFunc)();
 
 
 //#pragma warning (pop)
