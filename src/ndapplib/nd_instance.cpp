@@ -207,11 +207,30 @@ int NDInstanceBase::Open(int session_size )
 	}
 	pListen->SetAccept(1) ;
 	int ret = pListen->Open(m_config.l_cfg.port) ;
+    if (ret != 0) {
+        return  -1 ;
+    }
 
-	if (0==ret && m_config.l_cfg.connected_tmout){
+    //set listen config 
+	if (m_config.l_cfg.connected_tmout){
 		nd_set_connection_timeout(pListen->GetHandle(),m_config.l_cfg.connected_tmout) ;
 	}
+    
+    if (m_config.l_cfg.empty_close_tmout){
+        pListen->SetEmptyConnTimeout(m_config.l_cfg.empty_close_tmout) ;
+    }
+    
+    if (m_config.l_cfg.closed_unknown){
+        nd_net_set_unregmsg_handler(pListen->GetHandle(),1) ;
+    }
+    
+    if (m_config.l_cfg.cloase_unauthorize){
+        nd_net_set_unauthorize_handler(pListen->GetHandle(),1) ;
+    }
+    
 	pListen->m_inst = this ;
+    
+    
 	OnInitilize() ;
 
 	pListen->SetAccept(0) ;

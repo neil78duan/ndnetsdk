@@ -14,7 +14,10 @@ struct listen_config
 {
 	int port ;
 	int max_connect ;
-	int connected_tmout ;//Á¬½Ó³¬Ê±(s)
+	int connected_tmout ; //connect timeout (s)
+    int empty_close_tmout;
+    int closed_unknown ;
+    int cloase_unauthorize ;
 	char bind_ip[32] ;
 	char listen_name[32] ;
 };

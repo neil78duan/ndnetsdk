@@ -48,6 +48,11 @@ int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg)
 
 	XML_READ_SUB_INT(xmlroot,"connected_tmout",lcfg->connected_tmout) ;
 	
+    
+    XML_READ_SUB_INT(xmlroot,"empty_connected_timeout",lcfg->empty_close_tmout) ;
+    XML_READ_SUB_INT(xmlroot,"closed_unknown_msg",lcfg->closed_unknown) ;
+    XML_READ_SUB_INT(xmlroot,"closed_unauthorize_msg",lcfg->cloase_unauthorize) ;
+    
 	return 0 ;
 
 }
