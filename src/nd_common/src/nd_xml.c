@@ -705,6 +705,7 @@ READ_END :
 			if(xmlnode)
 				dealloc_xml(xmlnode) ;
 			*parse_end = NULL ;
+			*error_addr = paddr ;
 			return NULL ;
 		}
 		
@@ -717,6 +718,7 @@ READ_END :
 			//解析出错,没有遇到结束标志,或者是结束标志写错了
 			dealloc_xml(xmlnode) ;
 			*parse_end = NULL ;
+			*error_addr = paddr ;
 			return NULL ;
 		}
 		paddr = strchr(paddr,'>') ;

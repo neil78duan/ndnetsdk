@@ -402,20 +402,20 @@ int NDInstanceBase::ReadConfig(const char *configname)
 
 	ret = ndxml_load(config_file, &xmlfile) ;
 	if(0!=ret) {
-		nd_logfatal("load xml from file") ;
+		nd_logfatal("load xml from file\n") ;
 		return -1;
 	}
 
 	xmlroot = ndxml_getnode(&xmlfile,"root") ;
 	if(!xmlroot) {		
 		ndxml_destroy(&xmlfile);
-		nd_logfatal("xml config error") ;
+		nd_logfatal("xml read error : root-node can not found \n") ;
 		return -1;
 	}
 
 	if(-1==read_config(xmlroot, configname, &m_config) ) {
 		ndxml_destroy(&xmlfile);
-		nd_logfatal("xml config error") ;
+		nd_logfatal("xml config error %s node \n", configname) ;
 		return -1;
 	}
 
