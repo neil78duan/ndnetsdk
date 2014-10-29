@@ -9,6 +9,7 @@
 #include "nd_common/nd_comcfg.h"
 #include "nd_common/nd_os.h"
 #include "nd_common/nd_dbg.h"
+#include "nd_common/nddir.h"
 
 
 #include <time.h>
@@ -18,9 +19,19 @@
 
 static char __log_filename[128] ;
 static logfunc __log_func =NULL;
+static ndatomic_t __log_write_len = 0 ;
+static NDUINT32 __log_file_length = -1 ;
+
 void nd_setlog_func(logfunc f) 
 {
 	__log_func = f ;
+}
+
+NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size)
+{
+	NDUINT32 oldval = __log_file_length ;
+	__log_file_length = perfile_size ;
+	return  oldval ;
 }
 
 void set_log_file(const char *file_name)
@@ -40,7 +51,42 @@ void nd_output(const char *text)
 	fprintf(stdout,"%s", text) ;
 }
 
+
 #define ND_LOG_FILE get_log_file()
+
+void nd_default_filelog(const char* text)
+{
+	int size =  0 ;
+	const char *logfile_name = ND_LOG_FILE;
+	FILE *log_fp = fopen(logfile_name, "a");
+	if(!log_fp) {
+		return  ;
+	}
+	size = fprintf(log_fp,"%s", text) ;
+	fclose(log_fp) ;
+
+	if(size <= 0) {
+		return ;
+	}
+
+
+	nd_atomic_add(&__log_write_len, size) ;
+	if ((NDUINT32)__log_write_len >= __log_file_length) {
+		char aimFile[1024] ;
+		int i =1 ;
+		char *p = aimFile ;
+
+		size = snprintf(p, sizeof(aimFile), "%s.", logfile_name) ;
+		p += size ;
+		do {
+			snprintf(p, sizeof(aimFile) - size, "%d", i) ;
+			++i ;
+		}while(nd_existfile(aimFile)) ;
+		nd_renfile(logfile_name,aimFile) ;
+	}
+
+	
+}
 
 //ndchar_t *strtowcs(char *src, ndchar_t *desc,int len) ;
 
@@ -137,14 +183,7 @@ int _logmsg(const char *func, const char *file, int line, int level, const char 
 	}
 	else {
 #ifdef ND_OUT_LOG_2FILE
-		{
-			FILE *log_fp = fopen(ND_LOG_FILE, "a");	
-			if(!log_fp) {
-				return -1 ;
-			}
-			fprintf(log_fp,"%s", buf) ;
-			fclose(log_fp) ;
-		}
+		nd_default_filelog(buf) ;
 #endif
 #ifdef 	ND_OUT_LOG_2CTRL
 		if (level==ND_ERROR || level == ND_FATAL_ERR){

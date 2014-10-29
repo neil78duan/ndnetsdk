@@ -36,6 +36,7 @@ struct instance_config
 {
 	int open_dump ;				//是否打开dump
 	int single_thread;			//是否使用单线程逻辑
+	NDUINT32 log_file_size ;
 	char inet_ip[HOST_NAME_SIZE] ;
 	char callstack_file[256] ;
 	char log_file[256] ;

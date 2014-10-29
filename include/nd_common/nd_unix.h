@@ -90,6 +90,8 @@ ND_COMMON_API int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)  ;
 #define nd_sem_init(s)		sem_init(&(s),0,0)	//initilize semahpore resource, return 0 on success , error r
 #define nd_sem_destroy(s)   sem_destroy(&(s)) 		//destroy semahpore resource
 
+
+ND_COMMON_API void nd_init_daemon(void) ;
 #endif
 
 

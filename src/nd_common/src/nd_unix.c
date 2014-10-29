@@ -170,8 +170,8 @@ int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)
 		ts.tv_sec += waittime /1000 ;
 		ts.tv_nsec += (waittime %1000 ) * 1000000;
 		
-		//ÕâÀï²»ÄÜÊ¹ÓÃ (ret = sem_timedwait(sem, &ts)) == -1 && errno == EINTR Õâ¸öÅĞ¶Ï
-		//·ñÔòctrl+c½«²»ÄÜÊ¹³ÌĞòÕı³£ÍË³ö
+		//â€™â€šÂ¿Ã”â‰¤ÂªÆ’â€¹Â Ï€â€âˆš (ret = sem_timedwait(sem, &ts)) == -1 && errno == EINTR â€™â€šâˆË†â‰ˆâ€“âˆ‚Å“
+		//âˆ‘Ã’â€˜Ãšctrl+cÎ©Â´â‰¤ÂªÆ’â€¹Â Ï€â‰¥Ãƒâ€“Ãšâ€™Ëâ‰¥Â£Ã•Ã€â‰¥Ë†
 		//while ((ret = sem_timedwait(sem, &ts)) == -1 && errno == EINTR)
 		//	continue ;
 		//check what happened
@@ -189,31 +189,59 @@ int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)
 		return  sem_trywait(sem);
 	}
 }
+
+#ifndef NOFILE
+#define NOFILE 3 
+#endif
+void nd_init_daemon(void)
+{
+	pid_t pid;
+	int i;
+	pid = fork();
+	if(pid > 0){
+		exit(0);
+	}
+	else if(pid < 0 ){
+		perror("fork()\n");
+		exit(1);
+	}
+	else if(pid == 0){
+		setsid();
+		chdir("/tmp");
+		umask(0);
+		for (fd = 0, fdtablesize = getdtablesize(); fd < fdtablesize; fd++) {
+			close(fd);
+		}
+		signal(SIGCHLD,SIG_IGN);
+		return ;
+	}
+}
+
 #endif
 
 
 ndtime_t nd_time(void)
 {
 	struct timeval tmnow, deta;
-	static struct timeval __start_time ;	//³ÌĞòÆô¶¯Ê±¼ä
+	static struct timeval __start_time ;	//â‰¥Ãƒâ€“Ãšâˆ†Ã™âˆ‚Ã˜Â Â±Âºâ€°
 	static int __timer_inited = 0 ;
-	
+
 	if(0==__timer_inited) {
 		gettimeofday(&__start_time, NULL) ;
 		__timer_inited = 1 ;
 	}
 	gettimeofday(&tmnow, NULL) ;
-    
-    deta = nd_time_sub(&__start_time, &tmnow) ;
 
-	
+	deta = nd_time_sub(&__start_time, &tmnow) ;
+
+
 	return (ndtime_t)(deta.tv_sec * 1000 + deta.tv_usec / 1000 );
 }
 
 
 #include <sched.h>
 
-//´´½¨Ïß³Ìº¯Êı
+//Â¥Â¥Î©Â®Å“ï¬‚â‰¥Ãƒâˆ«Ã˜Â Ë
 ndth_handle nd_createthread(NDTH_FUNC func, void* param,ndthread_t *thid,int priority)
 {
 	pthread_t threadid ;
@@ -262,7 +290,7 @@ void nd_threadexit(int exitcode)
     void *param =  exitcode ;
 	pthread_exit( param );
 }
-//µÈ´ıÒ»¸öÏß³ÌµÄ½áÊø
+//ÂµÂ»Â¥Ëâ€œÂªâˆË†Å“ï¬‚â‰¥ÃƒÂµÆ’Î©Â·Â Â¯
 int nd_waitthread(ndth_handle handle) 
 {
 	ndthread_t selfid = nd_thread_self() ;
@@ -361,8 +389,8 @@ int kbhit ( void )
 int set_maxopen_fd(int max_fd)
 {
 	struct rlimit rt;
-    /* ÉèÖÃÃ¿¸ö½ø³ÌÔÊĞí´ò¿ªµÄ×î´óÎÄ¼şÊı */
-    /*ĞèÒªÒÔrootÔËĞĞ*/
+    /* â€¦Ã‹Ã·âˆšâˆšÃ¸âˆË†Î©Â¯â‰¥Ãƒâ€˜Â â€“ÃŒÂ¥ÃšÃ¸â„¢ÂµÆ’â—ŠÃ“Â¥Ã›Å’Æ’ÂºË›Â Ë */
+    /*â€“Ã‹â€œâ„¢â€œâ€˜rootâ€˜Ã€â€“â€“*/
     rt.rlim_max = rt.rlim_cur = max_fd;
     setrlimit(RLIMIT_NOFILE, &rt) ;
     

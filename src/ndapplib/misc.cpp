@@ -170,7 +170,7 @@ void _error_exit(const char * file, int line, const char *stm,...)
 	va_end (arg);
 
 	fprintf(stderr, "%s",buf) ;	
-	printf("press ANY key to continue\n") ;
+	//printf("press ANY key to continue\n") ;
 	//getch() ;
 	exit(1) ;
 }

@@ -93,6 +93,9 @@ int read_instance_info(ndxml *xmlroot, struct instance_config *icfg)
 	XML_READ_SUB_INT(xmlroot,"outputdump", icfg->open_dump) ;
 	XML_READ_SUB_INT(xmlroot,"single_thread", icfg->single_thread) ;
 	XML_READ_SUB_BUF(xmlroot,"data_dir", icfg->data_dir) ;
+
+	XML_READ_SUB_INT(xmlroot,"logfilesize", icfg->log_file_size) ;
+
 	if (icfg->data_dir[0]){
 		int len = (int) strlen(icfg->data_dir) ;
 		--len ;

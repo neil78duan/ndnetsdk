@@ -155,6 +155,10 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 #endif 
 	if (m_config.i_cfg.log_file[0]){
 		set_log_file(m_config.i_cfg.log_file) ;
+		if (m_config.i_cfg.log_file_size > 0) {
+			nd_setlog_maxsize(m_config.i_cfg.log_file_size) ;
+		}
+		nd_setlog_func(nd_default_filelog) ;
 	}
 
 	if (m_config.i_cfg.callstack_file[0]){
