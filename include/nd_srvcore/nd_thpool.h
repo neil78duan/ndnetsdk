@@ -35,7 +35,7 @@ void nd_srvnode_destroy(struct node_root *root);
 
 void init_netthread_msg( nd_handle  thhandle);
 //iocp Ïß³Ì³Ø
-int thpoolex_create(struct listen_contex *handle, int pre_thnum, int session_num) ;
+//int thpoolex_create(struct listen_contex *handle, int pre_thnum, int session_num) ;
 int thpoolex_destroy(struct listen_contex *handle) ;
 
 int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_map) ;

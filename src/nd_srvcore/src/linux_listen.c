@@ -91,6 +91,9 @@ int epoll_main(struct thread_pool_info *thip)
         if (listen_info->end_update){
             listen_info->end_update((nd_handle)listen_info, thread_handle) ;
         }
+//		if (listen_info->connector_hub) {
+//			update_connector_hub((nd_listen_handle)listen_info);
+//		}
 	}					//end while
 
 LISTEN_EXIT:
@@ -390,6 +393,9 @@ int kqueue_main(struct thread_pool_info *thip)
         if (listen_info->end_update){
             listen_info->end_update((nd_handle)listen_info, thread_handle) ;
         }
+//		if (listen_info->connector_hub) {
+//			update_connector_hub((nd_listen_handle)listen_info);
+//		}
     }					//end while
 
 LISTEN_EXIT:
@@ -467,36 +473,38 @@ int create_event_fd( int maxnumber )
 
 #if defined(ND_UNIX)
 
+//
+//int thpoolex_create(struct listen_contex *handle, int pre_thnum, int session_num)
+//{
+//    int i ;
+//    struct thread_pool_info  *piocp ;
+//    struct list_head *pos ;
+//
+//    for(i=0; i<pre_thnum; i++) {
+//        if(0==nd_open_listen_thread((nd_listen_handle) handle, session_num) ) {
+//            break ;
+//        }
+//    }
+//
+//    pos = handle->list_thread.next;
+//    if(pos == &handle->list_thread) {
+//        return -1 ;
+//    }
+//    piocp = list_entry(pos,struct thread_pool_info,list) ;
+//    //handle->listen_id = piocp->thid ;
+//
+//    //nd_thsrv_timer(piocp->thid,(nd_timer_entry)update_connector_hub, handle,10, ETT_LOOP) ;
+//    do 	{
+//        pos = pos->next ;
+//        nd_thsrv_resume(piocp->thid) ;
+//        piocp = list_entry(pos,struct thread_pool_info,list) ;;
+//    } while (pos != &handle->list_thread);
+//
+//    return 0;
+//
+//}
 
-int thpoolex_create(struct listen_contex *handle, int pre_thnum, int session_num)
-{
-    int i ;
-    struct thread_pool_info  *piocp ;
-    struct list_head *pos ;
 
-    for(i=0; i<pre_thnum; i++) {
-        if(0==nd_open_listen_thread((nd_listen_handle) handle, session_num) ) {
-            break ;
-        }
-    }
-
-    pos = handle->list_thread.next;
-    if(pos == &handle->list_thread) {
-        return -1 ;
-    }
-    piocp = list_entry(pos,struct thread_pool_info,list) ;
-    //handle->listen_id = piocp->thid ;
-
-    nd_thsrv_timer(piocp->thid,(nd_timer_entry)update_connector_hub, handle,10, ETT_LOOP) ;
-    do 	{
-        pos = pos->next ;
-        nd_thsrv_resume(piocp->thid) ;
-        piocp = list_entry(pos,struct thread_pool_info,list) ;;
-    } while (pos != &handle->list_thread);
-
-    return 0;
-
-}
 
 int listen_thread_createex(struct thread_pool_info *ic)
 {

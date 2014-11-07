@@ -13,6 +13,12 @@
 			<bindip desc="bind ip"/>
 			<listen_mod desc="lieten-tcp, listen-ext, listen-udt" kinds="hide" delete="no" >listen-ext</listen_mod>
 			<max_connect>32</max_connect>
+
+			<listen_thread_number desc="numbers of thread in pool 0 determined by cpus">0</listen_thread_number>
+			<empty_connected_timeout  desc="close accept before data in">30</empty_connected_timeout>
+			<closed_unknown_msg desc="closed the cliets when received unknow message, 0 nothing, 1 close ">1</closed_unknown_msg>
+			<closed_unauthorize_msg desc="closed the cliets when received unauthorize message, 0 nothing, 1 close ">1</closed_unauthorize_msg>
+
 		</listen>
         <reliable_host desc="from these host is reliable">
             <host0>localhost</host0>

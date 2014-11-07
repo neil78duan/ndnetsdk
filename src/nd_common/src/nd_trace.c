@@ -178,20 +178,21 @@ int _logmsg(const char *func, const char *file, int line, int level, const char 
 	done = vsnprintf (p, sizeof(buf),stm, arg);
 	va_end (arg);
 
+#ifdef 	ND_OUT_LOG_2CTRL
+	if (level==ND_ERROR || level == ND_FATAL_ERR){
+		fprintf(stderr, "%s", buf) ;
+	}
+	else {
+		fprintf(stdout, "%s", buf) ;
+	}
+#endif
+
 	if (__log_func)	{
 		__log_func(buf) ;
 	}
 	else {
 #ifdef ND_OUT_LOG_2FILE
 		nd_default_filelog(buf) ;
-#endif
-#ifdef 	ND_OUT_LOG_2CTRL
-		if (level==ND_ERROR || level == ND_FATAL_ERR){
-			fprintf(stderr, "%s", buf) ;
-		}
-		else {
-			fprintf(stdout, "%s", buf) ;
-		}		
 #endif
 	}
 	return done ;

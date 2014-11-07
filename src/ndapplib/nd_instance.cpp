@@ -104,6 +104,7 @@ NDInstanceBase::~NDInstanceBase()
 int NDInstanceBase::Create(int argc,const char *argv[])
 {
 	int i ;
+	const char *logfileName = NULL ;
 
     system_signals_init() ;
     
@@ -120,6 +121,11 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 		else if(0==strcmp(argv[i],"-nodev")) {
 			m_un_develop = 1;
 		}
+		
+		else if(0==strcmp(argv[i],"-log") && i<argc -1) {
+			logfileName = argv[++i];
+		}
+
         else if(0==strcmp(argv[i],"-pid") && i<argc -1){
             FILE *pf = fopen(argv[i+1], "w") ;
             if (pf) {
@@ -127,7 +133,7 @@ int NDInstanceBase::Create(int argc,const char *argv[])
                 fclose(pf) ;
             }
             else {
-                printf("write pid error %s file not exist\n", argv[i+1]) ;
+                fprintf(stderr,"write pid error %s file not exist\n", argv[i+1]) ;
                 exit(1) ;
             }
         }
@@ -153,6 +159,9 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 		::SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)nd_unhandler_except);
 	}
 #endif 
+	if(logfileName && logfileName[0]) {
+		strncpy(m_config.i_cfg.log_file, logfileName, sizeof(m_config.i_cfg.log_file)) ;
+	}
 	if (m_config.i_cfg.log_file[0]){
 		set_log_file(m_config.i_cfg.log_file) ;
 		if (m_config.i_cfg.log_file_size > 0) {
@@ -210,7 +219,7 @@ int NDInstanceBase::Open(int session_size )
 		return -1 ;
 	}
 	pListen->SetAccept(1) ;
-	int ret = pListen->Open(m_config.l_cfg.port) ;
+	int ret = pListen->Open(m_config.l_cfg.port,m_config.l_cfg.thread_pool_num) ;
     if (ret != 0) {
         return  -1 ;
     }

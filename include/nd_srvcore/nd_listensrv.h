@@ -45,7 +45,7 @@ struct listen_contex
 	ndtime_t	operate_timeout ;		//timeout between twice net read/write (if timeout session would be close)
 	ndtime_t	empty_conn_timeout;		//time out of stat ==1 
 	volatile nd_thsrvid_t  listen_id ;			//listen thread server id
-	volatile nd_thsrvid_t  sub_id ;				//sub thread server id 
+	//volatile nd_thsrvid_t  sub_id ;				//sub thread server id
 	void	 *th_pool;							//thread pool data
 	void	 *user_data ;						//user data of listener
 	struct node_root  *connector_hub ;			//connector manager
@@ -61,7 +61,7 @@ struct listen_contex
 #endif
 
 /*打开网络,并且启动监听线程*/
-ND_SRV_API int nd_listensrv_open(int port, nd_listen_handle handle,ndip_t bindip) ;
+ND_SRV_API int nd_listensrv_open(int port, nd_listen_handle handle,ndip_t bindip,int thread_num) ;
 /*关闭网络关闭监听线程*/
 ND_SRV_API int nd_listensrv_close(nd_listen_handle handle, int force) ;
 ND_SRV_API int nd_listensrv_checkvalid(nd_listen_handle handle) ;

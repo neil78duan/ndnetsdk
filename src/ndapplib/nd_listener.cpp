@@ -224,11 +224,11 @@ void NDListener::Destroy(int flag)
 
 }
 
-int NDListener::Open(int port)
+int NDListener::Open(int port,int thread_num)
 {
 	ND_TRACE_FUNC();
 	nd_assert(m_objhandle) ;
-	if(-1==nd_listensrv_open(port,   m_objhandle, 0)  ) {
+	if(-1==nd_listensrv_open(port,   m_objhandle, 0, thread_num)  ) {
 		nd_logfatal((char*)"open port!\n") ;
 		return -1 ;
 	}	

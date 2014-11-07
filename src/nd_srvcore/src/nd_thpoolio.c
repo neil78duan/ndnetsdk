@@ -21,13 +21,16 @@ extern int listen_thread_createex(struct thread_pool_info *ic);
 /* @thread_num 线程个数
  * @th_sessions 每个线程的连接数
  */
-int thpool_netio_create(struct listen_contex *handle, int pre_thnum, int session_num)
+int create_listen_thread_pool(struct listen_contex *handle, int pre_thnum, int session_num)
 {
+	int i;
 	struct thread_pool_info  *piocp ;
 	struct list_head *pos ;
 
-	if(0==nd_open_listen_thread((nd_listen_handle) handle, session_num) ) {
-		return -1; ;
+	for(i=0; i<pre_thnum; i++) {
+		if(0==nd_open_listen_thread((nd_listen_handle) handle, session_num) ) {
+			break ;
+		}
 	}
 
 	pos = handle->list_thread.next;
@@ -35,9 +38,14 @@ int thpool_netio_create(struct listen_contex *handle, int pre_thnum, int session
 		return -1 ;
 	}
 	piocp = list_entry(pos,struct thread_pool_info,list) ;
-	//handle->listen_id = piocp->thid ;
 
-	nd_thsrv_timer(piocp->thid,(nd_timer_entry)update_connector_hub, handle,10, ETT_LOOP) ;
+	if (handle->listen_id) {
+		nd_thsrv_timer(handle->listen_id,(nd_timer_entry)update_connector_hub, handle,50, ETT_LOOP) ;
+	}
+	else {
+		nd_logwarn("not add update_connector_hub() ti timer") ;
+	}
+	
 	do 	{
 		pos = pos->next ;
 		nd_thsrv_resume(piocp->thid) ;
@@ -48,7 +56,7 @@ int thpool_netio_create(struct listen_contex *handle, int pre_thnum, int session
 
 }
 
-int thpool_netio_destroy(struct listen_contex *handle,int flag)
+int destroy_listen_thread_pool(struct listen_contex *handle,int flag)
 {
 	
 	struct thread_pool_info  *piocp ;
@@ -316,11 +324,11 @@ int thpool_main(struct thread_pool_info *thip)
 			sleep = 0;
 		}
 
-		if (listen_info->connector_hub) {
-			if (update_connector_hub((nd_listen_handle)listen_info) > 0 )	{
-				sleep = 0 ;
-			}
-		}
+//		if (listen_info->connector_hub) {
+//			if (update_connector_hub((nd_listen_handle)listen_info) > 0 )	{
+//				sleep = 0 ;
+//			}
+//		}
 
 		if (listen_info->end_update){
 			listen_info->end_update((nd_handle)listen_info, context) ;

@@ -66,8 +66,8 @@ int udp_server_entry(struct listen_contex *listen_info)
 			listen_info,		//user data
 			("update_connect")			//service name
 		};
-		listen_info->sub_id = nd_thsrv_createex(&subth_info,NDT_PRIORITY_HIGHT,0) ;
-		if(!listen_info->sub_id ){
+		listen_info->listen_id = nd_thsrv_createex(&subth_info,NDT_PRIORITY_HIGHT,0) ;
+		if(!listen_info->listen_id ){
 			LEAVE_FUNC();
 			return -1;
 		}

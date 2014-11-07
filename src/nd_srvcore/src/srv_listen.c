@@ -20,8 +20,8 @@ void host_congest(ndsocket_t fd) ;
 
 extern int udp_server_entry(struct listen_contex *listen_info) ;
 
-extern int thpool_netio_create(struct listen_contex *handle, int pre_thnum, int session_num) ;
-extern int thpool_netio_destroy(struct listen_contex *handle, int flag);
+extern int create_listen_thread_pool(struct listen_contex *handle, int pre_thnum, int session_num) ;
+extern int destroy_listen_thread_pool(struct listen_contex *handle, int flag);
 
 void nd_listen_contex_init(nd_listen_handle handle)
 {
@@ -45,14 +45,11 @@ int nd_listensrv_close(nd_listen_handle handle, int flag)
 		LEAVE_FUNC() ;
 		return 0;
 	}
-	if(handle->sub_id) {
-		nd_thsrv_destroy(handle->sub_id, 0) ;
-	}
 
 	if(handle->listen_id) {
 		nd_thsrv_destroy(handle->listen_id, 0) ;
 	}
-	thpool_netio_destroy(handle,0);
+	destroy_listen_thread_pool(handle,0);
 
 	nd_close_all_session(handle) ;
 	nd_srv_close(&handle->tcp) ;
@@ -93,30 +90,23 @@ int nd_listensrv_set_update(nd_listen_handle h_listen,listen_thread_update pre_e
 	return 0;
 }
 
-int nd_listensrv_open(int port, nd_listen_handle handle,ndip_t bindip) 
+int nd_listensrv_open(int port, nd_listen_handle handle,ndip_t bindip,int thread_num)
 {
 	int ret ,io_mode;
-	
-	struct nd_thsrv_createinfo ls_info = {
-		SUBSRV_RUNMOD_STARTUP,	//srv_entry run module (ref e_subsrv_runmod)
-		NULL,					//service main entry function address
-		handle,					//param of srv_entry 
-		handle,					//user data
-		("listen")				//service name
-	};
 	nd_assert(handle) ;
 
 	io_mode = handle->io_mod ;
 	handle->tcp.bindip = bindip ;
 	ret = nd_srv_open(port,10, &handle->tcp ) ;
 	if(-1==ret) {
-		handle->udt.myerrno = NDERR_OPENFILE ;
+		handle->tcp.myerrno = NDERR_OPENFILE ;
 		return -1 ;
 	}
 	nd_socket_nonblock(get_listen_fd(handle),1) ;
-	if(_IS_UDT_MOD(io_mode)) {	
+	if(_IS_UDT_MOD(io_mode)) {
+		struct nd_thsrv_createinfo ls_info = {SUBSRV_RUNMOD_STARTUP,NULL,handle,handle,	("listen")	};
 		ls_info.srv_entry = (nd_threadsrv_entry )udp_server_entry ;
-#if !defined(ND_UNIX) 
+#if defined(ND_UNIX)
 		if(handle->tcp.sock_type==SOCK_RAW) {
 			if(-1== set_raw_iphdr(nd_srv_getfd((nd_handle)handle),10 )) {
 				return -1;
@@ -130,21 +120,20 @@ int nd_listensrv_open(int port, nd_listen_handle handle,ndip_t bindip)
 		handle->listen_id = nd_thsrv_createex(&ls_info,NDT_PRIORITY_HIGHT,0) ;
 		return handle->listen_id?0:-1;
 	}
+//Windows iocp
+#if defined(_MSC_VER)
 	else if(ND_LISTEN_OS_EXT==io_mode) {
 		handle->tcp.status = 1;
 
-#if !defined(ND_UNIX) 
+
+		struct nd_thsrv_createinfo ls_info = {SUBSRV_RUNMOD_STARTUP,NULL,handle,handle,	("listen")	};
 		ls_info.srv_entry = nd_start_iocp_listen ;
 		handle->listen_id = nd_thsrv_createex(&ls_info,NDT_PRIORITY_HIGHT,0) ;
 		return handle->listen_id?0:-1;
-#else 
-		return thpoolex_create( handle, nd_getcpu_num(),nd_listensrv_capacity(handle)) ;
+	}
 #endif
-	}
-	else {
-		return  thpool_netio_create( handle, 1,nd_listensrv_capacity(handle) );
 
-	}
+	return create_listen_thread_pool( handle,thread_num? thread_num: nd_getcpu_num(),nd_listensrv_capacity(handle)) ;
 
 }
 
@@ -484,6 +473,9 @@ int nd_close_all_session(nd_listen_handle listen_info)
 
 int update_connector_hub(nd_listen_handle listen_info)
 {
+	if (!listen_info->connector_hub) {
+		return -1;
+	}
 	return update_connectors(listen_info->connector_hub) ; 
 }
 

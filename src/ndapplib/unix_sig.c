@@ -140,7 +140,6 @@ int nd_wait_terminate_signals()
 
     ret = sigwait(&blockmask, &intmask) ;
     if (ret == 0) {
-        nd_logmsg("sigwait() received %d signed %s program would exit\n"  AND  intmask AND get_signal_desc(intmask));
         if(intmask <=0 || intmask > 32){
             LEAVE_FUNC();
             return 0;
@@ -150,7 +149,8 @@ int nd_wait_terminate_signals()
         nd_logerror("sigwait() : %s", nd_last_error()) ;
         LEAVE_FUNC();
         nd_sys_exit(1) ;
-    }
+	}
+	nd_logmsg("sigwait() received %d signed %s program would exit\n"  AND  intmask AND get_signal_desc(intmask));
 
     LEAVE_FUNC();
     return -1;

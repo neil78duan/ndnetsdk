@@ -18,6 +18,7 @@ struct listen_config
     int empty_close_tmout;
     int closed_unknown ;
     int cloase_unauthorize ;
+	int thread_pool_num;
 	char bind_ip[32] ;
 	char listen_name[32] ;
 };
