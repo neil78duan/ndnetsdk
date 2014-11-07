@@ -178,66 +178,82 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		break ;
 	case NDIOCTL_SET_TIMEOUT:
 		socket_node->disconn_timeout = *(ndtime_t*)val ;
+		ret = 0;
 		break;
 	case NDIOCTL_GET_TIMEOUT:
 		*(ndtime_t*)val  = socket_node->disconn_timeout ;
+		ret = 0;
 		break ;
     case NDIOCTL_GET_LAST_RECV_TIME:
-        *(ndtime_t*)val  = socket_node->last_recv ;
+		*(ndtime_t*)val  = socket_node->last_recv ;
+		ret = 0;
         break ;
         
     case NDIOCTL_GET_LAST_SEND_TIME:
-        *(ndtime_t*)val  = socket_node->last_push ;
+		*(ndtime_t*)val  = socket_node->last_push ;
+		ret = 0;
         break ;
         
     case NDIOCTL_GET_USERDATA:
-        *(nd_userdata_t*)val  = socket_node->user_data ;
+		*(nd_userdata_t*)val  = socket_node->user_data ;
+		ret = 0;
         break ;
     case NDIOCTL_SET_USERDATA:
-        socket_node->user_data = val;
+		socket_node->user_data = val;
+		ret = 0;
         break ;
         
         ///
         
     case NDIOCTL_GET_PEER_IP:
-        *(ndip_t*) val = nd_net_peer_getip(socket_node);
+		*(ndip_t*) val = nd_net_peer_getip(socket_node);
+		ret = 0;
         break;
         
     case NDIOCTL_GET_PEER_PORT:
-        *(ndport_t*) val = nd_net_peer_getport(socket_node);
+		*(ndport_t*) val = nd_net_peer_getport(socket_node);
+		ret = 0;
         break;
 
         
     case NDIOCTL_HOOK_DATA:
-        nd_hook_data(socket_node,(data_in_entry) val ) ;
+		nd_hook_data(socket_node,(data_in_entry) val ) ;
+		ret = 0;
         break ;
         
     case NDIOCTL_HOOK_PACKET:
-        nd_hook_packet(socket_node,(net_msg_entry) val ) ;
+		nd_hook_packet(socket_node,(net_msg_entry) val ) ;
+		ret = 0;
         break ;
         
     case NDIOCTL_SET_UNREG_MSG_CLOSED: //close peers when received unregister message
-        nd_net_set_unregmsg_handler(socket_node, *(int*)val);
+		nd_net_set_unregmsg_handler(socket_node, *(int*)val);
+		ret = 0;
 
         break ;
     case NDIOCTL_SET_UNAUTHORIZE_CLOSE:
-        nd_net_set_unauthorize_handler(socket_node, *(int*)val);
+		nd_net_set_unauthorize_handler(socket_node, *(int*)val);
+		ret = 0;
         break ;
         
 
     case NDIOCTL_SET_CRYPT_KEY:
-        nd_connector_set_crypt(socket_node,val, *size);
+		nd_connector_set_crypt(socket_node,val, *size);
+		ret = 0;
         break ;
     case NDIOCTL_GET_CRYPT_KEY:
-        *(nd_userdata_t*)val = nd_connector_get_crypt(socket_node, size) ;
+		*(nd_userdata_t*)val = nd_connector_get_crypt(socket_node, size) ;
+		ret = 0;
         break;
             
     case NDIOCTL_SET_LEVEL:
-        socket_node->level = (NDUINT8) (*(int*)val ) ;
+		socket_node->level = (NDUINT8) (*(int*)val ) ;
+		ret = 0;
         break;
             
     case NDIOCTL_GET_LEVEL:
-        *(int*)val = socket_node->level ;
+		*(int*)val = socket_node->level ;
+		ret = 0;
         break;
             
             
@@ -252,28 +268,28 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		if (socket_node->type ==NDHANDLE_TCPNODE|| socket_node->type ==NDHANDLE_UDPNODE ){
 			*(NDUINT32*)val = (NDUINT32) nd_atomic_read(&socket_node->recv_pack_times) ;
 			*size = sizeof(NDUINT32) ;
-			ret = 0 ;
+			ret = 0;
 		}
 		break ;
 	case NDIOCTL_SET_RECV_PACK_NUM:
 		if (socket_node->type ==NDHANDLE_TCPNODE|| socket_node->type ==NDHANDLE_UDPNODE ){
 			inputVal = *(NDUINT32*)val ;
 			nd_atomic_set(&socket_node->recv_pack_times, inputVal );
-			ret = 0 ;
+			ret = 0;
 		}
 		break ;
 	case NDIOCTL_GET_SEND_PACK_NUM:
 		if (socket_node->type ==NDHANDLE_TCPNODE|| socket_node->type ==NDHANDLE_UDPNODE ){
 			*(NDUINT32*)val = (NDUINT32) nd_atomic_read(&socket_node->send_pack_times );
 			*size = sizeof(NDUINT32) ;
-			ret = 0 ;
+			ret = 0;
 		}
 		break ;
 	case NDIOCTL_SET_SEND_PACK_NUM:
 		if (socket_node->type ==NDHANDLE_TCPNODE|| socket_node->type ==NDHANDLE_UDPNODE ){
 			inputVal = *(NDUINT32*)val ;
 			nd_atomic_set(&socket_node->send_pack_times, inputVal );
-			ret = 0 ;
+			ret = 0;
 		}
 		break ;
 	default :
