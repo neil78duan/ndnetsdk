@@ -85,7 +85,7 @@ public:
 			return false ;
 		}
 		*backup  = it->second ;
-		erase(it) ;
+		_MyBase::erase(it) ;
 		return true ;
 
 	}

@@ -52,4 +52,18 @@ typedef unsigned short		WORD ;
 #endif
 
 #define ND_ELEMENTS_NUM(a) (sizeof(a)/sizeof(a[0]))
+
+#define ND_MAKE_WORD(loByte, hiByte) ( ((loByte) & 0xff) | (((hiByte) & 0xff)<< 8) )
+#define ND_MAKE_DWORD(loWord, hiWord) ( ((loWord) & 0xffff) | (((hiWord) & 0xffff)<< 16) )
+#define ND_MAKE_QWORD(loDword, hiDword) ( ((NDUINT64)(loDword) & 0xffffffff) | (((NDUINT64)(hiDword) & 0xffffffff)<< 32) )
+
+#define ND_LOBYTE(wordval) ((wordval)  & 0xff)
+#define ND_HIBYTE(wordval) (((wordval)>>8)  & 0xff)
+
+#define ND_LOWORD(dwordval) ((dwordval)  & 0xffff)
+#define ND_HIWORD(dwordval) (((dwordval)>>16)  & 0xffff)
+
+#define ND_LODWORD(qwordval) ((qwordval)  & 0xffffffff)
+#define ND_HIDWORD(qwordval) (((qwordval)>>32)  & 0xffffffff)
+
 #endif
