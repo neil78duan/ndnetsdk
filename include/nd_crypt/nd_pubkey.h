@@ -9,9 +9,9 @@
 #include "nd_crypt/nd_crypt.h"
 
 
-ND_CRYPT_API int CliGetCertificateVersion(void);
-ND_CRYPT_API char *GetPrivatekeyMd5(void);
-ND_CRYPT_API char* CalcPublickeyMd5(char text[33]);
-ND_CRYPT_API R_RSA_PUBLIC_KEY *GetPgcliRsaPubkey(void) ;
+ND_CRYPT_API int nd_get_certificate_version(void);
+ND_CRYPT_API char *nd_get_privatekey_md5(void);
+ND_CRYPT_API char* nd_calc_publickey_md5(char text[33]);
+ND_CRYPT_API R_RSA_PUBLIC_KEY *nd_get_publickey(void) ;
 
 #endif 

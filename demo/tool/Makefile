@@ -8,7 +8,7 @@ include $(NDHOME)/src/Rules.make
 MYLIBS := $(LIBOUTPUT)/lib$(SRV_LIB).a
 LFLAGS += -L$(LIBOUTPUT) -l$(SRV_LIB)
 
-#PROJ1  = $(WORKDIR)/proxy
+PROJ1  = $(WORKDIR)/rsa_keygen
 PROJ2  = $(WORKDIR)/monitor
 
 OBJS   := monitor.o 
@@ -16,10 +16,10 @@ OBJS   := monitor.o
 CFLAGS += -I$(TOPDIR)/include -I$(TOPDIR)/nd_crypt/src
 
 
-all: $(PROJ2)
+all: $(PROJ1) $(PROJ2)
 			
-#$(PROJ1): proxy_srv.o $(MYLIBS)
-#	$(CPP) -o  $(PROJ1) proxy_srv.o $(LIBS)  $(LDFLAGS)  $(LFLAGS)
+$(PROJ1): rsa_keygen.o $(MYLIBS)
+	$(CPP) -o  $(PROJ1) rsa_keygen.o $(LIBS)  $(LDFLAGS)  $(LFLAGS)
 	
 $(PROJ2): monitor.o $(MYLIBS)
 	$(CPP) -o  $(PROJ2) monitor.o $(LIBS)  $(LDFLAGS)  $(LFLAGS) 

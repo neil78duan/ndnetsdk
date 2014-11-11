@@ -109,10 +109,11 @@ CPPAPI int set_mp() ;
 	CPPAPI int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen)
 
 
-CPPAPI int SrvGetCertificateVersion(void);
-CPPAPI char *GetPublickeyMd5(void);
-CPPAPI char* CalcPrivatekeyMd5(char text[33]);
-CPPAPI R_RSA_PRIVATE_KEY *GetPgsrvRsaPrivkey(void) ;
+CPPAPI int nd_get_certificate_version(void);
+CPPAPI char *nd_get_publickey_md5(void);
+
+CPPAPI char* nd_calc_privatekey_md5(char text[33]);
+CPPAPI R_RSA_PRIVATE_KEY *nd_get_privatekey(void) ;
 
 #define  ND_SAFE_DESTROY_OBJ(obj)	\
 	if(obj) {						\
