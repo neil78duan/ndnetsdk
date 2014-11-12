@@ -55,8 +55,8 @@ int main(int argc, const char *argv[])
 
 NDUINT32 getversion()
 {
-    return (NDUINT32)nd_get_certificate_version() ;
-    //return 1 ;
+    //return (NDUINT32)nd_get_certificate_version() ;
+    return 1 ;
 }
 
 

@@ -81,4 +81,9 @@ ND_COMMON_API int nd_mkfile(const char *file);
 
 #define nd_access access
 
+
+ND_COMMON_API size_t nd_get_file_size(const char *file);
+ND_COMMON_API void nd_unload_file(void *file_data);
+ND_COMMON_API void* nd_load_file(const char *file, size_t *size);
+
 #endif

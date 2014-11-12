@@ -52,50 +52,142 @@ void tea_test()
 }
 
 
+int testReadKey(RSA_HANDLE _h_rsa)
+{
+	char md5text1[33] ;
+	char md5text2[33] ;
+	char md5text3[33] ;
+	char md5text4[33] ;
+
+	R_RSA_PRIVATE_KEY priv_key = {0} ;
+	R_RSA_PUBLIC_KEY pub_key = {0} ;
+
+
+	if(-1==nd_rsa_privkey_input(&priv_key, "./private_key.bin") )  {
+		printf("read private key bin error \n") ;
+		exit(1) ;
+	}
+
+	if(-1==nd_rsa_pubkey_input(&pub_key, "./public_key.bin") )  {
+		printf("read private key bin error \n") ;
+		exit(1) ;
+	}
+
+	MD5CryptToStr32((char*)&_h_rsa->publicKey,sizeof(_h_rsa->publicKey),md5text1);
+	MD5CryptToStr32((char*)&pub_key,sizeof(pub_key),md5text2);
+
+
+	MD5CryptToStr32((char*)&_h_rsa->privateKey,sizeof(_h_rsa->privateKey),md5text3);
+	MD5CryptToStr32((char*)&priv_key,sizeof(priv_key),md5text4);
+
+	if (strcmp(md5text1,md5text2) ) {
+		printf("read public key data error not match \n") ;
+		exit(1) ;
+	}
+
+	if (strcmp(md5text3,md5text4) ) {
+		printf("read private key data error not match \n") ;
+		exit(1) ;
+	}
+	return 0 ;
+	
+}
+
+int TestRsa(R_RSA_PRIVATE_KEY *priv_key)
+{
+	int i =0;
+	int len1, len2 ;
+	int text_size ;
+	char *p  ;
+	char buf1[8192] ,buf2[8192];
+	char text_buf[4096] ;
+
+	len1 =sizeof(buf1) ;
+	len2 =sizeof(buf2) ;
+
+	ND_RSA_CONTEX rsa_contex = {0} ;
+	memcpy((void*)&rsa_contex.privateKey, priv_key, sizeof(rsa_contex.privateKey) );
+	memcpy((void*)&rsa_contex.publicKey, priv_key, sizeof(rsa_contex.publicKey) );
+	RSAinit_random(&rsa_contex.randomStruct);
+
+	text_size = 0 ;
+	p = text_buf ;
+	while (p< (text_buf + 4000) ) {
+		int size = snprintf(p, 100, "%d hell world. ", i) ;
+		i++ ;
+		p += size ;
+		text_size += size ;
+	}
+
+	p=text_buf ;
+
+	//test public encrypt , private decrypt
+	if (nd_RSAPublicEncrypt(buf1, &len1, p, text_size, &rsa_contex)){
+		printf("RSA text error \n") ;
+		return -1;
+	}
+	if (nd_RSAPrivateDecrypt(buf2, &len2, buf1, len1, &rsa_contex)){
+		printf("RSA text error \n") ;
+		return -1;
+	}
+
+	nd_assert(text_size == len2) ;
+	buf2[len2] = 0 ;
+	if(strcmp(p, buf2)) {
+		printf("RSA text error \n") ;
+		return -1;
+	}
+
+	len1 =sizeof(buf1) ;
+	len2 =sizeof(buf2) ;
+
+	//test private encrypt , public decrypt
+	if (nd_RSAPrivateEncrypt(buf1, &len1, p, text_size, &rsa_contex)){
+		printf("RSA text error \n") ;
+		return -1;
+	}
+
+	if (nd_RSAPublicDecrypt(buf2, &len2, buf1, len1, &rsa_contex)){
+		printf("RSA text error \n") ;
+		return -1;
+	}
+
+	nd_assert(text_size == len2) ;
+	buf2[len2] = 0 ;
+	if(strcmp(p, buf2)) {
+		printf("RSA text error \n") ;
+		return -1;
+	}
+
+	if(-1==nd_rsa_privkey_output(&rsa_contex.privateKey, "./private_key.bin") )  {
+		printf("out put private key bin error \n") ;
+		exit(1) ;
+	}
+
+	if(-1==nd_rsa_pubkey_output(&rsa_contex.publicKey, "./public_key.bin") )  {
+		printf("out put private key bin error \n") ;
+		exit(1) ;
+	}
+
+	testReadKey(&rsa_contex) ;
+
+	return 0 ;
+}
+
 //rsa¼ÓÃÜ/½âÃÜ
 void test_rsa()
 {
 
-	int len ,outlen, inlen;
-	char buf[128],en_buf[128], de_buf[128] ;
 		
 	ND_RSA_CONTEX  __rsa_contex ;
 
 	ndprintf("start test RSA \n input data\n") ;
 	
-	if(nd_RSAInit(&__rsa_contex))
+	if(nd_RSAInit(&__rsa_contex, 500))
 		abort()  ;
 
+	TestRsa(&__rsa_contex.privateKey) ;
 
-	fgets( buf, 128, stdin );
-	
-	len = strlen(buf) ;
-
-	printf("input buf=%s\n",buf);
-	
-	if(0!=nd_RSAPublicEncrypt(en_buf, &outlen, buf, len, &__rsa_contex)) {
-		ndprintf("generate rsa encrypt error\n") ;
-		abort() ;
-	}
-	
-	if(0!=nd_RSAPrivateDecrypt(de_buf, &inlen, en_buf, outlen,&__rsa_contex)) {
-		ndprintf("generate rsa encrypt error\n") ;
-		abort() ;
-	}
-/*
-	if(0!=nd_RSAPrivateEncrypt(en_buf, &outlen, de_buf, inlen, &__rsa_contex)) {
-		ndprintf("generate rsa encrypt error\n") ;
-		abort() ;
-	}
-	
-	if(0!=nd_RSAPublicDecrypt(de_buf, &inlen, en_buf, outlen,&__rsa_contex)) {
-		ndprintf("generate rsa encrypt error\n") ;
-		abort() ;
-	}
-
-*/
-	de_buf[len] = 0 ;
-	ndprintf("after encrypt and decrypt buf=%s\n", de_buf) ;
 	nd_RSAdestroy(&__rsa_contex);
 }
 

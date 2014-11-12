@@ -15,6 +15,67 @@
 static char _current_dir[ND_FILE_PATH_SIZE] = {0} ;
 static char _working_dir[ND_FILE_PATH_SIZE] = {0} ;
 
+size_t nd_get_file_size(const char *file)
+{
+	size_t size =0 ;
+	FILE *fp;
+
+	fp = fopen(file, "r+b") ;
+	if(!fp) {
+		return 0;
+	}
+	fseek(fp, 0, SEEK_END);
+	size = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	fclose(fp) ;
+
+	return size ;
+}
+
+void nd_unload_file(void *file_data)
+{
+	free(file_data) ;
+}
+
+void* nd_load_file(const char *file, size_t *size)
+{
+	size_t data_len,buf_size ;
+	FILE *fp;
+	char *buf= NULL ;
+
+	fp = fopen(file, "r+b") ;
+	if(!fp) {
+		return 0;
+	}
+	fseek(fp, 0, SEEK_END);
+	buf_size = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+
+	if(buf_size==0) {
+		fclose(fp) ;
+		return NULL ;
+	}
+	buf_size += 1 ;
+	buf =(char*) malloc(buf_size) ;
+
+	if(!buf){
+		fclose(fp) ;
+		return 0 ;
+	}
+	data_len = fread(buf,1, buf_size, fp) ;
+	if(data_len==0 || data_len>= buf_size) {
+		fclose(fp) ;
+		free(buf) ;
+		return 0 ;
+
+	}
+	buf[data_len] = 0 ;
+	fclose(fp) ;
+	if (size) {
+		*size = data_len ;
+	}
+	return (void*) buf ;
+}
 
 #if defined(ND_UNIX) 
 

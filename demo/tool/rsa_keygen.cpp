@@ -19,8 +19,11 @@ int out_pub_file(const char * filename,R_RSA_PUBLIC_KEY &pub_key,int ver_num,cha
 int out_priv_file(const char * filename,R_RSA_PRIVATE_KEY &priv_key,int ver_num,char*);
 int TestRsa(R_RSA_PRIVATE_KEY &priv_key);
 
+int testReadKey(RSA_HANDLE _h_rsa);
+
 int main(int argc, char *argv[])
 {
+	int bits = 0 ;
 	int number_index = 1 ;
 	char *_pub_file = NULL;
 	char *_pri_file = NULL;
@@ -49,6 +52,10 @@ int main(int argc, char *argv[])
 				number_index = atoi(argv[i+1]) ;
 				++i;
 			}
+			else if (strcmp(argv[i],"-bits")==0)	{
+				bits = atoi(argv[i+1]) ;
+				++i;
+			}
 		}
 
 	}
@@ -58,7 +65,7 @@ int main(int argc, char *argv[])
 		exit(1) ;
 	}
 
-	if (-1==nd_RSAInit(_h_rsa)){
+	if (-1==nd_RSAInit(_h_rsa,bits)){
 
 		printf("Create RS KEY error\n" ) ;
 		exit(1) ;
@@ -78,8 +85,63 @@ int main(int argc, char *argv[])
 		printf("out put private key to file %s error \n", _pri_file) ;
 		exit(1) ;
 	}
+
+	if(-1==nd_rsa_privkey_output(&_h_rsa->privateKey, "./private_key.bin") )  {
+		printf("out put private key bin error \n") ;
+		exit(1) ;
+	}
+
+	if(-1==nd_rsa_pubkey_output(&_h_rsa->publicKey, "./public_key.bin") )  {
+		printf("out put private key bin error \n") ;
+		exit(1) ;
+	}
+
+	testReadKey(_h_rsa) ;
+
 	nd_RSAdestroy(_h_rsa);
 	exit(0);
+}
+
+
+int testReadKey(RSA_HANDLE _h_rsa)
+{
+	char md5text1[33] ;
+	char md5text2[33] ;
+	char md5text3[33] ;
+	char md5text4[33] ;
+
+	R_RSA_PRIVATE_KEY priv_key = {0} ;
+	R_RSA_PUBLIC_KEY pub_key = {0} ;
+
+
+	if(-1==nd_rsa_privkey_input(&priv_key, "./private_key.bin") )  {
+		printf("read private key bin error \n") ;
+		exit(1) ;
+	}
+
+	if(-1==nd_rsa_pubkey_input(&pub_key, "./public_key.bin") )  {
+		printf("read private key bin error \n") ;
+		exit(1) ;
+	}
+
+	MD5CryptToStr32((char*)&_h_rsa->publicKey,sizeof(_h_rsa->publicKey),md5text1);
+	MD5CryptToStr32((char*)&pub_key,sizeof(pub_key),md5text2);
+
+
+	MD5CryptToStr32((char*)&_h_rsa->privateKey,sizeof(_h_rsa->privateKey),md5text3);
+	MD5CryptToStr32((char*)&priv_key,sizeof(priv_key),md5text4);
+
+	if (0==strcmp(md5text1,md5text2) ) {
+		printf("read public key data error not match \n") ;
+		exit(1) ;
+	}
+
+	if (0==strcmp(md5text3,md5text4) ) {
+		printf("read private key data error not match \n") ;
+		exit(1) ;
+	}
+	return 0 ;
+
 }
 
 
@@ -184,20 +246,33 @@ int out_priv_file(const char * filename,R_RSA_PRIVATE_KEY &priv_key,int ver_num,
 	return 0 ;
 }
 
-
 int TestRsa(R_RSA_PRIVATE_KEY &priv_key)
 {
-	int len1=1024, len2 =1024;
+	int i =0;
+	int len1, len2 ;
 	int text_size ;
-	char *p = "hello world" ;
-	char buf1[1024] ,buf2[1024];
+	char *p  ;
+	char buf1[8192] ,buf2[8192];
+	char text_buf[4096] ;
+
+	len1 =sizeof(buf1) ;
+	len2 =sizeof(buf2) ;
 
 	ND_RSA_CONTEX rsa_contex = {0} ;
 	memcpy((void*)&rsa_contex.privateKey, &priv_key, sizeof(rsa_contex.privateKey) );
 	memcpy((void*)&rsa_contex.publicKey, &priv_key, sizeof(rsa_contex.publicKey) );
 	RSAinit_random(&rsa_contex.randomStruct);
 
-	text_size = strlen(p) ;
+	text_size = 0 ;
+	p = text_buf ;
+	while (p< (text_buf + 4000) ) {
+		int size = snprintf(p, 100, "%d hell world. ", i) ;
+		i++ ;
+		p += size ;
+		text_size += size ;
+	}
+
+	p=text_buf ;
 
 	//test public encrypt , private decrypt
 	if (nd_RSAPublicEncrypt(buf1, &len1, p, text_size, &rsa_contex)){

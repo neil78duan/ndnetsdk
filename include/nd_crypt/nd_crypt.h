@@ -105,12 +105,12 @@ typedef struct  {
 }ND_RSA_CONTEX ;
 typedef ND_RSA_CONTEX *RSA_HANDLE ;
 
-#define RSA_KEY_BITS 512					/* rsa 密钥长度*/
-#define RSA_CRYPT_BUF_SIZE 128				/* rsa每次加密需要的缓冲长度*/
+#define RSA_KEY_BITS 2048					/* rsa 密钥长度*/
+#define RSA_CRYPT_BUF_SIZE 256				/* rsa每次加密需要的缓冲长度*/
 
 ND_CRYPT_API int RSAinit_random(R_RANDOM_STRUCT *rStruct);
 ND_CRYPT_API void RSAdestroy_random(R_RANDOM_STRUCT *rStruct);
-ND_CRYPT_API int nd_RSAInit(RSA_HANDLE h_rsa);
+ND_CRYPT_API int nd_RSAInit(RSA_HANDLE h_rsa, int keyBits);
 ND_CRYPT_API void nd_RSAdestroy(RSA_HANDLE h_rsa);
 /* rsa de/encrypt*/
 ND_CRYPT_API int nd_RSAPublicEncrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa);
@@ -123,6 +123,17 @@ ND_CRYPT_API int rsa_priv_encrypt(char *outbuf, int *outlen, char *inbuf, int in
 ND_CRYPT_API int rsa_pub_decrypt(char *outbuf, int *outlen, char *inbuf, int inlen,R_RSA_PUBLIC_KEY *key);
 ND_CRYPT_API int rsa_priv_decrypt(char *outbuf, int *outlen, char *inbuf, int inlen,R_RSA_PRIVATE_KEY *key);
 
-ND_CRYPT_API int nd_rsa_text(R_RSA_PRIVATE_KEY *priv_key, R_RSA_PUBLIC_KEY *pub_key) ;
+ND_CRYPT_API int rsa_get_crypt_len(R_RSA_PUBLIC_KEY *key);
+
+
+ND_CRYPT_API int nd_rsa_privkey_output(R_RSA_PRIVATE_KEY *priv_key, const char *bin_file) ;
+ND_CRYPT_API int nd_rsa_privkey_input(R_RSA_PRIVATE_KEY *priv_key, const char *bin_file) ;
+
+ND_CRYPT_API int nd_rsa_pubkey_output(R_RSA_PUBLIC_KEY *pub_key, const char *bin_file) ;
+ND_CRYPT_API int nd_rsa_pubkey_input(R_RSA_PUBLIC_KEY *pub_key, const char *bin_file) ;
+
+ND_CRYPT_API int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int is_private) ;
+
+ND_CRYPT_API int nd_rsa_test(R_RSA_PRIVATE_KEY *priv_key, R_RSA_PUBLIC_KEY *pub_key) ;
 
 #endif	//_ND_CRYPT_

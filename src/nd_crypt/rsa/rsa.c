@@ -18,6 +18,7 @@ static int RSAPrivateBlock PROTO_LIST
   ((unsigned char *, unsigned int *, unsigned char *, unsigned int,
     R_RSA_PRIVATE_KEY *));
 
+#define GET_MODULUS_LEN(key) (((key)->bits + 7) / 8)
 /* RSA public-key encryption, according to PKCS #1.
  */
 int RSAPublicEncrypt
@@ -29,10 +30,10 @@ unsigned int inputLen;                             /* length of input block */
 R_RSA_PUBLIC_KEY *publicKey;                              /* RSA public key */
 R_RANDOM_STRUCT *randomStruct;                          /* random structure */
 {
-  int status;
+  int status,i;
   unsigned char byte, pkcsBlock[MAX_RSA_MODULUS_LEN];
-  unsigned int i, modulusLen;
-  
+  unsigned int  modulusLen;
+#if 0
   modulusLen = (publicKey->bits + 7) / 8;
   if (inputLen + 11 > modulusLen)
     return (RE_LEN);
@@ -61,7 +62,56 @@ R_RANDOM_STRUCT *randomStruct;                          /* random structure */
    */
   byte = 0;
   R_memset ((POINTER)pkcsBlock, 0, sizeof (pkcsBlock));
-  
+#else 
+	//change by duan
+	// I need crypt more than MAX_RSA_MODULUS_LEN
+	int steps;
+	unsigned int needLen , stepLen,cryptLen ;
+	char *pOut = output, *pIn=input ;
+
+	modulusLen = GET_MODULUS_LEN(publicKey) ;
+	steps = (inputLen + 4 + modulusLen -1)/modulusLen ;
+	needLen = steps * modulusLen ;
+
+	if (needLen > *outputLen)
+		return (RE_LEN);
+
+	pkcsBlock[0] = 0;
+	pkcsBlock[1] = 2;
+
+	for (i = 2; i < needLen - inputLen - 1; i++) {
+		/* Find nonzero random byte.
+		 */
+		do {
+			R_GenerateBytes (&byte, 1, randomStruct);
+		} while (byte == 0);
+		pkcsBlock[i] = byte;
+		//pkcsBlock[i] = 0xff;
+	}
+
+	pkcsBlock[i++] = 0;
+	stepLen = modulusLen - (needLen - inputLen) ;
+
+	R_memcpy ((POINTER)&pkcsBlock[i], (POINTER)input, stepLen);
+	status = RSAPublicBlock(output, &cryptLen, pkcsBlock, modulusLen, publicKey);
+	if(status) {
+		return  status ;
+	}
+	*outputLen = cryptLen ;
+
+	for(i =0; i<steps -1 ; i++) {
+		pIn += stepLen ;
+		pOut += cryptLen ;
+
+		stepLen = modulusLen ;
+		status = RSAPublicBlock(pOut, &cryptLen, pIn, stepLen, publicKey);
+		if(status) {
+			return  status ;
+		}
+		*outputLen += cryptLen ;
+	}
+
+#endif
   return (status);
 }
 
@@ -74,10 +124,10 @@ unsigned char *input;                                        /* input block */
 unsigned int inputLen;                             /* length of input block */
 R_RSA_PUBLIC_KEY *publicKey;                              /* RSA public key */
 {
-  int status;
+  int status,i;
   unsigned char pkcsBlock[MAX_RSA_MODULUS_LEN];
-  unsigned int i, modulusLen, pkcsBlockLen;
-  
+  unsigned int modulusLen, pkcsBlockLen;
+#if 0
   modulusLen = (publicKey->bits + 7) / 8;
   if (inputLen > modulusLen)
     return (RE_LEN);
@@ -112,7 +162,61 @@ R_RSA_PUBLIC_KEY *publicKey;                              /* RSA public key */
   /* Zeroize potentially sensitive information.
    */
   R_memset ((POINTER)pkcsBlock, 0, sizeof (pkcsBlock));
-  
+#else
+	int steps;
+	unsigned int  stepLen ;
+	char *pOut = output, *pIn=input ;
+
+	modulusLen = GET_MODULUS_LEN(publicKey);
+	steps = inputLen / modulusLen ;
+	if(inputLen != steps * modulusLen )
+		return (RE_LEN);
+
+
+	if ((status = RSAPublicBlock(pkcsBlock, &pkcsBlockLen, input, modulusLen, publicKey)))
+		return (status);
+
+	if (pkcsBlockLen != modulusLen)
+		return (RE_LEN);
+
+	/* Require block type 1.
+	 */
+	if ((pkcsBlock[0] != 0) || (pkcsBlock[1] != 1))
+		return (RE_DATA);
+
+	for (i = 2; i < modulusLen-1; i++)
+		if (pkcsBlock[i] != 0xff)
+			break;
+
+	/* separator */
+	if (pkcsBlock[i++] != 0)
+		return (RE_DATA);
+
+	stepLen = modulusLen - i;
+
+	R_memcpy ((POINTER)output, (POINTER)&pkcsBlock[i], stepLen);
+
+	*outputLen = stepLen ;
+
+	for(i = 0; i<steps-1; i++) {
+		pOut += stepLen ;
+		pIn += modulusLen ;
+		if ((status = RSAPublicBlock(pOut, &pkcsBlockLen, pIn, modulusLen, publicKey)))
+			return (status);
+
+		stepLen = pkcsBlockLen ;
+		*outputLen += stepLen ;
+	}
+
+
+
+	/* Zeroize potentially sensitive information.
+	 */
+	R_memset ((POINTER)pkcsBlock, 0, sizeof (pkcsBlock));
+
+
+#endif
+
   return (0);
 }
 
@@ -125,10 +229,11 @@ unsigned char *input;                                        /* input block */
 unsigned int inputLen;                             /* length of input block */
 R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
 {
-  int status;
+  int status,i;
   unsigned char pkcsBlock[MAX_RSA_MODULUS_LEN];
-  unsigned int i, modulusLen;
-  
+  unsigned int  modulusLen;
+#if 0  
+	//original version
   modulusLen = (privateKey->bits + 7) / 8;
   if (inputLen + 11 > modulusLen)
     return (RE_LEN);
@@ -151,6 +256,52 @@ R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
   /* Zeroize potentially sensitive information.
    */
   R_memset ((POINTER)pkcsBlock, 0, sizeof (pkcsBlock));
+#else 
+	//change by duan
+	// I need crypt more than MAX_RSA_MODULUS_LEN
+	  int steps;
+	unsigned int needLen , stepLen,cryptLen ;
+	char *pOut = output, *pIn=input ;
+
+	modulusLen = GET_MODULUS_LEN(privateKey) ;
+	steps = (inputLen + 4 + modulusLen -1)/modulusLen ;
+	needLen = steps * modulusLen ;
+
+	if (needLen  > *outputLen)
+		return (RE_LEN);
+
+	pkcsBlock[0] = 0;
+	pkcsBlock[1] = 1;
+
+	for (i = 2; i < needLen - inputLen - 1; i++) {
+		pkcsBlock[i] = 0xff;
+	}
+
+	pkcsBlock[i++] = 0;
+	stepLen = modulusLen - (needLen - inputLen) ;
+
+	R_memcpy ((POINTER)&pkcsBlock[i], (POINTER)input, stepLen);
+	status = RSAPrivateBlock(output, &cryptLen, pkcsBlock, modulusLen, privateKey);
+	if(status) {
+		return  status ;
+	}
+	*outputLen = cryptLen ;
+
+	for(i =0; i<steps -1 ; i++) {
+		pIn += stepLen ;
+		pOut += cryptLen ;
+
+		stepLen = modulusLen ;
+		status = RSAPrivateBlock(pOut, &cryptLen, pIn, stepLen, privateKey);
+		if(status) {
+			return  status ;
+		}
+		*outputLen += cryptLen ;
+	}
+
+
+
+#endif
 
   return (status);
 }
@@ -167,7 +318,7 @@ R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
   int status;
   unsigned char pkcsBlock[MAX_RSA_MODULUS_LEN];
   unsigned int i, modulusLen, pkcsBlockLen;
-  
+#if 0
   modulusLen = (privateKey->bits + 7) / 8;
   if (inputLen > modulusLen)
     return (RE_LEN);
@@ -203,6 +354,56 @@ R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
   /* Zeroize sensitive information.
    */
   R_memset ((POINTER)pkcsBlock, 0, sizeof (pkcsBlock));
+#else 
+	int steps;
+	unsigned int  stepLen ;
+	char *pOut = output, *pIn=input ;
+
+	modulusLen = GET_MODULUS_LEN(privateKey);
+	steps = inputLen / modulusLen ;
+	if(inputLen != steps * modulusLen )
+		return (RE_LEN);
+
+
+	if ((status = RSAPrivateBlock(pkcsBlock, &pkcsBlockLen, input, modulusLen, privateKey)))
+		return (status);
+
+	if (pkcsBlockLen != modulusLen)
+		return (RE_LEN);
+
+	/* Require block type 1.
+	 */
+	if ((pkcsBlock[0] != 0) || (pkcsBlock[1] != 2))
+		return (RE_DATA);
+
+	for (i = 2; i < modulusLen-1; i++)
+		if (pkcsBlock[i] == 0)
+			break;
+
+	i++;
+	if (i >= modulusLen)
+		return (RE_DATA);
+
+	stepLen = modulusLen - i;
+
+	R_memcpy ((POINTER)output, (POINTER)&pkcsBlock[i], stepLen);
+
+	*outputLen = stepLen ;
+
+	for(i = 0; i<steps-1; i++) {
+		pOut += stepLen ;
+		pIn += modulusLen ;
+		if ((status = RSAPrivateBlock(pOut, &pkcsBlockLen, pIn, modulusLen, privateKey)))
+			return (status);
+
+		stepLen = pkcsBlockLen ;
+		*outputLen += stepLen ;
+	}
+	/* Zeroize potentially sensitive information.
+	 */
+	R_memset ((POINTER)pkcsBlock, 0, sizeof (pkcsBlock));
+
+#endif
   
   return (0);
 }
