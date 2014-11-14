@@ -151,6 +151,7 @@
 		07CBF85019C974A7002EE541 /* nd_connector.c in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84B19C974A7002EE541 /* nd_connector.c */; };
 		07CBF85119C974A7002EE541 /* nd_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84D19C974A7002EE541 /* nd_client.cpp */; };
 		07CBF85219C974A7002EE541 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84E19C974A7002EE541 /* Makefile */; };
+		07DF1C031A14519F00251E83 /* nd_exch_key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07DF1C021A14519F00251E83 /* nd_exch_key.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -300,6 +301,7 @@
 		07CBF84B19C974A7002EE541 /* nd_connector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_connector.c; sourceTree = "<group>"; };
 		07CBF84D19C974A7002EE541 /* nd_client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_client.cpp; sourceTree = "<group>"; };
 		07CBF84E19C974A7002EE541 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		07DF1C021A14519F00251E83 /* nd_exch_key.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_exch_key.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -647,6 +649,7 @@
 			children = (
 				07CBF84A19C974A7002EE541 /* msg_format.cpp */,
 				07CBF84B19C974A7002EE541 /* nd_connector.c */,
+				07DF1C021A14519F00251E83 /* nd_exch_key.cpp */,
 			);
 			path = c_api;
 			sourceTree = "<group>";
@@ -825,6 +828,7 @@
 				07A268EC19C7F4F000F51698 /* nd_udp.c in Sources */,
 				07A2688719C7F4F000F51698 /* nd_str.c in Sources */,
 				07A268BF19C7F4F000F51698 /* r_keygen.c in Sources */,
+				07DF1C031A14519F00251E83 /* nd_exch_key.cpp in Sources */,
 				07A268E719C7F4F000F51698 /* nd_net.c in Sources */,
 				07A268BB19C7F4F000F51698 /* prime.c in Sources */,
 				07A268E619C7F4F000F51698 /* nd_msgentry.c in Sources */,

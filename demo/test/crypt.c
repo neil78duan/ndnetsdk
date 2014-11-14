@@ -89,6 +89,43 @@ int testReadKey(RSA_HANDLE _h_rsa)
 		printf("read private key data error not match \n") ;
 		exit(1) ;
 	}
+
+	//test crpyt
+	size_t size = 0 ;
+
+	void *data = nd_load_file("./public_key.bin", &size) ;
+	if (!data ) {
+		nd_logfatal(" load public key error ./public_key.bin \n") ;
+		return -1 ;
+	}
+
+	//crypt public using embed private key , after client recv use embed public key decrypt
+	//R_RSA_PRIVATE_KEY *embedKey = &priv_key ;
+
+	ND_RSA_CONTEX rsa_contex = {0} ;
+	memcpy((void*)&rsa_contex.privateKey, &priv_key, sizeof(rsa_contex.privateKey) );
+	memcpy((void*)&rsa_contex.publicKey, &pub_key, sizeof(rsa_contex.publicKey) );
+	RSAinit_random(&rsa_contex.randomStruct);
+
+	char buf[1024] ;
+	int crpyt_size = sizeof(buf) ;
+
+	if(0!=nd_RSAPrivateEncrypt(buf, &crpyt_size, (char*)data, size, &rsa_contex) ) {
+		nd_unload_file(data) ;
+
+		nd_logfatal(" rsa crypt public key error  \n") ;
+		return -1 ;
+	}
+	if(0!=rsa_priv_encrypt(buf, &crpyt_size, (char*)data, size, &priv_key) ) {
+		nd_unload_file(data) ;
+
+		nd_logfatal(" rsa crypt public key error  \n") ;
+		return -1 ;
+	}
+
+	nd_unload_file(data) ;
+
+	fprintf(stdout," rsa crypt test success \n") ;
 	return 0 ;
 	
 }
@@ -169,7 +206,11 @@ int TestRsa(R_RSA_PRIVATE_KEY *priv_key)
 		exit(1) ;
 	}
 
-	testReadKey(&rsa_contex) ;
+	if(-1==testReadKey(&rsa_contex) ){
+		printf("read key error\n") ;
+		exit(1) ;
+
+	}
 
 	return 0 ;
 }

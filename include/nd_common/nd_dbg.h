@@ -43,8 +43,8 @@ ND_COMMON_API NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size); // set log file
 //log file operate
 ND_COMMON_API int _logmsg(const char *func, const char *file, int line, int level, const char *stm,...) ;
 ND_COMMON_API const char *nd_get_timestr(void);			//得到字符串形式的时间
-ND_COMMON_API const char *nd_get_datastr(void);			//得到字符串形式的日期
-ND_COMMON_API const char *nd_get_datatimestr(void);		//得到字符串形式的时间和日期
+ND_COMMON_API const char *nd_get_datestr(void);			//得到字符串形式的日期
+ND_COMMON_API const char *nd_get_datetimestr(void);		//得到字符串形式的时间和日期
 
 #define AND ,
 

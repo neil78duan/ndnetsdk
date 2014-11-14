@@ -19,7 +19,7 @@
 		077FF68E19CBE6330000AEFF /* test_xml.c in Sources */ = {isa = PBXBuildFile; fileRef = 077FF68219CBE6330000AEFF /* test_xml.c */; };
 		077FF68F19CBE6330000AEFF /* thmsg.c in Sources */ = {isa = PBXBuildFile; fileRef = 077FF68319CBE6330000AEFF /* thmsg.c */; };
 		077FF69019CBE6330000AEFF /* thsrv.c in Sources */ = {isa = PBXBuildFile; fileRef = 077FF68419CBE6330000AEFF /* thsrv.c */; };
-		077FF69419CBE86F0000AEFF /* libndMacStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 077FF69319CBE86F0000AEFF /* libndMacStatic.a */; };
+		07DF1C091A14A25200251E83 /* libndMacStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07DF1C081A14A25200251E83 /* libndMacStatic.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -48,7 +48,7 @@
 		077FF68219CBE6330000AEFF /* test_xml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_xml.c; path = ../../demo/test/test_xml.c; sourceTree = "<group>"; };
 		077FF68319CBE6330000AEFF /* thmsg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = thmsg.c; path = ../../demo/test/thmsg.c; sourceTree = "<group>"; };
 		077FF68419CBE6330000AEFF /* thsrv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = thsrv.c; path = ../../demo/test/thsrv.c; sourceTree = "<group>"; };
-		077FF69319CBE86F0000AEFF /* libndMacStatic.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libndMacStatic.a; path = "../../../../Library/Developer/Xcode/DerivedData/ndsdkxcode-cpesoamtjxffbthabrdsapbpdrik/Build/Products/Debug/libndMacStatic.a"; sourceTree = "<group>"; };
+		07DF1C081A14A25200251E83 /* libndMacStatic.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libndMacStatic.a; path = "../../../../../../../../Library/Developer/Xcode/DerivedData/ndsdkxcode-cgbofgwzqrbtkjcqcusalpceeiye/Build/Products/Debug/libndMacStatic.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				077FF69419CBE86F0000AEFF /* libndMacStatic.a in Frameworks */,
+				07DF1C091A14A25200251E83 /* libndMacStatic.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,7 +66,7 @@
 		077FF64D19CBE5150000AEFF = {
 			isa = PBXGroup;
 			children = (
-				077FF69319CBE86F0000AEFF /* libndMacStatic.a */,
+				07DF1C081A14A25200251E83 /* libndMacStatic.a */,
 				077FF67819CBE6180000AEFF /* src */,
 				077FF65719CBE5150000AEFF /* Products */,
 			);
@@ -258,6 +258,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/ndsdkxcode-cpesoamtjxffbthabrdsapbpdrik/Build/Products/Debug",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/ndsdkxcode-cgbofgwzqrbtkjcqcusalpceeiye/Build/Products/Debug",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = ../../include;
@@ -274,6 +275,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/ndsdkxcode-cpesoamtjxffbthabrdsapbpdrik/Build/Products/Debug",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/ndsdkxcode-cgbofgwzqrbtkjcqcusalpceeiye/Build/Products/Debug",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = ../../include;
@@ -299,6 +301,7 @@
 				077FF65F19CBE5150000AEFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

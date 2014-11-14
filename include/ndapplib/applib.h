@@ -22,6 +22,7 @@
 #include "ndstl/nd_allocator.h"
 #include "ndstl/nd_new.h"
 
+
 #include "ndapplib/nd_lockhelper.h"
 #include "ndapplib/nd_cmmgr.h"
 #include "ndapplib/nd_connector.h"
@@ -109,7 +110,7 @@ CPPAPI int set_mp() ;
 	CPPAPI int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen)
 
 
-CPPAPI int nd_get_certificate_version(void);
+CPPAPI int nd_get_private_certificate_version(void);
 CPPAPI char *nd_get_publickey_md5(void);
 
 CPPAPI char* nd_calc_privatekey_md5(char text[33]);

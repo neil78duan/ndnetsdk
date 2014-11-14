@@ -261,7 +261,7 @@ R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
 	// I need crypt more than MAX_RSA_MODULUS_LEN
 	  int steps;
 	unsigned int needLen , stepLen,cryptLen ;
-	char *pOut = output, *pIn=input ;
+	unsigned char *pOut = output, *pIn=input ;
 
 	modulusLen = GET_MODULUS_LEN(privateKey) ;
 	steps = (inputLen + 4 + modulusLen -1)/modulusLen ;

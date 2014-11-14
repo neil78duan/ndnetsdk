@@ -28,7 +28,7 @@
 #include "ndcli/nd_iconn.h"
 #include "nd_msg.h"
 
-#define  WAITMSG_TIMEOUT 10000
+extern int nd_exchange_key(nd_handle nethandle) ;
 
 class NDConnector : public NDIConn 
 {
@@ -288,7 +288,9 @@ int NDConnector::CheckValid()
 
 int NDConnector::ExchangeKey()
 {
-    return -1;
+	if(!m_objhandle)
+		return -1 ;
+	return 	nd_exchange_key(m_objhandle) ;
 }
 /*
  

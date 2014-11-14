@@ -255,8 +255,17 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		*(int*)val = socket_node->level ;
 		ret = 0;
         break;
-            
-            
+
+	case NDIOCTL_GET_SESSIONID:
+		*(int*)val = socket_node->session_id ;
+		ret = 0;
+		break;
+	case NDIOCTL_SET_SESSIONID:
+		socket_node->session_id = (NDUINT16) (*(int*)val);
+		ret = 0;
+		break;
+
+
 	case NDIOCTL_SET_BLOCK:
 		ret = nd_socket_nonblock(socket_node->fd, 0) ;
 		break ;

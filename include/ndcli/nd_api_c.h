@@ -120,6 +120,8 @@ CPPAPI int ndSentTest(netObject netObj) ;
 CPPAPI void ndMsgfuncInit(netObject netObj) ;
 
 
+CPPAPI int nd_exchange_key(netObject nethandle) ;
+
 /*
 CPPAPI netObject ndGetConnector() ;
 CPPAPI int SendFormat(int maxid, int minid, int argc, ...) ;

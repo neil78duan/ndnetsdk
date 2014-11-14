@@ -122,7 +122,7 @@ const char *nd_get_timestr(void)
 	return (const char *)timebuf ;
 }
 //得到字符串形式的日期
-const char *nd_get_datastr(void)
+const char *nd_get_datestr(void)
 {
 	static __ndthread  char datebuf[64] ;
 	time_t nowtm ;
@@ -136,7 +136,7 @@ const char *nd_get_datastr(void)
 	return (const char *)datebuf ;
 }
 //得到字符串形式的时间和日期
-const char *nd_get_datatimestr(void)
+const char *nd_get_datetimestr(void)
 {
 	static __ndthread  char timebuf[64] ;
 	time_t nowtm ;
@@ -166,7 +166,7 @@ int _logmsg(const char *func, const char *file, int line, int level, const char 
 	int done;
 
 #ifdef	ND_LOG_WITH_TIME
-	p += snprintf(p, 4096,"%s ", nd_get_datatimestr()) ;
+	p += snprintf(p, 4096,"%s ", nd_get_datetimestr()) ;
 #endif
 
 #ifdef	ND_LOG_WITH_SOURCE

@@ -21,6 +21,9 @@ int TestRsa(R_RSA_PRIVATE_KEY &priv_key);
 
 int testReadKey(RSA_HANDLE _h_rsa);
 
+#define OUTPUT_PRIV_KEY "./atlantis_private.bin"
+#define OUTPUT_PUB_KEY "./atlantis_public.bin"
+
 int main(int argc, char *argv[])
 {
 	int bits = 0 ;
@@ -86,17 +89,20 @@ int main(int argc, char *argv[])
 		exit(1) ;
 	}
 
-	if(-1==nd_rsa_privkey_output(&_h_rsa->privateKey, "./private_key.bin") )  {
+	if(-1==nd_rsa_privkey_output(&_h_rsa->privateKey, OUTPUT_PRIV_KEY) )  {
 		printf("out put private key bin error \n") ;
 		exit(1) ;
 	}
 
-	if(-1==nd_rsa_pubkey_output(&_h_rsa->publicKey, "./public_key.bin") )  {
-		printf("out put private key bin error \n") ;
+	if(-1==nd_rsa_pubkey_output(&_h_rsa->publicKey, OUTPUT_PUB_KEY) )  {
+		printf("out put public key bin error \n") ;
 		exit(1) ;
 	}
 
-	testReadKey(_h_rsa) ;
+	if(-1==testReadKey(_h_rsa) ) {
+		printf("test Read ERROR \n") ;
+		exit(1) ;
+	}
 
 	nd_RSAdestroy(_h_rsa);
 	exit(0);
@@ -114,13 +120,13 @@ int testReadKey(RSA_HANDLE _h_rsa)
 	R_RSA_PUBLIC_KEY pub_key = {0} ;
 
 
-	if(-1==nd_rsa_privkey_input(&priv_key, "./private_key.bin") )  {
+	if(-1==nd_rsa_privkey_input(&priv_key, OUTPUT_PRIV_KEY) )  {
 		printf("read private key bin error \n") ;
 		exit(1) ;
 	}
 
-	if(-1==nd_rsa_pubkey_input(&pub_key, "./public_key.bin") )  {
-		printf("read private key bin error \n") ;
+	if(-1==nd_rsa_pubkey_input(&pub_key, OUTPUT_PUB_KEY) )  {
+		printf("read public key bin error \n") ;
 		exit(1) ;
 	}
 
@@ -131,15 +137,47 @@ int testReadKey(RSA_HANDLE _h_rsa)
 	MD5CryptToStr32((char*)&_h_rsa->privateKey,sizeof(_h_rsa->privateKey),md5text3);
 	MD5CryptToStr32((char*)&priv_key,sizeof(priv_key),md5text4);
 
-	if (0==strcmp(md5text1,md5text2) ) {
+	if (strcmp(md5text1,md5text2) ) {
 		printf("read public key data error not match \n") ;
 		exit(1) ;
 	}
 
-	if (0==strcmp(md5text3,md5text4) ) {
+	if (strcmp(md5text3,md5text4) ) {
 		printf("read private key data error not match \n") ;
 		exit(1) ;
 	}
+
+	//test crpyt
+	size_t size = 0 ;
+
+	void *data = nd_load_file(OUTPUT_PUB_KEY, &size) ;
+	if (!data ) {
+		nd_logfatal(" load public key error %s \n",OUTPUT_PUB_KEY) ;
+		return -1 ;
+	}
+
+	//crypt public using embed private key , after client recv use embed public key decrypt
+	R_RSA_PRIVATE_KEY *embedKey = &priv_key ;
+
+	char buf[1024] ;
+	int crpyt_size = sizeof(buf) ;
+
+	if(0!=rsa_priv_encrypt(buf, &crpyt_size, (char*)data, size, embedKey) ) {
+		nd_unload_file(data) ;
+
+		nd_logfatal(" rsa crypt public key error  \n") ;
+		return -1 ;
+	}
+
+	nd_unload_file(data) ;
+
+	if(-1==TestRsa( priv_key) ) {
+
+		nd_logfatal(" READ KEY from file test error  \n") ;
+		return -1 ;
+	}
+
+	fprintf(stdout," rsa crypt test success \n") ;
 	return 0 ;
 
 }
@@ -164,7 +202,7 @@ int out_pub_file(const char * filename,R_RSA_PUBLIC_KEY &pub_key,int ver_num, ch
 	}
 	fprintf(pf, "/* file %s \n", filename) ;
 	fprintf(pf, " * RSA public key \n * create by auto_tool please DO NOT modify \n"
-		" * datetime: %s\n" , nd_get_datatimestr() ) ;
+		" * datetime: %s\n" , nd_get_datetimestr() ) ;
 	fprintf(pf, " */ \n\n") ;
 
 
@@ -185,8 +223,8 @@ int out_pub_file(const char * filename,R_RSA_PUBLIC_KEY &pub_key,int ver_num, ch
 	fprintf(pf, "\n} ;\n\n") ;
 	fprintf(pf, "/* RSA public key  data --end */ \n\n") ;
 
-	fprintf(pf, "int nd_get_certificate_version(void)\n{\n\treturn __g_pub_publis_num ;\n}\n\n") ;
-	fprintf(pf, "char *nd_get_privatekey_md5(void)\n{\n\treturn __g_privkey_md5 ;\n}\n\n" ) ;
+	fprintf(pf, "int nd_get_public_certificate_version(void)\n{\n\treturn __g_pub_publis_num ;\n}\n\n") ;
+	//fprintf(pf, "char *nd_get_privatekey_md5(void)\n{\n\treturn __g_privkey_md5 ;\n}\n\n" ) ;
 	fprintf(pf, "char* nd_calc_publickey_md5(char text[33])\n{\n\treturn MD5CryptToStr32((char*)&__nd_pub_key, sizeof(__nd_pub_key), text) ;\n}\n\n") ;
 	fprintf(pf, "R_RSA_PUBLIC_KEY *nd_get_publickey(void) \n{\n\treturn &__nd_pub_key ;\n}\n\n") ;
 	fclose(pf) ;
@@ -202,7 +240,7 @@ int out_priv_file(const char * filename,R_RSA_PRIVATE_KEY &priv_key,int ver_num,
 
 	fprintf(pf, "/* file %s \n", filename) ;
 	fprintf(pf, " * RSA private key \n * create by auto_tool please DO NOT modify \n"
-		" * datetime: %s\n", nd_get_datatimestr() ) ;
+		" * datetime: %s\n", nd_get_datetimestr() ) ;
 	fprintf(pf, " */ \n\n") ;
 
 	fprintf(pf, "#include \"nd_crypt/nd_crypt.h\"\n") ;
@@ -237,7 +275,7 @@ int out_priv_file(const char * filename,R_RSA_PRIVATE_KEY &priv_key,int ver_num,
 	fprintf(pf, "\n} ;\n\n") ;
 	fprintf(pf, "/* RSA private key  data --end */ \n\n") ;
 
-	fprintf(pf, "int nd_get_certificate_version(void)\n{\n\treturn __g_pirv_publis_num ;\n}\n\n") ;
+	fprintf(pf, "int nd_get_private_certificate_version(void)\n{\n\treturn __g_pirv_publis_num ;\n}\n\n") ;
 	fprintf(pf, "char *nd_get_publickey_md5(void)\n{\n\treturn __g_pubkey_md5 ;\n}\n\n" ) ;
 	fprintf(pf, "char* nd_calc_privatekey_md5(char text[33])\n{\n\treturn MD5CryptToStr32((char*)&__nd_pri_key, sizeof(__nd_pri_key), text) ;\n}\n\n") ;
 	fprintf(pf, "R_RSA_PRIVATE_KEY *nd_get_privatekey(void) \n{\n\treturn &__nd_pri_key ;\n}\n\n") ;

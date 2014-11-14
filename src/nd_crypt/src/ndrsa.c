@@ -115,6 +115,7 @@ int rsa_pub_encrypt(char *outbuf, int *outlen, char *inbuf, int inlen,R_RSA_PUBL
 
 int rsa_priv_encrypt(char *outbuf, int *outlen, char *inbuf, int inlen,R_RSA_PRIVATE_KEY *key)
 {
+
 	return RSAPrivateEncrypt(outbuf, outlen, inbuf, inlen, key) ;
 }
 
@@ -169,6 +170,19 @@ struct rsa_key_header
 		}				\
 	}					\
 }while(0)
+
+
+#define _order_exch_s(_a)    ((short)( \
+	(((short)(_a) & (short)0x00ff) << 8) | \
+	(((short)(_a) & (short)0xff00) >> 8) ))
+
+
+#define _order_exch_l(_a) 	((int)( \
+(((int)(_a) & (int)0x000000ff) << 24) | \
+(((int)(_a) & (int)0x0000ff00) << 8) | \
+(((int)(_a) & (int)0x00ff0000) >> 8) | \
+(((int)(_a) & (int)0xff000000) >> 24) ))
+
 
 int _key_output(R_RSA_PRIVATE_KEY *key, const char *bin_file, int is_private)
 {
@@ -227,17 +241,18 @@ int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int 
 	if (*(int*)rsa_header.sign != *(int*)inheader->sign ) {
 		return -1 ;
 	}
-	if (rsa_header.byte_order != inheader->byte_order) {
-		return  -2 ;
-	}
 
-	key->bits = inheader->bits ;
+	key->bits = rsa_header.byte_order == inheader->byte_order ? inheader->bits : _order_exch_l(inheader->bits) ;
 	p = (char*) (inheader + 1 ) ;
+
+#define GET_SHORT(_s) _s =  rsa_header.byte_order == inheader->byte_order ? (_s) : _order_exch_s(_s)
 
 #define  READ_NODE( _data, _size) \
 	do {						\
 		unsigned short start_pos = *((*(unsigned short**)&p)++) ;	\
 		unsigned short len = *((*(unsigned short**)&p)++) ;			\
+		GET_SHORT(start_pos) ;	\
+		GET_SHORT(len) ;	\
 		if(start_pos>= _size || len > _size) {						\
 			return -1 ;			\
 		}						\

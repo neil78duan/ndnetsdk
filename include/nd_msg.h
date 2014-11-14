@@ -27,6 +27,11 @@ enum eNDMsgSys{
     ND_MSG_SYS_ECHO,
     ND_MSG_SYS_TIME,
     ND_MSG_SYS_BROADCAST,
+
+	ND_MSG_SYS_GET_CHECK_CRYPT_VERSION ,	//get RSA public-key md5
+	ND_MSG_SYS_GET_PUBLIC_KEY,		//get RSA public
+	ND_MSG_SYS_SEND_SYM_KEY ,		//send SYM encrypt key
+	ND_MSG_SYS_SYM_KEY_ACK ,		// acknowledgement of send-sym-key
     ND_MSG_SYS_NUMBER
 };
 

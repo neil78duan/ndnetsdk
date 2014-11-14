@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		077FF67519CBE5D00000AEFF /* connector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 077FF67419CBE5D00000AEFF /* connector.cpp */; };
 		077FF67719CBE6060000AEFF /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 077FF67619CBE6060000AEFF /* Makefile */; };
 		077FF69219CBE84B0000AEFF /* libndclient_mac.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 077FF69119CBE84B0000AEFF /* libndclient_mac.dylib */; };
+		07A347F51A14B4C600C0DEDD /* rsa_keygen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07A347F41A14B4C600C0DEDD /* rsa_keygen.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,9 +26,9 @@
 
 /* Begin PBXFileReference section */
 		077FF66919CBE5950000AEFF /* cliDemo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cliDemo; sourceTree = BUILT_PRODUCTS_DIR; };
-		077FF67419CBE5D00000AEFF /* connector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = connector.cpp; path = ../../demo/ndclient/connector.cpp; sourceTree = "<group>"; };
 		077FF67619CBE6060000AEFF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../demo/ndclient/Makefile; sourceTree = "<group>"; };
 		077FF69119CBE84B0000AEFF /* libndclient_mac.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libndclient_mac.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/ndsdkxcode-cpesoamtjxffbthabrdsapbpdrik/Build/Products/Debug/libndclient_mac.dylib"; sourceTree = "<group>"; };
+		07A347F41A14B4C600C0DEDD /* rsa_keygen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rsa_keygen.cpp; path = ../../demo/tool/rsa_keygen.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,8 +63,8 @@
 		077FF67319CBE5B10000AEFF /* src */ = {
 			isa = PBXGroup;
 			children = (
+				07A347F41A14B4C600C0DEDD /* rsa_keygen.cpp */,
 				077FF67619CBE6060000AEFF /* Makefile */,
-				077FF67419CBE5D00000AEFF /* connector.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -126,7 +126,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				077FF67719CBE6060000AEFF /* Makefile in Sources */,
-				077FF67519CBE5D00000AEFF /* connector.cpp in Sources */,
+				07A347F51A14B4C600C0DEDD /* rsa_keygen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +260,7 @@
 				077FF67219CBE5960000AEFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -58,22 +58,22 @@ static __inline int nd_byte_order()
 }
 
 //大尾数转换小尾数
-#define nd_btols(a)    ((short)( \
+#define nd_btols(x)    ((short)( \
         (((short)(x) & (short)0x00ff) << 8) | \
         (((short)(x) & (short)0xff00) >> 8) ))
         
-#define nd_btoll(a) 	((int)( \
+#define nd_btoll(x) 	((int)( \
         (((int)(x) & (int)0x000000ff) << 24) | \
         (((int)(x) & (int)0x0000ff00) << 8) | \
         (((int)(x) & (int)0x00ff0000) >> 8) | \
         (((int)(x) & (int)0xff000000) >> 24) ))
 
 //小尾数 转换大尾数
-#define nd_ltobs(a) 	((short)( \
+#define nd_ltobs(x) 	((short)( \
         (((short)(x) & (short)0x00ff) << 8) | \
         (((short)(x) & (short)0xff00) >> 8) ))
         
-#define nd_ltobl(a) 	((int)( \
+#define nd_ltobl(x) 	((int)( \
         (((int)(x) & (int)0x000000ff) << 24) | \
         (((int)(x) & (int)0x0000ff00) << 8) | \
         (((int)(x) & (int)0x00ff0000) >> 8) | \
