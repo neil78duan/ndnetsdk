@@ -68,12 +68,8 @@ public :
     virtual void SetDftMsgHandler(nd_iconn_func) = 0;
 	virtual void SetMsgNum(int maxmsg_num , int maxid_start)  = 0;
 	virtual int Reconnect(ndip_t IP, int port,nd_proxy_info *proxy=NULL) = 0 ;//connect to another host
-	virtual NDUINT32 GetID()  = 0;
-	virtual void SetID(NDUINT32 id) = 0;
-	virtual NDUINT32 GetType()  = 0;
-	virtual void SetType(NDUINT32 type) = 0;
 	virtual nd_handle GetHandle()=0;
-	virtual int ExchangeKey() =0;
+	virtual int ExchangeKey(void *output_key) =0;
 	virtual int LastError()=0 ;
 	virtual void SetLastError(NDUINT32 errcode) =0;
 	virtual const char *ErrorDesc() =0;

@@ -23,8 +23,10 @@
 	ND_MSG_SYS_SEND_SYM_KEY ,		//send SYM encrypt key
 	ND_MSG_SYS_SYM_KEY_ACK ,		// acknowledgement of send-sym-key
  */
-#define SEND_MSG(_h, _omsg) \
-	nd_connector_send(_h,(nd_packhdr_t*) (_omsg.GetMsgAddr()), ESF_URGENCY)
+#define SEND_MSG(__handle, _omsg) \
+	nd_connector_send(__handle,(nd_packhdr_t*) (_omsg.GetMsgAddr()), ESF_URGENCY)
+
+
 
 #define SEND_AND_WAIT(_handle, _omsg, _rmsg_buf,_wait_min_id) \
 if(SEND_MSG(_handle, _omsg) <= 0) {	\
@@ -35,6 +37,9 @@ if(-1==ndWaitMsg(_handle, (char*)_rmsg_buf, WAITMSG_TIMEOUT)) {	\
 	nd_object_seterror(_handle, NDERR_TIMEOUT) ;	\
 	return -1 ;									\
 }												\
+else if(nd_checkErrorMsg((netObject)_handle ,(ndMsgData *)_rmsg_buf) )   {\
+	return -1 ;	\
+}\
 else if(ND_USERMSG_MAXID(_rmsg_buf)!=ND_MAIN_ID_SYS || ND_USERMSG_MINID(_rmsg_buf) != _wait_min_id) { \
 	nd_object_seterror(_handle, NDERR_BADPACKET) ;	\
 	return -1 ;										\
@@ -42,10 +47,10 @@ else if(ND_USERMSG_MAXID(_rmsg_buf)!=ND_MAIN_ID_SYS || ND_USERMSG_MINID(_rmsg_bu
 
 static int _check_public_key(nd_handle nethandle)
 {
-	NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_GET_CHECK_CRYPT_VERSION) ;
+	NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_CHECK_CRYPT_VERSION) ;
 	nd_usermsgbuf_t rmsg ; ;
 
-	SEND_AND_WAIT(nethandle, omsg, &rmsg,ND_MSG_SYS_GET_CHECK_CRYPT_VERSION)
+	SEND_AND_WAIT(nethandle, omsg, &rmsg,ND_MSG_SYS_CHECK_CRYPT_VERSION)
 	else {
 		NDUINT16 ver_num  ;
 		NDUINT8 md5text[33] , mymd5[33];
@@ -71,18 +76,23 @@ static int _check_public_key(nd_handle nethandle)
 	return 0 ;
 }
 
-static int _get_public_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
+static int _get_public_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &output_key, char *output_md5)
 {
 	NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_GET_PUBLIC_KEY) ;
 	nd_usermsgbuf_t rmsg ;
 
 	SEND_AND_WAIT(nethandle, omsg, &rmsg ,ND_MSG_SYS_GET_PUBLIC_KEY)
 	else {
+		char keymd5[16], srvmd5[16] ;
 		NDUINT8 recv_buf[2048] ;
 		NDIStreamMsg inmsg(&rmsg) ;
 		int size = (int) inmsg.ReadBin(recv_buf, sizeof(recv_buf)) ;
 		if (size <= 0) {
-			nd_object_seterror(nethandle, NDERR_READ) ;
+			nd_object_seterror(nethandle, NDERR_BADPACKET) ;
+			return  -1 ;
+		}
+		if(16!=inmsg.ReadBin(srvmd5, sizeof(srvmd5))  ) {
+			nd_object_seterror(nethandle, NDERR_BADPACKET) ;
 			return  -1 ;
 		}
 
@@ -97,10 +107,20 @@ static int _get_public_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 			return  -1 ;
 		}
 
-		if (-1== nd_rsa_read_key((R_RSA_PRIVATE_KEY*)&pub_key, (const char*)key_buf, keySize, 0)) {
+		//check public key md5
+		MD5Crypt16((char*)key_buf, keySize, srvmd5) ;
+		if(MD5cmp(keymd5, srvmd5)) {
 			nd_object_seterror(nethandle, NDERR_BADPACKET) ;
 			return  -1 ;
 		}
+		
+
+		if (-1== nd_rsa_read_key((R_RSA_PRIVATE_KEY*)&output_key, (const char*)key_buf, keySize, 0)) {
+			nd_object_seterror(nethandle, NDERR_BADPACKET) ;
+			return  -1 ;
+		}
+		memcpy(output_md5, keymd5, sizeof(keymd5)) ;
+
 	}
 
 	return 0;
@@ -158,16 +178,26 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 	return 0;
 }
 
-int nd_exchange_key(nd_handle nethandle)
+int nd_exchange_key(netObject netObject,void *out_public_key)
 {
+	nd_handle nethandle = (nd_handle) netObject ;
 	if (-1== _check_public_key( nethandle)) {
 		return -1;
 	}
 
-	R_RSA_PUBLIC_KEY pub_key = {0} ;
-	if (-1== _get_public_key( nethandle,pub_key)) {
+	struct {
+		char keymd5[16] ;
+		R_RSA_PUBLIC_KEY pub_key ;
+	} key = {0} ;
+	if (-1== _get_public_key( nethandle,key.pub_key, key.keymd5)) {
 		return -1;
 	}
 
-	return _get_sym_key(nethandle,pub_key) ;
+	if (0==_get_sym_key(nethandle,key.pub_key) ){
+		if(out_public_key) {
+			memcpy(out_public_key, &key, sizeof(key)) ;
+		}
+		return 0;
+	}
+	return -1;
 }

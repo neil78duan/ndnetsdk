@@ -96,6 +96,9 @@ ND_CRYPT_API char *MD5Crypt16(char *input, int inlen, char output[16]);
 ND_CRYPT_API char *MD5CryptToStr32(char *input, int inlen, char output[33]);
 ND_CRYPT_API int MD5cmp(char src[16], char desc[16]) ;
 
+ND_CRYPT_API int base64_encode( const char * source, int len, char * destination_string );
+#define nd_base64_encode base64_encode
+
 /* rsa crypt*/
 
 typedef struct  {	
@@ -135,6 +138,9 @@ ND_CRYPT_API int nd_rsa_pubkey_output(R_RSA_PUBLIC_KEY *pub_key, const char *bin
 ND_CRYPT_API int nd_rsa_pubkey_input(R_RSA_PUBLIC_KEY *pub_key, const char *bin_file) ;
 
 ND_CRYPT_API int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int is_private) ;
+
+// key to stream , return length of stream
+ND_CRYPT_API int nd_rsa_write_key(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is_private);
 
 ND_CRYPT_API int nd_rsa_test(R_RSA_PRIVATE_KEY *priv_key, R_RSA_PUBLIC_KEY *pub_key) ;
 

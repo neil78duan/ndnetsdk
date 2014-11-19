@@ -174,3 +174,16 @@ void _error_exit(const char * file, int line, const char *stm,...)
 	//getch() ;
 	exit(1) ;
 }
+
+#include "nd_msg.h"
+int send_error_ack(nd_handle hconnect, int errcode)
+{
+	NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_ERROR) ;
+	omsg.Write((NDUINT32)errcode) ;
+
+
+	ND_MSG_SEND( hconnect, omsg.GetMsgAddr(), NULL) ;
+
+	return 0;
+}
+

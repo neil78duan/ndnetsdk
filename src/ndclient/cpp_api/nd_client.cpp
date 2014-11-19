@@ -27,8 +27,9 @@
 
 #include "ndcli/nd_iconn.h"
 #include "nd_msg.h"
+#include "ndcli/nd_api_c.h"
+//extern int nd_exchange_key(nd_handle nethandle) ;
 
-extern int nd_exchange_key(nd_handle nethandle) ;
 
 class NDConnector : public NDIConn 
 {
@@ -56,12 +57,8 @@ public :
     
 	int Reconnect(ndip_t IP, int port,nd_proxy_info *proxy=NULL) ;//connect to another host
 
-	NDUINT32 GetID() {return m_id;}
-	void SetID(NDUINT32 id) {m_id = id;}
-	NDUINT32 GetType() {return m_type;}
-	void SetType(NDUINT32 type) {m_type = type;}
 	nd_handle GetHandle() {return m_objhandle;}
-	int ExchangeKey() ;
+	int ExchangeKey(void *output_key) ;
 
 	int LastError() ;
 	void SetLastError(NDUINT32 errcode);
@@ -74,17 +71,9 @@ private:
 	//nd_handle m_objhandle ;
 	int msg_kinds ;
 	int msg_base ;
-
-	NDUINT32 m_id ;				//id
-	NDUINT32 m_type ;			//¿‡–Õ
 	nd_handle m_objhandle ;
 
     void *__userData ;
-	//crypt key
-	int __pki_ok ;
-	char __rsa_digest[16] ;
-	ND_RSA_CONTEX __rsa_contex;
-	tea_k	__crypt_key;
 };
 
 
@@ -93,8 +82,7 @@ NDConnector::NDConnector(int maxmsg_num , int maxid_start)
 	m_objhandle = NULL ;
 	msg_kinds = maxmsg_num;
 	msg_base = maxid_start;
-	m_id = 0 ;				//id
-	m_type  = 0;			//¿‡–Õ
+
     __userData = 0 ;
 }
 
@@ -286,103 +274,14 @@ int NDConnector::CheckValid()
 	return 	nd_connector_valid((nd_netui_handle)m_objhandle) ;
 }
 
-int NDConnector::ExchangeKey()
+int NDConnector::ExchangeKey(void *output_key)
 {
 	if(!m_objhandle)
 		return -1 ;
-	return 	nd_exchange_key(m_objhandle) ;
+
+	return 	nd_exchange_key((netObject)m_objhandle,output_key) ;
 }
-/*
- 
-int NDConnector::ExchangeKey()
-{
-	NDOStreamMsg omsg(PGMAXID_LOGIN, MSG_LOGIN_PKI_KEY_REQ) ;
-	if(SendMsg(omsg,ESF_URGENCY) <= 0) {
-		return -1 ;
-	}
-	//get public key 
-	pg_usermsgbuf_t rmsg ;
-	if(-1==WaitMsg(&rmsg, WAITMSG_TIMEOUT)) {
-		return -1 ;
-	}
 
-	size_t data_len = ND_USERMSG_LEN(&rmsg) - ND_USERMSG_HDRLEN;
-
-	if(ND_USERMSG_MAXID(&rmsg)!=PGMAXID_LOGIN || 
-		ND_USERMSG_MINID(&rmsg) != MSG_LOGIN_PKI_KEY_ACK||
-		data_len!=sizeof(R_RSA_PUBLIC_KEY)) {
-			return -1 ;
-	}	
-	memcpy(&__rsa_contex.publicKey, ND_USERMSG_DATA(&rmsg), data_len) ;
-
-	//get public key digest 
-	NDOStreamMsg omsg_digest(PGMAXID_LOGIN, MSG_LOGIN_PKI_DIGEST_REQ) ;
-	if(SendMsg(omsg_digest,ESF_URGENCY) <= 0) {
-		return -1 ;
-	}
-	if(-1==WaitMsg(&rmsg, WAITMSG_TIMEOUT)) {
-		return -1 ;
-	}
-
-	data_len = ND_USERMSG_LEN(&rmsg) - ND_USERMSG_HDRLEN;
-	if(ND_USERMSG_MAXID(&rmsg)!=PGMAXID_LOGIN || 
-		ND_USERMSG_MINID(&rmsg) != MSG_LOGIN_PKI_DIGEST_ACK||
-		data_len!=16) {
-			return -1 ;
-	}	
-	MD5Crypt16((char*)&__rsa_contex.publicKey, sizeof(R_RSA_PUBLIC_KEY ) , __rsa_digest);
-	if(0==MD5cmp(__rsa_digest, ND_USERMSG_DATA(&rmsg))) {
-		__pki_ok = 1 ;
-	}
-	//PKI success
-
-	//exchange password
-	if(0!=tea_key(&__crypt_key) ){
-		nd_logmsg("error on create crypt-key\n") ;
-		return -1 ;
-	}
-	struct {
-		char  cryptKeymd5[16] ;
-		tea_k k ;
-	} symm_key;
-
-	MD5Crypt16((char*)&__crypt_key,sizeof(__crypt_key),symm_key.cryptKeymd5) ;
-	memcpy(&(symm_key.k), &__crypt_key, sizeof(__crypt_key)) ;
-
-	int len ;
-	//send symm crypt key
-	if(0!=nd_RSAPublicEncrypt(ND_USERMSG_DATA(&rmsg) , &len, (char*)&symm_key,sizeof(symm_key),&__rsa_contex )) {
-		nd_logmsg("rsa encrypt error data error\n") ;
-		return -1 ;
-	}
-	ND_USERMSG_LEN(&rmsg) = len + ND_USERMSG_HDRLEN;
-	ND_USERMSG_MAXID(&rmsg) = PGMAXID_LOGIN ;
-	ND_USERMSG_MINID(&rmsg) = MSG_LOGIN_EXCH_CRYPTKEY_REQ ;
-	if(SendMsg((pg_msg_base*)&rmsg, ESF_URGENCY) <= 0) {
-		return -1 ;
-	}
-
-	if(-1==WaitMsg(&rmsg, WAITMSG_TIMEOUT)) {
-		return -1 ;
-	}
-	NDIStreamMsg inpkimsg(&rmsg) ;
-
-	if(inpkimsg.MsgMaxid()!=PGMAXID_LOGIN || 
-		inpkimsg.MsgMinid() != MSG_LOGIN_EXCH_CRYPTKEY_ACK) {
-			return -1 ;
-	}
-	NDUINT32 is_ok ;
-	if(inpkimsg.Read(is_ok)==-1) {
-		return -1 ;
-	}
-	if(0==is_ok) {
-		nd_handle h = GetHandle() ;
-		nd_connector_set_crypt(h,(void*)&__crypt_key, sizeof(__crypt_key)) ;
-		return 0 ;
-	}
-	return -1 ;
-}
-*/
 
 NDIConn * htoConnector(nd_handle h)
 {

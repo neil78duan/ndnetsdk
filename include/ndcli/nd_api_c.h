@@ -120,7 +120,8 @@ CPPAPI int ndSentTest(netObject netObj) ;
 CPPAPI void ndMsgfuncInit(netObject netObj) ;
 
 
-CPPAPI int nd_exchange_key(netObject nethandle) ;
+CPPAPI int nd_exchange_key(netObject nethandle,void *output_key) ;
+CPPAPI int nd_checkErrorMsg(netObject nethandle,struct ndMsgData *msg) ;
 
 /*
 CPPAPI netObject ndGetConnector() ;

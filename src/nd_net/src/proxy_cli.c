@@ -21,7 +21,7 @@ enum prox_ack_code{
 
 //Error codes
 int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_info *proxy, int is_udp,SOCKADDR_IN *proxy_addr) ;
-int base64_encode( const char * source, int len, char * destination_string ) ;
+//int base64_encode( const char * source, int len, char * destination_string ) ;
 
 ndsocket_t nd_proxy_connect(const char *host, short port,SOCKADDR_IN *out_addr, struct nd_proxy_info *proxy, int is_udp)
 {
@@ -264,120 +264,4 @@ int nd_proxy_sendto(ndsocket_t fd, void *data, size_t size, SOCKADDR_IN *remotea
 	
 	return nd_socket_udp_write(fd,(char*)buf, size+10 ,proxy) ;
 	//return send(fd,(char*) buf, size+10 ,0) ;
-}
-
-#define END_OF_BASE64_ENCODED_DATA           ('=')
-#define BASE64_END_OF_BUFFER                 (0xFD)
-#define BASE64_IGNORABLE_CHARACTER           (0xFE)
-#define BASE64_UNKNOWN_VALUE                 (0xFF)
-#define BASE64_NUMBER_OF_CHARACTERS_PER_LINE (72)
-
-int base64_encode( const char * source, int len, char * destination_string )
-{
-
-	const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-	int loop_index                = 0;
-	int number_of_bytes_to_encode = len;
-
-	NDUINT8 byte_to_add = 0;
-	NDUINT8 byte_1      = 0;
-	NDUINT8 byte_2      = 0;
-	NDUINT8 byte_3      = 0;
-
-	NDUINT32 number_of_bytes_encoded = (NDUINT32) ( (double) number_of_bytes_to_encode / (double) 0.75 ) + 1;
-	char * destination;
-
-	number_of_bytes_encoded += (NDUINT32)( ( ( number_of_bytes_encoded / BASE64_NUMBER_OF_CHARACTERS_PER_LINE ) + 1 ) * 2 );
-
-	destination = destination_string;
-
-	number_of_bytes_encoded = 0;
-
-	while( loop_index < number_of_bytes_to_encode ) {
-		// Output the first byte
-		byte_1 = source[ loop_index ];
-		byte_to_add = alphabet[ ( byte_1 >> 2 ) ];
-
-		destination[ number_of_bytes_encoded ] =  byte_to_add ;
-		number_of_bytes_encoded++;
-
-		loop_index++;
-
-		if ( loop_index >= number_of_bytes_to_encode ) {
-			// We're at the end of the data to encode
-			byte_2 = 0;
-			byte_to_add = alphabet[ ( ( ( byte_1 & 0x03 ) << 4 ) | ( ( byte_2 & 0xF0 ) >> 4 ) ) ];
-
-			destination[ number_of_bytes_encoded ] = byte_to_add;
-			number_of_bytes_encoded++;
-
-			destination[ number_of_bytes_encoded ] =  END_OF_BASE64_ENCODED_DATA;
-			number_of_bytes_encoded++;
-
-			destination[ number_of_bytes_encoded ] =  END_OF_BASE64_ENCODED_DATA;
-
-			destination[ number_of_bytes_encoded + 1 ] = 0;
-
-			return 0;
-		}
-		else{
-			byte_2 = source[ loop_index ];
-		}
-
-		byte_to_add = alphabet[ ( ( ( byte_1 & 0x03 ) << 4 ) | ( ( byte_2 & 0xF0 ) >> 4 ) ) ];
-
-		destination[ number_of_bytes_encoded ] = byte_to_add;
-		number_of_bytes_encoded++;
-
-		loop_index++;
-
-		if ( loop_index >= number_of_bytes_to_encode )
-		{
-			// We ran out of bytes, we need to add the last half of byte_2 and pad
-			byte_3 = 0;
-
-			byte_to_add = alphabet[ ( ( ( byte_2 & 0x0F ) << 2 ) | ( ( byte_3 & 0xC0 ) >> 6 ) ) ];
-
-			destination[ number_of_bytes_encoded ] = byte_to_add;
-			number_of_bytes_encoded++;
-
-			destination[ number_of_bytes_encoded ] = END_OF_BASE64_ENCODED_DATA;
-
-			destination[ number_of_bytes_encoded + 1 ] = 0;
-
-			return 0;
-		}
-		else
-		{
-			byte_3 = source[ loop_index ];
-		}
-
-		loop_index++;
-
-		byte_to_add = alphabet[ ( ( ( byte_2 & 0x0F ) << 2 ) | ( ( byte_3 & 0xC0 ) >> 6 ) ) ];
-
-		destination[ number_of_bytes_encoded ] = byte_to_add;
-		number_of_bytes_encoded++;
-
-		byte_to_add = alphabet[ ( byte_3 & 0x3F ) ];
-
-		destination[ number_of_bytes_encoded ] = byte_to_add;
-		number_of_bytes_encoded++;
-
-		if ( ( number_of_bytes_encoded % BASE64_NUMBER_OF_CHARACTERS_PER_LINE ) == 0 )
-		{
-			destination[ number_of_bytes_encoded ] = 13;		//»Ø³µreturn
-			number_of_bytes_encoded++;
-
-			destination[ number_of_bytes_encoded ] = 10;		//»»ÐÐ
-			number_of_bytes_encoded++;
-		}
-	}
-
-	destination[ number_of_bytes_encoded ] = END_OF_BASE64_ENCODED_DATA;
-
-	destination[ number_of_bytes_encoded + 1 ] = 0;
-
-	return 0;
 }

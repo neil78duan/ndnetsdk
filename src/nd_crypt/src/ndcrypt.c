@@ -4,7 +4,7 @@
  * 2008-5
  */
 
-//#include "nd_common/nd_common.h"
+#include "nd_common/nd_common.h"
 #include "nd_crypt/nd_crypt.h"
 
 #include <stdlib.h>
@@ -190,3 +190,122 @@ int MD5cmp(char src[16], char desc[16])
 	ret = s4[3] - d4[3] ;
 	return ret ;
 }
+
+//base 64
+
+#define END_OF_BASE64_ENCODED_DATA           ('=')
+#define BASE64_END_OF_BUFFER                 (0xFD)
+#define BASE64_IGNORABLE_CHARACTER           (0xFE)
+#define BASE64_UNKNOWN_VALUE                 (0xFF)
+#define BASE64_NUMBER_OF_CHARACTERS_PER_LINE (72)
+
+int base64_encode( const char * source, int len, char * destination_string )
+{
+
+	const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+	int loop_index                = 0;
+	int number_of_bytes_to_encode = len;
+
+	NDUINT8 byte_to_add = 0;
+	NDUINT8 byte_1      = 0;
+	NDUINT8 byte_2      = 0;
+	NDUINT8 byte_3      = 0;
+
+	NDUINT32 number_of_bytes_encoded = (NDUINT32) ( (double) number_of_bytes_to_encode / (double) 0.75 ) + 1;
+	char * destination;
+
+	number_of_bytes_encoded += (NDUINT32)( ( ( number_of_bytes_encoded / BASE64_NUMBER_OF_CHARACTERS_PER_LINE ) + 1 ) * 2 );
+
+	destination = destination_string;
+
+	number_of_bytes_encoded = 0;
+
+	while( loop_index < number_of_bytes_to_encode ) {
+		// Output the first byte
+		byte_1 = source[ loop_index ];
+		byte_to_add = alphabet[ ( byte_1 >> 2 ) ];
+
+		destination[ number_of_bytes_encoded ] =  byte_to_add ;
+		number_of_bytes_encoded++;
+
+		loop_index++;
+
+		if ( loop_index >= number_of_bytes_to_encode ) {
+			// We're at the end of the data to encode
+			byte_2 = 0;
+			byte_to_add = alphabet[ ( ( ( byte_1 & 0x03 ) << 4 ) | ( ( byte_2 & 0xF0 ) >> 4 ) ) ];
+
+			destination[ number_of_bytes_encoded ] = byte_to_add;
+			number_of_bytes_encoded++;
+
+			destination[ number_of_bytes_encoded ] =  END_OF_BASE64_ENCODED_DATA;
+			number_of_bytes_encoded++;
+
+			destination[ number_of_bytes_encoded ] =  END_OF_BASE64_ENCODED_DATA;
+
+			destination[ number_of_bytes_encoded + 1 ] = 0;
+
+			return 0;
+		}
+		else{
+			byte_2 = source[ loop_index ];
+		}
+
+		byte_to_add = alphabet[ ( ( ( byte_1 & 0x03 ) << 4 ) | ( ( byte_2 & 0xF0 ) >> 4 ) ) ];
+
+		destination[ number_of_bytes_encoded ] = byte_to_add;
+		number_of_bytes_encoded++;
+
+		loop_index++;
+
+		if ( loop_index >= number_of_bytes_to_encode )
+		{
+			// We ran out of bytes, we need to add the last half of byte_2 and pad
+			byte_3 = 0;
+
+			byte_to_add = alphabet[ ( ( ( byte_2 & 0x0F ) << 2 ) | ( ( byte_3 & 0xC0 ) >> 6 ) ) ];
+
+			destination[ number_of_bytes_encoded ] = byte_to_add;
+			number_of_bytes_encoded++;
+
+			destination[ number_of_bytes_encoded ] = END_OF_BASE64_ENCODED_DATA;
+
+			destination[ number_of_bytes_encoded + 1 ] = 0;
+
+			return 0;
+		}
+		else
+		{
+			byte_3 = source[ loop_index ];
+		}
+
+		loop_index++;
+
+		byte_to_add = alphabet[ ( ( ( byte_2 & 0x0F ) << 2 ) | ( ( byte_3 & 0xC0 ) >> 6 ) ) ];
+
+		destination[ number_of_bytes_encoded ] = byte_to_add;
+		number_of_bytes_encoded++;
+
+		byte_to_add = alphabet[ ( byte_3 & 0x3F ) ];
+
+		destination[ number_of_bytes_encoded ] = byte_to_add;
+		number_of_bytes_encoded++;
+
+		if ( ( number_of_bytes_encoded % BASE64_NUMBER_OF_CHARACTERS_PER_LINE ) == 0 )
+		{
+			destination[ number_of_bytes_encoded ] = 13;		//»Ø³µreturn
+			number_of_bytes_encoded++;
+
+			destination[ number_of_bytes_encoded ] = 10;		//»»ÐÐ
+			number_of_bytes_encoded++;
+		}
+	}
+
+	destination[ number_of_bytes_encoded ] = END_OF_BASE64_ENCODED_DATA;
+
+	destination[ number_of_bytes_encoded + 1 ] = 0;
+
+	return 0;
+}
+

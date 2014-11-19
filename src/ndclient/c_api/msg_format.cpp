@@ -330,6 +330,20 @@ int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag)
     
 }
 
+
+int nd_checkErrorMsg(netObject nethandle,ndMsgData *msg)
+{
+	if (msg->maxID==ND_MAIN_ID_SYS && msg->minID ==ND_MSG_SYS_ERROR) {
+		NDIStreamMsg inmsg((nd_usermsgbuf_t*) msg) ;
+		NDUINT32 errcode =NDERR_BADTHREAD;
+		inmsg.Read(errcode) ;
+		nd_object_seterror((nd_handle)nethandle, errcode) ;
+		return  errcode ;
+	}
+	return  0 ;
+
+}
+
 /////////
 
 // for test

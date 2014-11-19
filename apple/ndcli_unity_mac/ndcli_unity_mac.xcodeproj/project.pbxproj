@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07501E3C1A161207003DE0CA /* nd_exch_key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07501E3B1A161207003DE0CA /* nd_exch_key.cpp */; };
 		07A26B3119C80DA600F51698 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07A269C919C80DA500F51698 /* Makefile */; };
 		07A26B3319C80DA600F51698 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07A269CC19C80DA500F51698 /* Makefile */; };
 		07A26B5619C80DA600F51698 /* bintree.c in Sources */ = {isa = PBXBuildFile; fileRef = 07A269F119C80DA600F51698 /* bintree.c */; };
@@ -83,6 +84,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		07501E3B1A161207003DE0CA /* nd_exch_key.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_exch_key.cpp; sourceTree = "<group>"; };
 		07A2695C19C80B1500F51698 /* ndcli_unity_mac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ndcli_unity_mac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A2696019C80B1500F51698 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		07A2696919C80DA500F51698 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
@@ -586,6 +588,7 @@
 		07CBF85419C974BC002EE541 /* c_api */ = {
 			isa = PBXGroup;
 			children = (
+				07501E3B1A161207003DE0CA /* nd_exch_key.cpp */,
 				07CBF85519C974BC002EE541 /* msg_format.cpp */,
 				07CBF85619C974BC002EE541 /* nd_connector.c */,
 			);
@@ -717,6 +720,7 @@
 				07A26BBB19C80DA600F51698 /* ipraw.c in Sources */,
 				07A26B5919C80DA600F51698 /* nd_handle.c in Sources */,
 				07A26B6119C80DA600F51698 /* nd_win.c in Sources */,
+				07501E3C1A161207003DE0CA /* nd_exch_key.cpp in Sources */,
 				07A26B9C19C80DA600F51698 /* ndrsa.c in Sources */,
 				07A26B9D19C80DA600F51698 /* tea.c in Sources */,
 				07A26B9419C80DA600F51698 /* r_enhanc.c in Sources */,

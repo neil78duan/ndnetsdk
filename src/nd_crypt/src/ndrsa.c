@@ -232,6 +232,69 @@ int _key_output(R_RSA_PRIVATE_KEY *key, const char *bin_file, int is_private)
 	
 }
 
+//write key to buf
+int nd_rsa_write_key(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is_private)
+{
+	char sign ;
+	char *pf = tobuf ;
+	RSA_HEADER_INIT( rsa_header ) ;
+
+	rsa_header.bits = key->bits ;
+
+	if (pf + sizeof(rsa_header) > tobuf + bufsize) {
+		return -1;
+	}
+
+	memcpy(pf, &rsa_header, sizeof(rsa_header)) ;
+
+
+
+#define COPY_CONTEXT(_sign, _data, _size, _pf) do { \
+	int i ;		\
+	for(i =0 ;i<_size; i++) {		\
+		if(_data[i] ) {				\
+			unsigned short write_len= _size - i ; 	\
+			unsigned short start_pos= i ; 	\
+			if (_pf + write_len + 5 > tobuf + bufsize ) { return -1 ;} \
+			*((*(char**)&_pf)++) =*(_sign) ;	\
+			*((*(unsigned short**)&_pf)++) =start_pos ;	\
+			*((*(unsigned short**)&_pf)++) =write_len ; \
+			memcpy(_pf,&(_data[i]), write_len) ;			\
+			_pf+= write_len ; \
+			break ;		\
+		}				\
+	}					\
+}while(0)
+
+	sign='A' ;
+	COPY_CONTEXT(&sign, key->modulus, sizeof(key->modulus), pf) ;
+
+	sign='B' ;
+	COPY_CONTEXT(&sign, key->publicExponent, sizeof(key->publicExponent), pf) ;
+
+	if (is_private) {
+		sign='C' ;
+		COPY_CONTEXT(&sign, key->exponent, sizeof(key->exponent), pf) ;
+
+		sign='D' ;
+		COPY_CONTEXT(&sign, key->prime[0], sizeof(key->prime[0]), pf) ;
+
+		sign='E' ;
+		COPY_CONTEXT(&sign, key->prime[1], sizeof(key->prime[1]), pf) ;
+
+		sign='F' ;
+		COPY_CONTEXT(&sign, key->primeExponent[0], sizeof(key->primeExponent[0]), pf) ;
+
+		sign='G' ;
+		COPY_CONTEXT(&sign, key->primeExponent[1], sizeof(key->primeExponent[1]), pf) ;
+
+		sign='H' ;
+		COPY_CONTEXT(&sign, key->coefficient, sizeof(key->coefficient), pf) ;
+	}
+
+	return pf-tobuf;
+}
+
 int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int is_private)
 {
 	int ret = 0;

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		073C46D119C18D580081D14F /* libndclient_ios.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 079318F619931665009C8BC5 /* libndclient_ios.a */; };
+		074DC2841A19CC3F0094D454 /* nd_exch_key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 074DC2831A19CC3F0094D454 /* nd_exch_key.cpp */; };
 		079318FA19931665009C8BC5 /* ndclient_ios.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 079318F919931665009C8BC5 /* ndclient_ios.h */; };
 		079318FC19931665009C8BC5 /* ndclient_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 079318FB19931665009C8BC5 /* ndclient_ios.m */; };
 		0793190219931665009C8BC5 /* libndclient_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 079318F619931665009C8BC5 /* libndclient_ios.a */; };
@@ -105,6 +106,7 @@
 
 /* Begin PBXFileReference section */
 		074B3FA019C2F1BB000C6C52 /* client_c_api_desc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = client_c_api_desc.txt; path = ../../doc/client_c_api_desc.txt; sourceTree = "<group>"; };
+		074DC2831A19CC3F0094D454 /* nd_exch_key.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_exch_key.cpp; sourceTree = "<group>"; };
 		07885A7119BED1F40075AF59 /* nd_api_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_api_c.h; sourceTree = "<group>"; };
 		07885A7219BED1F40075AF59 /* nd_iconn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconn.h; sourceTree = "<group>"; };
 		079318F619931665009C8BC5 /* libndclient_ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndclient_ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -534,6 +536,7 @@
 		07EBCE6D19A8CF6C00802576 /* c_api */ = {
 			isa = PBXGroup;
 			children = (
+				074DC2831A19CC3F0094D454 /* nd_exch_key.cpp */,
 				07EBCE6E19A8CF6C00802576 /* msg_format.cpp */,
 				07EBCE6F19A8CF6C00802576 /* nd_connector.c */,
 			);
@@ -689,6 +692,7 @@
 				07EBCE2619A8CD1900802576 /* Makefile in Sources */,
 				07EBCE1619A8CD1900802576 /* md2c.c in Sources */,
 				07EBCE3419A8CD1900802576 /* udt_srv.c in Sources */,
+				074DC2841A19CC3F0094D454 /* nd_exch_key.cpp in Sources */,
 				07EBCE0519A8CD1900802576 /* nd_handle.c in Sources */,
 				07EBCE7719A8CF6C00802576 /* nd_connector.c in Sources */,
 				07EBCE1C19A8CD1900802576 /* r_enhanc.c in Sources */,
