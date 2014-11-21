@@ -27,6 +27,7 @@ struct listen_config
 struct connect_config
 {
 	int port ;
+	int tmout ;
 	char protocol_name[32] ;
 	char host[HOST_NAME_SIZE] ;
 	struct nd_proxy_info proxy_info ;

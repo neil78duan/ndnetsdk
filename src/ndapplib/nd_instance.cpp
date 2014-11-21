@@ -615,4 +615,26 @@ int instance_tick_entry(void *param)
 }
 
 
+MSG_ENTRY_INSTANCE(nd_transfer_to_session)
+{
+	ND_TRACE_FUNC() ;
+	NDUINT16 sid ;
+	NDIStreamMsg inmsg(msg) ;
+	
+	//nd_logdebug("receive message need transfer\n");
+	if(-1==inmsg.Read(sid) || sid ==0) {
+		
+		nd_logmsg("transfer-message error sessionid ==0\n") ;
+		return 0 ;
+	}
+	if(!h_listen){
+		h_listen = getbase_inst()->GetDeftListener()->GetHandle() ;
+		nd_assert(h_listen) ;
+	}
+
+	if(-1==nd_netmsg_handle(sid,(nd_usermsghdr_t*)msg, h_listen) ){
+		nd_logmsg("nd_netmsg_handle() to %d error\n", sid) ;		
+	}
+	return 0 ;
+}
 

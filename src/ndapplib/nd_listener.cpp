@@ -357,3 +357,4 @@ int NDSafeListener::OnAccept(NDSession *pSession, SOCKADDR_IN*addr)
 	}
 	return 0 ;
 }
+

@@ -75,6 +75,9 @@ public :
 	virtual const char *ErrorDesc() =0;
     virtual void *GetUserData() = 0;
     virtual void SetUserData(void *pData) = 0;
+
+	virtual int ioctl(int cmd, void *val, int *size) = 0;
+
 protected:
 	NDIConn() {} 
 	virtual~NDIConn() {}

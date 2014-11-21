@@ -12,6 +12,12 @@
 // #include "nd_common/nd_alloc.h"
 // #include "nd_srvcore/nd_thpool.h"
 
+#ifdef _MSC_VER
+#define check_thread_switch(lc) do {\
+	if(lc->io_mod != ND_LISTEN_COMMON) {return -1;} }while(0) 
+#else 
+#define check_thread_switch(lc) do{} while(0) 
+#endif
 
 //通过SESSIONid把消息发送给客户端
 int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) 
@@ -20,7 +26,10 @@ int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_h
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
-	if(!pmanger||sessionid==0 || lc->io_mod != ND_LISTEN_COMMON) 
+	
+	check_thread_switch(lc) ;
+	
+	if(!pmanger||sessionid==0 ) 
 		return -1 ;
 	thid = nd_node_get_owner(pmanger,sessionid ) ;
 	if(0==thid) 
@@ -52,7 +61,10 @@ int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
-	if(!pmanger|| lc->io_mod != ND_LISTEN_COMMON) 
+	
+	check_thread_switch(lc) ;
+	
+	if(!pmanger) 
 		return -1 ;
 	thid = nd_node_get_owner(pmanger,sessionid ) ;
 	if(0==thid) 
@@ -88,7 +100,10 @@ int _session_addto(NDUINT16 sessionid, nd_handle listen_handle,ndthread_t thid)
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 	nd_netui_handle client ;
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
-	if(!pmanger|| lc->io_mod != ND_LISTEN_COMMON) 
+	
+	check_thread_switch(lc) ;
+	
+	if(!pmanger) 
 		return -1 ;
 	if(thid == nd_thread_self())
 		return -1;

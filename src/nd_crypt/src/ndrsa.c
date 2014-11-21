@@ -246,8 +246,7 @@ int nd_rsa_write_key(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is
 	}
 
 	memcpy(pf, &rsa_header, sizeof(rsa_header)) ;
-
-
+	pf += sizeof(rsa_header) ;
 
 #define COPY_CONTEXT(_sign, _data, _size, _pf) do { \
 	int i ;		\

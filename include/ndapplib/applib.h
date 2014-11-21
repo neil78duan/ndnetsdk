@@ -100,7 +100,10 @@ CPPAPI int set_mp() ;
 #define USER_NETMSG_FUNC	nd_usermsg_func		
 #define ND_GET_SESSION_ID(nethandle)		nd_session_getid(nethandle)
 
-
+static inline int nd_check_coming_our_server(nd_usermsgbuf_t *msg)
+{
+	return ND_USERMSG_SYS_RESERVED(msg) ? 1: 0 ;
+}
 //定义消息处理函数
 #define MSG_ENTRY_INSTANCE(name) \
 	int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen) 
@@ -126,5 +129,7 @@ CPPAPI R_RSA_PRIVATE_KEY *nd_get_privatekey(void) ;
 extern time_t app_inst_time(time_t* _t);
 extern void	  app_inst_set_hm(int _h, int _m);
 
+
+MSG_ENTRY_DECLARE(nd_transfer_to_session) ;
 
 #endif

@@ -21,6 +21,7 @@
 
 typedef int(*nd_close_callback)(void* handle, int flag) ;			//对象关闭函数
 typedef void (*nd_init_func)(void*)  ;								//对象初始化函数
+typedef const char* (*nd_error_convert)(int errcode)  ;
 
 //对象关闭方式
 enum eObjectClose{
@@ -160,7 +161,7 @@ static __INLINE__ void nd_object_seterror(nd_handle h, NDUINT32 errcode)
 	((struct tag_nd_handle*)h)->myerrno =(NDUINT16) errcode;
 }
 
-ND_COMMON_API char *nd_object_errordesc(nd_handle h) ;
+ND_COMMON_API const char *nd_object_errordesc(nd_handle h) ;
 ND_COMMON_API int nd_object_check_error(nd_handle h) ;//检测句柄是否出错无效
 ND_COMMON_API int nd_tryto_clear_err(nd_handle h) ;
 
@@ -168,4 +169,7 @@ ND_COMMON_API int nd_tryto_clear_err(nd_handle h) ;
 ND_COMMON_API int nd_reg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_unreg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_handle_checkvalid(nd_handle hobj, NDUINT16 objtype);
+
+ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
+
 #endif

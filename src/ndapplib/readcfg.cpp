@@ -65,12 +65,17 @@ int read_connect_cfg(ndxml *xmlroot, int base_port, struct connect_config *ccfg)
 	//read port
 	XML_READ_SUB_INT(xmlroot,"remote_port",ccfg->port) ;
 	ccfg->port += base_port ;
+
+	XML_READ_SUB_INT(xmlroot,"connected_tmout",ccfg->tmout) ;
 	
 	//read remote host
 	XML_READ_SUB_BUF(xmlroot,"host",ccfg->host) ;
 
 	//read listen_mod
 	XML_READ_SUB_BUF(xmlroot,"connect_protocol",ccfg->protocol_name) ;
+
+
+
 
 	//read proxy info 
 	xml_sub = ndxml_refsub(xmlroot,"proxy") ;

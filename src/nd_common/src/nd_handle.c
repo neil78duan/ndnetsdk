@@ -32,6 +32,15 @@ struct alloced_objects
 };
 static nd_mutex __alloced_lock ;
 static int __inited ;
+static nd_error_convert __error_convert ;
+
+
+nd_error_convert nd_register_error_convert( nd_error_convert func)
+{
+	nd_error_convert ret = __error_convert ;
+	__error_convert = func ;
+	return ret ;
+}
 
 /*创建一个对象实例*/
 nd_handle _object_create(const char *name)
@@ -148,8 +157,9 @@ int destroy_object_register_manager(void)
 	return 0 ;
 }
 
-char *nd_object_errordesc(nd_handle h) 
+const char *nd_object_errordesc(nd_handle h)
 {
+	static char errdesc[128] ;
 	char *perr[] = {
 		"NDERR_SUCCESS " ,
 		"NDERR_INVALID_HANDLE",
@@ -176,9 +186,13 @@ char *nd_object_errordesc(nd_handle h)
 
 	if(h->myerrno <= NDERR_UNKNOW)
 		return perr[h->myerrno] ;
-	else 
-		return "unknowwing" ;
-
+	else if(__error_convert) {
+		return __error_convert(h->myerrno) ;
+	}
+	else {
+		snprintf(errdesc, sizeof(errdesc), "Error code =%d",h->myerrno) ;
+		return errdesc ;
+	}
 }
 
 int nd_object_check_error(nd_handle h) 

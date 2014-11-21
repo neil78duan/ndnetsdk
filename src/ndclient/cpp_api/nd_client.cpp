@@ -66,7 +66,9 @@ public :
 
     void *GetUserData() { return __userData ;}
     void SetUserData(void *pData){ __userData = pData ;}
-    
+
+	int ioctl(int cmd, void *val, int *size) ;
+
 private:
 	//nd_handle m_objhandle ;
 	int msg_kinds ;
@@ -98,6 +100,14 @@ int NDConnector::LastError()
 	else 
 		return nd_object_lasterror(m_objhandle) ;
 
+}
+
+int NDConnector::ioctl(int cmd, void *val, int *size)
+{
+	if(!m_objhandle)
+		return -1 ;
+	else
+		return nd_net_ioctl((nd_netui_handle)m_objhandle, cmd, val, size) ;
 }
 
 void NDConnector::SetLastError(NDUINT32 errcode) 

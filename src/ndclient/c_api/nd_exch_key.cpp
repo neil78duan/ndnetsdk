@@ -108,7 +108,7 @@ static int _get_public_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &output_key, cha
 		}
 
 		//check public key md5
-		MD5Crypt16((char*)key_buf, keySize, srvmd5) ;
+		MD5Crypt16((char*)key_buf, keySize, keymd5) ;
 		if(MD5cmp(keymd5, srvmd5)) {
 			nd_object_seterror(nethandle, NDERR_BADPACKET) ;
 			return  -1 ;
@@ -173,6 +173,7 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 		int sessionid = client_sission ;
 		int size = sizeof(int) ;
 		nd_net_ioctl((nd_netui_handle)nethandle, NDIOCTL_SET_SESSIONID,&sessionid, &size) ;
+		nd_connect_level_set(nethandle, EPL_CONNECT) ;
 	}
 
 	return 0;

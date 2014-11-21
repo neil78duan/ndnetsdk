@@ -177,11 +177,11 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		}
 		break ;
 	case NDIOCTL_SET_TIMEOUT:
-		socket_node->disconn_timeout = *(ndtime_t*)val ;
+		socket_node->disconn_timeout = (*(ndtime_t*)val) *1000 ;
 		ret = 0;
 		break;
 	case NDIOCTL_GET_TIMEOUT:
-		*(ndtime_t*)val  = socket_node->disconn_timeout ;
+		*(ndtime_t*)val  = socket_node->disconn_timeout /1000 ;
 		ret = 0;
 		break ;
     case NDIOCTL_GET_LAST_RECV_TIME:
@@ -242,8 +242,15 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		ret = 0;
         break ;
     case NDIOCTL_GET_CRYPT_KEY:
-		*(nd_userdata_t*)val = nd_connector_get_crypt(socket_node, size) ;
+		{
+		int keysize = 0 ;
+		void *addr = nd_connector_get_crypt(socket_node, size) ;
+		if (keysize <= *size) {
+			memcpy(val, addr, keysize) ;
+			*size = keysize ;
+		}
 		ret = 0;
+		}
         break;
             
     case NDIOCTL_SET_LEVEL:
