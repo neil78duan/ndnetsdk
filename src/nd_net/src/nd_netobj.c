@@ -244,12 +244,13 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
     case NDIOCTL_GET_CRYPT_KEY:
 		{
 		int keysize = 0 ;
-		void *addr = nd_connector_get_crypt(socket_node, size) ;
+		void *addr = nd_connector_get_crypt(socket_node, &keysize) ;
+		ret = -1 ;
 		if (keysize <= *size) {
 			memcpy(val, addr, keysize) ;
 			*size = keysize ;
+			ret = 0 ;
 		}
-		ret = 0;
 		}
         break;
             

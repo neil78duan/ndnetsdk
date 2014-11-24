@@ -48,7 +48,7 @@ class NDIConn ;
 typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
 
 
-#define  WAITMSG_TIMEOUT 10000
+#define  WAITMSG_TIMEOUT 300000
 
 //net connector 
 class NDIConn
