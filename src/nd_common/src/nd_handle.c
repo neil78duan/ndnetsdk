@@ -16,7 +16,7 @@ static ND_LIST_HEAD(__reg_list) ;
 
 static ND_LIST_HEAD(__alloced_obj_list) ;
 
-//¼ÇÂ¼ËùÓĞ×¢²áµÄ¶ÔÏóÀàĞÍ
+//ÂºÂ«Â¬ÂºÃ€Ë˜â€â€“â—ŠÂ¢â‰¤Â·ÂµÆ’âˆ‚â€˜Å“Ã›Â¿â€¡â€“Ã•
 struct register_object_info
 {
 	struct list_head list ;
@@ -24,7 +24,7 @@ struct register_object_info
 
 };
 
-//ÒÑ¾­¶¯Ì¬·ÖÅäµÄ¶ÔÏóÁĞ±í
+//â€œâ€”Ã¦â‰ âˆ‚Ã˜ÃƒÂ¨âˆ‘Ã·â‰ˆâ€°ÂµÆ’âˆ‚â€˜Å“Ã›Â¡â€“Â±ÃŒ
 struct alloced_objects 
 {
 	struct list_head list ;
@@ -42,7 +42,7 @@ nd_error_convert nd_register_error_convert( nd_error_convert func)
 	return ret ;
 }
 
-/*´´½¨Ò»¸ö¶ÔÏóÊµÀı*/
+/*Â¥Â¥Î©Â®â€œÂªâˆË†âˆ‚â€˜Å“Ã›Â ÂµÂ¿Ë*/
 nd_handle _object_create(const char *name)
 {
 	struct register_object_info *objlist ;
@@ -87,7 +87,7 @@ nd_handle _object_create(const char *name)
 }
 
 
-/* ¹Ø±ÕÒ»¸ö¾ä±ú*/
+/* Ï€Ã¿Â±â€™â€œÂªâˆË†Ã¦â€°Â±Ë™*/
 int _object_destroy(nd_handle handle, int flag) 
 {
 	int ret = -1;
@@ -123,7 +123,7 @@ int _object_destroy(nd_handle handle, int flag)
 	return ret ;
 }
 
-//×¢²áÒ»¸ö¾ä±úÀàĞÍ,ÀàËÆÓÚwindows´°¿ÚÀàĞÍµÄ×¢²á
+//â—ŠÂ¢â‰¤Â·â€œÂªâˆË†Ã¦â€°Â±Ë™Â¿â€¡â€“Ã•,Â¿â€¡Ã€âˆ†â€â„windowsÂ¥âˆÃ¸â„Â¿â€¡â€“Ã•ÂµÆ’â—ŠÂ¢â‰¤Â·
 int nd_object_register(struct nd_handle_reginfo *reginfo) 
 {
 	struct register_object_info *pobj;
@@ -200,7 +200,8 @@ int nd_object_check_error(nd_handle h)
 	if (h->myerrno ==NDERR_SUCCESS ||
 		h->myerrno ==NDERR_WUOLD_BLOCK || 
 		h->myerrno==NDERR_USER_BREAK || 
-		h->myerrno==NDERR_NO_PRIVILAGE)	{
+		h->myerrno==NDERR_NO_PRIVILAGE ||
+		h->myerrno >= NDERR_USERDEFINE)	{
 		return 0 ;
 	}
 	return h->myerrno ;
@@ -280,7 +281,7 @@ struct tag_nd_handle * _search_handle(NDUINT32 objid)
 	return NULL;
 }
 
-//µÇ¼ÇÒ»¸ö´´½¨ºÃµÄ¾ä±ú
+//ÂµÂ«ÂºÂ«â€œÂªâˆË†Â¥Â¥Î©Â®âˆ«âˆšÂµÆ’Ã¦â€°Â±Ë™
 int nd_reg_handle(nd_handle hobj) 
 {
 	struct tag_nd_handle *handle = (struct tag_nd_handle *) hobj ;
@@ -369,7 +370,7 @@ int nd_handle_checkvalid(nd_handle hobj, NDUINT16 objtype)
 }
 #else 
 
-//µÇ¼ÇÒ»¸ö´´½¨ºÃµÄ¾ä±ú
+//ÂµÂ«ÂºÂ«â€œÂªâˆË†Â¥Â¥Î©Â®âˆ«âˆšÂµÆ’Ã¦â€°Â±Ë™
 int nd_reg_handle(nd_handle hobj) 
 {
 	nd_atomic_set(&((struct tag_nd_handle *)hobj)->__created,1) ;

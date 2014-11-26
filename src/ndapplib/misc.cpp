@@ -183,6 +183,11 @@ int send_error_ack(nd_handle hconnect, int errcode)
 
 
 	ND_MSG_SEND( hconnect, omsg.GetMsgAddr(), NULL) ;
+	
+	
+	NDSession *pSession = (NDSession*) NDGetSession(hconnect) ;
+	char ipbuf[32] ;
+	nd_logdebug("send error %d to %s \n", errcode, nd_inet_ntoa(pSession->GetID(), ipbuf) ) ;
 
 	return 0;
 }
