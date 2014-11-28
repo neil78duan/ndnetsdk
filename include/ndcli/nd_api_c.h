@@ -83,6 +83,9 @@ CPPAPI int ndUpdateConnect(netObject netObj, int timeOutMS) ;
 //wait net message untill timeout, when you get the data ,you need handle it yourself
 CPPAPI int ndWaitMsg(netObject netObj, char *buf, int timeOutMS) ;
 
+//set terminate callback function , return old function
+CPPAPI ndNetFunc ndSetTerminateFunc(ndNetFunc func) ;
+
 //init/deinit net 
 CPPAPI int ndInitNet() ;
 CPPAPI void ndDeinitNet() ;

@@ -17,6 +17,10 @@ static int __bInit = 0 ;
 
 int _translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle) ;
 
+static ndNetFunc __terminate_entry ;
+
+void tryto_terminate(netObject netObj) ;
+
 int ndInitNet()
 {
     if (__bInit) {
@@ -33,6 +37,7 @@ int ndInitNet()
     //RSAinit_random(&__rsa_contex.randomStruct);
     nd_net_set_crypt((nd_netcrypt)nd_TEAencrypt, (nd_netcrypt)nd_TEAdecrypt, sizeof(tea_v)) ;
     __bInit =1 ;
+	__terminate_entry = 0 ;
     return 0 ;
 }
 
@@ -85,6 +90,13 @@ void ndClostConnect(netObject netObj)
     }
     
 }
+ndNetFunc ndSetTerminateFunc(ndNetFunc func) 
+{
+	ndNetFunc ret =	__terminate_entry ;
+	__terminate_entry = func;
+	return ret ;
+}
+
 
 
 int ndSendData(netObject netObj, char *data, int dataLen, int flag)
@@ -94,31 +106,50 @@ int ndSendData(netObject netObj, char *data, int dataLen, int flag)
     packet_ntoh(&msghdr) ;
     ret = nd_connector_send((nd_handle) netObj, (nd_packhdr_t *)data, flag) ;
     packet_hton(&msghdr) ;
+	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj)) {
+		tryto_terminate(netObj) ;
+	}
     return ret ;
 }
 
 int ndSendRaw(netObject netObj,char *data, int size)
 {
-    return  nd_connector_raw_write((nd_handle) netObj , data, (size_t) size) ;
+    int ret = nd_connector_raw_write((nd_handle) netObj , data, (size_t) size) ;
+	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj)) {
+		tryto_terminate(netObj) ;
+	}
+	return ret ;
 }
 
 
 int ndSendMsg(netObject netObj,struct ndMsgData *data, int flag)
 {
+	int ret ;
     data->reserved = 0 ;
-    return nd_connector_send((nd_handle) netObj, (nd_packhdr_t *)data, flag) ;
-
+    ret = nd_connector_send((nd_handle) netObj, (nd_packhdr_t *)data, flag) ;
+	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj)) {
+		tryto_terminate(netObj) ;
+	}
+	return ret ;
 }
 
 
 int ndUpdateConnect(netObject netObj, int timeOutMS)
 {
+	int ret ;
     if (!nd_connector_valid((nd_netui_handle)netObj)) {
         return -1;
     }
     
-    nd_connector_update((nd_handle)netObj,timeOutMS);
-    return 0;
+    ret = nd_connector_update((nd_handle)netObj,timeOutMS);
+	
+	if (-1==ret ) {
+		if (NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj) &&
+			NDERR_TIMEOUT != nd_object_lasterror((nd_handle) netObj) ) {
+			tryto_terminate(netObj) ;
+		}		
+	}
+	return ret ;
 
     
 }
@@ -140,10 +171,29 @@ int ndSetDftMsgHandler(netObject netObj,ndNetFunc dftFunc)
 
 int ndWaitMsg(netObject netObj, char *buf, int timeOutMS)
 {
-    return nd_connector_waitmsg(netObj, (nd_packetbuf_t *)buf,timeOutMS);
+    int ret = nd_connector_waitmsg(netObj, (nd_packetbuf_t *)buf,timeOutMS);
+	
+	if (-1==ret ) {
+		if (NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj) &&
+			NDERR_TIMEOUT != nd_object_lasterror((nd_handle) netObj) &&
+			NDERR_INVALID_INPUT != nd_object_lasterror((nd_handle) netObj) ) {
+			tryto_terminate(netObj) ;
+		}		
+	}
+
+	return ret ;
 }
 
 
+void tryto_terminate(netObject netObj) 
+{
+	if (__terminate_entry) {		
+		nd_netui_handle handle = (nd_netui_handle) netObj ;
+		if (handle->status != ETS_DEAD && handle->status != ETS_CLOSED) {
+			__terminate_entry(netObj, NULL, 0) ;
+		}		
+	}
+}
 
 struct msg_entry_node
 {

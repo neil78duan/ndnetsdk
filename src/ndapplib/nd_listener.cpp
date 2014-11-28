@@ -89,7 +89,6 @@ static  void on_close_entry(nd_handle nethandle, nd_handle h_listen)
 		return ;
 
 	nd_assert(((nd_netui_handle )nethandle)->level != EPL_NONE);
-	((nd_netui_handle )nethandle)->level = EPL_NONE ;		//set privilage
 	NDSessionMgr cm_iterator(pListener) ;
 
 	nd_atomic_dec(&__current_num);
@@ -101,7 +100,9 @@ static  void on_close_entry(nd_handle nethandle, nd_handle h_listen)
 	nd_logdebug(("net CLOSED error =%s\tconnect_num=%d free=%d active=%d \n") AND 
 		nd_object_errordesc((nd_handle)nethandle) AND  __current_num AND 
 		pListener->GetAllocatorFreenum() AND cm_iterator.GetActiveNum()-1 );
-
+	
+	((nd_netui_handle )nethandle)->level = EPL_NONE ;		//set privilage
+	
 	//need to lock
 	nd_netui_handle netobject = (nd_netui_handle)nethandle ;
 	ndtime_t onlinetm = nd_time() - netobject->start_time ;

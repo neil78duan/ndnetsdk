@@ -30,6 +30,7 @@
 #include "ndcli/nd_api_c.h"
 //extern int nd_exchange_key(nd_handle nethandle) ;
 
+CPPAPI void tryto_terminate(netObject netObj) ;
 
 class NDConnector : public NDIConn 
 {
@@ -77,6 +78,7 @@ private:
 
     void *__userData ;
 };
+
 
 
 NDConnector::NDConnector(int maxmsg_num , int maxid_start) 
@@ -203,7 +205,11 @@ void NDConnector::Destroy(int flag)
 int NDConnector::SendMsg(NDSendMsg &msg, int flag) 
 {
 	nd_assert(m_objhandle) ;
-	return nd_connector_send(m_objhandle,(nd_packhdr_t*) (msg.GetMsgAddr()), flag) ;
+	int ret = nd_connector_send(m_objhandle,(nd_packhdr_t*) (msg.GetMsgAddr()), flag) ;
+	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle)) {
+		tryto_terminate((netObject)m_objhandle) ;
+	}
+	return ret ;
 }
 
 int NDConnector::Send(int maxid, int minid, void *data, size_t size) 
@@ -212,32 +218,55 @@ int NDConnector::Send(int maxid, int minid, void *data, size_t size)
 	if(-1==omsg.WriteBin(data, size) ) {
 		return -1 ;
 	}
-	return nd_connector_send(m_objhandle,(nd_packhdr_t*) (omsg.GetMsgAddr()),ESF_NORMAL) ;
-
+	int ret = nd_connector_send(m_objhandle,(nd_packhdr_t*) (omsg.GetMsgAddr()),ESF_NORMAL) ;
+	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle)) {
+		tryto_terminate((netObject)m_objhandle) ;
+	}
+	return ret ;
 }
 
 int NDConnector::SendMsg(nd_usermsgbuf_t *msghdr, int flag)
 {
-	return nd_connector_send(m_objhandle,(nd_packhdr_t*)msghdr, flag) ;
+	int ret = nd_connector_send(m_objhandle,(nd_packhdr_t*)msghdr, flag) ;
+	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle)) {
+		tryto_terminate((netObject)m_objhandle) ;
+	}
+	return ret ;
+
 }
 
 int NDConnector::SendRawData(void *data , size_t size) 
 {
 	nd_assert(m_objhandle) ;
-	return nd_connector_raw_write(m_objhandle,data,size) ;
+	int ret = nd_connector_raw_write(m_objhandle,data,size) ;
+	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle)) {
+		tryto_terminate((netObject)m_objhandle) ;
+	}
+	return ret ;
 
 }
 
 int NDConnector::RecvRawData(void *buf, size_t size, ndtime_t waittm) 
 {
 	nd_assert(m_objhandle) ;
-	return nd_connector_raw_waitdata(m_objhandle, buf, size, waittm) ;
+	int ret = nd_connector_raw_waitdata(m_objhandle, buf, size, waittm) ;
+		
+	if (-1==ret ) {
+		if (NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle) &&
+			NDERR_TIMEOUT != nd_object_lasterror(m_objhandle) &&
+			NDERR_INVALID_INPUT != nd_object_lasterror(m_objhandle) ) {
+			tryto_terminate((netObject)m_objhandle) ;
+		}
+	}
+
+	return ret ;
+
 }
 
 int NDConnector::Update(ndtime_t wait_time)
 {
 
-	int ret;
+	int ret = 0;
 	//nd_msgui_buf msg_recv;
 	if(m_objhandle->type==NDHANDLE_UDPNODE) {
 		nd_usermsgbuf_t msg_recv;
@@ -250,19 +279,37 @@ RE_WAIT:
 			goto RE_WAIT;
 			//return 0;
 		}
-		else {
-			return ret ;
-		}
 
 	}
 	else {
-		return nd_connector_update(m_objhandle,wait_time) ;
+		ret = nd_connector_update(m_objhandle,wait_time) ;
 	}
+	
+	if (-1==ret ) {
+		if (NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle) &&
+			NDERR_TIMEOUT != nd_object_lasterror(m_objhandle)  ) {
+			tryto_terminate((netObject)m_objhandle) ;
+		}
+	}
+	
+	return ret ;
+
 }
 
 int NDConnector::WaitMsg(nd_usermsgbuf_t*msgbuf, ndtime_t wait_time)
 {
-	return nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)msgbuf,wait_time);
+	int ret = nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)msgbuf,wait_time);
+	
+	if (-1==ret ) {
+		if (NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle) &&
+			NDERR_TIMEOUT != nd_object_lasterror(m_objhandle) &&
+			NDERR_INVALID_INPUT != nd_object_lasterror(m_objhandle) ) {
+			tryto_terminate((netObject)m_objhandle) ;
+		}
+	}
+	
+	return ret ;
+
 }
 void NDConnector::InstallMsgFunc(nd_iconn_func func, ndmsgid_t maxid, ndmsgid_t minid)
 {
