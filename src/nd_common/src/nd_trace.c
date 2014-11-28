@@ -151,6 +151,20 @@ const char *nd_get_datetimestr(void)
 	return (const char *)timebuf ;
 }
 
+const char * _getfilename(const char *filenamePath) 
+{
+	const char * ret = filenamePath ;
+	const char *p = filenamePath ;
+	while ( *p ) {
+		if (*p == '/' || *p=='\\') {
+			ret = p+1 ;
+		}
+		++p ;
+	}
+	
+	return ret ;
+}
+
 int nd_time_day_interval(time_t end_tm, time_t start_tm) 
 {
 	int start = (int)(start_tm / (3600 * 24)) ;
@@ -158,12 +172,13 @@ int nd_time_day_interval(time_t end_tm, time_t start_tm)
 	return end - start ;
 }
 
-int _logmsg(const char *func, const char *file, int line, int level, const char *stm,...) 
+int _logmsg(const char *func, const char *filePath, int line, int level, const char *stm,...) 
 {
 	char buf[1024*4] ;
 	char *p = buf;
 	va_list arg;
 	int done;
+	const char *file = _getfilename(filePath) ;
 
 #ifdef	ND_LOG_WITH_TIME
 	p += snprintf(p, 4096,"%s ", nd_get_datetimestr()) ;

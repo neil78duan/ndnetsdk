@@ -13,6 +13,7 @@
 
 #include <cstddef>
 #include <new>
+#include <iterator>
 
 #include "nd_common/nd_comcfg.h"
 
