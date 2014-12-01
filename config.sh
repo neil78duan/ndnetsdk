@@ -50,10 +50,4 @@ LIBDIR="./lib/"$OS_kernel"_"$ARCH_MACHINE
 
 echo "config SUCCESS "
 
-if [ "x$NDHOME" == "x" ]; then
-    echo "You need relogin and run make to install"
-else
-    echo "Run make to install"
-fi
-
 
