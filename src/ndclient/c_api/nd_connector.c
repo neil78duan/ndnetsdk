@@ -98,6 +98,16 @@ ndNetFunc ndSetTerminateFunc(ndNetFunc func)
 }
 
 
+int ndGetLastError(netObject netObj) 
+{
+	return nd_object_lasterror((nd_handle)netObj) ;
+}
+
+const char *ndGetLastErrorDesc(netObject netObj) 
+{
+	return nd_object_errordesc((nd_handle)netObj) ;
+}
+
 
 int ndSendData(netObject netObj, char *data, int dataLen, int flag)
 {

@@ -86,6 +86,10 @@ CPPAPI int ndWaitMsg(netObject netObj, char *buf, int timeOutMS) ;
 //set terminate callback function , return old function
 CPPAPI ndNetFunc ndSetTerminateFunc(ndNetFunc func) ;
 
+CPPAPI int ndGetLastError(netObject netObj) ;
+
+CPPAPI const char *ndGetLastErrorDesc(netObject netObj) ;
+
 //init/deinit net 
 CPPAPI int ndInitNet() ;
 CPPAPI void ndDeinitNet() ;
