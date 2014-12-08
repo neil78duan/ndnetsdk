@@ -26,7 +26,7 @@ int ndInitNet()
     if (__bInit) {
         return 0;
     }
-    const char *argv[] = {"FlashRoutes"} ;
+    const char *argv[] = {"ndNetCAPI"} ;
     
     printf("test byte order is : %s \n" , nd_byte_order()?"little":"big") ;
     

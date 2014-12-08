@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		073C46D119C18D580081D14F /* libndclient_ios.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 079318F619931665009C8BC5 /* libndclient_ios.a */; };
 		074DC2841A19CC3F0094D454 /* nd_exch_key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 074DC2831A19CC3F0094D454 /* nd_exch_key.cpp */; };
-		079318FA19931665009C8BC5 /* ndclient_ios.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 079318F919931665009C8BC5 /* ndclient_ios.h */; };
-		079318FC19931665009C8BC5 /* ndclient_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 079318FB19931665009C8BC5 /* ndclient_ios.m */; };
 		0793190219931665009C8BC5 /* libndclient_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 079318F619931665009C8BC5 /* libndclient_ios.a */; };
 		07CBF84519C9744E002EE541 /* nd_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84419C9744E002EE541 /* nd_client.cpp */; };
 		07CBF84719C9746B002EE541 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84619C9746B002EE541 /* Makefile */; };
@@ -82,23 +79,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		073C46CF19C18C780081D14F /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /Users/duan/Documents/work/AtlatisRoot/trunk/Atlantis/Assets/Plugins/iOS;
-			dstSubfolderSpec = 0;
-			files = (
-				073C46D119C18D580081D14F /* libndclient_ios.a in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		079318F419931665009C8BC5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				079318FA19931665009C8BC5 /* ndclient_ios.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,8 +96,6 @@
 		07885A7119BED1F40075AF59 /* nd_api_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_api_c.h; sourceTree = "<group>"; };
 		07885A7219BED1F40075AF59 /* nd_iconn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconn.h; sourceTree = "<group>"; };
 		079318F619931665009C8BC5 /* libndclient_ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndclient_ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		079318F919931665009C8BC5 /* ndclient_ios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ndclient_ios.h; sourceTree = "<group>"; };
-		079318FB19931665009C8BC5 /* ndclient_ios.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ndclient_ios.m; sourceTree = "<group>"; };
 		0793190119931665009C8BC5 /* ndclient_iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ndclient_iosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0793190719931665009C8BC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		07CBF84419C9744E002EE541 /* nd_client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_client.cpp; sourceTree = "<group>"; };
@@ -278,8 +262,6 @@
 		079318F819931665009C8BC5 /* ndclient_ios */ = {
 			isa = PBXGroup;
 			children = (
-				079318F919931665009C8BC5 /* ndclient_ios.h */,
-				079318FB19931665009C8BC5 /* ndclient_ios.m */,
 			);
 			path = ndclient_ios;
 			sourceTree = "<group>";
@@ -563,7 +545,6 @@
 				079318F219931665009C8BC5 /* Sources */,
 				079318F319931665009C8BC5 /* Frameworks */,
 				079318F419931665009C8BC5 /* CopyFiles */,
-				073C46CF19C18C780081D14F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -686,7 +667,6 @@
 				07EBCE0C19A8CD1900802576 /* nd_unix.c in Sources */,
 				07EBCE1B19A8CD1900802576 /* r_encode.c in Sources */,
 				07EBCE2219A8CD1900802576 /* nd_pubkey.c in Sources */,
-				079318FC19931665009C8BC5 /* ndclient_ios.m in Sources */,
 				07EBCE2C19A8CD1900802576 /* nd_socket.c in Sources */,
 				07EBCE1019A8CD1900802576 /* node_mgr.c in Sources */,
 				07EBCE2619A8CD1900802576 /* Makefile in Sources */,
