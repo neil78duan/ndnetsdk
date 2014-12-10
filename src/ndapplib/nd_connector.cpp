@@ -90,6 +90,7 @@ int NDConnector::Close(int force)
 {
 	ND_TRACE_FUNC();
 	if(m_objhandle && m_open ) {
+		nd_logerror("connector %s closed eror = %d \n", nd_inet_ntoa(GetPeerip(), NULL), LastError() ) ;
 		int ret =  nd_connector_close(m_objhandle, force) ;
 		if(ret==0) 
 			OnClose() ;
@@ -141,6 +142,8 @@ void NDConnector::Destroy(int flag)
 
 int NDConnector::SendMsg(NDSendMsg &msg, int flag)
 {
+	return SendMsg((nd_usermsghdr_t*) (msg.GetMsgAddr()),  flag) ;
+	/*
 	ND_TRACE_FUNC();
 	int ret ;
 	if (!m_objhandle || !nd_connector_valid((nd_netui_handle)m_objhandle )) {
@@ -156,6 +159,7 @@ int NDConnector::SendMsg(NDSendMsg &msg, int flag)
 		Close(0);
 	}
 	return ret ;
+	 */
 }
 
 int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
@@ -163,9 +167,10 @@ int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
 	ND_TRACE_FUNC();
 	int ret ;
 	if (!m_objhandle || !nd_connector_valid((nd_netui_handle)m_objhandle )) {
+		nd_logerror("try to send data error , connector is invalid\n") ;
 		return -1 ;
 	}
-	//nd_assert(m_objhandle) ;
+	nd_assert(m_objhandle) ;
 	ret = nd_connector_send(m_objhandle,&msghdr->packet_hdr, flag) ;
 	if (ret > 0 && (flag & ESF_URGENCY)) {
 		if (m_objhandle->type == NDHANDLE_TCPNODE){
@@ -173,6 +178,7 @@ int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
 		}
 	}
 	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WUOLD_BLOCK) {
+		nd_logerror("Send data error errorcode =%d\n", LastError() ) ;
 		Close(0);
 	}
 	return ret ;
@@ -180,6 +186,8 @@ int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
 
 int NDConnector::ResendMsg(NDIStreamMsg &resendmsg, int flag)
 {
+	return SendMsg((nd_usermsghdr_t*) (resendmsg.GetMsgAddr()),  flag) ;
+	/*
 	ND_TRACE_FUNC();
 	int ret ;
 	nd_assert(m_objhandle) ;
@@ -193,6 +201,7 @@ int NDConnector::ResendMsg(NDIStreamMsg &resendmsg, int flag)
 		Close(0);
 	}
 	return ret ;
+	 */
 }
 
 int NDConnector::SendRawData(void *data , size_t size) 
