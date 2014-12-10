@@ -53,9 +53,9 @@ typedef unsigned short		WORD ;
 
 #define ND_ELEMENTS_NUM(a) (sizeof(a)/sizeof(a[0]))
 
-#define ND_MAKE_WORD(loByte, hiByte) ( ((loByte) & 0xff) | (((hiByte) & 0xff)<< 8) )
-#define ND_MAKE_DWORD(loWord, hiWord) ( ((loWord) & 0xffff) | (((hiWord) & 0xffff)<< 16) )
-#define ND_MAKE_QWORD(loDword, hiDword) ( ((NDUINT64)(loDword) & 0xffffffff) | (((NDUINT64)(hiDword) & 0xffffffff)<< 32) )
+#define ND_MAKE_WORD(hiByte, loByte) ( ((loByte) & 0xff) | (((hiByte) & 0xff)<< 8) )
+#define ND_MAKE_DWORD(hiWord, loWord) ( ((loWord) & 0xffff) | (((hiWord) & 0xffff)<< 16) )
+#define ND_MAKE_QWORD(hiDword, loDword) ( ((NDUINT64)(loDword) & 0xffffffff) | (((NDUINT64)(hiDword) & 0xffffffff)<< 32) )
 
 #define ND_LOBYTE(wordval) ((wordval)  & 0xff)
 #define ND_HIBYTE(wordval) (((wordval)>>8)  & 0xff)

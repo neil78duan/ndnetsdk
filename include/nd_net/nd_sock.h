@@ -26,6 +26,7 @@
 	#include <sys/socket.h>
 	#include <netinet/in.h>
 	#include <netdb.h>
+	#include <arpa/inet.h>
 	typedef signed int 				ndsocket_t;
 	typedef struct sockaddr_in  SOCKADDR_IN ;
 	typedef struct hostent HOSTENT,*LPHOSTENT;

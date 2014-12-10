@@ -293,10 +293,18 @@ ndsocket_t nd_socket_udp_connect(const char *host_name, short port,SOCKADDR_IN *
 }
 #endif 
 
-static __ndthread char _s_iptext[20] ;
 //从ip地址int 到字符串形式
 char *nd_inet_ntoa (unsigned int in, char *buffer)
 {
+	struct in_addr inaddr ;
+	inaddr.s_addr = in ;
+	if (!buffer) {		
+		return inet_ntoa(inaddr);
+	}
+	else {
+		return strncpy(buffer, inet_ntoa(inaddr), 20);
+	}
+	/*
 	char *p ;
 
 	unsigned char *bytes = (unsigned char *) &in;
@@ -308,10 +316,15 @@ char *nd_inet_ntoa (unsigned int in, char *buffer)
 	}
 	snprintf (p, 20, "%d.%d.%d.%d", bytes[0], bytes[1], bytes[2], bytes[3]);
 	return p ;
+	 */
 }
 
 ndip_t nd_inet_aton(const char *ipaddr)
 {
+	return (ndip_t) inet_addr(ipaddr) ;
+	
+	//int inet_aton(const char *cp, struct in_addr *pin);
+	/*
 	HOSTENT *host ;
 
 	host = gethostbyname((ipaddr));
@@ -319,7 +332,7 @@ ndip_t nd_inet_aton(const char *ipaddr)
 		return 0 ;
 	}
 	return *((ndip_t*)(host->h_addr)) ;
-
+*/
 }
 
 

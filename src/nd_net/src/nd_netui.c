@@ -482,7 +482,7 @@ int nd_reconnect(nd_netui_handle net_handle, ndip_t ip, int port, struct nd_prox
 		nd_object_seterror(net_handle,NDERR_SUCCESS);
 	}
 	LEAVE_FUNC();
-	return 0 ;
+	return ret ;
 }
 
 /*

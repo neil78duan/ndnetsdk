@@ -244,6 +244,9 @@ int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_h
 		else if(root_entry->def_entry){
 			ret = root_entry->def_entry(connect_handle,(nd_usermsgbuf_t*)usermsg,NULL) ;
 		}
+		else {
+			nd_logmsg("received message (%d,%d) UNHANDLED\n"  AND main_index AND minid) ;
+		}
 
 		if(-1==ret) {
 			nd_object_seterror(connect_handle, NDERR_USER) ;
@@ -308,19 +311,18 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 		else if(root_entry->def_entry){
 			ret = root_entry->def_entry(connect_handle,(nd_usermsgbuf_t*)usermsg,listen_handle) ;
 		}
-		/*
-#ifdef ND_OPEN_LOG_DEBUG
 		else {
-			char buf[20] ;
 			SOCKADDR_IN *addr =& (connect_handle->remote_addr );
-			nd_logdebug(("received message from [%s] maxid =%d minid =%d UNHANDLED\n") AND 
-				nd_inet_ntoa( addr->sin_addr.s_addr, buf ) AND main_index AND minid) ;
-			nd_object_seterror(connect_handle, NDERR_INVALID_INPUT) ;
+			nd_logwarn(("received message from [%s] (%d,%d) UNHANDLED\n") AND 
+				nd_inet_ntoa( addr->sin_addr.s_addr, NULL ) AND main_index AND minid) ;
+			
+			if (srv_node->unreg_msg_close) {
+				nd_object_seterror(connect_handle, NDERR_INVALID_INPUT) ;    			
+			}
 			LEAVE_FUNC();
 			return srv_node->unreg_msg_close ? -1 : data_len ;
 		}
-#endif
-		*/
+		
 		if (ret == -1) {
 			nd_object_seterror(connect_handle, NDERR_USER) ;
 			nd_logwarn("run message (%d,%d)error connect would be close\n" AND   main_index AND minid);
