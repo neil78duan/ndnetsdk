@@ -17,6 +17,7 @@ enum  privalige_level{
 	EPL_NONE = 0 ,			//没有任何权限
 	EPL_CONNECT,			//普通权限
 	EPL_LOGIN ,				//登陆权限
+	EPL_READY,				//start game
 	EPL_HIGHT				//特区
 };
 

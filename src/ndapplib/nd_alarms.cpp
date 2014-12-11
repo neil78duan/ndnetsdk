@@ -75,7 +75,7 @@ int NDAlarm::Create()
 	return 0;
 }
 
-void NDAlarm::Destroy()
+void NDAlarm::Destroy(int flag)
 {
 	ND_TRACE_FUNC() ;
 

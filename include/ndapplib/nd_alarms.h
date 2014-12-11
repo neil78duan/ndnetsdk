@@ -25,7 +25,7 @@ public:
 
 	virtual void UpdateDaily() ;	//daily function
 	virtual void UpdateWeek() ;		// weekly function
-	virtual void Destroy() ;
+	virtual void Destroy(int flag=0) ;
 	virtual int Create() ;
 
 	void SetDailyTime(int hour_index,int minute_index=0) ;
