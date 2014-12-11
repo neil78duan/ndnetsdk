@@ -181,6 +181,9 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 				break ;
 			}
 		}
+		if (-1==read_len) {
+			ret = -1;
+		}
 	}
 	//////////////////////////////////////////////////////////////////////////
 	
@@ -1043,20 +1046,26 @@ int nd_net_set_packet_minsize(int minsize)
 int nd_net_sysmsg_hander(nd_netui_handle node, nd_sysresv_pack_t *pack)
 {
 	NDUINT16 cksum = pack->checksum ;
+	
+	nd_packet_ntoh(&pack->hdr) ;
+	
 	pack->checksum = 0 ;
 	pack->checksum = nd_checksum((NDUINT16 *)pack, pack->hdr.length ) ;
 	if (cksum != pack->checksum){
 		node->myerrno= NDERR_BADPACKET ; 
+		nd_logerror("nd-system-msg error checkSum error send=%x, calc=%x\n", cksum,pack->checksum ) ;
 		return -1 ;
 	}
 	//msg handle
 	if (pack->msgid == ERSV_ALIVE_ID) {
 		if (pack->hdr.length != sizeof(nd_sysresv_pack_t) || pack->hdr.stuff_len != 5 ){
 			node->myerrno= NDERR_BADPACKET ; 
+			nd_logerror("nd-system-msg input data error \n" ) ;
 			return -1 ;
 		}
 	}
 	else if(ERSV_VERSION_ERROR==pack->msgid) {
+		nd_logerror("nd-system-msg message id error \n" ) ;
 		node->myerrno = NDERR_VERSION ;
 		return -1;
 	}
