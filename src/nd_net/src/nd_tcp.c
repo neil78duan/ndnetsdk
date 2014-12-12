@@ -566,7 +566,7 @@ int _tcp_node_update(struct nd_tcp_node *node)
 		nd_netbuf_t *pbuf = &(node->send_buffer) ;
 		size_t data_len = ndlbuf_datalen(pbuf) ;
 		
-		int alive_timeout = node->disconn_timeout >> 2 ;
+		int alive_timeout = node->disconn_timeout >> 1 ;
 		alive_timeout = alive_timeout? alive_timeout:ND_ALIVE_TIMEOUT;
 
 		if(data_len > 0) {

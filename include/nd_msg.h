@@ -33,6 +33,10 @@ enum eNDMsgSys{
 	ND_MSG_SYS_GET_PUBLIC_KEY_MD5,	//get RSA public-KEY md5
 	ND_MSG_SYS_SEND_SYM_KEY ,		//send SYM encrypt key
 	ND_MSG_SYS_SYM_KEY_ACK ,		// acknowledgement of send-sym-key
+	
+	ND_MSG_SYS_TRANSLATE_TO_OTHER,	// send message to other client 
+	ND_MSG_SYS_CALL_MSG_PROC_OTHER,	// Send message to other session's message-handler 
+	
     ND_MSG_SYS_NUMBER
 };
 

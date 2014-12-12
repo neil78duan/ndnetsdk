@@ -1063,6 +1063,12 @@ int nd_net_sysmsg_hander(nd_netui_handle node, nd_sysresv_pack_t *pack)
 			nd_logerror("nd-system-msg input data error \n" ) ;
 			return -1 ;
 		}
+		else {			
+			nd_sysresv_pack_t alive ;
+			nd_make_alive_pack(&alive) ;
+			nd_connector_send(node, &alive.hdr, ESF_URGENCY) ;	
+		}
+		
 	}
 	else if(ERSV_VERSION_ERROR==pack->msgid) {
 		nd_logerror("nd-system-msg message id error \n" ) ;
