@@ -137,10 +137,26 @@ int nd_close_listen_thread(nd_listen_handle h,nd_thsrvid_t sid)
 //为session找一个相对空闲的线程
 int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid)
 {
+	ndthread_t self_id = nd_thread_self() ;
 	struct thread_pool_info  *piocp ,*minpool=NULL;
 	struct list_head *pos ;
 	struct listen_contex *handle = (struct listen_contex *)h;
+	
+	struct cm_manager *pmanger = nd_listensrv_get_cmmamager(h) ;	
+	
 	pos = handle->list_thread.next ;
+	
+#ifndef ND_UNIX
+	if (handle->io_mod == ND_LISTEN_OS_EXT) {
+		nd_logerror("this platform not support this function \n") ;
+		return -1 ;
+	}
+#endif
+	
+	if(pmanger->connect_num < SESSION_IN_THREAD_LOW_NUM ) { //low requirment 
+		return 0 ;
+	}
+		
 	while(pos != &handle->list_thread) {
 		piocp = list_entry(pos,struct thread_pool_info,list) ;
 		pos = pos->next ;
@@ -151,7 +167,7 @@ int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid)
 			minpool = piocp ;
 		}
 	}
-	if (minpool==NULL){
+	if (minpool==NULL || minpool->thid == self_id){
 		return -1;
 	}
 	return nd_session_switch( h, sessionid,  minpool->thid) ;
@@ -403,6 +419,7 @@ int addto_thread_pool(struct nd_client_map *client, struct thread_pool_info * pt
     }
 	
 #endif 
+	nd_logdebug("client %d add to %d thread server\n", nd_session_getid((nd_handle)client), nd_thread_self() ) ;
 	return 0 ;
 }
 

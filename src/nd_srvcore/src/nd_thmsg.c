@@ -6,11 +6,7 @@
  * 2011/3/3 15:30:29
  */
 
-// #include "nd_common/nd_common.h"
 #include "nd_srvcore/nd_srvlib.h"
-// #include "nd_net/nd_netlib.h"
-// #include "nd_common/nd_alloc.h"
-// #include "nd_srvcore/nd_thpool.h"
 
 #ifdef _MSC_VER
 #define check_thread_switch(lc) do {\
@@ -19,29 +15,33 @@
 #define check_thread_switch(lc) do{} while(0) 
 #endif
 
-//Í¨¹ıSESSIONid°ÑÏûÏ¢·¢ËÍ¸ø¿Í»§¶Ë
+//Ã•Â®Ï€ËSESSIONidâˆâ€”Å“ËšÅ“Â¢âˆ‘Â¢Ã€Ã•âˆÂ¯Ã¸Ã•ÂªÃŸâˆ‚Ã€
 int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) 
 {
+	int ret =0 ;
 	ndthread_t thid ;
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
-
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
 	
-	check_thread_switch(lc) ;
+	//check_thread_switch(lc) ;
 	
-	if(!pmanger||sessionid==0 ) 
+	if(!pmanger ) {
 		return -1 ;
+	}
+	else if(0==sessionid) {
+		return nd_sendto_all(data, listen_handle, 0) ;
+	}
+	
 	thid = nd_node_get_owner(pmanger,sessionid ) ;
-	if(0==thid) 
+	if(0==thid) {
 		return -1 ;
+	}
 	if(thid == nd_thread_self() ) {
-		int ret ;
 		nd_handle client = (nd_handle) pmanger->lock(pmanger,sessionid) ;
 		if(!client) 
 			return -1 ;
 		ret = nd_sessionmsg_send(client,data) ;
 		pmanger->unlock(pmanger,sessionid);
-		return ret ;
 	}
 	else {
 		NDUINT32  size = ND_USERMSG_LEN(data) ;
@@ -50,51 +50,179 @@ int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_h
 		}
 		ND_USERMSG_LEN(data) = sessionid ;
 
-		return nd_thsrv_send(thid,E_THMSGID_SENDTO_CLIENT,data, size) ;
+		ret = nd_thsrv_send(thid,E_THMSGID_SENDTO_CLIENT,data, size) ;
+		
+		ND_USERMSG_LEN(data) = size ;
 	}
+	return ret ;
 }
 
-//°ÑÏûÏ¢½»¸øsession´¦Àí
-int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) 
+int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level)
 {
+	NDUINT8 ver ;
+	int ret = 0;	
+	NDUINT32  size = ND_USERMSG_LEN(data) ;
+	
+	struct list_head *pos ;
+	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
+	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
+	
+	if(pmanger->connect_num < 1 ) { //low requirment 
+		return 0 ;
+	}
+	
+	if(size==0 || size>ND_PACKET_SIZE) {
+		return -1 ;
+	}
+#ifndef ND_UNIX
+	if (lc->io_mod == ND_LISTEN_OS_EXT) {		
+		nd_netui_handle client ;
+		cmlist_iterator_t cm_iterator ;				
+		for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
+			client = pmanger->lock_next (pmanger,&cm_iterator) ) {
+			
+			if (nd_connect_level_get(client)>= priv_level )	{
+				nd_sessionmsg_post(client,data) ;
+			}
+			++ret ;
+		}
+		return  ret; 
+	}
+#endif
+	
+	ND_USERMSG_LEN(data) = 0 ;
+	ver = data->packet_hdr.version ;
+	data->packet_hdr.version = priv_level ;
+	
+	pos = lc->list_thread.next ;	
+	while(pos != &lc->list_thread) {
+		struct thread_pool_info  *piocp  = list_entry(pos,struct thread_pool_info,list) ;
+		pos = pos->next ;
+		
+		nd_thsrv_send(piocp->thid,E_THMSGID_SENDTO_CLIENT,data, size) ;
+		++ret ;
+	}
+	
+	ND_USERMSG_LEN(data) = size ;
+	data->packet_hdr.version = ver;
+	
+	return ret ;
+}
+
+//âˆâ€”Å“ËšÅ“Â¢Î©ÂªâˆÂ¯sessionÂ¥Â¶Â¿ÃŒ
+int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) 
+{	
+	NDUINT8 tmp,ver ;
+	int ret = -1;
+	
 	ndthread_t thid ;
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
+	NDUINT32  size = ND_USERMSG_LEN(data) ;
 	
-	check_thread_switch(lc) ;
+	if(size==0 || size>ND_PACKET_SIZE) 
+		return -1 ;
+	
+	//check_thread_switch(lc) ;
 	
 	if(!pmanger) 
 		return -1 ;
+	else if(0==sessionid) {
+		return nd_netmsg_2all_handle(data, listen_handle, 0) ;
+	}
+	
 	thid = nd_node_get_owner(pmanger,sessionid ) ;
+	
 	if(0==thid) 
 		return -1 ;
-	if(thid == nd_thread_self() ) {
-		NDUINT8 tmp ;
-		int ret ;
-		nd_netui_handle  client = (nd_netui_handle) pmanger->lock(pmanger,sessionid) ;
-		if(!client) 
-			return -1 ;
-		//ret = client->msg_entry((nd_handle)client, data, ND_USERMSG_LEN(data), listen_handle) ;
-		tmp = data->packet_hdr.ndsys_msg ;
-		data->packet_hdr.ndsys_msg =1 ;
-		ret = client->msg_entry((nd_handle)client,(nd_packhdr_t *) data, listen_handle) ; 
-		data->packet_hdr.ndsys_msg = tmp ;
-		pmanger->unlock(pmanger,sessionid);
-		return ret ;
-	}
-	else {
-		NDUINT32  size = ND_USERMSG_LEN(data) ;
-		if(size==0 || size>ND_PACKET_SIZE) 
-			return -1 ;
 	
-		ND_USERMSG_LEN(data) = sessionid ;
-		return nd_thsrv_send(thid,E_THMSGID_NETMSG_HANDLE,data, size) ;
+	tmp = data->packet_hdr.ndsys_msg ;
+	data->packet_hdr.ndsys_msg =1 ;
+		
+	if(thid == nd_thread_self() ) {
+		nd_netui_handle  client = (nd_netui_handle) pmanger->lock(pmanger,sessionid) ;
+		if(client) {			
+			ret = client->msg_entry((nd_handle)client,(nd_packhdr_t *) data, listen_handle) ; 
+			pmanger->unlock(pmanger,sessionid);
+		}		
 	}
+	else {	
+		
+		ND_USERMSG_LEN(data) = sessionid ;	
+		ver = data->packet_hdr.version ;		
+		data->packet_hdr.version = 0 ;
+		
+		ret = nd_thsrv_send(thid,E_THMSGID_NETMSG_HANDLE,data, size) ;
+		
+		ND_USERMSG_LEN(data) = size ;
+		data->packet_hdr.version =ver ;
+	}
+	
+	data->packet_hdr.ndsys_msg = tmp ;
+	
+	return ret ;
 
 }
 
-//°ÑsessionÌí¼Óµ½ÆäËûÏß³Ì
+int nd_netmsg_2all_handle(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level) 
+{	
+	NDUINT8 tmp,ver ;
+	int ret = 0;	
+	NDUINT32  size = ND_USERMSG_LEN(data) ;
+	
+	struct list_head *pos ;
+	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
+	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
+	
+	if(pmanger->connect_num < 1 ) { //low requirment 
+		return 0 ;
+	}
+	
+	if(size==0 || size>ND_PACKET_SIZE) {
+		return -1 ;
+	}	
+		
+#ifndef ND_UNIX
+	if (lc->io_mod == ND_LISTEN_OS_EXT) {		
+		nd_netui_handle client ;
+		cmlist_iterator_t cm_iterator ;
+		NDUINT8 tmp = data->packet_hdr.ndsys_msg ;
+		data->packet_hdr.ndsys_msg =1 ;
+			
+		for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
+			client = pmanger->lock_next (pmanger,&cm_iterator) ) {
+			client->msg_entry((nd_handle)client,(nd_packhdr_t *) data, listen_handle) ; 
+			++ret ;
+		}		
+		data->packet_hdr.ndsys_msg = tmp ;
+		return  ret; 
+	}
+#endif
+	
+	
+	ND_USERMSG_LEN(data) = 0 ;	
+	ver = data->packet_hdr.version ;		
+	data->packet_hdr.version = priv_level ;	
+	tmp = data->packet_hdr.ndsys_msg ;
+	data->packet_hdr.ndsys_msg =1 ;
+	
+	pos = lc->list_thread.next ;	
+	while(pos != &lc->list_thread) {
+		struct thread_pool_info  *piocp  = list_entry(pos,struct thread_pool_info,list) ;
+		pos = pos->next ;
+		
+		nd_thsrv_send(piocp->thid,E_THMSGID_NETMSG_HANDLE,data, size) ;			
+		++ret ;
+	}	
+	ND_USERMSG_LEN(data) = size ;
+	data->packet_hdr.ndsys_msg = tmp ;
+	data->packet_hdr.version =ver ;
+	return ret ;
+
+}
+
+//âˆâ€”sessionÃƒÃŒÂºâ€ÂµÎ©âˆ†â€°Ã€ËšÅ“ï¬‚â‰¥Ãƒ
 int _session_addto(NDUINT16 sessionid, nd_handle listen_handle,ndthread_t thid) 
 {
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
@@ -163,7 +291,7 @@ int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid)
 }
 
 //////////////////////////////////////////////////////////////////////////
-//ÏûÏ¢´¦Àíº¯Êı
+//Å“ËšÅ“Â¢Â¥Â¶Â¿ÃŒâˆ«Ã˜Â Ë
 int session_add_handler(nd_thsrv_msg *msg)
 {
 	NDUINT16 sessionid;
@@ -180,7 +308,7 @@ int session_add_handler(nd_thsrv_msg *msg)
 		return 0 ;	
 	client = (nd_netui_handle) pmanger->trylock(pmanger,sessionid) ;
 	if(!client) {
-		return -1 ;//Èç¹û²»ÄÜlock¾Í±£ÁôÒ»ÏÂ´ËÏûÏ¢
+		return -1 ;//Â»ÃÏ€Ëšâ‰¤ÂªÆ’â€¹lockÃ¦Ã•Â±Â£Â¡Ã™â€œÂªÅ“Â¬Â¥Ã€Å“ËšÅ“Â¢
 	}	
 	pmanger->unlock(pmanger,sessionid);
 	addto_thread_pool((struct nd_client_map *)client,pthinfo) ;
@@ -235,6 +363,7 @@ int session_close_handler(nd_thsrv_msg *msg)
 
 int msg_sendto_client_handler(nd_thsrv_msg *msg)
 {
+	NDUINT8 priv_level = 0 ;
 	NDUINT16  session_id  ;
 	nd_netui_handle client ;
 
@@ -255,19 +384,33 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 	session_id = ND_USERMSG_LEN(net_msg) ;
 	ND_USERMSG_LEN(net_msg) = (NDUINT16) msg->data_len ;
 	
+	priv_level = net_msg->msg_hdr.packet_hdr.version ;
+	net_msg->msg_hdr.packet_hdr.version = NDNETMSG_VERSION ;
+	
 	if (session_id){
 		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
-		if(!client) 
-			return 0 ;
-		nd_sessionmsg_send(client,net_msg) ;
-		pmanger->unlock(pmanger,session_id);
+		
+		if(client) {
+			nd_sessionmsg_send(client,net_msg) ;
+			pmanger->unlock(pmanger,session_id);			
+		}
 	}
 	else {
 		nd_handle client;
-		NDUINT8 priv_level = net_msg->msg_hdr.packet_hdr.version ;
-		net_msg->msg_hdr.packet_hdr.version = NDNETMSG_VERSION ;
-
-		if (lc->io_mod == ND_LISTEN_COMMON)	{
+		
+#ifndef ND_UNIX
+		if (lc->io_mod == ND_LISTEN_OS_EXT) {
+			cmlist_iterator_t cm_iterator ;
+			for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
+				client = pmanger->lock_next (pmanger,&cm_iterator) ) {
+				if (nd_connect_level_get(client)>= priv_level )	{
+					nd_sessionmsg_post(client,net_msg) ;
+				}
+			}
+		}
+		else 
+#endif
+		if(pthinfo){
 			int i;
 			for (i=pthinfo->session_num-1; i>=0;i-- ) {
 				NDUINT16 session_id = pthinfo->sid_buf[i];
@@ -279,24 +422,18 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 				}
 				pmanger->unlock(pmanger,session_id) ;
 			}
-		}
-		else {
-			cmlist_iterator_t cm_iterator ;
-			for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
-				client = pmanger->lock_next (pmanger,&cm_iterator) ) {
-					if (nd_connect_level_get(client)>= priv_level )	{
-						nd_sessionmsg_post(client,net_msg) ;
-					}
-			}
-		}
-		net_msg->msg_hdr.packet_hdr.version = priv_level;		
+		}	
 	}	
+	
+	net_msg->msg_hdr.packet_hdr.version = priv_level;	
+	ND_USERMSG_LEN(net_msg) = session_id;
+	
 	return 0 ;
 }
 
 int netmsg_recv_handler(nd_thsrv_msg *msg)
 {
-	NDUINT8 tmp;
+	NDUINT8 tmp,priv_level =0;
 	NDUINT16  session_id  ;
 	nd_netui_handle client ;
 
@@ -313,19 +450,40 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 		return 0;
 	}
 	net_msg = (nd_usermsgbuf_t *)msg->data ;
-
-	session_id = ND_USERMSG_LEN(net_msg) ;
 	
+	priv_level = net_msg->msg_hdr.packet_hdr.version ;
+	net_msg->msg_hdr.packet_hdr.version = NDNETMSG_VERSION ;
+	
+	session_id = ND_USERMSG_LEN(net_msg) ;	
 	ND_USERMSG_LEN(net_msg) = (NDUINT16) msg->data_len ;
-	client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
-	if(!client) 
-		return 0 ;
+	
 	tmp = net_msg->msg_hdr.packet_hdr.ndsys_msg ;
 	net_msg->msg_hdr.packet_hdr.ndsys_msg =1 ;
-	client->msg_entry((nd_handle)client,(nd_packhdr_t*)net_msg, (nd_handle)lc) ;
+	
+	if(session_id) {
+		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
+		if(client) {
+			client->msg_entry((nd_handle)client,(nd_packhdr_t*)net_msg, (nd_handle)lc) ;			
+		}
+		pmanger->unlock(pmanger,session_id);	
+	}
+	else {
+		int i;
+		for (i=pthinfo->session_num-1; i>=0;i-- ) {
+			NDUINT16 session_id = pthinfo->sid_buf[i];
+			client =(nd_handle) pmanger->lock(pmanger,session_id) ;
+			if (!client)
+				continue ;
+			if (nd_connect_level_get(client)>= priv_level )	{
+				nd_sessionmsg_post(client,net_msg) ;
+			}
+			pmanger->unlock(pmanger,session_id) ;
+		}
+	}
+	
+	net_msg->msg_hdr.packet_hdr.version = priv_level ;		
+	ND_USERMSG_LEN(net_msg) = session_id ;	
 	net_msg->msg_hdr.packet_hdr.ndsys_msg = tmp;
-	//client->data_entry((nd_handle)client, net_msg, msg->data_len,(nd_handle)lc) ;
-	pmanger->unlock(pmanger,session_id);
 	
 	return 0;
 }

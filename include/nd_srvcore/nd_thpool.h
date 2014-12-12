@@ -30,6 +30,12 @@ struct thread_pool_info
 };
 #pragma  warning(pop)
 
+#ifdef ND_DEBUG
+#define SESSION_IN_THREAD_LOW_NUM 4 //if session number in current thread more than this , it will be switch to other thread 
+#else
+#define SESSION_IN_THREAD_LOW_NUM 32 //if session number in current thread more than this , it will be switch to other thread 
+#endif
+
 int nd_srvnode_create(struct node_root *root, int max_num, size_t node_size,NDUINT16 start_id,nd_handle mmpool) ;
 void nd_srvnode_destroy(struct node_root *root);
 
@@ -47,8 +53,13 @@ int _delfrom_thread_pool(NDUINT16 sid, struct thread_pool_info * pthinfo) ;
 int close_session_in_thread(struct thread_pool_info *thpi) ;
 //通过SESSIONid把消息发送给客户端
 ND_SRV_API int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) ;
+//send to all , implement not like broadcast 
+ND_SRV_API int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level) ;
 //把消息交给session处理
 ND_SRV_API int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) ;
+
+ND_SRV_API int nd_netmsg_2all_handle(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level) ;
+
 //把session 添加到其他线程
 ND_SRV_API int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid);
 

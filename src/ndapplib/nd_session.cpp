@@ -202,4 +202,13 @@ int NDSession::SetDelayClose()
 	return 0;
 }
 
+int NDSession::LoadBalance() 
+{
+	NDObject *pobj = GetParent() ;
+	nd_assert(pobj) ;
+	return nd_session_loadbalancing((nd_listen_handle)pobj->GetHandle(), GetSessionID());
+	
+}
+
+
 #undef ND_NEW_REDEFINE
