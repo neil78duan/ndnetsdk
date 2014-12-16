@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		073C46CC19C1636A0081D14F /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 073C46CA19C1636A0081D14F /* Makefile */; };
+		07647B561A400DE400A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B551A400DE400A96620 /* nd_cmdline.c */; };
+		07647B581A400DF900A96620 /* nd_cmdline.h in Headers */ = {isa = PBXBuildFile; fileRef = 07647B571A400DF900A96620 /* nd_cmdline.h */; };
 		07931A4A19931C5A009C8BC5 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 079319D919931C5A009C8BC5 /* Makefile */; };
 		07931A4B19931C5A009C8BC5 /* bintree.c in Sources */ = {isa = PBXBuildFile; fileRef = 079319DC19931C5A009C8BC5 /* bintree.c */; };
 		07931A4C19931C5A009C8BC5 /* callstack.c in Sources */ = {isa = PBXBuildFile; fileRef = 079319DD19931C5A009C8BC5 /* callstack.c */; };
@@ -186,6 +188,8 @@
 /* Begin PBXFileReference section */
 		073C46CA19C1636A0081D14F /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../src/Makefile; sourceTree = "<group>"; };
 		073C46CB19C1636A0081D14F /* Rules.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Rules.make; path = ../../src/Rules.make; sourceTree = "<group>"; };
+		07647B551A400DE400A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_cmdline.c; sourceTree = "<group>"; };
+		07647B571A400DF900A96620 /* nd_cmdline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_cmdline.h; sourceTree = "<group>"; };
 		0793191919931918009C8BC5 /* libndnetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndnetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		079319D919931C5A009C8BC5 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		079319DC19931C5A009C8BC5 /* bintree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bintree.c; sourceTree = "<group>"; };
@@ -421,6 +425,7 @@
 		079319DB19931C5A009C8BC5 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				07647B551A400DE400A96620 /* nd_cmdline.c */,
 				079319DC19931C5A009C8BC5 /* bintree.c */,
 				079319DD19931C5A009C8BC5 /* callstack.c */,
 				079319DE19931C5A009C8BC5 /* common.c */,
@@ -619,6 +624,7 @@
 		07EBCCCA19A8B6AD00802576 /* nd_common */ = {
 			isa = PBXGroup;
 			children = (
+				07647B571A400DF900A96620 /* nd_cmdline.h */,
 				07EBCCCB19A8B6AD00802576 /* list.h */,
 				07EBCCCC19A8B6AD00802576 /* nd_alloc.h */,
 				07EBCCCD19A8B6AD00802576 /* nd_atomic.h */,
@@ -798,6 +804,7 @@
 				07EBCD3419A8B6AE00802576 /* nd_recbuf.h in Headers */,
 				07EBCD3319A8B6AE00802576 /* nd_os.h in Headers */,
 				07EBCD5B19A8B6AE00802576 /* client_map.h in Headers */,
+				07647B581A400DF900A96620 /* nd_cmdline.h in Headers */,
 				07EBCD4F19A8B6AE00802576 /* nd_netcrypt.h in Headers */,
 				07EBCD3E19A8B6AE00802576 /* nd_cryptfile.h in Headers */,
 				07EBCD7919A8B6AE00802576 /* nd_text.h in Headers */,
@@ -925,6 +932,7 @@
 				07931A7C19931C5A009C8BC5 /* udt_socket.c in Sources */,
 				07931A8319931C5A009C8BC5 /* nd_thpoolio.c in Sources */,
 				073C46CC19C1636A0081D14F /* Makefile in Sources */,
+				07647B561A400DE400A96620 /* nd_cmdline.c in Sources */,
 				07931A4D19931C5A009C8BC5 /* common.c in Sources */,
 				07931A8C19931C5A009C8BC5 /* Makefile in Sources */,
 				07931A8519931C5A009C8BC5 /* srv_nodemgr.c in Sources */,

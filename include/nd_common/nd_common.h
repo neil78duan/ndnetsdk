@@ -45,6 +45,7 @@
 #include "nd_common/nd_node_mgr.h"
 
 #include "nd_common/nddir.h"
+#include "nd_common/nd_cmdline.h"
 
 ND_COMMON_API ndtime_t		nd_time(void) ;
 ND_COMMON_API ndbigtime_t	nd_bigtime(void);

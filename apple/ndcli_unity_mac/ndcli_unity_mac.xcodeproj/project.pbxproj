@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		07501E3C1A161207003DE0CA /* nd_exch_key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07501E3B1A161207003DE0CA /* nd_exch_key.cpp */; };
+		07647B521A400D7F00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B511A400D7F00A96620 /* nd_cmdline.c */; };
 		07A26B3119C80DA600F51698 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07A269C919C80DA500F51698 /* Makefile */; };
 		07A26B3319C80DA600F51698 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07A269CC19C80DA500F51698 /* Makefile */; };
 		07A26B5619C80DA600F51698 /* bintree.c in Sources */ = {isa = PBXBuildFile; fileRef = 07A269F119C80DA600F51698 /* bintree.c */; };
@@ -85,6 +86,7 @@
 
 /* Begin PBXFileReference section */
 		07501E3B1A161207003DE0CA /* nd_exch_key.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_exch_key.cpp; sourceTree = "<group>"; };
+		07647B511A400D7F00A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_cmdline.c; sourceTree = "<group>"; };
 		07A2695C19C80B1500F51698 /* ndcli_unity_mac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ndcli_unity_mac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A2696019C80B1500F51698 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		07A2696919C80DA500F51698 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
@@ -482,6 +484,7 @@
 		07A269F019C80DA600F51698 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				07647B511A400D7F00A96620 /* nd_cmdline.c */,
 				07A269F119C80DA600F51698 /* bintree.c */,
 				07A269F219C80DA600F51698 /* callstack.c */,
 				07A269F319C80DA600F51698 /* common.c */,
@@ -673,6 +676,7 @@
 			files = (
 				07A26B8F19C80DA600F51698 /* md5c.c in Sources */,
 				07A26BBE19C80DA600F51698 /* nd_netobj.c in Sources */,
+				07647B521A400D7F00A96620 /* nd_cmdline.c in Sources */,
 				07A26B9819C80DA600F51698 /* rsa.c in Sources */,
 				07A26B8D19C80DA600F51698 /* digit.c in Sources */,
 				07A26B5619C80DA600F51698 /* bintree.c in Sources */,

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07647B541A400D9B00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B531A400D9B00A96620 /* nd_cmdline.c */; };
 		07A2669B19C7F4C700F51698 /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A2663C19C7F4C700F51698 /* list.h */; };
 		07A2669C19C7F4C700F51698 /* nd_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A2663D19C7F4C700F51698 /* nd_alloc.h */; };
 		07A2669D19C7F4C700F51698 /* nd_atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A2663E19C7F4C700F51698 /* nd_atomic.h */; };
@@ -155,6 +156,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		07647B531A400D9B00A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nd_cmdline.c; path = src/nd_cmdline.c; sourceTree = "<group>"; };
 		07A2663119C7F3E700F51698 /* libndclient_mac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndclient_mac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A2663C19C7F4C700F51698 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
 		07A2663D19C7F4C700F51698 /* nd_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_alloc.h; sourceTree = "<group>"; };
@@ -532,6 +534,7 @@
 		07A266F419C7F4EE00F51698 /* nd_common */ = {
 			isa = PBXGroup;
 			children = (
+				07647B531A400D9B00A96620 /* nd_cmdline.c */,
 				07A266F619C7F4EE00F51698 /* Makefile */,
 				07A2671A19C7F4EE00F51698 /* src */,
 			);
@@ -861,6 +864,7 @@
 				07CBF85219C974A7002EE541 /* Makefile in Sources */,
 				07A2688E19C7F4F000F51698 /* node_mgr.c in Sources */,
 				07A268C519C7F4F000F51698 /* ndcrypt.c in Sources */,
+				07647B541A400D9B00A96620 /* nd_cmdline.c in Sources */,
 				07A268E519C7F4F000F51698 /* ipraw.c in Sources */,
 				07A2688319C7F4F000F51698 /* nd_handle.c in Sources */,
 				07A2688B19C7F4F000F51698 /* nd_win.c in Sources */,

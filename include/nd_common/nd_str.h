@@ -41,6 +41,9 @@ ND_COMMON_API char *ndstr_read_numerals(const char *src, char *desc, int *isok) 
 ND_COMMON_API char *ndstr_parse_word(char *src, char *outstr);
 ND_COMMON_API char *ndstr_parse_word_n(char *src, char *outstr, int n) ;
 
+//Parse string to command line , return number of commands-lines
+ND_COMMON_API int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number) ;
+
 ND_COMMON_API int ndstr_get_ip(char *src, ndip_t *ip) ;
 
 //分解可显示的字符床

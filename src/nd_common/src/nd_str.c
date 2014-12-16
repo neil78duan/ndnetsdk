@@ -235,6 +235,23 @@ char *ndstr_parse_word_n(char *src, char *outstr, int n)
 }
 
 
+//Parse string to command line , return number of commands-lines
+int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number) 
+{
+	int ret = 0 ;
+	char *next_text = ndstr_first_valid((const char*)input_text) ;
+	while (next_text && *next_text ) {
+		next_text = ndstr_parse_word_n(next_text, argv[ret], bufize) ;
+		++ret ;
+		if (ret>=number) {
+			break ;
+		}
+		next_text = ndstr_first_valid((const char*)next_text) ;
+	}
+	return ret ;
+	
+}
+
 int ndstr_get_ip(char *src, ndip_t *ip) 
 {
 	int i= 0;
