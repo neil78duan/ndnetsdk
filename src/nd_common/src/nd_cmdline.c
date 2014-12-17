@@ -30,6 +30,7 @@ int _command_line(struct nd_cmdline_root *root, int argc,  const char *argv[])
 
 int _parse_input_and_run(struct nd_cmdline_root *root,char *input_text) 
 {
+	int i ;
 	int argc = 0 ;
 	char *p = ndstr_first_valid(input_text) ;
 	char commands_buf[ND_COMMAND_LINE_NUMBER][ND_COMMAND_LINE_SIZE] ; 
@@ -46,6 +47,10 @@ int _parse_input_and_run(struct nd_cmdline_root *root,char *input_text)
 	argc = ndstr_parse_command(p, argv, ND_COMMAND_LINE_SIZE, ND_COMMAND_LINE_NUMBER) ;
 	if (argc == 0) {
 		return -1;
+	}
+	
+	for (i=0; i<argc; i++) {
+		fprintf(stdout, "\t %s\n", argv[i]) ;
 	}
 	
 	return _command_line(root, argc, argv) ;

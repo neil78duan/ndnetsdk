@@ -234,6 +234,26 @@ char *ndstr_parse_word_n(char *src, char *outstr, int n)
 	return *src?src:NULL ;
 }
 
+char *_ndstr_read_cmd(char *src, char *outstr, int n, char endmark) 
+{
+	register unsigned char a ;
+	while(*src && n-- > 0) {		
+		a = (unsigned char)*src ;
+		if (a=='\\') {
+			src++ ;
+			a = (unsigned char)*src ;
+		}
+		else if(endmark==a) {
+			++src ; //skip endmark ,such as " hello world "
+			break ;
+		}
+		*outstr++ = *src++ ;
+		
+	}
+	*outstr = 0 ;
+	return *src?src:NULL ;
+	
+}
 
 //Parse string to command line , return number of commands-lines
 int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number) 
@@ -241,7 +261,13 @@ int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number)
 	int ret = 0 ;
 	char *next_text = ndstr_first_valid((const char*)input_text) ;
 	while (next_text && *next_text ) {
-		next_text = ndstr_parse_word_n(next_text, argv[ret], bufize) ;
+		if (*next_text=='\"') {
+			++next_text ;
+			next_text = _ndstr_read_cmd(next_text, argv[ret], bufize, '\"' ) ;
+		}
+		else {
+			next_text = ndstr_parse_word_n(next_text, argv[ret], bufize) ;
+		}
 		++ret ;
 		if (ret>=number) {
 			break ;
