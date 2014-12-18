@@ -42,7 +42,7 @@ static __INLINE__ int  nd_session_sendex(nd_handle session_handle,nd_packhdr_t  
 //发送消息个数的数据
 static __INLINE__ int nd_sessionmsg_sendex(nd_handle session_handle,nd_usermsghdr_t  *msg, int flag)
 {
-	
+	ND_USERMSG_SYS_RESERVED(msg) = 0 ; //session , connector not allow send system message 
 	nd_assert(session_handle) ;
 	nd_assert(msg) ;
 	nd_netmsg_hton(msg) ;

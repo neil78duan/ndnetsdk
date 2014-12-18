@@ -113,6 +113,8 @@ int ndSendData(netObject netObj, char *data, int dataLen, int flag)
 {
     int ret = 0 ;
     nd_packhdr_t *msghdr = (nd_packhdr_t *) data ;
+	
+	ND_USERMSG_SYS_RESERVED(msghdr) = 0 ;
     packet_ntoh(&msghdr) ;
     ret = nd_connector_send((nd_handle) netObj, (nd_packhdr_t *)data, flag) ;
     packet_hton(&msghdr) ;

@@ -70,7 +70,7 @@ public :
 
 	int ioctl(int cmd, void *val, int *size) ;
 
-private:
+private:	
 	//nd_handle m_objhandle ;
 	int msg_kinds ;
 	int msg_base ;
@@ -204,12 +204,7 @@ void NDConnector::Destroy(int flag)
 
 int NDConnector::SendMsg(NDSendMsg &msg, int flag) 
 {
-	nd_assert(m_objhandle) ;
-	int ret = nd_connector_send(m_objhandle,(nd_packhdr_t*) (msg.GetMsgAddr()), flag) ;
-	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle)) {
-		tryto_terminate((netObject)m_objhandle) ;
-	}
-	return ret ;
+	return SendMsg(msg.GetMsgAddr(), flag) ;
 }
 
 int NDConnector::Send(int maxid, int minid, void *data, size_t size) 
@@ -218,15 +213,13 @@ int NDConnector::Send(int maxid, int minid, void *data, size_t size)
 	if(-1==omsg.WriteBin(data, size) ) {
 		return -1 ;
 	}
-	int ret = nd_connector_send(m_objhandle,(nd_packhdr_t*) (omsg.GetMsgAddr()),ESF_NORMAL) ;
-	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle)) {
-		tryto_terminate((netObject)m_objhandle) ;
-	}
-	return ret ;
+	return SendMsg(omsg.GetMsgAddr(), ESF_NORMAL) ;
 }
 
 int NDConnector::SendMsg(nd_usermsgbuf_t *msghdr, int flag)
 {
+	nd_assert(m_objhandle);
+	ND_USERMSG_SYS_RESERVED(msghdr) = 0 ;
 	int ret = nd_connector_send(m_objhandle,(nd_packhdr_t*)msghdr, flag) ;
 	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle)) {
 		tryto_terminate((netObject)m_objhandle) ;

@@ -171,6 +171,7 @@ int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
 		return -1 ;
 	}
 	nd_assert(m_objhandle) ;
+	ND_USERMSG_SYS_RESERVED(msghdr) = 0 ;
 	ret = nd_connector_send(m_objhandle,&msghdr->packet_hdr, flag) ;
 	if (ret > 0 && (flag & ESF_URGENCY)) {
 		if (m_objhandle->type == NDHANDLE_TCPNODE){
@@ -186,22 +187,7 @@ int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
 
 int NDConnector::ResendMsg(NDIStreamMsg &resendmsg, int flag)
 {
-	return SendMsg((nd_usermsghdr_t*) (resendmsg.GetMsgAddr()),  flag) ;
-	/*
-	ND_TRACE_FUNC();
-	int ret ;
-	nd_assert(m_objhandle) ;
-	ret = nd_connector_send(m_objhandle,(nd_packhdr_t*) (resendmsg.GetMsgAddr()), flag) ;
-	if (ret > 0 && (flag & ESF_URGENCY)) {
-		if (m_objhandle->type == NDHANDLE_TCPNODE){
-			nd_tcpnode_flush_sendbuf((nd_netui_handle)m_objhandle) ;
-		}
-	}
-	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WUOLD_BLOCK) {
-		Close(0);
-	}
-	return ret ;
-	 */
+	return SendMsg((nd_usermsghdr_t*) (resendmsg.GetMsgAddr()),  flag) ;	
 }
 
 int NDConnector::SendRawData(void *data , size_t size) 
