@@ -186,6 +186,7 @@
 /* Begin PBXFileReference section */
 		07647B4E1A3FD77C00A96620 /* nd_cmdline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_cmdline.h; sourceTree = "<group>"; };
 		07647B4F1A3FDBBE00A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_cmdline.c; sourceTree = "<group>"; };
+		07647B641A4419B300A96620 /* _nderr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
 		07D47C5019D9694A00D08BB6 /* nd_alarms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_alarms.h; sourceTree = "<group>"; };
 		07D47C5219D9695A00D08BB6 /* nd_alarms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_alarms.cpp; sourceTree = "<group>"; };
 		07EBCE8719A8DEFC00802576 /* libndMacStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndMacStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -638,6 +639,7 @@
 				07EBCFE419A8E01500802576 /* ndchar.h */,
 				07EBCFE519A8E01500802576 /* nddir.h */,
 				07647B4E1A3FD77C00A96620 /* nd_cmdline.h */,
+				07647B641A4419B300A96620 /* _nderr.h */,
 			);
 			name = nd_common;
 			path = ../../include/nd_common;

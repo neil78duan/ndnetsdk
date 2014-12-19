@@ -157,42 +157,34 @@ int destroy_object_register_manager(void)
 	return 0 ;
 }
 
-const char *nd_object_errordesc(nd_handle h)
+
+const char *nd_error_desc(int errcode)
 {
 	static char errdesc[128] ;
+	
 	char *perr[] = {
 		"NDERR_SUCCESS " ,
-		"NDERR_INVALID_HANDLE",
-		"NDERR_TIMEOUT " ,
-		"NDERR_NOSOURCE " ,
-		"NDERR_OPENFILE " ,
-		"NDERR_BADTHREAD " ,
-		"NDERR_LIMITED " ,
-		"NDERR_USER " ,
-		"NDERR_INVALID_INPUT " ,
-		"NDERR_IO | IO bad SYSTEM IO BAD" ,
-		"NDERR_WUOLD_BLOCK ",
-		"NDERR_CLOSED | socket closed by peer" ,
-		"NDERR_BADPACKET " ,
-		"NDERR_BADSOCKET " ,
-		"NDERR_READ | read error" ,
-		"NDERR_WRITE | write error" ,
-		"NDERR_NO_PRIVILAGE ",
-		"NDERR_RESET " ,
-		"NDERR_USER_BREAK " ,
-		"NDERR_VERSION " ,
-		"NDERR_UNKNOW | unknowwing error"
+		
+#undef ErrorElement 
+#define ErrorElement(a) #a
+#include "nd_common/_nderr.h"		
+#undef ErrorElement 		
 	} ;
-
-	if(h->myerrno <= NDERR_UNKNOW)
-		return perr[h->myerrno] ;
+	
+	if(errcode <= NDERR_UNKNOW)
+		return perr[errcode] ;
 	else if(__error_convert) {
-		return __error_convert(h->myerrno) ;
+		return __error_convert(errcode) ;
 	}
 	else {
-		snprintf(errdesc, sizeof(errdesc), "Error code =%d",h->myerrno) ;
+		snprintf(errdesc, sizeof(errdesc), "Error code =%d",errcode) ;
 		return errdesc ;
 	}
+}
+
+const char *nd_object_errordesc(nd_handle h)
+{
+	return nd_error_desc(h->myerrno);
 }
 
 int nd_object_check_error(nd_handle h) 

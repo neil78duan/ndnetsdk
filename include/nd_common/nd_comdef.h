@@ -9,7 +9,11 @@
 
 enum END_ERROR_TYPE
 {
+#undef ErrorElement 
+#define ErrorElement(a) a
 	NDERR_SUCCESS  = 0 ,	//正确
+#include "_nderr.h"
+	/*
 	NDERR_INVALID_HANDLE,	//无效句柄
 	NDERR_TIMEOUT   ,		//超时
 	NDERR_NOSOURCE ,		//没有足够资源
@@ -30,7 +34,11 @@ enum END_ERROR_TYPE
 	NDERR_USER_BREAK,		//用户中断(退出循环)
 	NDERR_VERSION,			//版本号错误
 	NDERR_UNKNOW			//unknowwing error
+	 */
+	
+#undef ErrorElement 
 };
+
 
 #define NDERR_USERDEFINE 1024 
 
