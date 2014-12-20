@@ -399,7 +399,7 @@ int set_maxopen_fd(int max_fd)
 
 int create_filemap(const char *filename, size_t size,nd_filemap_t *out_handle)
 {
-	int fd =-1,i;
+	int fd =-1,ret=0;
 	char temp;
 
 	if (filename) {
@@ -418,9 +418,19 @@ int create_filemap(const char *filename, size_t size,nd_filemap_t *out_handle)
 	}
 
 	out_handle->paddr =  mmap( NULL,size, PROT_READ|PROT_WRITE,MAP_SHARED,fd,0 );
-	out_handle->size = size ;
-	if(-1!=fd)
+    if ( MAP_FAILED==out_handle->paddr) {
+        out_handle->paddr = NULL ;
+        out_handle->size = 0 ;
+        ret = -1 ;
+    }
+    else {
+        out_handle->size = size ;
+        ret = 0 ;
+    }
+    if(-1!=fd) {
 		close( fd );
+    }
+    
 	return 0 ;
 }
 
@@ -436,7 +446,7 @@ int close_filemap(nd_filemap_t *mapinfo)
 
 int open_filemap(const char *filename, nd_filemap_t *out_handle)
 {
-	int fd,i;
+	int fd,ret;
 	long start, end ;
 	size_t size ;
 	fd=open( filename,O_CREAT|O_RDWR,00644 );
@@ -452,10 +462,21 @@ int open_filemap(const char *filename, nd_filemap_t *out_handle)
 	size = end - start ;
 
 	out_handle->paddr =  mmap( NULL,size, PROT_READ|PROT_WRITE,MAP_SHARED,fd,0 );
-	out_handle->size = size ;
-	if(-1!=fd)
-		close( fd );
-	return 0 ;
+    
+    if ( MAP_FAILED==out_handle->paddr) {
+        out_handle->paddr = NULL ;
+        out_handle->size = 0 ;
+        ret = -1 ;
+    }
+    else {
+        out_handle->size = size ;
+        ret = 0 ;
+    }
+    if(-1!=fd) {
+        close( fd );
+    }
+
+	return ret ;
 }
 
 int nd_getcpu_num() 

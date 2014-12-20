@@ -214,7 +214,7 @@ char *ndstr_parse_word_n(char *src, char *outstr, int n)
 	register unsigned char a ;
 	while(*src && n-- > 0) {
 		a = (unsigned char)*src ;
-		if(IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a=='_' ){			
+		if(IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a=='_' || a=='.'){
 			*outstr++ = *src++ ;
 		}
 		
