@@ -12,8 +12,8 @@
 #include "nd_common/nd_os.h"
 
 
-static char _current_dir[ND_FILE_PATH_SIZE] = {0} ;
-static char _working_dir[ND_FILE_PATH_SIZE] = {0} ;
+static char _current_dir[ND_FILE_PATH_SIZE] = {0} ; //current dir 
+static char _original_dir[ND_FILE_PATH_SIZE] = {0} ; // program start dir / original dir 
 
 size_t nd_get_file_size(const char *file)
 {
@@ -81,31 +81,26 @@ void* nd_load_file(const char *file, size_t *size)
 
 const char * nd_getcwd()
 {
-	long size = getcwd(_current_dir, ND_FILE_PATH_SIZE);
-	if (size > 0){
+	if (_current_dir[0]) {
 		return _current_dir ;
 	}
-	return 0;
+	return getcwd(_current_dir, ND_FILE_PATH_SIZE);
 }
 
-const char * nd_getworkingdir()
+int nd_chdir(const char *dir)
 {
-	if (_working_dir[0]==0)	{
-		long size = getcwd(_working_dir, ND_FILE_PATH_SIZE);
-		if (-1==size)	{
-			return NULL ;
-		}
+	if (0==chdir(dir)) {
+		getcwd(_current_dir, ND_FILE_PATH_SIZE);
+		return 0 ;
 	}
-
-	return _working_dir ;
+	return -1;
 }
-//设置当前的工作目录
-char * nd_setworkingdir(const char *d)
+const char * nd_get_init_dir()
 {
-	if (chdir(d)==0){
-		strncpy(_working_dir, d, sizeof(_working_dir)) ;
+	if (_original_dir[0]==0)	{
+		return getcwd(_original_dir, ND_FILE_PATH_SIZE);
 	}
-	return _working_dir;
+	return _original_dir ;
 }
 
 int nd_cpfile(const char *oldfile,const  char *newfile)
@@ -161,8 +156,20 @@ const  char* nd_getsysdir()
 //得到工作目录
 const char * nd_getcwd()
 {
+	if (_current_dir[0]) {
+		return _current_dir ;
+	}
 	GetCurrentDirectory( sizeof(_current_dir),(LPTSTR)_current_dir);
 	return _current_dir ;
+}
+
+const char * nd_get_init_dir()
+{
+	if (_original_dir[0]==0)	{
+		
+		GetCurrentDirectory( sizeof(_original_dir),(LPTSTR)_original_dir);
+	}
+	return _original_dir ;
 }
 
 //删除文件
@@ -180,7 +187,11 @@ int nd_renfile(const char *oldfile,const  char *newfile)
 //改变工作目录
 int nd_chdir(const char *dir)
 {
-	return SetCurrentDirectory((LPCTSTR)dir);
+	if(0==SetCurrentDirectory((LPCTSTR)dir) ) {			
+		GetCurrentDirectory( sizeof(_current_dir),(LPTSTR)_current_dir);
+		return 0;
+	}
+	return -1;
 }
 
 //copy 文件
@@ -205,8 +216,9 @@ int nd_rmdir(const char *dir)
 //得到系统目录
 const char* nd_getsysdir()
 {
-	GetSystemDirectory((LPTSTR)_current_dir,sizeof(_current_dir));
-	return _current_dir ;
+	static char _system_dir[ND_FILE_PATH_SIZE] ;
+	GetSystemDirectory((LPTSTR)_system_dir,sizeof(_system_dir));
+	return _system_dir ;
 }
 
 //查找指定的文件是否存在
@@ -225,14 +237,6 @@ int nd_existfile(const char *pachfilename)
 	}
 }
 
-//得到工作目录
-const char * nd_getworkingdir()
-{
-	if(_working_dir[0]==0) {
-		GetCurrentDirectory( sizeof(_working_dir),(LPTSTR)_working_dir);
-	}
-	return _working_dir ;
-}
 
 //创建一个新文件
 //可以读写,独占,如果存在则失败
@@ -256,12 +260,4 @@ int nd_mkfile(const char *file)
 	}
 }
 
-//设置当前的工作目录
-char * nd_setworkingdir(const char *d)
-{
-	if (SetCurrentDirectory((LPCTSTR)d)){
-		strncpy(_working_dir, d, sizeof(_working_dir)) ;
-	}
-	return _working_dir;
-}
 #endif
