@@ -36,8 +36,8 @@ typedef NDUINT8	ndmsgid_t ;		//消息编号
 typedef struct nd_usermsghdr_t
 {
 	nd_packhdr_t	packet_hdr ;		//消息包头
-	ndmsgid_t		maxid ;		//主消息号 16bits
-	ndmsgid_t		minid ;		//次消息号 16bits
+	ndmsgid_t		maxid ;		//主消息号 8bits
+	ndmsgid_t		minid ;		//次消息号 8bits
 //	ndmsgparam_t	param;		//消息参数
 }nd_usermsghdr_t ;
 
@@ -95,10 +95,13 @@ ND_NET_API void nd_msgtable_destroy(nd_handle  handle, int flag) ;
 ND_NET_API int nd_message_set_system(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int issystem) ;
 
 /*在handle句柄上安装网络消息处理函数*/
-ND_NET_API int nd_msgentry_install(nd_handle  handle, nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid,int level) ;
+ND_NET_API int nd_msgentry_install(nd_handle  handle, nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid,int level, const char *name) ;
 
 /* 设置默认消息处理函数*/
 ND_NET_API int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func)  ;
+
+ND_NET_API nd_usermsg_func nd_msgentry_get_func(nd_netui_handle handle, ndmsgid_t maxid, ndmsgid_t minid) ;
+ND_NET_API nd_usermsg_func nd_msgentry_get_def_func(nd_netui_handle handle) ;
 
 
 ND_NET_API nd_handle nd_get_msg_hadle(nd_netui_handle handle) ;

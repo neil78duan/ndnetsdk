@@ -13,6 +13,8 @@
 //#include "nd_net/nd_netlib.h"
 #include "nd_net/nd_netioctl.h"
 
+#define CONNECT_INSTALL_MSG(connect, msgFunc, maxID, minID) \
+	(connect)->InstallMsgFunc(msgFunc, maxID, minID, "msgName_" #maxID"-"#minID) 
 
 //net connector 
 class NDConnector : public NDObject 
@@ -32,7 +34,7 @@ public :
 	int CheckValid();
 	int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100);
 	int Update(ndtime_t wait_time);
-	void InstallMsgFunc( nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid);
+	void InstallMsgFunc( nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid,const char *msgname=NULL);
 
 	ndip_t Getip() ;
 	ndport_t GetPort() ;

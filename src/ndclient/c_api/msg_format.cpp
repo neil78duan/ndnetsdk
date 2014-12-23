@@ -399,7 +399,7 @@ MSG_ENTRY_INSTANCE(netmsg_sys_time)
 }
 
 #define MSG_HANDLER_INS(_f, _maxid, _minid) \
-nd_msgentry_install((nd_handle)netObj, _f,_maxid, _minid,EPL_CONNECT)
+nd_msgentry_install((nd_handle)netObj, _f,_maxid, _minid,EPL_CONNECT,"msgName_" #_maxid "_" #_minid )
 
 void ndMsgfuncInit(netObject netObj)
 {

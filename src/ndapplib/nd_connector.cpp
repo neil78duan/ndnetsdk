@@ -247,10 +247,10 @@ int NDConnector::WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time)
 	ND_TRACE_FUNC();
 	return nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)msgbuf,wait_time);
 }
-void NDConnector::InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid)
+void NDConnector::InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,const char *msgname)
 {
 	if(m_objhandle)
-		nd_msgentry_install(m_objhandle, func,  maxid,  minid,EPL_CONNECT) ;
+		nd_msgentry_install(m_objhandle, func,  maxid,  minid,EPL_CONNECT,msgname) ;
 }
 
 int NDConnector::CheckValid()

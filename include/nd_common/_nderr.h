@@ -27,4 +27,5 @@ ErrorElement(NDERR_NO_PRIVILAGE),		//√ª”–»®œﬁ
 ErrorElement(NDERR_RESET),			//±ª÷ÿ÷√
 ErrorElement(NDERR_USER_BREAK),		//”√ªß÷–∂œ(ÕÀ≥ˆ—≠ª∑)
 ErrorElement(NDERR_VERSION),			//∞Ê±æ∫≈¥ÌŒÛ
+ErrorElement(NDERR_UNHANDLED_MSG),			//unknow message
 ErrorElement(NDERR_UNKNOW)			//unknowwing error

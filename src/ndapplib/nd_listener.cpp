@@ -290,9 +290,9 @@ int NDListener::OnAccept(NDSession *pSession, SOCKADDR_IN *addr)
 }
 
 
-void NDListener::InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level)
+void NDListener::InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level , const char *msgname)
 {
-	::nd_msgentry_install(m_objhandle, func,  maxid,  minid, level) ;
+	::nd_msgentry_install(m_objhandle, func,  maxid,  minid, level,msgname) ;
 }
 
 int NDListener::Attach(NDConnector &conn, nd_thsrvid_t thid )

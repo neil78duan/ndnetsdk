@@ -168,7 +168,7 @@ int ndUpdateConnect(netObject netObj, int timeOutMS)
 int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID)
 {
     if(netObj)
-        return nd_msgentry_install((nd_handle)netObj, (nd_usermsg_func)func,  maxID,  minID,EPL_CONNECT) ;
+        return nd_msgentry_install((nd_handle)netObj, (nd_usermsg_func)func,  maxID,  minID,EPL_CONNECT,NULL) ;
     return -1;
     
 }
@@ -207,6 +207,34 @@ void tryto_terminate(netObject netObj)
 	}
 }
 
+
+int _translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
+{
+	ENTER_FUNC()	
+	
+	int ret = 0 ;
+	int data_len = nd_pack_len(msg);
+	
+	nd_usermsghdr_t *usermsg = (nd_usermsghdr_t *) (msg) ;	
+	nd_usermsg_func func ;
+	
+	nd_netmsg_ntoh(usermsg) ; 
+	func = nd_msgentry_get_func(connect_handle, usermsg->maxid,  usermsg->minid);
+	
+	func = func? func : nd_msgentry_get_def_func(connect_handle) ;
+	
+	if (func){
+		ret = func((netObject) connect_handle, (char*)msg, (int)ND_USERMSG_LEN(msg) );
+	}
+	else {
+		nd_logmsg("received message (%d,%d) UNHANDLED\n" AND usermsg->maxid AND usermsg->minid) ;		
+	}
+	
+	LEAVE_FUNC();
+	return  ret==-1? -1:data_len ;
+}
+
+/*
 struct msg_entry_node
 {
     NDUINT32			level;
@@ -220,9 +248,10 @@ struct sub_msgentry
 
 struct msgentry_root
 {
-    ND_OBJ_BASE;
-    int	main_num ;
-    int msgid_base ;
+	ND_OBJ_BASE;
+	NDUINT16	main_num ;			//∞¸∫¨∂‡…Ÿ∏ˆœ˚œ¢¿‡±
+	NDUINT16	msgid_base ;		//÷˜œ˚œ¢∫≈∆ ºµÿ÷∑
+	NDUINT32	msg_node_size ;
     nd_usermsg_func		def_entry ;
     struct sub_msgentry sub_buf[ND_MAIN_MSG_CAPACITY] ;
 };
@@ -272,7 +301,7 @@ int _translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_han
     LEAVE_FUNC();
     return  data_len ;
 }
-
+*/
 /*
 static nd_handle s_connObj ;
 

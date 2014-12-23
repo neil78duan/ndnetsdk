@@ -21,6 +21,11 @@ class NDConnector ;
 class NDOStreamMsg ;
 class NDInstanceBase ;
 
+
+#define LISTENER_INSTALL_MSG(listener, msgFunc, maxID, minID, level) \
+	(listener)->InstallMsgFunc(msgFunc, maxID, minID, level, "msgName_" #maxID"-"#minID) 
+
+
 class NDListener : public NDObject
 {
 public:
@@ -33,7 +38,7 @@ public:
 	int GetAllocatorCapacity();
 	
 	int CloseAllConnects() ;
-	void InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level=EPL_CONNECT);
+	void InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level=EPL_CONNECT, const char *msgname=NULL);
 	virtual int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
 	
 	NDSession *ConstructSession(void *addr);
