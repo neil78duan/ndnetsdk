@@ -37,6 +37,8 @@ enum eNDMsgSys{
 	ND_MSG_SYS_TRANSLATE_TO_OTHER,	// send message to other client 
 	ND_MSG_SYS_CALL_MSG_PROC_OTHER,	// Send message to other session's message-handler 
 	
+	ND_MSG_SYS_GET_MESSAGE_NAME ,// GET message name 
+	
     ND_MSG_SYS_NUMBER
 };
 

@@ -56,6 +56,10 @@ struct ndMsgData
 
 typedef int (*ndNetFunc)(netObject netObj, unsigned char *data, int dataLen );
 
+
+#define NDNET_INSTALL_MSG(netObj, msgFunc, maxID, minID) \
+	ndNetFuncInstall(netObj,msgFunc, maxID, minID, "msgName_" #maxID"-"#minID) 
+
 //connect server
 CPPAPI netObject ndOpenConnect(const char *host, int port) ;
 CPPAPI void ndClostConnect(netObject netObj) ;
@@ -75,7 +79,7 @@ CPPAPI int ndSendRaw(netObject netObj,char *data, int size) ;
 CPPAPI int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag) ;
 
 //install message handle functions
-CPPAPI int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID) ;
+CPPAPI int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID,const char *name) ;
 CPPAPI int ndSetDftMsgHandler(netObject netObj,ndNetFunc dftFunc) ;
 
 //tic net message , maybe you need a single thread to call this function

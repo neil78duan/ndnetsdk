@@ -222,6 +222,22 @@ nd_usermsg_func nd_msgentry_get_func(nd_netui_handle handle, ndmsgid_t maxid, nd
 	return node ? node->entry : NULL;
 }
 
+const char * nd_msgentry_get_name(nd_netui_handle handle, ndmsgid_t maxid, ndmsgid_t minid)
+{
+#ifdef ND_DEBUG
+	struct msg_entry_node * node ;
+	ENTER_FUNC() ;
+	
+	node = _nd_msgentry_get_node(handle,   maxid,  minid) ;
+	LEAVE_FUNC();
+	
+	return node ? node->name : NULL;
+#else
+	return NULL ;
+#endif
+}
+
+
 nd_usermsg_func nd_msgentry_get_def_func(nd_netui_handle handle) 
 {
 	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle( handle) ;

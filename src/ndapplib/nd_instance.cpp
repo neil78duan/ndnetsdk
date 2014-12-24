@@ -638,3 +638,29 @@ MSG_ENTRY_INSTANCE(nd_transfer_to_session)
 	return 0 ;
 }
 
+MSG_ENTRY_INSTANCE(nd_get_message_name_handler)
+{
+	ND_TRACE_FUNC() ;
+	NDUINT16 sid ;
+	NDIStreamMsg inmsg(msg) ;
+	NDOStreamMsg omsg(inmsg.MsgMaxid(),inmsg.MsgMinid()) ;
+	NDUINT16 maxID, minID ;
+	
+	if (-1==inmsg.Read(maxID)) {
+		return 0 ;
+	}
+	if (-1==inmsg.Read(minID)) {
+		return 0 ;
+	}
+	const char *p = nd_msgentry_get_name(h_listen, maxID, minID) ;
+	
+	omsg.Write(maxID) ;
+	
+	omsg.Write(minID) ;
+	
+	omsg.Write((NDUINT8*)p) ;
+	
+	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(),  h_listen) ;
+	return 0;
+}
+

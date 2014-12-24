@@ -49,7 +49,7 @@ public :
 	int CheckValid();
 	int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100);
 	int Update(ndtime_t wait_time);
-	void InstallMsgFunc(nd_iconn_func, ndmsgid_t maxid, ndmsgid_t minid);
+	void InstallMsgFunc(nd_iconn_func, ndmsgid_t maxid, ndmsgid_t minid,const char *name=NULL);
     void SetDftMsgHandler(nd_iconn_func func);
     
 	NDConnector(int maxmsg_num =ND_MAIN_MSG_CAPACITY, int maxid_start=ND_MSG_BASE_ID) ;
@@ -304,16 +304,16 @@ int NDConnector::WaitMsg(nd_usermsgbuf_t*msgbuf, ndtime_t wait_time)
 	return ret ;
 
 }
-void NDConnector::InstallMsgFunc(nd_iconn_func func, ndmsgid_t maxid, ndmsgid_t minid)
+void NDConnector::InstallMsgFunc(nd_iconn_func func, ndmsgid_t maxid, ndmsgid_t minid,const char *name)
 {
 	if(m_objhandle)
-		nd_msgentry_install(m_objhandle, (nd_usermsg_func)func,  maxid,  minid,EPL_CONNECT, NULL) ;
+		nd_msgentry_install(m_objhandle, (nd_usermsg_func)func,  maxid,  minid,EPL_CONNECT, name) ;
 }
 
 void NDConnector::SetDftMsgHandler(nd_iconn_func func)
 {
     if(m_objhandle)
-        nd_msgentry_def_handler((nd_netui_handle)m_objhandle, (nd_usermsg_func)func) ;
+        nd_msgentry_def_handler(m_objhandle, (nd_usermsg_func)func) ;
 
 }
 
@@ -390,9 +390,9 @@ int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg 
 	nd_usermsg_func func ;
 	
 	nd_netmsg_ntoh(usermsg) ; 
-	func = nd_msgentry_get_func(connect_handle, usermsg->maxid,  usermsg->minid);
+	func = nd_msgentry_get_func((nd_handle)connect_handle, usermsg->maxid,  usermsg->minid);
 	
-	func = func? func : nd_msgentry_get_def_func(connect_handle) ;
+	func = func? func : nd_msgentry_get_def_func((nd_handle)connect_handle) ;
 	
 	if (func){
 		NDIConn *pc = htoConnector((nd_handle)connect_handle);

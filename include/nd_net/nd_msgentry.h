@@ -98,13 +98,13 @@ ND_NET_API int nd_message_set_system(nd_handle handle,  ndmsgid_t maxid, ndmsgid
 ND_NET_API int nd_msgentry_install(nd_handle  handle, nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid,int level, const char *name) ;
 
 /* 设置默认消息处理函数*/
-ND_NET_API int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func)  ;
+ND_NET_API int nd_msgentry_def_handler(nd_handle handle, nd_usermsg_func func)  ;
 
-ND_NET_API nd_usermsg_func nd_msgentry_get_func(nd_netui_handle handle, ndmsgid_t maxid, ndmsgid_t minid) ;
-ND_NET_API nd_usermsg_func nd_msgentry_get_def_func(nd_netui_handle handle) ;
+ND_NET_API nd_usermsg_func nd_msgentry_get_func(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid) ;
+ND_NET_API nd_usermsg_func nd_msgentry_get_def_func(nd_handle handle) ;
+ND_NET_API const char * nd_msgentry_get_name(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid) ;
 
-
-ND_NET_API nd_handle nd_get_msg_hadle(nd_netui_handle handle) ;
+ND_NET_API nd_handle nd_get_msg_hadle(nd_handle handle) ;
 
 /* 正常发送消息 */
 static __INLINE__ int nd_connectmsg_send(nd_handle  connector_handle, nd_usermsgbuf_t *msg ) 

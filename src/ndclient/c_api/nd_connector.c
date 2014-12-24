@@ -165,10 +165,10 @@ int ndUpdateConnect(netObject netObj, int timeOutMS)
 
     
 }
-int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID)
+int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID,const char *name)
 {
     if(netObj)
-        return nd_msgentry_install((nd_handle)netObj, (nd_usermsg_func)func,  maxID,  minID,EPL_CONNECT,NULL) ;
+        return nd_msgentry_install((nd_handle)netObj, (nd_usermsg_func)func,  maxID,  minID,EPL_CONNECT,name) ;
     return -1;
     
 }
