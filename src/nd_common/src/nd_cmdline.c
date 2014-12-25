@@ -77,7 +77,7 @@ int nd_run_cmdline(struct nd_cmdline_root *root, int argc, const char *argv[] )
 		if (root->update_func) {
 			ret = root->update_func(root, 0, NULL) ;
 			if (ret > 0) {				
-				fprintf(stdout, "\n%s>", root->tips ) ;
+				//fprintf(stdout, "update ret =%d\n%s>",ret, root->tips ) ;
 				fflush(stdout) ;	
 			}
 			
@@ -95,11 +95,12 @@ int nd_run_cmdline(struct nd_cmdline_root *root, int argc, const char *argv[] )
 			}
 			if (root->exit_stat) {
 				break ;
-			}			
+			}
+			
+			fprintf(stdout, ">%s>", root->tips ) ;
+			fflush(stdout) ;	
 		}
 		
-		fprintf(stdout, "%s>", root->tips ) ;
-		fflush(stdout) ;	
 			
 	}
 	return 0;
