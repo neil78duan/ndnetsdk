@@ -169,10 +169,13 @@ CPPAPI void nd_sourcelog_dump() ;
 #ifdef ND_DEBUG
 #define ND_RUN_HERE()	printf("[%s : %d] run here...\n" AND __FILE__, __LINE__)
 #define printf_dbg		printf
+#define ND_PRINT_STACK() nd_show_cur_stack(fprintf, stderr) 
+
 #else 
 #define printf_dbg //
 #define ND_RUN_HERE()	//
 
+#define ND_PRINT_STACK() nd_show_cur_stack(fprintf, stderr) 
 //#define nd_
 #endif	//ND_DEBUG
 
@@ -185,8 +188,12 @@ ND_COMMON_API int push_func(const char *funcname);
 ND_COMMON_API void pop_func();
 ND_COMMON_API char *nd_get_callstack_desc(char *buf, size_t size) ;
 
+
 typedef int (*nd_out_func)(FILE *outfile,const char *stm,...) ;
 ND_COMMON_API int nd_callstack_monitor_dump(nd_out_func func,FILE *outfile);
+
+ND_COMMON_API int nd_show_cur_stack(nd_out_func func,FILE *outfile) ;
+
 
 #ifdef ND_CALLSTACK_TRACE
 

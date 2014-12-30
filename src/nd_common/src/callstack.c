@@ -160,10 +160,47 @@ char *nd_get_callstack_desc(char *buf, size_t size)
 				
 			}
 			p= buf ;
+			break ;
 		}
 	}
 	return p;
 }
+
+int nd_show_cur_stack(nd_out_func func,FILE *outfile) 
+{
+	ndatomic_t self_id ;
+	int i ,n;
+	int len = 0;
+	struct callstack_info *pcs =(struct callstack_info *) g_callstack_map.paddr ;
+	
+	if (!g_callstack_map.paddr){
+		
+		func(outfile, " none stack\n" ) ;
+		return 0;
+	}	
+	
+	func(outfile, " call stack : " ) ;
+	self_id =(ndatomic_t) nd_thread_self() ;
+	
+	for(i=0; i<MAX_THREAD_NUM; i++, pcs++) {
+		if (nd_atomic_read(&pcs->th_id) == self_id) {
+			
+			for(n=pcs->stack_point-1;n>=0 ; --n){				
+				if (0==pcs->names[n][0]){
+					break ;
+				}
+				else {
+					len += func(outfile, "%s();", pcs->names[n] ) ;
+				}
+			}
+			break ;
+		}
+	}
+	
+	func(outfile, "\n" ) ;
+	return len;
+}
+
 int nd_callstack_monitor_dump(nd_out_func func,FILE *outfile)
 {
 	if (g_monitor.paddr) {
