@@ -96,6 +96,17 @@ void _set_ndtcp_session_dft_option(ndsocket_t sock_fd);
 #define TCPNODE_CHECK_OK(conn_node) (((struct nd_tcp_node*)(conn_node))->status == ETS_CONNECTED)
 #define TCPNODE_CHECK_CLOSED(conn_node) (((struct nd_tcp_node*)(conn_node))->status == ETS_TRYTO_CLOSE)
 #define TCPNODE_SET_CLOSED(conn_node) (((struct nd_tcp_node*)(conn_node))->status = ETS_TRYTO_CLOSE)
+
+#define TCPNODE_TRY_CALLBACK_WRITE(conn_node) do { \
+	net_writable_callback w_callback = ((struct nd_tcp_node*)(conn_node))->writable_callback ; \
+	if(w_callback) {		\
+		if(nd_socket_wait_writablity(TCPNODE_FD(conn_node),0) > 0) {\
+			w_callback((nd_handle)conn_node) ;	\
+		}\
+	}\
+}while(0)
+
+
 #if 0
 #define CONNECT_CLOSED 0
 #define TCPNODE_SET_RESET(conn_node) \

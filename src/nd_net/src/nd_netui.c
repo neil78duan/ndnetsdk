@@ -37,11 +37,15 @@ int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout)
 	if(net_handle->type==NDHANDLE_TCPNODE){
 		//把tcp的流式协议变成消息模式
 		struct nd_tcp_node *socket_node = (struct nd_tcp_node *) net_handle ;
+		
+		
 		read_len = nd_tcpnode_read(socket_node) ;
 		if (timeout ){
 			if (read_len == 0)	{
 				int waitret =nd_socket_wait_read(socket_node->fd,timeout) ;
 				if(waitret<=0) {
+					
+					TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;	//check writable
 					if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 						waitret = -1;
 					}
@@ -63,7 +67,9 @@ RE_READ:
 			}
 			if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 				ret = -1;
-			}
+			}			
+			TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;	//check writable
+			
 			LEAVE_FUNC();
 			return ret;
 		}
@@ -81,7 +87,8 @@ RE_READ:
 			nd_tcpnode_flush_sendbuf((nd_netui_handle)socket_node) ;
 			if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 				ret = -1;
-			}
+			}			
+			TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;	//check writable
 		}
 	}
 	else if(net_handle->type==NDHANDLE_UDPNODE) {
@@ -743,7 +750,6 @@ int nd_connector_waitmsg(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf, ndt
 	}
 
 	if(net_handle->type==NDHANDLE_TCPNODE){
-		ndtime_t start_wait = 0;
 		ndtime_t waittime = 0;
 		struct nd_tcp_node *socket_node = (struct nd_tcp_node*)net_handle ;
 
@@ -757,6 +763,7 @@ TCP_REWAIT:
 		
 		ret = tcpnode_wait_msg(socket_node, waittime) ;
 		if(ret <= 0) {
+			TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;
 			if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 				LEAVE_FUNC();
 				return -1;
@@ -771,6 +778,7 @@ TCP_REWAIT:
 		}
 		ret =nd_net_fetch_msg(net_handle, (nd_packhdr_t *)msgbuf) ; 
 
+		TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;
 		if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 			ret = -1;
 		}

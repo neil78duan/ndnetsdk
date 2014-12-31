@@ -540,6 +540,9 @@ int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node,int force)
 	
 	nd_netbuf_t *pbuf = &(conn_node->send_buffer) ;
 	size_t data_len = ndlbuf_datalen(pbuf) ;
+	
+	TCPNODE_TRY_CALLBACK_WRITE(conn_node) ;
+	
 	if(data_len==0 || !check_connect_valid(conn_node)){
 		LEAVE_FUNC();
 		return 0;

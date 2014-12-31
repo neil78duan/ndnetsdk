@@ -214,29 +214,29 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
 	epoll_ctl(thip->iopc_handle, EPOLL_CTL_DEL, client_map->connect_node.fd, &ev_listen);
 	return 0 ;
 }
-
-int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thpi)
-{
-	int i ,sleep=0;
-	struct nd_client_map  *client;
-
-	//flush send buffer
-	for (i=thpi->session_num-1; i>=0;i-- ) {
-		NDUINT16 session_id = thpi->sid_buf[i];
-		client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
-		if (!client)
-			continue ;
-		if (0==tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout )){
-			++sleep ;
-		}
-		else if (TCPNODE_IS_OK(client)){
-			if(_tcpnode_push_sendbuf(&client->connect_node,0) > 0)
-				++sleep ;
-		}
-		pmanger->unlock(pmanger,session_id) ;
-	}
-	return sleep;
-}
+//
+//int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thpi)
+//{
+//	int i ,sleep=0;
+//	struct nd_client_map  *client;
+//
+//	//flush send buffer
+//	for (i=thpi->session_num-1; i>=0;i-- ) {
+//		NDUINT16 session_id = thpi->sid_buf[i];
+//		client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
+//		if (!client)
+//			continue ;
+//		if (0==tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout )){
+//			++sleep ;
+//		}
+//		else if (TCPNODE_IS_OK(client)){
+//			if(_tcpnode_push_sendbuf(&client->connect_node,0) > 0)
+//				++sleep ;
+//		}
+//		pmanger->unlock(pmanger,session_id) ;
+//	}
+//	return sleep;
+//}
 
 #elif defined(__MAC_OS__)
 
@@ -299,28 +299,6 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
 
 }
 
-int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thpi)
-{
-    int i ,sleep=0;
-    struct nd_client_map  *client;
-
-    //flush send buffer
-    for (i=thpi->session_num-1; i>=0;i-- ) {
-        NDUINT16 session_id = thpi->sid_buf[i];
-        client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
-        if (!client)
-            continue ;
-        if (0==tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout )){
-            ++sleep ;
-        }
-        else if (TCPNODE_IS_OK(client)){
-            if(_tcpnode_push_sendbuf(&client->connect_node,0) > 0)
-                ++sleep ;
-        }
-        pmanger->unlock(pmanger,session_id) ;
-    }
-    return sleep;
-}
 
 int kqueue_main(struct thread_pool_info *thip)
 {
@@ -519,6 +497,31 @@ int listen_thread_createex(struct thread_pool_info *ic)
     nd_threadsrv_entry th_func = (nd_threadsrv_entry)(ic->lh->listen_id ?epoll_sub:epoll_main);
     return listen_thread_create(ic,th_func);
 }
+
+int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thpi)
+{
+	int i ,sleep=0;
+	struct nd_client_map  *client;
+	
+	//flush send buffer
+	for (i=thpi->session_num-1; i>=0;i-- ) {
+		NDUINT16 session_id = thpi->sid_buf[i];
+		client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
+		if (!client)
+			continue ;
+		if (0==tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout )){
+			++sleep ;
+		}
+		else if (TCPNODE_IS_OK(client)){
+			if(_tcpnode_push_sendbuf(&client->connect_node,0) > 0)
+				++sleep ;			
+			client->connect_node.update_entry((nd_handle)client) ;
+		}
+		pmanger->unlock(pmanger,session_id) ;
+	}
+	return sleep;
+}
+
 
 #endif
 

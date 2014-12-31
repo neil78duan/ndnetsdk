@@ -53,6 +53,8 @@ typedef int (*net_msg_entry)(nd_handle  handle, nd_packhdr_t *msg , nd_handle li
 
 typedef int (*net_update_entry)(nd_handle h) ;
 
+typedef int (*net_writable_callback) (nd_handle h) ; //when socket can be writable call 
+
 typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 
 typedef void *nd_userdata_t ;
@@ -78,6 +80,7 @@ typedef void *nd_userdata_t ;
 	net_msg_entry		msg_entry ;		\
 	net_update_entry	update_entry ;	\
 	net_get_packet_size get_pack_size;	\
+	net_writable_callback writable_callback; \
 	nd_cryptkey			crypt_key ;		\
 	struct sockaddr_in 	remote_addr ;	\
 	ndtime_t			last_push ;		\

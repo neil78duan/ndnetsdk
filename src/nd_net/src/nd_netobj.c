@@ -182,15 +182,18 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		break;
 	case NDIOCTL_GET_TIMEOUT:
 		*(ndtime_t*)val  = socket_node->disconn_timeout /1000 ;
+		*size = sizeof(ndtime_t) ;
 		ret = 0;
 		break ;
     case NDIOCTL_GET_LAST_RECV_TIME:
 		*(ndtime_t*)val  = socket_node->last_recv ;
+		*size = sizeof(ndtime_t) ;
 		ret = 0;
         break ;
         
     case NDIOCTL_GET_LAST_SEND_TIME:
 		*(ndtime_t*)val  = socket_node->last_push ;
+		*size = sizeof(ndtime_t) ;
 		ret = 0;
         break ;
         
@@ -272,7 +275,16 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		socket_node->session_id = (NDUINT16) (*(int*)val);
 		ret = 0;
 		break;
-
+		
+	case NDIOCTL_GET_WRITABLE_CALLBACK:
+		*(net_writable_callback*)val = socket_node->writable_callback ;
+		ret = 0 ;
+		break ;
+	case NDIOCTL_SET_WRITABLE_CALLBACK:
+		socket_node->writable_callback = val ;
+		ret = 0 ;
+		break ;
+		
 
 	case NDIOCTL_SET_BLOCK:
 		ret = nd_socket_nonblock(socket_node->fd, 0) ;
