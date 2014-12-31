@@ -21,6 +21,7 @@ int BigDataAsyncSend(nd_handle connector,  void *data, size_t datalen, NDUINT64 
 		return nd_connector_send(connector, (nd_packhdr_t*)omsg.GetMsgAddr(), 0) ;
 	}
 	else {
+		//这里可能会导致内存泄漏需要即使释放
 		NDBigDataTransfer *pTransferHelper = new NDBigDataTransfer(connector, callback) ;
 		return  pTransferHelper->asyncSend(ND_MAIN_ID_SYS, ND_MSG_BIG_DATA_TRANSFER, data, datalen, param) ;		
 	}
