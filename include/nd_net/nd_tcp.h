@@ -100,8 +100,9 @@ void _set_ndtcp_session_dft_option(ndsocket_t sock_fd);
 #define TCPNODE_TRY_CALLBACK_WRITE(conn_node) do { \
 	net_writable_callback w_callback = ((struct nd_tcp_node*)(conn_node))->writable_callback ; \
 	if(w_callback) {		\
+		nd_userdata_t _param = ((struct nd_tcp_node*)(conn_node))->writable_param ; \
 		if(nd_socket_wait_writablity(TCPNODE_FD(conn_node),0) > 0) {\
-			w_callback((nd_handle)conn_node) ;	\
+			w_callback((nd_handle)conn_node,_param) ;	\
 		}\
 	}\
 }while(0)

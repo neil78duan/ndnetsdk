@@ -30,6 +30,9 @@ struct nd_netsocket
 	ND_OBJ_BASE ;
 	ND_SOCKET_OBJ_BASE ;
 };
+
+typedef void *nd_userdata_t ;
+
 //发送数据函数
 typedef int (*socket_write_entry)(nd_handle node,void *data , size_t len) ; 
 
@@ -53,11 +56,10 @@ typedef int (*net_msg_entry)(nd_handle  handle, nd_packhdr_t *msg , nd_handle li
 
 typedef int (*net_update_entry)(nd_handle h) ;
 
-typedef int (*net_writable_callback) (nd_handle h) ; //when socket can be writable call 
+typedef int (*net_writable_callback) (nd_handle h,nd_userdata_t param) ; //when socket can be writable call 
 
 typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 
-typedef void *nd_userdata_t ;
 
 #define  ND_CONNECTOR_BASE \
 	NDUINT8		level ;			\
@@ -80,6 +82,7 @@ typedef void *nd_userdata_t ;
 	net_msg_entry		msg_entry ;		\
 	net_update_entry	update_entry ;	\
 	net_get_packet_size get_pack_size;	\
+	nd_userdata_t		writable_param ;	\
 	net_writable_callback writable_callback; \
 	nd_cryptkey			crypt_key ;		\
 	struct sockaddr_in 	remote_addr ;	\

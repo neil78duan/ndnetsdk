@@ -39,6 +39,8 @@ enum eNDMsgSys{
 	
 	ND_MSG_SYS_GET_MESSAGE_NAME ,// GET message name 
 	
+	ND_MSG_BIG_DATA_TRANSFER ,
+	
     ND_MSG_SYS_NUMBER
 };
 
