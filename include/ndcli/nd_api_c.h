@@ -112,6 +112,9 @@ CPPAPI double ndMsgWrapperReadDouble(netObject msgWrapper) ;
 CPPAPI unsigned int ndMsgWrapperReadText(netObject msgWrapper, unsigned char *buf, int size) ;
 CPPAPI unsigned int ndMsgWrapperReadBin (netObject msgWrapper, unsigned char *buf, int size_buf) ;
 
+CPPAPI int ndMsgWrapperReadMaxID (netObject msgWrapper) ;
+CPPAPI int ndMsgWrapperReadMinID (netObject msgWrapper) ;
+
 //output Message wrapper
 
 CPPAPI netObject ndMsgOutputWrapperCreate(int maxID, int minID);

@@ -153,6 +153,7 @@
 		07CBF85119C974A7002EE541 /* nd_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84D19C974A7002EE541 /* nd_client.cpp */; };
 		07CBF85219C974A7002EE541 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84E19C974A7002EE541 /* Makefile */; };
 		07DF1C031A14519F00251E83 /* nd_exch_key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07DF1C021A14519F00251E83 /* nd_exch_key.cpp */; };
+		07EA8FD01A5E5DD300EC0D2B /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EA8FCF1A5E5DD300EC0D2B /* nd_datatransfer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -304,6 +305,7 @@
 		07CBF84D19C974A7002EE541 /* nd_client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_client.cpp; sourceTree = "<group>"; };
 		07CBF84E19C974A7002EE541 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		07DF1C021A14519F00251E83 /* nd_exch_key.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_exch_key.cpp; sourceTree = "<group>"; };
+		07EA8FCF1A5E5DD300EC0D2B /* nd_datatransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nd_datatransfer.cpp; path = ../../src/ndapplib/nd_datatransfer.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -346,6 +348,7 @@
 		07A2663919C7F48800F51698 /* netapi */ = {
 			isa = PBXGroup;
 			children = (
+				07EA8FCF1A5E5DD300EC0D2B /* nd_datatransfer.cpp */,
 				07A2695119C7F54F00F51698 /* nd_msgpack.cpp */,
 			);
 			name = netapi;
@@ -846,6 +849,7 @@
 				07A268C019C7F4F000F51698 /* r_random.c in Sources */,
 				07A268BD19C7F4F000F51698 /* r_encode.c in Sources */,
 				07A268ED19C7F4F000F51698 /* net_srv.c in Sources */,
+				07EA8FD01A5E5DD300EC0D2B /* nd_datatransfer.cpp in Sources */,
 				07A268E919C7F4F000F51698 /* nd_netui.c in Sources */,
 				07A268EF19C7F4F000F51698 /* udt_icmp.c in Sources */,
 				07A268EE19C7F4F000F51698 /* proxy_cli.c in Sources */,

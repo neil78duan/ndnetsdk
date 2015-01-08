@@ -14,14 +14,14 @@ int BigDataAsyncSend(nd_handle connector,  void *data, size_t datalen, NDUINT64 
 {
 	if (datalen <= NDBigDataTransfer::TRANSFER_UNIT_SIZE ) {
 		NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_BIG_DATA_TRANSFER) ;
-		omsg.Write(param);
 		omsg.Write((NDUINT8)EBIG_DATA_START) ;
+		omsg.Write(param);
 		omsg.Write((NDUINT32)datalen) ;
 		omsg.WriteBin((NDUINT8*)data, datalen) ;
 		return nd_connector_send(connector, (nd_packhdr_t*)omsg.GetMsgAddr(), 0) ;
 	}
 	else {
-		//这里可能会导致内存泄漏需要即使释放
+		//这里可能会导致内存泄漏需要及时释放
 		NDBigDataTransfer *pTransferHelper = new NDBigDataTransfer(connector, callback) ;
 		return  pTransferHelper->asyncSend(ND_MAIN_ID_SYS, ND_MSG_BIG_DATA_TRANSFER, data, datalen, param) ;		
 	}
@@ -90,10 +90,10 @@ int NDBigDataTransfer::asyncSend(int maxID, int minID, void*data, size_t datalen
 		pWritableParam = list_hdr ;
 		
 		param_size = sizeof(pWritableParam) ;
-		nd_net_ioctl((nd_netui_handle)m_objhandle,NDIOCTL_SET_WRITABLE_CALLBACK_PARAM, pWritableParam, &param_size);
+		nd_net_ioctl((nd_netui_handle)m_objhandle,NDIOCTL_SET_WRITABLE_CALLBACK_PARAM, &pWritableParam, &param_size);
 		
 		pWritableParam = (nd_userdata_t) _writable_entry;
-		nd_net_ioctl((nd_netui_handle)m_objhandle,NDIOCTL_SET_WRITABLE_CALLBACK, pWritableParam, &param_size);
+		nd_net_ioctl((nd_netui_handle)m_objhandle,NDIOCTL_SET_WRITABLE_CALLBACK, &pWritableParam, &param_size);
 		
 		isEmpty =true ;
 	}
@@ -119,7 +119,6 @@ int NDBigDataTransfer::sendUnit()
 	NDUINT8 *pData = (NDUINT8*) ndlbuf_data(&m_buf) ;
 	
 	NDOStreamMsg omsg(m_maxid, m_minid) ;
-	omsg.Write(m_param);
 	
 	//size = min(size, (size_t)ndlbuf_datalen(&m_buf)) ;
 	if (size > datalen) {
@@ -127,10 +126,11 @@ int NDBigDataTransfer::sendUnit()
 	}
 	
 	if (pData == ndlbuf_raw_addr(&m_buf) ) {		
-		omsg.Write((NDUINT8)EBIG_DATA_START) ;
+		omsg.Write((NDUINT8)EBIG_DATA_START) ;		
+		omsg.Write(m_param);
 		omsg.Write((NDUINT32)datalen) ;
 	}
-	else {		
+	else {				
 		omsg.Write((NDUINT8)EBIG_DATA_CONTINUE) ;
 	}
 	nd_assert(size > 0) ;
@@ -167,4 +167,73 @@ void NDBigDataTransfer::Destroy()
 	ndlbuf_destroy(&m_buf) ;
 	list_del_init(&m_node.list) ;
 }
+////////////////////////////////////////////
+NDBigDataReceiver::NDBigDataReceiver(data_recv_callback cb, void *receiver) : m_recv_ok_callback(cb), m_receiver(receiver)
+{
+	
+	memset(&m_buf, 0 ,sizeof(m_buf)) ;
+	m_param = 0;
+	
+}
+
+NDBigDataReceiver::~NDBigDataReceiver() 
+{
+	Reset() ;
+}
+
+int NDBigDataReceiver::OnRecv(NDIStreamMsg &inmsg) 
+{
+	NDUINT8 type ;
+	size_t read_len =0;
+	NDUINT8 data[ND_PACKET_SIZE];
+	if (-1== inmsg.Read(type)) {
+		return NDERR_BADPACKET ;
+	}
+	if (type == EBIG_DATA_START) {
+		if (CheckInit()) {
+			return NDERR_INVALID_INPUT ;
+		}
+		if (-1==inmsg.Read(m_param)) {
+			return NDERR_BADPACKET ;
+		}
+		
+		NDUINT32 datalen =0;
+		if (-1==inmsg.Read(datalen)) {
+			return NDERR_BADPACKET;
+		}
+		ndlbuf_init(&m_buf, datalen) ;		
+	}
+	else {
+		if (!CheckInit()) {
+			return NDERR_INVALID_INPUT ;
+		}
+	}
+	read_len = inmsg.ReadBin(data, sizeof(data)) ;
+	if (read_len > ndlbuf_capacity(&m_buf)) {
+		return NDERR_INVALID_INPUT ;
+	}
+	ndlbuf_write(&m_buf, data, read_len, 0) ;
+	if (ndlbuf_capacity(&m_buf) == ndlbuf_datalen(&m_buf)) {
+		m_recv_ok_callback(NDERR_SUCCESS, m_receiver, m_param, ndlbuf_data(&m_buf), ndlbuf_datalen(&m_buf)) ;
+		return NDERR_SUCCESS ;
+	}
+	
+	return NDERR_WUOLD_BLOCK;
+}
+
+bool NDBigDataReceiver::CheckInit() 
+{
+	if(ndlbuf_capacity(&m_buf) > 0) {
+		return true ;
+	}
+	return false;
+}
+
+void NDBigDataReceiver::Reset() 
+{
+	m_param =0 ;
+	ndlbuf_destroy(&m_buf) ;
+	
+}
+
 

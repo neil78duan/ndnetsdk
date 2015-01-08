@@ -206,6 +206,7 @@ void nd_init_daemon(void)
 		exit(1);
 	}
 	else if(pid == 0){
+		int fd ,fdtablesize;
 		setsid();
 		chdir("/tmp");
 		umask(0);

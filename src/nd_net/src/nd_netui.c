@@ -45,7 +45,6 @@ int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout)
 				int waitret =nd_socket_wait_read(socket_node->fd,timeout) ;
 				if(waitret<=0) {
 					
-					TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;	//check writable
 					if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 						waitret = -1;
 					}
@@ -68,7 +67,6 @@ RE_READ:
 			if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 				ret = -1;
 			}			
-			TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;	//check writable
 			
 			LEAVE_FUNC();
 			return ret;
@@ -88,7 +86,6 @@ RE_READ:
 			if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 				ret = -1;
 			}			
-			TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;	//check writable
 		}
 	}
 	else if(net_handle->type==NDHANDLE_UDPNODE) {
@@ -763,7 +760,6 @@ TCP_REWAIT:
 		
 		ret = tcpnode_wait_msg(socket_node, waittime) ;
 		if(ret <= 0) {
-			TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;
 			if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 				LEAVE_FUNC();
 				return -1;
@@ -778,7 +774,6 @@ TCP_REWAIT:
 		}
 		ret =nd_net_fetch_msg(net_handle, (nd_packhdr_t *)msgbuf) ; 
 
-		TCPNODE_TRY_CALLBACK_WRITE(socket_node) ;
 		if(socket_node->update_entry((nd_handle)socket_node)==-1) {
 			ret = -1;
 		}

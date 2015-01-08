@@ -11,6 +11,7 @@
 		0793190219931665009C8BC5 /* libndclient_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 079318F619931665009C8BC5 /* libndclient_ios.a */; };
 		07CBF84519C9744E002EE541 /* nd_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84419C9744E002EE541 /* nd_client.cpp */; };
 		07CBF84719C9746B002EE541 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84619C9746B002EE541 /* Makefile */; };
+		07EA8FD21A5E5E1100EC0D2B /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EA8FD11A5E5E1100EC0D2B /* nd_datatransfer.cpp */; };
 		07EBCDDF19A8CD1900802576 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCD8119A8CD1900802576 /* Makefile */; };
 		07EBCE0219A8CD1900802576 /* bintree.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCDA619A8CD1900802576 /* bintree.c */; };
 		07EBCE0319A8CD1900802576 /* callstack.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCDA719A8CD1900802576 /* callstack.c */; };
@@ -100,6 +101,7 @@
 		0793190719931665009C8BC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		07CBF84419C9744E002EE541 /* nd_client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_client.cpp; sourceTree = "<group>"; };
 		07CBF84619C9746B002EE541 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../src/ndclient/Makefile; sourceTree = "<group>"; };
+		07EA8FD11A5E5E1100EC0D2B /* nd_datatransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nd_datatransfer.cpp; path = ../../src/ndapplib/nd_datatransfer.cpp; sourceTree = "<group>"; };
 		07EBCD8119A8CD1900802576 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		07EBCDA619A8CD1900802576 /* bintree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bintree.c; sourceTree = "<group>"; };
 		07EBCDA719A8CD1900802576 /* callstack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = callstack.c; sourceTree = "<group>"; };
@@ -506,6 +508,7 @@
 		07EBCE6C19A8CF4100802576 /* netapi */ = {
 			isa = PBXGroup;
 			children = (
+				07EA8FD11A5E5E1100EC0D2B /* nd_datatransfer.cpp */,
 				07CBF84619C9746B002EE541 /* Makefile */,
 				07EBCE7D19A8D19500802576 /* nd_msgpacket.h */,
 				07EBCE7B19A8D17E00802576 /* nd_msgpack.cpp */,
@@ -680,6 +683,7 @@
 				07EBCE0319A8CD1900802576 /* callstack.c in Sources */,
 				07EBCE0419A8CD1900802576 /* common.c in Sources */,
 				07EBCE0B19A8CD1900802576 /* nd_trace.c in Sources */,
+				07EA8FD21A5E5E1100EC0D2B /* nd_datatransfer.cpp in Sources */,
 				07EBCE2A19A8CD1900802576 /* nd_netobj.c in Sources */,
 				07EBCE3019A8CD1900802576 /* proxy_cli.c in Sources */,
 			);

@@ -98,6 +98,7 @@
 		07931AA619931C5A009C8BC5 /* unix_sig.c in Sources */ = {isa = PBXBuildFile; fileRef = 07931A4819931C5A009C8BC5 /* unix_sig.c */; };
 		07D47C5519DA455200D08BB6 /* nd_alarms.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D47C5419DA455200D08BB6 /* nd_alarms.h */; };
 		07D47C5719DA458400D08BB6 /* nd_alarms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07D47C5619DA458400D08BB6 /* nd_alarms.cpp */; };
+		07EA8FD41A5E5FB000EC0D2B /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EA8FD31A5E5FB000EC0D2B /* nd_datatransfer.cpp */; };
 		07EBCD2719A8B6AE00802576 /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EBCCCB19A8B6AD00802576 /* list.h */; };
 		07EBCD2819A8B6AE00802576 /* nd_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EBCCCC19A8B6AD00802576 /* nd_alloc.h */; };
 		07EBCD2919A8B6AE00802576 /* nd_atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EBCCCD19A8B6AD00802576 /* nd_atomic.h */; };
@@ -281,6 +282,7 @@
 		07CBF85E19C995C7002EE541 /* build-lib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "build-lib"; path = "../../src/build-lib"; sourceTree = "<group>"; };
 		07D47C5419DA455200D08BB6 /* nd_alarms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_alarms.h; sourceTree = "<group>"; };
 		07D47C5619DA458400D08BB6 /* nd_alarms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_alarms.cpp; sourceTree = "<group>"; };
+		07EA8FD31A5E5FB000EC0D2B /* nd_datatransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_datatransfer.cpp; sourceTree = "<group>"; };
 		07EBCCCB19A8B6AD00802576 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
 		07EBCCCC19A8B6AD00802576 /* nd_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_alloc.h; sourceTree = "<group>"; };
 		07EBCCCD19A8B6AD00802576 /* nd_atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_atomic.h; sourceTree = "<group>"; };
@@ -583,6 +585,7 @@
 		07931A3819931C5A009C8BC5 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				07EA8FD31A5E5FB000EC0D2B /* nd_datatransfer.cpp */,
 				07D47C5619DA458400D08BB6 /* nd_alarms.cpp */,
 				07931A3919931C5A009C8BC5 /* Makefile */,
 				07931A3A19931C5A009C8BC5 /* misc.cpp */,
@@ -975,6 +978,7 @@
 				07931A9719931C5A009C8BC5 /* Makefile in Sources */,
 				07931A7819931C5A009C8BC5 /* net_srv.c in Sources */,
 				07931A5319931C5A009C8BC5 /* nd_timer.c in Sources */,
+				07EA8FD41A5E5FB000EC0D2B /* nd_datatransfer.cpp in Sources */,
 				07931A9A19931C5A009C8BC5 /* nd_cmmgr.cpp in Sources */,
 				07931A6E19931C5A009C8BC5 /* tea.c in Sources */,
 				07931A5C19931C5A009C8BC5 /* Makefile in Sources */,

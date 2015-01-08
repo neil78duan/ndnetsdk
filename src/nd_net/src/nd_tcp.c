@@ -541,8 +541,6 @@ int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node,int force)
 	nd_netbuf_t *pbuf = &(conn_node->send_buffer) ;
 	size_t data_len = ndlbuf_datalen(pbuf) ;
 	
-	TCPNODE_TRY_CALLBACK_WRITE(conn_node) ;
-	
 	if(data_len==0 || !check_connect_valid(conn_node)){
 		LEAVE_FUNC();
 		return 0;
@@ -593,6 +591,8 @@ int _tcp_node_update(struct nd_tcp_node *node)
 			//pack_hdr.ndsys_msg = 1 ;
 			ret =nd_tcpnode_send(node, &alive.hdr,ESF_URGENCY) ;
 		}
+		
+		TCPNODE_TRY_CALLBACK_WRITE(node) ;
 		nd_send_unlock((nd_netui_handle)node) ;
 	}
 	

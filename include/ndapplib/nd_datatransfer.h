@@ -14,6 +14,9 @@
 
 typedef void (*data_transfer_callback) (nd_handle nethandle, NDUINT64 param , int error_code);
 
+typedef void (*data_recv_callback) (int error_code,void *receiver, NDUINT64 param , void *data, size_t size);
+
+class NDIStreamMsg;
 class NDBigDataTransfer ;
 struct data_transfer_node
 {
@@ -51,10 +54,27 @@ private:
 	NDUINT64 m_param ;
 	data_transfer_callback m_completed_callback;
 	
-	line_buf_hdr m_buf ;
+	nd_linebuf m_buf ;
 	data_transfer_node m_node ;
 };
 
-int BigDataAsyncSend(nd_handle connector, void *data, size_t datalen, NDUINT64 param,data_transfer_callback callback) ;
+
+class NDBigDataReceiver
+{
+public:
+	NDBigDataReceiver(data_recv_callback cb, void *receiver=NULL) ;
+	virtual ~NDBigDataReceiver() ;
+	int OnRecv(NDIStreamMsg &inmsg) ;
+	void Reset() ;
+	
+private:
+	bool CheckInit() ;
+	void *m_receiver ;	
+	NDUINT64 m_param ;
+	data_recv_callback m_recv_ok_callback ;
+	nd_linebuf m_buf ;
+};
+
+ND_COMMON_API int BigDataAsyncSend(nd_handle connector, void *data, size_t datalen, NDUINT64 param,data_transfer_callback callback) ;
 
 #endif /* defined(__ndMacStatic__nd_datatransfer__) */

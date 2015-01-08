@@ -30,7 +30,7 @@ int _command_line(struct nd_cmdline_root *root, int argc,  const char *argv[])
 
 int _parse_input_and_run(struct nd_cmdline_root *root,char *input_text) 
 {
-	//int i ;
+	int i ;
 	int argc = 0 ;
 	char *p = ndstr_first_valid(input_text) ;
 	char commands_buf[ND_COMMAND_LINE_NUMBER][ND_COMMAND_LINE_SIZE] ; 
@@ -40,7 +40,7 @@ int _parse_input_and_run(struct nd_cmdline_root *root,char *input_text)
 		//fprintf(stderr, "bad command: %s\n", input_text ) ;
 		return -1;
 	}
-	for (int i=0; i<ND_COMMAND_LINE_NUMBER; i++) {
+	for (i=0; i<ND_COMMAND_LINE_NUMBER; i++) {
 		argv[i] = commands_buf[i] ;
 		commands_buf[i][0] = 0 ;
 	}
@@ -109,7 +109,8 @@ int nd_run_cmdline(struct nd_cmdline_root *root, int argc, const char *argv[] )
 
 int _check_is_run_helper(int argc, const char *argv[], const char *help_tips)
 {
-	for (int i=1; i<argc; i++) {
+	int i ;
+	for (i=1; i<argc; i++) {
 		if ( ndstricmp((char*)argv[i], (char*)"-h")==0 || ndstricmp((char*)argv[i], (char*) "--help")==0) {
 			fprintf(stdout, "\t%s\n", help_tips) ;
 			return 0;

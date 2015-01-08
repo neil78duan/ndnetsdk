@@ -281,17 +281,16 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		ret = 0 ;
 		break ;
 	case NDIOCTL_SET_WRITABLE_CALLBACK:
-		socket_node->writable_callback = val ;
+		socket_node->writable_callback =(net_writable_callback) *(nd_userdata_t*)val ;
 		ret = 0 ;
 		break ;
-		
 		
 	case NDIOCTL_GET_WRITABLE_CALLBACK_PARAM:
 		*(nd_userdata_t*)val = socket_node->writable_param ;
 		ret = 0 ;
 		break ;
 	case NDIOCTL_SET_WRITABLE_CALLBACK_PARAM:
-		socket_node->writable_param = val ;
+		socket_node->writable_param = *(nd_userdata_t*)val ;
 		ret = 0 ;
 		break ;
 		

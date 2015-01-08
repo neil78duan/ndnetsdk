@@ -217,6 +217,23 @@ unsigned int ndMsgWrapperReadBin (netObject msgWrapper, unsigned char *buf, int 
     return 0;
 }
 
+int ndMsgWrapperReadMaxID (netObject msgWrapper) 
+{
+	nd_message_wrapper *pwapper = (nd_message_wrapper*)msgWrapper ;	
+	nd_assert(pwapper->size == sizeof(nd_message_wrapper));
+	nd_assert(pwapper->type == NDHANDLE_USER1 + 1);
+	return (int) pwapper->inStream->MsgMaxid() ;	
+}
+
+int ndMsgWrapperReadMinID (netObject msgWrapper) 
+{
+	nd_message_wrapper *pwapper = (nd_message_wrapper*)msgWrapper ;	
+	nd_assert(pwapper->size == sizeof(nd_message_wrapper));
+	nd_assert(pwapper->type == NDHANDLE_USER1 + 1);
+	return (int) pwapper->inStream->MsgMinid() ;
+	
+}
+
 // output message wrapper
 
 struct nd_message_out_wrapper

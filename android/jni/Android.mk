@@ -11,6 +11,7 @@ LOCAL_SRC_FILES := test-libstl.cpp \
 ../../src/nd_common/src/bintree.c \
 ../../src/nd_common/src/callstack.c \
 ../../src/nd_common/src/common.c \
+../../src/nd_common/src/nd_cmdline.c \
 ../../src/nd_common/src/nd_handle.c \
 ../../src/nd_common/src/nd_mempool.c \
 ../../src/nd_common/src/nd_mutex.c \
@@ -39,11 +40,6 @@ LOCAL_SRC_FILES := test-libstl.cpp \
 ../../src/nd_net/src/udt_net.c \
 ../../src/nd_net/src/udt_socket.c \
 ../../src/nd_net/src/udt_srv.c \
-../../src/nd_crypt/src/nd_cryptfile.c \
-../../src/nd_crypt/src/nd_pubkey.c \
-../../src/nd_crypt/src/ndcrypt.c \
-../../src/nd_crypt/src/ndrsa.c \
-../../src/nd_crypt/src/tea.c \
 ../../src/nd_crypt/rsa/desc.c \
 ../../src/nd_crypt/rsa/digit.c \
 ../../src/nd_crypt/rsa/md2c.c \
@@ -57,9 +53,17 @@ LOCAL_SRC_FILES := test-libstl.cpp \
 ../../src/nd_crypt/rsa/r_random.c \
 ../../src/nd_crypt/rsa/r_stdlib.c \
 ../../src/nd_crypt/rsa/rsa.c \
+../../src/nd_crypt/src/nd_cryptfile.c \
+../../src/nd_crypt/src/nd_pubkey.c \
+../../src/nd_crypt/src/ndcrypt.c \
+../../src/nd_crypt/src/ndrsa.c \
+../../src/nd_crypt/src/tea.c \
 ../../src/ndclient/c_api/msg_format.cpp \
 ../../src/ndclient/c_api/nd_connector.c \
+../../src/ndclient/c_api/nd_exch_key.cpp \
+../../src/ndclient/cpp_api/nd_client.cpp \
 ../../src/ndapplib/nd_msgpack.cpp \
+../../src/ndapplib/nd_datatransfer.cpp
 
 
 LOCAL_CFLAGS := --debug -DDEBUG -DND_DEBUG -D__LINUX__ -DND_UNIX -DND_ANDROID
@@ -67,6 +71,5 @@ LOCAL_CPPFLAGS:= --debug -DDEBUG -DND_DEBUG -D__LINUX__ -DND_UNIX -DND_ANDROID -
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../include
 
-LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dx_static
 
 include $(BUILD_SHARED_LIBRARY)
