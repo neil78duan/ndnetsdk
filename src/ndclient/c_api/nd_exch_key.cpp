@@ -31,17 +31,21 @@
 #define SEND_AND_WAIT(_handle, _omsg, _rmsg_buf,_wait_min_id) \
 if(SEND_MSG(_handle, _omsg) <= 0) {	\
 	nd_object_seterror(_handle, NDERR_WRITE) ;	\
+	nd_logdebug("send data error \n") ;			\
 	return -1 ;									\
 }												\
 if(-1==ndWaitMsg(_handle, (char*)_rmsg_buf, WAITMSG_TIMEOUT)) {	\
 	nd_object_seterror(_handle, NDERR_TIMEOUT) ;	\
+	nd_logdebug("wait message error \n") ;			\
 	return -1 ;									\
 }												\
 else if(nd_checkErrorMsg((netObject)_handle ,(ndMsgData *)_rmsg_buf) )   {\
+	nd_logdebug("object connect error \n") ;			\
 	return -1 ;	\
 }\
 else if(ND_USERMSG_MAXID(_rmsg_buf)!=ND_MAIN_ID_SYS || ND_USERMSG_MINID(_rmsg_buf) != _wait_min_id) { \
 	nd_object_seterror(_handle, NDERR_BADPACKET) ;	\
+	nd_logdebug("received error-return message(%d,%d) \n" AND ND_USERMSG_MAXID(_rmsg_buf) AND ND_USERMSG_MINID(_rmsg_buf)) ;				\
 	return -1 ;										\
 }
 
@@ -149,6 +153,8 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 
 	if(0!=rsa_pub_encrypt((char*)key_crypt, &crypt_size, (char*)&mykey, (int)sizeof(mykey), &pub_key) ) {
 		nd_object_seterror(nethandle, NDERR_VERSION) ;
+		
+		nd_logdebug("rea encrypt symm-key error \n") ;
 		return -1;
 	}
 	omsg.WriteBin(key_crypt, crypt_size) ;
@@ -186,6 +192,7 @@ int nd_exchange_key(netObject netObject,void *out_public_key)
 {
 	nd_handle nethandle = (nd_handle) netObject ;
 	if (-1== _check_public_key( nethandle)) {
+		nd_logdebug("check public key md5 error\n") ;
 		return -1;
 	}
 
@@ -194,6 +201,7 @@ int nd_exchange_key(netObject netObject,void *out_public_key)
 		R_RSA_PUBLIC_KEY pub_key ;
 	} key = {0} ;
 	if (-1== _get_public_key( nethandle,key.pub_key, key.keymd5)) {
+		nd_logdebug("get public key md5 error\n") ;
 		return -1;
 	}
 
@@ -203,5 +211,7 @@ int nd_exchange_key(netObject netObject,void *out_public_key)
 		}
 		return 0;
 	}
+	
+	nd_logdebug("exchange symm-key error\n") ;
 	return -1;
 }

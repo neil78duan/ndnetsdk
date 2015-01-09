@@ -68,14 +68,13 @@ netObject ndOpenConnect(const char *host, int port)
         nd_object_destroy(handle, 0) ;
         return NULL ;
     }
-    
+	
     //open
     if(-1==nd_connector_open( handle, (char*)host,  port,NULL ) ){
         nd_logerror("connect error :%s!" AND nd_last_error()) ;
         nd_object_destroy(handle,1) ;
         return NULL;
     }
-
     
     nd_hook_packet((netObject) handle,(net_msg_entry )_translate_message);
     ndMsgfuncInit( (netObject) handle ) ;

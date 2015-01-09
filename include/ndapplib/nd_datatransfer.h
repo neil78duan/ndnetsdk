@@ -71,6 +71,7 @@ private:
 	bool CheckInit() ;
 	void *m_receiver ;	
 	NDUINT64 m_param ;
+	size_t m_dataSize ;
 	data_recv_callback m_recv_ok_callback ;
 	nd_linebuf m_buf ;
 };

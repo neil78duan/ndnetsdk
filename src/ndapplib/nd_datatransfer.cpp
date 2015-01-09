@@ -21,7 +21,7 @@ int BigDataAsyncSend(nd_handle connector,  void *data, size_t datalen, NDUINT64 
 		return nd_connector_send(connector, (nd_packhdr_t*)omsg.GetMsgAddr(), 0) ;
 	}
 	else {
-		//这里可能会导致内存泄漏需要及时释放
+		nd_logmsg("send big data len=%d\n", (int)datalen) ;
 		NDBigDataTransfer *pTransferHelper = new NDBigDataTransfer(connector, callback) ;
 		return  pTransferHelper->asyncSend(ND_MAIN_ID_SYS, ND_MSG_BIG_DATA_TRANSFER, data, datalen, param) ;		
 	}
@@ -140,14 +140,26 @@ int NDBigDataTransfer::sendUnit()
 	int len = nd_connector_send(m_objhandle, (nd_packhdr_t*)omsg.GetMsgAddr(), 0) ;
 	
 	if (len > 0) {
+		static int send_index = 0 ;
+		
+		nd_logmsg("%d send data %d success \n",send_index, len) ;
+		
+		++send_index ;
+		
 		ndlbuf_sub_data(&m_buf, size) ;
 		if (ndlbuf_datalen(&m_buf)==0 ) {
 			m_completed_callback(m_objhandle ,m_param, 0) ;
 			Destroy() ;
 			delete this ;
+			send_index = 0 ;
+			
+			nd_logmsg("send data COMPLETED \n") ;
 			return  0 ;
 		}
-	}	
+	}
+	else {
+		nd_logerror("send big data(%d) error send-len = %d\n", size, len);
+	}
 	return len;
 }
 
@@ -201,7 +213,8 @@ int NDBigDataReceiver::OnRecv(NDIStreamMsg &inmsg)
 		if (-1==inmsg.Read(datalen)) {
 			return NDERR_BADPACKET;
 		}
-		ndlbuf_init(&m_buf, datalen) ;		
+		ndlbuf_init(&m_buf, datalen + sizeof(size_t)) ;	
+		m_dataSize = datalen ;
 	}
 	else {
 		if (!CheckInit()) {
@@ -212,8 +225,12 @@ int NDBigDataReceiver::OnRecv(NDIStreamMsg &inmsg)
 	if (read_len > ndlbuf_capacity(&m_buf)) {
 		return NDERR_INVALID_INPUT ;
 	}
+	static int recv_index = 0 ;
+	nd_logmsg("%d recv data len =%d\n", recv_index,read_len) ;
+	++recv_index ;
+	
 	ndlbuf_write(&m_buf, data, read_len, 0) ;
-	if (ndlbuf_capacity(&m_buf) == ndlbuf_datalen(&m_buf)) {
+	if (m_dataSize== ndlbuf_datalen(&m_buf)) {
 		m_recv_ok_callback(NDERR_SUCCESS, m_receiver, m_param, ndlbuf_data(&m_buf), ndlbuf_datalen(&m_buf)) ;
 		return NDERR_SUCCESS ;
 	}
