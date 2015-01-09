@@ -49,6 +49,7 @@ private:
 	void Destroy() ;
 	int sendUnit() ;
 
+	int m_SendIndex ;
 	int m_maxid, m_minid ;
 	nd_handle m_objhandle ;
 	NDUINT64 m_param ;

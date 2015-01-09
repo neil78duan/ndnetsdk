@@ -37,11 +37,13 @@ void _writable_entry(nd_handle handle, nd_userdata_t param)
 		nd_userdata_t pWritableParam= 0 ;
 		int param_size = sizeof(pWritableParam);
 		
+		
 		nd_net_ioctl((nd_netui_handle)handle,NDIOCTL_SET_WRITABLE_CALLBACK_PARAM, &pWritableParam, &param_size) ;
 		nd_net_ioctl((nd_netui_handle)handle,NDIOCTL_SET_WRITABLE_CALLBACK, &pWritableParam, &param_size) ;
 		
 		delete header ;
 		
+		nd_tcpnode_tryto_flush_sendbuf((nd_tcp_node*)handle) ;
 		return ;
 	}
 	struct list_head *next = header->next ;
@@ -55,6 +57,7 @@ NDBigDataTransfer::NDBigDataTransfer(nd_handle netObject,data_transfer_callback 
 	m_maxid = 0;
  	m_minid = 0;
 	m_param = 0 ;	
+	m_SendIndex = 0 ;
 	memset(&m_buf, 0 ,sizeof(m_buf)) ;
 	
 	INIT_LIST_HEAD(&m_node.list) ;
@@ -125,35 +128,37 @@ int NDBigDataTransfer::sendUnit()
 		size = datalen;
 	}
 	
-	if (pData == ndlbuf_raw_addr(&m_buf) ) {		
+	if (m_SendIndex==0) {		
 		omsg.Write((NDUINT8)EBIG_DATA_START) ;		
 		omsg.Write(m_param);
 		omsg.Write((NDUINT32)datalen) ;
+		
 	}
 	else {				
 		omsg.Write((NDUINT8)EBIG_DATA_CONTINUE) ;
 	}
 	nd_assert(size > 0) ;
 	
-	
+	omsg.Write((NDUINT16)m_SendIndex) ;
 	omsg.WriteBin(pData, size) ;
 	int len = nd_connector_send(m_objhandle, (nd_packhdr_t*)omsg.GetMsgAddr(), 0) ;
 	
-	if (len > 0) {
-		static int send_index = 0 ;
+	if (len== omsg.MsgLength()) {
 		
-		nd_logmsg("%d send data %d success \n",send_index, len) ;
+		//nd_logdebug("%d pack-len=%d send data %d success \n",m_SendIndex, len, size) ;
 		
-		++send_index ;
+		++m_SendIndex ;
 		
 		ndlbuf_sub_data(&m_buf, size) ;
 		if (ndlbuf_datalen(&m_buf)==0 ) {
+			
+			nd_tcpnode_tryto_flush_sendbuf((nd_tcp_node*)m_objhandle) ;
+			
 			m_completed_callback(m_objhandle ,m_param, 0) ;
 			Destroy() ;
 			delete this ;
-			send_index = 0 ;
 			
-			nd_logmsg("send data COMPLETED \n") ;
+			//nd_logmsg("send data COMPLETED \n") ;
 			return  0 ;
 		}
 	}
@@ -178,6 +183,7 @@ void NDBigDataTransfer::Destroy()
 {
 	ndlbuf_destroy(&m_buf) ;
 	list_del_init(&m_node.list) ;
+	m_SendIndex = 0;
 }
 ////////////////////////////////////////////
 NDBigDataReceiver::NDBigDataReceiver(data_recv_callback cb, void *receiver) : m_recv_ok_callback(cb), m_receiver(receiver)
@@ -196,6 +202,7 @@ NDBigDataReceiver::~NDBigDataReceiver()
 int NDBigDataReceiver::OnRecv(NDIStreamMsg &inmsg) 
 {
 	NDUINT8 type ;
+	NDUINT16 index = 0 ;
 	size_t read_len =0;
 	NDUINT8 data[ND_PACKET_SIZE];
 	if (-1== inmsg.Read(type)) {
@@ -221,13 +228,17 @@ int NDBigDataReceiver::OnRecv(NDIStreamMsg &inmsg)
 			return NDERR_INVALID_INPUT ;
 		}
 	}
+	if (0!=inmsg.Read(index)) {		
+		return NDERR_INVALID_INPUT ;
+	}
+	
 	read_len = inmsg.ReadBin(data, sizeof(data)) ;
 	if (read_len > ndlbuf_capacity(&m_buf)) {
 		return NDERR_INVALID_INPUT ;
 	}
-	static int recv_index = 0 ;
-	nd_logmsg("%d recv data len =%d\n", recv_index,read_len) ;
-	++recv_index ;
+	//static int recv_index = 0 ;
+	//nd_logmsg("%d recv packet-len = %d data len =%d\n", index,inmsg.MsgLength() ,read_len) ;
+	//++recv_index ;
 	
 	ndlbuf_write(&m_buf, data, read_len, 0) ;
 	if (m_dataSize== ndlbuf_datalen(&m_buf)) {
