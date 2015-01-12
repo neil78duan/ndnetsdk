@@ -39,7 +39,8 @@ enum eObjectClose{
 	ndatomic_t __created ;\
 	char inst_name[32];				\
 	NDUINT32 __objid ;				\
-	struct nd_rb_node  __self_rbnode
+	struct nd_rb_node  __self_rbnode ; \
+	struct list_head __release_cb_hdr ;
 #else 
 
 #define ND_OBJ_BASE \
@@ -47,7 +48,8 @@ enum eObjectClose{
 	NDUINT16 type ;	\
 	NDUINT16 myerrno;	\
 	nd_close_callback close_entry ;\
-	ndatomic_t __created 
+	ndatomic_t __created  ;\
+	struct list_head __release_cb_hdr ;
 
 #endif
 
@@ -172,5 +174,22 @@ ND_COMMON_API int nd_handle_checkvalid(nd_handle hobj, NDUINT16 objtype);
 
 ND_COMMON_API const char *nd_error_desc(int errcode);
 ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
+
+
+////////////////
+// user resource manager 
+typedef void (*nd_object_destroy_callback)(nd_handle handle, void *param) ;
+
+struct release_callback_source_node
+{
+	struct list_head list ;
+	int type ;
+	nd_object_destroy_callback func ;
+	void *param ;
+};
+//add function call when object destroyed
+ND_COMMON_API int nd_object_add_destroy_cb(nd_handle handle,nd_object_destroy_callback callback, void *param,int type) ;
+ND_COMMON_API int nd_object_del_destroy_cb(nd_handle handle,nd_object_destroy_callback callback, void *param) ;
+ND_COMMON_API int _nd_object_on_destroy(nd_handle handle,int type) ;
 
 #endif

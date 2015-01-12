@@ -23,6 +23,7 @@
 #include "nd_net/nd_netlib.h"
 #include "nd_crypt/nd_crypt.h"
 #include "ndapplib/nd_msgpacket.h"
+#include "ndapplib/nd_datatransfer.h"
 //#include "pg_loginmsg.h"
 
 #include "ndcli/nd_iconn.h"
@@ -31,6 +32,7 @@
 //extern int nd_exchange_key(nd_handle nethandle) ;
 
 CPPAPI void tryto_terminate(netObject netObj) ;
+CPPAPI int _big_data_recv_handler(NDIConn* pconn, nd_usermsgbuf_t *msg );
 
 class NDConnector : public NDIConn 
 {
@@ -45,7 +47,9 @@ public :
 	int SendMsg(nd_usermsgbuf_t *msghdr, int flag=ESF_NORMAL);
 	int SendRawData(void *data , size_t size) ;
 	int RecvRawData(void *buf, size_t size, ndtime_t waittm) ;
-
+	
+	int BigDataSend(NDUINT64 param, void *data, size_t datalen);
+	
 	int CheckValid();
 	int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100);
 	int Update(ndtime_t wait_time);
@@ -69,7 +73,10 @@ public :
     void SetUserData(void *pData){ __userData = pData ;}
 
 	int ioctl(int cmd, void *val, int *size) ;
+	
+	void SetBigDataHandler(nd_bigdata_handler entry) ;
 
+	NDBigDataReceiver *getBigDataRecver() {return &m_dataRecv;} 
 private:	
 	//nd_handle m_objhandle ;
 	int msg_kinds ;
@@ -77,11 +84,12 @@ private:
 	nd_handle m_objhandle ;
 
     void *__userData ;
+	
+	NDBigDataReceiver m_dataRecv ;
 };
 
 
-
-NDConnector::NDConnector(int maxmsg_num , int maxid_start) 
+NDConnector::NDConnector(int maxmsg_num , int maxid_start):m_dataRecv(NULL)
 {
 	m_objhandle = NULL ;
 	msg_kinds = maxmsg_num;
@@ -110,6 +118,12 @@ int NDConnector::ioctl(int cmd, void *val, int *size)
 		return -1 ;
 	else
 		return nd_net_ioctl((nd_netui_handle)m_objhandle, cmd, val, size) ;
+}
+
+
+void NDConnector::SetBigDataHandler(nd_bigdata_handler entry) 
+{
+	m_dataRecv.SetHandler((data_recv_callback)entry) ;
 }
 
 void NDConnector::SetLastError(NDUINT32 errcode) 
@@ -147,6 +161,8 @@ int NDConnector::Open(const char *host, int port,const char *protocol_name,nd_pr
 		m_objhandle = NULL ;
 		return -1;
 	}
+	m_dataRecv.SetReceive(m_objhandle) ;
+	InstallMsgFunc(_big_data_recv_handler, ND_MAIN_ID_SYS, ND_MSG_BIG_DATA_TRANSFER) ;
 
 	return 0 ;
 
@@ -238,6 +254,12 @@ int NDConnector::SendRawData(void *data , size_t size)
 	return ret ;
 
 }
+
+int NDConnector::BigDataSend(NDUINT64 param,  void *data, size_t datalen) 
+{	
+	return BigDataAsyncSend(m_objhandle, data, datalen,  param, NULL) ;
+}
+
 
 int NDConnector::RecvRawData(void *buf, size_t size, ndtime_t waittm) 
 {
@@ -406,6 +428,22 @@ int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg 
 	LEAVE_FUNC();
 	return  ret==-1? -1:data_len ;
 }
+
+
+int _big_data_recv_handler(NDIConn* pconn, nd_usermsgbuf_t *msg )
+{
+	NDConnector *pNetObj = (NDConnector*)pconn ;
+	int len = ND_USERMSG_DATALEN(msg) ;
+	
+	NDIStreamMsg inmsg(msg) ;
+	len = pNetObj->getBigDataRecver()->OnRecv(inmsg) ;
+	if (len!= NDERR_SUCCESS && len!=NDERR_WUOLD_BLOCK) {
+		nd_logerror("error onRecv big data message ret=%d\n", len) ;
+	}
+	return 0 ;
+}
+
+
 
 /*
 struct msg_entry_node

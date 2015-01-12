@@ -56,9 +56,11 @@ int nd_session_close(nd_session_handle cli_handle, int force)
 	}
 
 	nd_unreg_handle((nd_handle)cli_handle) ;
-
+	
+	_nd_object_on_destroy(cli_handle, 1) ;
+	
 	ret = cli_handle->close_entry(cli_handle, force) ;
-
+	
 	LEAVE_FUNC();
 	return ret ;
 }

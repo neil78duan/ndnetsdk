@@ -9,6 +9,7 @@
 #include "nd_srvcore/nd_srvlib.h"
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_listener.h"
+#include "ndapplib/nd_datatransfer.h"
 
 //////////////////////////////////////////////////////////////////////////
 //class NDSession
@@ -75,6 +76,14 @@ int NDSession::ResendMsg(NDIStreamMsg &resendmsg, int flag)
 // 	return ret ;
 }
 
+int NDSession::BigDataSend(int maxID, int minID, void *data, size_t datalen) 
+{
+	NDUINT32 hiDword = -1 ;
+	NDUINT32 lowDord = ND_MAKE_DWORD(maxID, minID) ;
+	NDUINT64 param = ND_MAKE_QWORD(hiDword, lowDord);
+	
+	return BigDataAsyncSend(m_objhandle, data, datalen,  param, NULL) ;
+}
 
 //µÃµ½ÍøÂçµØÖ·
 const char* NDSession::GetInetAddr()

@@ -66,12 +66,14 @@ nd_handle _object_create(const char *name)
 		struct alloced_objects *ao =(struct alloced_objects *) malloc(alloc_size) ;
 		if(ao) {
 			
-			INIT_LIST_HEAD(&ao->list) ;			
+			INIT_LIST_HEAD(&ao->list) ;				
+			
 			nd_mutex_lock(&__alloced_lock) ;
 			list_add_tail(&ao->list, &__alloced_obj_list) ;
 			nd_mutex_unlock(&__alloced_lock) ;
 
 			memset(&ao->alloced_obj, 0, reginfo->object_size) ;
+			INIT_LIST_HEAD(&ao->alloced_obj.__release_cb_hdr) ;
 			if(reginfo->init_entry) {
 				reginfo->init_entry(&ao->alloced_obj) ;
 			}
@@ -117,6 +119,8 @@ int _object_destroy(nd_handle handle, int flag)
 	if(handle->close_entry) {		
 		ret = handle->close_entry(handle, flag) ;		
 	}
+	
+	_nd_object_on_destroy(handle,-1) ;
 	if(is_free) {
 		free(free_addr) ;
 	}
@@ -157,6 +161,61 @@ int destroy_object_register_manager(void)
 	return 0 ;
 }
 
+//////////////
+
+int nd_object_add_destroy_cb(nd_handle handle,nd_object_destroy_callback callback, void *param,int type) 
+{
+	struct release_callback_source_node *node = malloc(sizeof(struct release_callback_source_node)) ;
+	if(!node ) {
+		return -1;
+	}
+	INIT_LIST_HEAD(&node->list) ;
+	node->func = callback ;
+	node->param = param ;
+	node->type = type ;
+	
+	list_add(&node->list, &handle->__release_cb_hdr) ;
+	return 0;
+}
+int nd_object_del_destroy_cb(nd_handle handle,nd_object_destroy_callback callback, void *param) 
+{
+	struct list_head *source_hdr = &handle->__release_cb_hdr ;
+	struct release_callback_source_node *node,*next ;
+	if (list_empty(source_hdr)) {
+		return -1;
+	}
+	list_for_each_entry_safe(node, next, source_hdr, struct release_callback_source_node, list) {
+		if (node->func == callback && node->param ==param) {
+			
+			node->func(handle, node->param) ;
+			list_del_init(&node->list) ;
+			free(node) ;
+			break ;
+		}
+	}
+	
+	return  0;
+	
+}
+//call when destory or something 
+int _nd_object_on_destroy(nd_handle handle,int type) 
+{
+	struct list_head *source_hdr = &handle->__release_cb_hdr ;
+	struct release_callback_source_node *node,*next ;
+	if (list_empty(source_hdr)) {
+		return 0;
+	}
+	list_for_each_entry_safe(node, next, source_hdr, struct release_callback_source_node, list) {
+		if (-1==type || node->type== type) {
+			node->func(handle, node->param) ;
+			list_del_init(&node->list) ;
+			free(node) ;
+		}
+	}
+	return 0;
+}
+
+///////////////////////////
 
 const char *nd_error_desc(int errcode)
 {

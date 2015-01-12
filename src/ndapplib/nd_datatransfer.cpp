@@ -27,7 +27,34 @@ int BigDataAsyncSend(nd_handle connector,  void *data, size_t datalen, NDUINT64 
 	}
 }
 
-void _writable_entry(nd_handle handle, nd_userdata_t param) 
+
+static void _destroy_on_clost(nd_handle handle, void *param) 
+{
+	data_transfer_node *node,*next ;
+	
+	struct list_head *hdr = (struct list_head *)param ;
+	list_for_each_entry_safe(node, next, hdr, data_transfer_node, list) {
+		if (node->pDataTransfer) {
+			node->pDataTransfer->Destroy(NDERR_CLOSED) ;
+			delete node->pDataTransfer ;
+			node->pDataTransfer = 0 ;
+		}
+	}
+	
+	
+	nd_userdata_t pWritableParam= 0 ;
+	int param_size = sizeof(pWritableParam);
+	
+	nd_net_ioctl((nd_netui_handle)handle,NDIOCTL_SET_WRITABLE_CALLBACK_PARAM, &pWritableParam, &param_size) ;
+	nd_net_ioctl((nd_netui_handle)handle,NDIOCTL_SET_WRITABLE_CALLBACK, &pWritableParam, &param_size) ;
+	
+	
+	nd_logmsg("send data not success when closed \n") ;
+	delete hdr ;
+	
+}
+
+static void _writable_entry(nd_handle handle, nd_userdata_t param) 
 {
 	nd_assert(handle) ;
 	struct list_head *header = (struct list_head*) param ;
@@ -41,9 +68,11 @@ void _writable_entry(nd_handle handle, nd_userdata_t param)
 		nd_net_ioctl((nd_netui_handle)handle,NDIOCTL_SET_WRITABLE_CALLBACK_PARAM, &pWritableParam, &param_size) ;
 		nd_net_ioctl((nd_netui_handle)handle,NDIOCTL_SET_WRITABLE_CALLBACK, &pWritableParam, &param_size) ;
 		
+		nd_connector_del_close_callback(handle, _destroy_on_clost, header) ;
 		delete header ;
 		
 		nd_tcpnode_tryto_flush_sendbuf((nd_tcp_node*)handle) ;
+		nd_logdebug("send data complete \n") ;
 		return ;
 	}
 	struct list_head *next = header->next ;
@@ -99,6 +128,8 @@ int NDBigDataTransfer::asyncSend(int maxID, int minID, void*data, size_t datalen
 		nd_net_ioctl((nd_netui_handle)m_objhandle,NDIOCTL_SET_WRITABLE_CALLBACK, &pWritableParam, &param_size);
 		
 		isEmpty =true ;
+		
+		nd_connector_add_close_callback(m_objhandle, _destroy_on_clost, list_hdr) ;
 	}
 	else {
 		list_hdr = (struct list_head*) pWritableParam ;
@@ -154,7 +185,6 @@ int NDBigDataTransfer::sendUnit()
 			
 			nd_tcpnode_tryto_flush_sendbuf((nd_tcp_node*)m_objhandle) ;
 			
-			m_completed_callback(m_objhandle ,m_param, 0) ;
 			Destroy() ;
 			delete this ;
 			
@@ -179,8 +209,12 @@ int NDBigDataTransfer::timerSend()
 	return 0 ;
 }
 
-void NDBigDataTransfer::Destroy() 
+void NDBigDataTransfer::Destroy(int errorCode) 
 {
+	if (m_completed_callback) {
+		m_completed_callback(m_objhandle ,m_param, 0) ;
+	}	
+	
 	ndlbuf_destroy(&m_buf) ;
 	list_del_init(&m_node.list) ;
 	m_SendIndex = 0;
@@ -242,7 +276,10 @@ int NDBigDataReceiver::OnRecv(NDIStreamMsg &inmsg)
 	
 	ndlbuf_write(&m_buf, data, read_len, 0) ;
 	if (m_dataSize== ndlbuf_datalen(&m_buf)) {
-		m_recv_ok_callback(NDERR_SUCCESS, m_receiver, m_param, ndlbuf_data(&m_buf), ndlbuf_datalen(&m_buf)) ;
+		if (m_recv_ok_callback) {			
+			m_recv_ok_callback( m_receiver, m_param, ndlbuf_data(&m_buf), ndlbuf_datalen(&m_buf)) ;
+		}
+		Reset();
 		return NDERR_SUCCESS ;
 	}
 	

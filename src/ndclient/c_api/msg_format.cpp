@@ -11,6 +11,7 @@
 #include "nd_crypt/nd_crypt.h"
 
 #include "ndapplib/nd_msgpacket.h"
+#include "ndapplib/nd_datatransfer.h"
 #include "ndcli/nd_api_c.h"
 
 #include "nd_msg.h"
@@ -377,6 +378,24 @@ int ndSentTest(netObject netObj)
     
 }
 
+int ndBigDataSend(netObject netObj,NDUINT64 param, void *data, size_t datalen) 
+{
+	return BigDataAsyncSend((nd_handle)netObj, data, datalen,  param, NULL) ;
+}
+
+
+static NDBigDataReceiver *__bigDataRecv ;
+void ndSetBigDataHandler(netObject netObj,ndBigDataHandler entry) 
+{
+	if (!__bigDataRecv) {
+		__bigDataRecv = new NDBigDataReceiver((data_recv_callback)entry, netObj);
+	}
+	else {
+		__bigDataRecv->SetHandler((data_recv_callback)entry) ;
+	}
+	
+}
+
 #define MSG_ENTRY_INSTANCE(name) \
 int name (nd_handle handle,nd_usermsgbuf_t *msg, nd_handle h_listen)
 
@@ -415,6 +434,22 @@ MSG_ENTRY_INSTANCE(netmsg_sys_time)
     return 0 ;
 }
 
+MSG_ENTRY_INSTANCE(__data_recv_handler)
+{
+	int len = ND_USERMSG_DATALEN(msg) ;
+	
+	NDIStreamMsg inmsg(msg) ;
+	if (__bigDataRecv) {
+		__bigDataRecv->OnRecv(inmsg) ;
+		
+		if (len!= NDERR_SUCCESS && len!=NDERR_WUOLD_BLOCK) {
+			nd_logerror("error onRecv big data message ret=%d\n", len) ;
+		}
+	}
+	return 0 ;
+}
+
+
 #define MSG_HANDLER_INS(_f, _maxid, _minid) \
 nd_msgentry_install((nd_handle)netObj, _f,_maxid, _minid,EPL_CONNECT,"msgName_" #_maxid "_" #_minid )
 
@@ -426,7 +461,8 @@ void ndMsgfuncInit(netObject netObj)
     MSG_HANDLER_INS(netmsg_sys_error,ND_MAIN_ID_SYS,ND_MSG_SYS_ERROR) ;
     
     MSG_HANDLER_INS(netmsg_sys_time,ND_MAIN_ID_SYS,ND_MSG_SYS_TIME) ;
-    
+	
+	MSG_HANDLER_INS(__data_recv_handler,ND_MAIN_ID_SYS,ND_MSG_BIG_DATA_TRANSFER) ;
 }
 
 

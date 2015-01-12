@@ -606,6 +606,7 @@ int nd_connector_close(nd_netui_handle net_handle, int flag)
 			}
 			nd_tcpnode_close((struct nd_tcp_node*)net_handle,flag);
 			net_release_sendlock(net_handle) ;
+			_nd_object_on_destroy(net_handle, 1) ;
 		}
 		LEAVE_FUNC();
 		return 0 ;
@@ -618,6 +619,8 @@ int nd_connector_close(nd_netui_handle net_handle, int flag)
 				udt_close(socket_addr,1);
 				net_release_sendlock(net_handle) ;		//client socket need send lock
 			}
+			
+			_nd_object_on_destroy(net_handle, 1) ;
 			LEAVE_FUNC();
 			return 0;
 		}

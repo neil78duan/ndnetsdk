@@ -144,7 +144,6 @@ int ndSendMsg(netObject netObj,struct ndMsgData *data, int flag)
 	return ret ;
 }
 
-
 int ndUpdateConnect(netObject netObj, int timeOutMS)
 {
 	int ret ;

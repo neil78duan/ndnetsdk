@@ -187,6 +187,16 @@ ND_NET_API void* nd_connector_get_userdata(nd_netui_handle net_handle);
 
 int nd_net_sysmsg_hander(nd_netui_handle node, nd_sysresv_pack_t *pack);
 
+// add function call when close
+static __INLINE__ int nd_connector_add_close_callback(nd_handle handle,nd_object_destroy_callback callback, void *param) 
+{
+	return nd_object_add_destroy_cb(handle, callback, param, 1) ;
+}
+
+static __INLINE__  int nd_connector_del_close_callback(nd_handle handle,nd_object_destroy_callback callback, void *param) 
+{
+	return nd_object_del_destroy_cb(handle, callback, param) ;
+}
 
 #endif 
 

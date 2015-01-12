@@ -28,7 +28,9 @@ public :
 	int SendMsg(NDSendMsg &smsg, int flag=ESF_NORMAL);//{return ::nd_connector_send(GetHandle() , (nd_packhdr_t *)(smsg.GetMsgAddr()), flag) ;	}	
 	int SendMsg(nd_usermsghdr_t *msghdr, int flag=ESF_NORMAL);//{return ::nd_connector_send(GetHandle() , &msghdr->packet_hdr, flag) ;	}
 	int ResendMsg(NDIStreamMsg &resendmsg, int flag=ESF_NORMAL);//{return ::nd_connector_send(GetHandle() , (nd_packhdr_t *)(resendmsg.GetMsgAddr()), flag) ;	}	
-
+	
+	int BigDataSend(int maxID, int minID, void *data, size_t datalen);
+	
 	int Send(NDOStreamMsg &omsg) ;		//send message in script
 	int Close(int flag = 0);
 

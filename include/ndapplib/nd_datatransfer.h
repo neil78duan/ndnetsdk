@@ -14,7 +14,7 @@
 
 typedef void (*data_transfer_callback) (nd_handle nethandle, NDUINT64 param , int error_code);
 
-typedef void (*data_recv_callback) (int error_code,void *receiver, NDUINT64 param , void *data, size_t size);
+typedef void (*data_recv_callback) (void *receiver, NDUINT64 param , void *data, size_t size);
 
 class NDIStreamMsg;
 class NDBigDataTransfer ;
@@ -45,8 +45,8 @@ public:
 	void setCallback(data_transfer_callback cb) ;
 	
 	int timerSend() ;
+	void Destroy(int errorCode=0) ;
 private:
-	void Destroy() ;
 	int sendUnit() ;
 
 	int m_SendIndex ;
@@ -67,7 +67,8 @@ public:
 	virtual ~NDBigDataReceiver() ;
 	int OnRecv(NDIStreamMsg &inmsg) ;
 	void Reset() ;
-	
+	void SetReceive(void *p) { m_receiver = p;}
+	void SetHandler(data_recv_callback handler)  {m_recv_ok_callback = handler;} 
 private:
 	bool CheckInit() ;
 	void *m_receiver ;	

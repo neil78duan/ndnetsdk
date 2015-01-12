@@ -51,6 +51,8 @@ typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
 	(connect)->InstallMsgFunc(msgFunc, maxID, minID, "msgName_" #maxID"-"#minID) 
 
 
+typedef int (*nd_bigdata_handler)(nd_handle nethandle,  NDUINT64 param , void *data, size_t datalen) ;
+
 #define  WAITMSG_TIMEOUT 300000
 
 //net connector 
@@ -64,6 +66,8 @@ public :
 	virtual int SendMsg(nd_usermsgbuf_t *msghdr, int flag=0) = 0;
 	virtual int SendRawData(void *data , size_t size)  = 0;
 	virtual int RecvRawData(void *buf, size_t size, ndtime_t waittm) = 0 ;
+	virtual int BigDataSend(NDUINT64 param, void *data, size_t datalen) =0;
+	
 	virtual int CheckValid() = 0;
 	virtual int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100) = 0;
 	virtual int Update(ndtime_t wait_time) = 0;
@@ -80,7 +84,8 @@ public :
     virtual void SetUserData(void *pData) = 0;
 
 	virtual int ioctl(int cmd, void *val, int *size) = 0;
-
+	virtual void SetBigDataHandler(nd_bigdata_handler entry) = 0 ;
+	
 protected:
 	NDIConn() {} 
 	virtual~NDIConn() {}
