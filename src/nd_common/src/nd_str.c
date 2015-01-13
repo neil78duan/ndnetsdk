@@ -17,10 +17,6 @@ static __INLINE__ int _read_word(unsigned  char** dest, unsigned char **src)
 		**dest = **src ; ++(*src) ; ++(*dest) ;
 		return 2;
 	}
-	else {
-		**dest = **src ; ++(*src) ; ++(*dest) ;
-		return 1 ;
-	}
 #elif defined(ND_UTF_8)
 	if (**src > (unsigned  char)0x80){
 		int ret =1 ;
@@ -29,20 +25,19 @@ static __INLINE__ int _read_word(unsigned  char** dest, unsigned char **src)
 			**dest = **src ; ++(*src) ; ++(*dest) ;
 			ret += 2 ;
 		}
-		else if(*src >=(unsigned  char)192)	{
+		else if(**src >=(unsigned  char)192)	{
 			**dest = **src ; ++(*src) ; ++(*dest) ;
 			++ret ;
 		} 
 		**dest = **src ; ++(*src) ; ++(*dest) ;
 		return ret;
 	}
-
-#else 
+#endif
 	**dest = **src ; 
 	++(*src) ; 
 	++(*dest) ;
 	return 1 ;
-#endif 
+ 
 }
 
 /* 去掉字符串开头部分无用的字符（不可打印的字符）*/
