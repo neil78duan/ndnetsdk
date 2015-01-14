@@ -77,6 +77,7 @@ public :
 	void SetBigDataHandler(nd_bigdata_handler entry) ;
 
 	NDBigDataReceiver *getBigDataRecver() {return &m_dataRecv;} 
+	
 private:	
 	//nd_handle m_objhandle ;
 	int msg_kinds ;

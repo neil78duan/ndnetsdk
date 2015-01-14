@@ -73,12 +73,13 @@ nd_handle _object_create(const char *name)
 			nd_mutex_unlock(&__alloced_lock) ;
 
 			memset(&ao->alloced_obj, 0, reginfo->object_size) ;
-			INIT_LIST_HEAD(&ao->alloced_obj.__release_cb_hdr) ;
 			if(reginfo->init_entry) {
 				reginfo->init_entry(&ao->alloced_obj) ;
 			}
 			ao->alloced_obj.size = reginfo->object_size ;
 			ao->alloced_obj.close_entry = reginfo->close_entry ;
+			
+			INIT_LIST_HEAD(&ao->alloced_obj.__release_cb_hdr) ;
 			
 			nd_reg_handle((nd_handle)&ao->alloced_obj) ;
 
