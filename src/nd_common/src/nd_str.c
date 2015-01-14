@@ -1,4 +1,4 @@
-c/* file : nd_str.h
+/* file : nd_str.h
  * defien string function of nd common
  * 2007-3-15 17:29
  * last mod 2008-8-24

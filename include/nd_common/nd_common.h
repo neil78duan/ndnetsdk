@@ -1,7 +1,7 @@
 /* file: nd_common.h
  * define common functon module
- * author : neil 
- * version 1.0 
+ * author : neil
+ * version 1.0
  * 2007-9-27 16:02
  * all right reserved 2007
  */
@@ -57,11 +57,11 @@ ND_COMMON_API const char *nd_process_name() ;
 //ND_COMMON_API char *process_name();
 ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
-#ifdef ND_FILE_TRACE	
+#ifdef ND_FILE_TRACE
 	#undef  fopen
 	#undef  fclose
 	#define fopen(filename, mod) nd_fopen_dbg(filename, mod,__FILE__,__LINE__)
 	#define fclose(fp)			nd_fclose_dbg(fp)
 #endif
 
-#endif 
+#endif
