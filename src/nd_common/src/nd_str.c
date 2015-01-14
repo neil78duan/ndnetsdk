@@ -1,11 +1,11 @@
-/* file : nd_str.h
- * defien string function of nd common 
+c/* file : nd_str.h
+ * defien string function of nd common
  * 2007-3-15 17:29
- * last mod 2008-8-24 
+ * last mod 2008-8-24
  * v1.0
- * neil 
+ * neil
  */
- 
+
 #include "nd_common/nd_str.h"
 #include "nd_common/nd_comcfg.h"
 
@@ -28,20 +28,20 @@ static __INLINE__ int _read_word(unsigned  char** dest, unsigned char **src)
 		else if(**src >=(unsigned  char)192)	{
 			**dest = **src ; ++(*src) ; ++(*dest) ;
 			++ret ;
-		} 
+		}
 		**dest = **src ; ++(*src) ; ++(*dest) ;
 		return ret;
 	}
 #endif
-	**dest = **src ; 
-	++(*src) ; 
+	**dest = **src ;
+	++(*src) ;
 	++(*dest) ;
 	return 1 ;
- 
+
 }
 
 /* 去掉字符串开头部分无用的字符（不可打印的字符）*/
-char *ndstr_first_valid(const char *src) 
+char *ndstr_first_valid(const char *src)
 {
 	unsigned char *tmp = (unsigned char *)src ;
 	while(*tmp <=(unsigned char) _ND_SPACE) {
@@ -51,7 +51,7 @@ char *ndstr_first_valid(const char *src)
 		tmp++ ;
 	}
 	return (char*)tmp ;
-		
+
 }
 
 /* 检测字符是否是有效的数字*/
@@ -60,13 +60,13 @@ int ndstr_is_numerals(const char *src)
 	int dot = 0 ;
 	int ret = 0 ;
 	src = ndstr_first_valid(src) ;
-	
+
 	if(*src==_MINUS)
 		++src ;
 	else if(IS_NUMERALS(*src)){
 		++src ; ret = 1 ;
 	}
-	else 
+	else
 		return 0 ;
 	while(*src) {
 		if(IS_NUMERALS(*src) ){
@@ -81,21 +81,21 @@ int ndstr_is_numerals(const char *src)
 			return 0 ;
 		++src ;
 	}
-	return ret ;	
+	return ret ;
 }
 
 //检测字符串是否自然数
 int ndstr_is_naturalnumber(const char *src)
-{	
+{
 	int ret = 1 ;
 	src = ndstr_first_valid(src) ;
-	
+
 	if(*src=='+')
 		++src ;
 	else if(IS_NUMERALS(*src)){
 		++src ; ret = 1 ;
 	}
-	else 
+	else
 		return 0 ;
 	while(*src) {
 		if(!IS_NUMERALS(*src) ){
@@ -104,17 +104,17 @@ int ndstr_is_naturalnumber(const char *src)
 		}
 		++src ;
 	}
-	return ret ;	
+	return ret ;
 }
 
 
 /* 读取有效数字,*isok == 0出错*/
-char *ndstr_read_numerals(const char *src, char *desc, int *isok) 
+char *ndstr_read_numerals(const char *src, char *desc, int *isok)
 {
 	int dot = 0 ;
 	*isok = 0 ;
 	src = ndstr_first_valid(src) ;
-	
+
 	if(*src==_MINUS||*src=='+')
 		*desc++ =*src++ ;
 	else if(*src==_DOT){
@@ -147,7 +147,7 @@ char *ndstr_read_numerals(const char *src, char *desc, int *isok)
 		*desc++ =*src++ ;
 	}
 	*desc = 0;
-	return (char*)src ;	
+	return (char*)src ;
 }
 
 
@@ -157,16 +157,16 @@ char *ndstr_parse_word(char *src, char *outstr)
 	register unsigned char a ;
 	while(*src) {
 		a = (unsigned char)*src ;
-		if(IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a=='_' ){			
+		if(IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a=='_' ){
 			*outstr++ = *src++ ;
 		}
 #ifndef ND_ANSI
-		else if(a>(unsigned char)0x80){		//chinese		
+		else if(a>(unsigned char)0x80){		//chinese
 			_read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
 			//*outstr++ = *src++ ;
 			//*outstr++ = *src++ ;
 		}
-#endif 
+#endif
 		else{
 			break ;
 		}
@@ -186,11 +186,11 @@ char *ndstr_parse_string(char *src, char *outstr)
 		}
 		_read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
 		/*
-		if(a > 0x20){			
+		if(a > 0x20){
 			*outstr++ = *src++ ;
 		}
 
-		else if(a>(unsigned char)0x80){		//chinese		
+		else if(a>(unsigned char)0x80){		//chinese
 			*outstr++ = *src++ ;
 			*outstr++ = *src++ ;
 		}
@@ -212,15 +212,15 @@ char *ndstr_parse_word_n(char *src, char *outstr, int n)
 		if(IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a=='_' || a=='.'){
 			*outstr++ = *src++ ;
 		}
-		
+
 #ifndef ND_ANSI
-		else if(a>(unsigned char)0x80){		//chinese		
+		else if(a>(unsigned char)0x80){		//chinese
 			int ret  = _read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
 			n -= ret -1 ;
 			//*outstr++ = *src++ ;
 			//*outstr++ = *src++ ;
 		}
-#endif 
+#endif
 		else{
 			break ;
 		}
@@ -229,10 +229,10 @@ char *ndstr_parse_word_n(char *src, char *outstr, int n)
 	return *src?src:NULL ;
 }
 
-char *_ndstr_read_cmd(char *src, char *outstr, int n, char endmark) 
+char *_ndstr_read_cmd(char *src, char *outstr, int n, char endmark)
 {
 	register unsigned char a ;
-	while(*src && n-- > 0) {		
+	while(*src && n-- > 0) {
 		a = (unsigned char)*src ;
 		if (a=='\\') {
 			src++ ;
@@ -243,15 +243,15 @@ char *_ndstr_read_cmd(char *src, char *outstr, int n, char endmark)
 			break ;
 		}
 		*outstr++ = *src++ ;
-		
+
 	}
 	*outstr = 0 ;
 	return *src?src:NULL ;
-	
+
 }
 
 //Parse string to command line , return number of commands-lines
-int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number) 
+int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number)
 {
 	int ret = 0 ;
 	char *next_text = ndstr_first_valid((const char*)input_text) ;
@@ -264,7 +264,7 @@ int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number)
 			if (envValName[0]) {
 				char *envVal = getenv(envValName) ;
 				if (envVal && envVal[0]) {
-					strncpy(argv[ret], envVal, bufize) ;					
+					strncpy(argv[ret], envVal, bufize) ;
 				}
 				else {
 					break ;
@@ -273,20 +273,20 @@ int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number)
 			else {
 				break ;
 			}
-			
+
 		}
-#else 
+#else
 		if (*next_text==0x25) { // %
 			char envValName[1024] ;
 			envValName[0] = 0 ;
-			
+
 			next_text = ndstr_str_end(++next_text, envValName, 0x25) ;
 			if (envValName[0]) {
 				++next_text ;
-				
+
 				char *envVal = getenv(envValName) ;
 				if (envVal && envVal[0]) {
-					strncpy(argv[ret], envVal, bufize) ;					
+					strncpy(argv[ret], envVal, bufize) ;
 				}
 				else {
 					break ;
@@ -311,10 +311,10 @@ int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number)
 		next_text = ndstr_first_valid((const char*)next_text) ;
 	}
 	return ret ;
-	
+
 }
 
-int ndstr_get_ip(char *src, ndip_t *ip) 
+int ndstr_get_ip(char *src, ndip_t *ip)
 {
 	int i= 0;
 	union {
@@ -370,7 +370,7 @@ char *ndstr_str_end(char *src, char *outstr, const char end)
 			break ;
 		}
 		_read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
-// 		if((unsigned char)*src>(unsigned char)0x80)		//chinese		
+// 		if((unsigned char)*src>(unsigned char)0x80)		//chinese
 // 			*outstr++ = *src++ ;
 // 		*outstr++ = *src++ ;
 	}
@@ -387,7 +387,7 @@ char *ndstr_nstr_end(char *src, char *outstr, const char end, int n)
 			int ret  = _read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
 			n -= ret ;
 		}
-// 		if((unsigned char)*src>(unsigned char)0x80){	//chinese		
+// 		if((unsigned char)*src>(unsigned char)0x80){	//chinese
 // 			*outstr++ = *src++ ;
 // 			--n ;
 // 		}
@@ -399,7 +399,7 @@ char *ndstr_nstr_end(char *src, char *outstr, const char end, int n)
 }
 
 /*不区分大小写,比较字符串*/
-int ndstricmp(char *src, char *desc) 
+int ndstricmp(char *src, char *desc)
 {
 	int ret ;
 	do {
@@ -430,7 +430,7 @@ char *ndstristr(char *src, char *desc)
 	while(*src) {
 		char *tmp = src;
 		char *aid = desc;
-		
+
 		while(*aid) {
 			ret = *tmp - *aid ;
 			if(ret){
@@ -444,10 +444,10 @@ char *ndstristr(char *src, char *desc)
 				else {
 					break ;
 				}
-				
+
 				if(a!=*aid)
 					break ;
-				else 
+				else
 					ret = 0 ;
 			}
 			aid++ ;
@@ -471,6 +471,6 @@ char *ndstr_reverse_chr(char *src, char ch, char *end)
 		}
 		--src;
 	}
-	
+
 	return NULL;
 }
