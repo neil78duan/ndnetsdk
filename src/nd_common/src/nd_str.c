@@ -181,7 +181,7 @@ char *ndstr_parse_string(char *src, char *outstr)
 	register unsigned char a ;
 	while(*src) {
 		a = (unsigned char)*src ;
-		if (a<0x20)	{
+		if (a<=0x20)	{
 			break ;
 		}
 		_read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
@@ -302,7 +302,7 @@ int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number)
 			next_text = _ndstr_read_cmd(next_text, argv[ret], bufize, '\"' ) ;
 		}
 		else {
-			next_text = ndstr_parse_word_n(next_text, argv[ret], bufize) ;
+			next_text = ndstr_parse_string(next_text, argv[ret]) ;
 		}
 		++ret ;
 		if (ret>=number) {
