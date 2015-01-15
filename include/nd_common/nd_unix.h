@@ -133,9 +133,9 @@ static __INLINE__ void _showerror(char *file, int line,const char *func) {
 #define NDTRAC(msg,arg...)   fprintf(stderr, msg,##arg)
 #define _CRTTRAC(msg,arg...) fprintf(stderr, msg,##arg)
 #else 
-#define NDTRACF(msg) (void) 0
-#define NDTRAC(msg) (void) 0
-#define _CRTTRAC(msg) (void) 0
+#define NDTRACF(msg,arg...) 
+#define NDTRAC(msg,arg...)
+#define _CRTTRAC(msg,arg...)
 #endif
 
 #ifdef ND_USE_MSGBOX
@@ -148,6 +148,7 @@ static __INLINE__ void _showerror(char *file, int line,const char *func) {
 	}while(0)
 #else 
 	#define nd_msgbox_dg(text, cap) (void) 0
+	#define nd_msgbox(msg,title) (void) 0
 #endif
 
 #define nd_exit(code) exit(code)
