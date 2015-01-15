@@ -74,6 +74,35 @@ int mythread_cond_timewait(pthread_cond_t *cond,
     
 }
 
+#ifndef NOFILE
+#define NOFILE 3 
+#endif
+void nd_init_daemon(void)
+{
+	pid_t pid;
+	//int i;
+	pid = fork();
+	if(pid > 0){
+		exit(0);
+	}
+	else if(pid < 0 ){
+		perror("fork()\n");
+		exit(1);
+	}
+	else if(pid == 0){
+		int fd ,fdtablesize;
+		setsid();
+		chdir("/tmp");
+		//umask(0);
+		for (fd = 0, fdtablesize = getdtablesize(); fd < fdtablesize; fd++) {
+			close(fd);
+		}
+		signal(SIGCHLD,SIG_IGN);
+		
+		nd_log_close_screen(1) ;
+		return ;
+	}
+}
 
 #ifdef __MAC_OS__
 
@@ -190,33 +219,6 @@ int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)
 	}
 }
 
-#ifndef NOFILE
-#define NOFILE 3 
-#endif
-void nd_init_daemon(void)
-{
-	pid_t pid;
-	int i;
-	pid = fork();
-	if(pid > 0){
-		exit(0);
-	}
-	else if(pid < 0 ){
-		perror("fork()\n");
-		exit(1);
-	}
-	else if(pid == 0){
-		int fd ,fdtablesize;
-		setsid();
-		chdir("/tmp");
-		umask(0);
-		for (fd = 0, fdtablesize = getdtablesize(); fd < fdtablesize; fd++) {
-			close(fd);
-		}
-		signal(SIGCHLD,SIG_IGN);
-		return ;
-	}
-}
 
 #endif
 

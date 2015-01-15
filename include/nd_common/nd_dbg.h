@@ -35,12 +35,15 @@ typedef enum _error_ID{
 
 typedef void (*logfunc)(const char* text) ;
 ND_COMMON_API void nd_setlog_func(logfunc f) ;
+ND_COMMON_API void nd_log_close_screen(int flag);
 ND_COMMON_API void set_log_file(const char *file_name)  ;
 ND_COMMON_API void nd_output(const char *text)  ;	//screen output
 ND_COMMON_API void nd_default_filelog(const char* text) ; //default log function , write to *.log file
 ND_COMMON_API NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size); // set log file size , if write-len > size , generate a *.log.1 ...
 
 //log file operate
+
+ND_COMMON_API int _logmsg_screen(const char *filePath, int line, const char *stm,...) ;
 ND_COMMON_API int _logmsg(const char *func, const char *file, int line, int level, const char *stm,...) ;
 ND_COMMON_API const char *nd_get_timestr(void);			//µÃµ½×Ö·û´®ĞÎÊ½µÄÊ±¼ä
 ND_COMMON_API const char *nd_get_datestr(void);			//µÃµ½×Ö·û´®ĞÎÊ½µÄÈÕÆÚ
@@ -86,6 +89,12 @@ ND_COMMON_API const char *nd_get_datetimestr(void);		//µÃµ½×Ö·û´®ĞÎÊ½µÄÊ±¼äºÍÈÕÆ
 #define nd_logfatal(msg) (void) 0
 #endif
 
+#if defined(ND_OUT_LOG_2CTRL) && defined(ND_DEBUG) 
+#define  nd_log_screen(msg) _logmsg_screen(__FILE__, __LINE__, ##arg)
+#else 
+#define  nd_log_screen (void)0
+#endif 
+
 //////////////////////////////////////////////////////////////////////////
 //unix 
 #else 
@@ -120,14 +129,15 @@ ND_COMMON_API const char *nd_get_datetimestr(void);		//µÃµ½×Ö·û´®ĞÎÊ½µÄÊ±¼äºÍÈÕÆ
 #define nd_logfatal(msg) (void) 0
 #endif
 
+#if defined(ND_OUT_LOG_2CTRL) && defined(ND_DEBUG) 
+#define  nd_log_screen(fmt,arg...)  _logmsg_screen(__FILE__, __LINE__, fmt,##arg)
+#else 
+#define  nd_log_screen(msg) (void)0
+#endif 
+
 #endif		//end win32
 
 
-#if defined(ND_OUT_LOG_2CTRL) && defined(ND_DEBUG) 
-#define  nd_log_screen printf 
-#else 
-#define  nd_log_screen
-#endif 
 
 //¼ÇÂ¼×ÊÔ´µÄÊ¹ÓÃÇé¿ö
 //ÔÚ³ÌĞòÍË³öÒÔºó¿ÉÒÔÈ·¶¨ÄÇĞ©×ÊÔ´Ã»ÓĞÊÍ·Å

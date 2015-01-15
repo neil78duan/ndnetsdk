@@ -57,6 +57,8 @@ ND_COMMON_API int nd_getch(void);
 ND_COMMON_API int kbhit ( void );
 #define getch	nd_getch
 
+ND_COMMON_API void nd_init_daemon(void) ;
+
 #define NDSEM_SUCCESS		0
 #define NDSEM_ERROR			-1
 #define NDSEM_TIMEOUT		1

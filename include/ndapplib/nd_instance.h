@@ -58,7 +58,7 @@ public :
 	virtual bool CheckIsDeveVer() ;
 	bool CheckNormalExit() {return m_bNormalExit==0 ? true : false ;}
 	void SetExitCode(int exitcode = 0) {m_bNormalExit = exitcode ;}
-    
+	void trytoDaemon() ;
 protected :
     
 	int ReadConfig(const char *configname) ;		//read config from file
@@ -75,6 +75,7 @@ protected :
 	int m_un_develop ;
 	int m_bNormalExit ;
     int m_alarm_id ;
+	int m_bDaemon ;
 public:
 	void StartStaticsMem() ;
 	void EndStaticsMem() ;

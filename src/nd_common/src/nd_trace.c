@@ -21,10 +21,15 @@ static char __log_filename[128] ;
 static logfunc __log_func =NULL;
 static ndatomic_t __log_write_len = 0 ;
 static NDUINT32 __log_file_length = -1 ;
+static NDUINT8 __close_screen_log = 0 ;
 
 void nd_setlog_func(logfunc f) 
 {
 	__log_func = f ;
+}
+void nd_log_close_screen(int flag)
+{
+	__close_screen_log = flag ? 1 : 0 ;
 }
 
 NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size)
@@ -172,6 +177,37 @@ int nd_time_day_interval(time_t end_tm, time_t start_tm)
 	return end - start ;
 }
 
+int _logmsg_screen(const char *filePath, int line, const char *stm,...) 
+{
+	char buf[1024*4] ;
+	char *p = buf;
+	va_list arg;
+	int done;
+	const char *file ;
+	
+	if (__close_screen_log) {
+		return 0;
+	}
+	
+	file = _getfilename(filePath) ;
+		
+#ifdef	ND_LOG_WITH_TIME
+	p += snprintf(p, 4096 ,"%s ", nd_get_timestr()) ;
+#endif
+	
+#ifdef	ND_LOG_WITH_SOURCE
+	p += snprintf(p, 4096- (p-buf),"[%d:%s] ",   line, file) ;
+#endif
+	
+	va_start (arg, stm);
+	done = vsnprintf (p, sizeof(buf) - (p-buf),stm, arg);
+	va_end (arg);
+	
+	fprintf(stdout, "%s", buf) ;
+	
+	return done ;
+}
+
 int _logmsg(const char *func, const char *filePath, int line, int level, const char *stm,...) 
 {
 	char buf[1024*4] ;
@@ -194,12 +230,14 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 	va_end (arg);
 
 #ifdef 	ND_OUT_LOG_2CTRL
-	if (level==ND_ERROR || level == ND_FATAL_ERR){
-		fprintf(stderr, "%s", buf) ;
-	}
-	else {
-		fprintf(stdout, "%s", buf) ;
-	}
+	if (__close_screen_log==0) {
+		if (level==ND_ERROR || level == ND_FATAL_ERR){
+			fprintf(stderr, "%s", buf) ;
+		}
+		else {
+			fprintf(stdout, "%s", buf) ;
+		}
+	}	
 #endif
 
 	if (__log_func)	{

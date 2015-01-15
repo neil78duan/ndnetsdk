@@ -93,6 +93,7 @@ NDInstanceBase::NDInstanceBase()
 	m_bNormalExit = 1;
 	g_base_inst = this ;
     m_alarm_id = -1 ;
+	m_bDaemon = 0 ;
 	//char *configname ;
 }
 
@@ -125,6 +126,12 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 		else if(0==strcmp(argv[i],"-log") && i<argc -1) {
 			logfileName = argv[++i];
 		}
+		else if(0==strcmp(argv[i],"-workdir") &&i<argc -1 ) {
+			nd_chdir(argv[++i]) ;
+		}
+//		else if(0==strcmp(argv[i],"-daemon")) {
+//			m_bDaemon = 1 ;
+//		}
 
         else if(0==strcmp(argv[i],"-pid") && i<argc -1){
             FILE *pf = fopen(argv[i+1], "w") ;
@@ -402,6 +409,15 @@ int NDInstanceBase::EnableAlarm(bool bEnable )
     return 0;
 }
 
+void NDInstanceBase::trytoDaemon() 
+{
+	if (!m_bDaemon) {
+		return ;
+	}
+#ifdef ND_UNIX
+	nd_init_daemon() ;
+#endif 
+}
 //read config from file
 int NDInstanceBase::ReadConfig(const char *configname) 
 {

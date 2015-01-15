@@ -9,9 +9,11 @@
 #define _ND_COMCFG_H_
 
 #define ND_PLATFORM "x86"
-#define ND_VERSION "2.1"
+#define ND_VERSION "3.0"
 
-#define ND_GB2312		1
+//#define ND_GB2312		1
+#define ND_UTF_8		1
+
 // #ifdef _MSC_VER
 // #define ND_GB2312		1
 // #else
