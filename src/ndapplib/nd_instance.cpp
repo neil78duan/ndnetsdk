@@ -81,6 +81,7 @@ public:
 #define __initdata__
 #endif
 __initdata__ NDStaticInitHelper _g_static_init_helper ;
+extern const char * __g_version_desc ;
 
 NDInstanceBase::NDInstanceBase() 
 {
@@ -129,9 +130,10 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 		else if(0==strcmp(argv[i],"-workdir") &&i<argc -1 ) {
 			nd_chdir(argv[++i]) ;
 		}
-//		else if(0==strcmp(argv[i],"-daemon")) {
-//			m_bDaemon = 1 ;
-//		}
+		else if(0==strcmp(argv[i],"-v") || 0==strcmp(argv[i],"--version") ) {
+			fprintf(stdout, "version : %s \n" , __g_version_desc) ;
+			exit(0) ;
+		}
 
         else if(0==strcmp(argv[i],"-pid") && i<argc -1){
             FILE *pf = fopen(argv[i+1], "w") ;

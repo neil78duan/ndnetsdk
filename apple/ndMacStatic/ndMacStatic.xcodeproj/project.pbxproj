@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0739F41E1A676B1C00520AE2 /* nd_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0739F41D1A676B1C00520AE2 /* nd_version.cpp */; };
 		07631C7F1A539BEB00C82B5A /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */; };
 		07631C821A539E7500C82B5A /* nd_datatransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = 07631C811A539E7500C82B5A /* nd_datatransfer.h */; };
 		07647B501A3FDBBE00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B4F1A3FDBBE00A96620 /* nd_cmdline.c */; };
@@ -186,6 +187,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0739F41D1A676B1C00520AE2 /* nd_version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_version.cpp; sourceTree = "<group>"; };
 		07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_datatransfer.cpp; sourceTree = "<group>"; };
 		07631C811A539E7500C82B5A /* nd_datatransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_datatransfer.h; sourceTree = "<group>"; };
 		07647B4E1A3FD77C00A96620 /* nd_cmdline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_cmdline.h; sourceTree = "<group>"; };
@@ -613,6 +615,7 @@
 				07EBCF3819A8DFCD00802576 /* readcfg.cpp */,
 				07EBCF3919A8DFCD00802576 /* unix_sig.c */,
 				07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */,
+				0739F41D1A676B1C00520AE2 /* nd_version.cpp */,
 			);
 			name = ndapplib;
 			path = ../../src/ndapplib;
@@ -951,6 +954,7 @@
 				07EBCF7019A8DFCD00802576 /* desc.c in Sources */,
 				07EBCF6F19A8DFCD00802576 /* Makefile in Sources */,
 				07EBCFA619A8DFCD00802576 /* nd_vm.c in Sources */,
+				0739F41E1A676B1C00520AE2 /* nd_version.cpp in Sources */,
 				07EBCFB319A8DFCD00802576 /* nd_object.cpp in Sources */,
 				07EBCF7C19A8DFCD00802576 /* rsa.c in Sources */,
 				07EBCF6C19A8DFCD00802576 /* node_mgr.c in Sources */,
