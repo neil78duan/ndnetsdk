@@ -81,7 +81,9 @@ public:
 #define __initdata__
 #endif
 __initdata__ NDStaticInitHelper _g_static_init_helper ;
+
 extern const char * __g_version_desc ;
+extern int __g_version_id ; 
 
 NDInstanceBase::NDInstanceBase() 
 {
@@ -659,7 +661,6 @@ MSG_ENTRY_INSTANCE(nd_transfer_to_session)
 MSG_ENTRY_INSTANCE(nd_get_message_name_handler)
 {
 	ND_TRACE_FUNC() ;
-	NDUINT16 sid ;
 	NDIStreamMsg inmsg(msg) ;
 	NDOStreamMsg omsg(inmsg.MsgMaxid(),inmsg.MsgMinid()) ;
 	NDUINT16 maxID, minID ;
@@ -682,3 +683,14 @@ MSG_ENTRY_INSTANCE(nd_get_message_name_handler)
 	return 0;
 }
 
+MSG_ENTRY_INSTANCE(nd_get_app_ver_handler)
+{
+	ND_TRACE_FUNC() ;
+	NDOStreamMsg omsg(ND_USERMSG_MAXID(msg),ND_USERMSG_MINID(msg)) ;
+	
+	omsg.Write((NDUINT32)__g_version_id) ;
+	omsg.Write((NDUINT8*)__g_version_desc) ;
+		
+	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(),  h_listen) ;
+	return 0;
+}

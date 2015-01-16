@@ -9,4 +9,4 @@
 #include <stdio.h>
 
 const char *__g_version_desc ="version 1.0 \n build time: \n" ;
-const int __g_version_id = 100000 ;
+int __g_version_id = 100000 ;
