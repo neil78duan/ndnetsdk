@@ -256,7 +256,48 @@ int ndstr_parse_command(char *input_text, char *argv[], int bufize, int number)
 	int ret = 0 ;
 	char *next_text = ndstr_first_valid((const char*)input_text) ;
 	while (next_text && *next_text ) {
-		if (*next_text=='\"') {
+#ifdef ND_UNIX
+		if (*next_text==0x24) { // $
+			char envValName[1024] ;
+			envValName[0] = 0 ;
+			next_text = ndstr_parse_word(++next_text, envValName) ;
+			if (envValName[0]) {
+				char *envVal = getenv(envValName) ;
+				if (envVal && envVal[0]) {
+					strncpy(argv[ret], envVal, bufize) ;					
+				}
+				else {
+					break ;
+				}
+			}
+			else {
+				break ;
+			}
+			
+		}
+#else 
+		if (*next_text==0x25) { // %
+			char envValName[1024] ;
+			envValName[0] = 0 ;
+			
+			next_text = ndstr_str_end(++next_text, envValName, 0x25) ;
+			if (envValName[0]) {
+				++next_text ;
+				
+				char *envVal = getenv(envValName) ;
+				if (envVal && envVal[0]) {
+					strncpy(argv[ret], envVal, bufize) ;					
+				}
+				else {
+					break ;
+				}
+			}
+			else {
+				break ;
+			}
+		}
+#endif
+		else if (*next_text=='\"') {
 			++next_text ;
 			next_text = _ndstr_read_cmd(next_text, argv[ret], bufize, '\"' ) ;
 		}
