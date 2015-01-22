@@ -58,6 +58,7 @@ public:
 
 	ndthread_t OpenListenThread(int session_num) ;
 	int SwitchTothread(NDSession *session, ndthread_t aimth) ;
+	int GetClientsInThreads(ndthread_t *threadid_buf, int *count_buf, int size) ;
 
 	NDSession *htoSession(nd_handle h_session) ;
 	void SetEmptyConnTimeout(int seconds) ;		//设置空连接超时时间

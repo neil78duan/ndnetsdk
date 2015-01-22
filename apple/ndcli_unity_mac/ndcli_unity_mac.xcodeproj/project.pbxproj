@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		07501E3C1A161207003DE0CA /* nd_exch_key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07501E3B1A161207003DE0CA /* nd_exch_key.cpp */; };
 		07647B521A400D7F00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B511A400D7F00A96620 /* nd_cmdline.c */; };
+		0766909A1A6F9A3000258B13 /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076690991A6F9A3000258B13 /* nd_datatransfer.cpp */; };
 		07A26B3119C80DA600F51698 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07A269C919C80DA500F51698 /* Makefile */; };
 		07A26B3319C80DA600F51698 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07A269CC19C80DA500F51698 /* Makefile */; };
 		07A26B5619C80DA600F51698 /* bintree.c in Sources */ = {isa = PBXBuildFile; fileRef = 07A269F119C80DA600F51698 /* bintree.c */; };
@@ -87,6 +88,7 @@
 /* Begin PBXFileReference section */
 		07501E3B1A161207003DE0CA /* nd_exch_key.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_exch_key.cpp; sourceTree = "<group>"; };
 		07647B511A400D7F00A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_cmdline.c; sourceTree = "<group>"; };
+		076690991A6F9A3000258B13 /* nd_datatransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nd_datatransfer.cpp; path = ../ndapplib/nd_datatransfer.cpp; sourceTree = "<group>"; };
 		07A2695C19C80B1500F51698 /* ndcli_unity_mac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ndcli_unity_mac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A2696019C80B1500F51698 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		07A2696919C80DA500F51698 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
@@ -581,6 +583,7 @@
 		07CBF85319C974BC002EE541 /* ndclient */ = {
 			isa = PBXGroup;
 			children = (
+				076690991A6F9A3000258B13 /* nd_datatransfer.cpp */,
 				07CBF85419C974BC002EE541 /* c_api */,
 				07CBF85719C974BC002EE541 /* cpp_api */,
 				07CBF85919C974BC002EE541 /* Makefile */,
@@ -690,6 +693,7 @@
 				07A26B9519C80DA600F51698 /* r_keygen.c in Sources */,
 				07A26C6719C80DFA00F51698 /* nd_msgpack.cpp in Sources */,
 				07A26BBD19C80DA600F51698 /* nd_net.c in Sources */,
+				0766909A1A6F9A3000258B13 /* nd_datatransfer.cpp in Sources */,
 				07A26B9119C80DA600F51698 /* prime.c in Sources */,
 				07A26BBC19C80DA600F51698 /* nd_msgentry.c in Sources */,
 				07A26B9919C80DA600F51698 /* nd_cryptfile.c in Sources */,
@@ -825,6 +829,7 @@
 		07A2696419C80B1500F51698 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__MAC_OS__,
@@ -837,6 +842,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = ../../include;
+				VALID_ARCHS = i386;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -844,6 +850,7 @@
 		07A2696519C80B1500F51698 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__MAC_OS__,
@@ -854,6 +861,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = ../../include;
+				VALID_ARCHS = i386;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;

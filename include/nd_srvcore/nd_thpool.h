@@ -72,4 +72,6 @@ ND_SRV_API nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h,int session_num
 ND_SRV_API int nd_close_listen_thread(nd_listen_handle h,nd_thsrvid_t sid)  ;
 
 ND_SRV_API struct thread_pool_info *get_thread_poolinf(nd_listen_handle h, nd_thsrvid_t thid);
+ND_SRV_API int nd_fetch_sessions_in_thread(nd_listen_handle h,  ndthread_t *threadid_buf, int *count_buf, int size);
+
 #endif

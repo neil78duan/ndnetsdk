@@ -333,6 +333,11 @@ int NDListener::SwitchTothread(NDSession *session, ndthread_t aimth)
 	return nd_session_switch((nd_listen_handle) GetHandle(),session->GetSessionID(),  aimth);
 }
 
+int NDListener::GetClientsInThreads(ndthread_t *threadid_buf, int *count_buf, int size) 
+{
+	return nd_fetch_sessions_in_thread((nd_listen_handle)GetHandle(), threadid_buf, count_buf, size) ;
+}
+
 
 NDSafeListener::NDSafeListener(nd_fectory_base *sf ) : NDListener(sf)
 {
