@@ -438,7 +438,7 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 		return -1;
 	}
     msg_buf->version = NDNETMSG_VERSION ;
-	if(flag & ESF_ENCRYPT ) {
+	if((flag & ESF_ENCRYPT) && !msg_buf->encrypt) {
 		nd_packetbuf_t crypt_buf ;
 		memcpy(&crypt_buf, msg_buf, nd_pack_len(msg_buf)) ;
 		nd_packet_encrypt(net_handle, &crypt_buf) ;

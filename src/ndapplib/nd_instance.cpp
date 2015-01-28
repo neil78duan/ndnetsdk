@@ -658,6 +658,31 @@ MSG_ENTRY_INSTANCE(nd_transfer_to_session)
 	return 0 ;
 }
 
+MSG_ENTRY_INSTANCE(nd_transfer_to_client)
+{
+	ND_TRACE_FUNC() ;
+	NDUINT16 sid ;
+	NDIStreamMsg inmsg(msg) ;
+	
+	//nd_logdebug("receive message need transfer\n");
+	if(-1==inmsg.Read(sid) || sid ==0) {
+		
+		nd_logmsg("transfer-message error sessionid ==0\n") ;
+		return 0 ;
+	}
+	if(!h_listen){
+		h_listen = getbase_inst()->GetDeftListener()->GetHandle() ;
+		nd_assert(h_listen) ;
+	}
+	NDOStreamMsg omsg(inmsg.MsgMaxid(), inmsg.MsgMinid()) ;
+	inmsg.Read(omsg) ;
+	
+	if(-1==nd_send_tocliet(sid,(nd_usermsghdr_t*)omsg.GetMsgAddr(), h_listen) ){
+		nd_logmsg("nd_netmsg_handle() to %d error\n", sid) ;		
+	}
+	return 0 ;
+}
+
 MSG_ENTRY_INSTANCE(nd_get_message_name_handler)
 {
 	ND_TRACE_FUNC() ;

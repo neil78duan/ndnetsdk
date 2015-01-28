@@ -83,6 +83,8 @@
 
 #define ND_MULTI_THREADED 1				//使用多线程(必须)
 
+#define ND_MAX_THREAD_NUM 16
+
 #define ND_CALLSTACK_TRACE	1			//跟踪函数调用堆栈
 
 #ifndef BUILD_AS_STATIC_LIB

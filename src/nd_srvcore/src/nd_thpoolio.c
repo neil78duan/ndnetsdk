@@ -180,6 +180,11 @@ nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h,int session_num)
 	struct listen_contex * lc =(struct listen_contex *) h ;
 	struct thread_pool_info  *piocp ;
 
+	if (nd_listen_get_threads(h) >= ND_MAX_THREAD_NUM ) {
+		nd_object_seterror(h, NDERR_LIMITED) ;
+		nd_assert(0) ;
+		return 0 ;
+	}
 #ifndef ND_UNIX
 	if (ND_LISTEN_OS_EXT==lc->io_mod && lc->listen_id ){
 		return lc->listen_id;
@@ -498,6 +503,19 @@ struct thread_pool_info *get_thread_poolinf(nd_listen_handle h, nd_thsrvid_t thi
 		pthinfo = NULL;
 	}
 	return NULL;
+}
+
+
+int nd_listen_get_threads(nd_listen_handle h) 
+{
+	int num = 0 ;
+	struct thread_pool_info *node = NULL;
+	struct listen_contex *listen_info = (struct listen_contex *) h ;
+	
+	list_for_each_entry(node, &listen_info->list_thread, struct thread_pool_info, list) {
+		++num ;
+	}
+	return  num ;
 }
 
 int nd_fetch_sessions_in_thread(nd_listen_handle h, ndthread_t *threadid_buf, int *count_buf, int size)

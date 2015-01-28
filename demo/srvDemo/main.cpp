@@ -96,8 +96,8 @@ MSG_ENTRY_INSTANCE(loging_hander)
 {
     size_t len ;
     NDIStreamMsg inmsg(msg) ;
-    NDUINT8 pwd[PASSWORD_SIZE];
-    NDUINT8 name[USER_NAME_SIZE] ;
+    NDUINT8 pwd[32];
+    NDUINT8 name[100] ;
     
     len = inmsg.Read(name, sizeof(name)) ;
     

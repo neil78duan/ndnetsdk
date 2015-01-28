@@ -85,6 +85,14 @@ int NDSession::BigDataSend(int maxID, int minID, void *data, size_t datalen)
 	return BigDataAsyncSend(m_objhandle, data, datalen,  param, NULL) ;
 }
 
+int NDSession::CryptPackage(nd_usermsgbuf_t *msgBuf) 
+{	
+	if (msgBuf->msg_hdr.packet_hdr.encrypt) {
+		return 0;
+	}
+	return nd_packet_encrypt(m_objhandle, (nd_packetbuf_t*)msgBuf) > 0 ? 0 : -1 ;
+	
+}
 //µÃµ½ÍøÂçµØÖ·
 const char* NDSession::GetInetAddr()
 {

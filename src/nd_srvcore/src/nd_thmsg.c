@@ -15,12 +15,12 @@
 #define check_thread_switch(lc) do{} while(0) 
 #endif
 
+
 //Õ®π˝SESSIONid∞—œ˚œ¢∑¢ÀÕ∏¯øÕªß∂À
-int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) 
+int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle,int encrypt) 
 {
 	int ret =0 ;
 	ndthread_t thid ;
-	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
 	
 	//check_thread_switch(lc) ;
@@ -29,7 +29,7 @@ int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_h
 		return -1 ;
 	}
 	else if(0==sessionid) {
-		return nd_sendto_all(data, listen_handle, 0) ;
+		return nd_sendto_all_ex(data, listen_handle, 0,encrypt) ;
 	}
 	
 	thid = nd_node_get_owner(pmanger,sessionid ) ;
@@ -37,10 +37,11 @@ int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_h
 		return -1 ;
 	}
 	if(thid == nd_thread_self() ) {
+		int flag = encrypt ? (ESF_ENCRYPT|ESF_NORMAL): ESF_NORMAL ;
 		nd_handle client = (nd_handle) pmanger->lock(pmanger,sessionid) ;
 		if(!client) 
 			return -1 ;
-		ret = nd_sessionmsg_send(client,data) ;
+		ret = nd_sessionmsg_sendex(client,data, flag) ;
 		pmanger->unlock(pmanger,sessionid);
 	}
 	else {
@@ -49,15 +50,19 @@ int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_h
 			return -1 ;
 		}
 		ND_USERMSG_LEN(data) = sessionid ;
+		if (encrypt) {			
+			data->packet_hdr.encrypt = 1 ;
+		}
 
 		ret = nd_thsrv_send(thid,E_THMSGID_SENDTO_CLIENT,data, size) ;
 		
+		data->packet_hdr.encrypt = 0 ;		
 		ND_USERMSG_LEN(data) = size ;
 	}
 	return ret ;
 }
 
-int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level)
+int nd_sendto_all_ex(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level,int encrypt)
 {
 	NDUINT8 ver ;
 	int ret = 0;	
@@ -75,14 +80,15 @@ int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level)
 		return -1 ;
 	}
 #ifndef ND_UNIX
-	if (lc->io_mod == ND_LISTEN_OS_EXT) {		
+	if (lc->io_mod == ND_LISTEN_OS_EXT) {	
+		int flag = encrypt ? (ESF_ENCRYPT|ESF_POST): ESF_POST ;	
 		nd_netui_handle client ;
 		cmlist_iterator_t cm_iterator ;				
 		for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
 			client = pmanger->lock_next (pmanger,&cm_iterator) ) {
 			
 			if (nd_connect_level_get(client)>= priv_level )	{
-				nd_sessionmsg_post(client,data) ;
+				nd_sessionmsg_sendex(client,data, flag) ;
 			}
 			++ret ;
 		}
@@ -93,6 +99,9 @@ int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level)
 	ND_USERMSG_LEN(data) = 0 ;
 	ver = data->packet_hdr.version ;
 	data->packet_hdr.version = priv_level ;
+	if (encrypt) {		
+		data->packet_hdr.encrypt = 1 ;
+	}
 	
 	pos = lc->list_thread.next ;	
 	while(pos != &lc->list_thread) {
@@ -105,6 +114,7 @@ int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level)
 	
 	ND_USERMSG_LEN(data) = size ;
 	data->packet_hdr.version = ver;
+	data->packet_hdr.encrypt = 0;
 	
 	return ret ;
 }
@@ -363,6 +373,7 @@ int session_close_handler(nd_thsrv_msg *msg)
 
 int msg_sendto_client_handler(nd_thsrv_msg *msg)
 {
+	NDUINT8 iscrypt = 0 ;
 	NDUINT8 priv_level = 0 ;
 	NDUINT16  session_id  ;
 	nd_netui_handle client ;
@@ -387,16 +398,21 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 	priv_level = net_msg->msg_hdr.packet_hdr.version ;
 	net_msg->msg_hdr.packet_hdr.version = NDNETMSG_VERSION ;
 	
+	iscrypt = net_msg->msg_hdr.packet_hdr.encrypt ;
+	net_msg->msg_hdr.packet_hdr.encrypt = 0 ;
+	
 	if (session_id){
+		int flag = iscrypt?  (ESF_NORMAL | ESF_ENCRYPT) : ESF_NORMAL;
 		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
 		
 		if(client) {
-			nd_sessionmsg_send(client,net_msg) ;
+			nd_sessionmsg_sendex((nd_handle)client,&net_msg->msg_hdr,flag) ;
 			pmanger->unlock(pmanger,session_id);			
 		}
 	}
 	else {
 		nd_handle client;
+		int flag = iscrypt?  ESF_POST: (ESF_POST | ESF_ENCRYPT) ;
 		
 #ifndef ND_UNIX
 		if (lc->io_mod == ND_LISTEN_OS_EXT) {
@@ -404,7 +420,7 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 			for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
 				client = pmanger->lock_next (pmanger,&cm_iterator) ) {
 				if (nd_connect_level_get(client)>= priv_level )	{
-					nd_sessionmsg_post(client,net_msg) ;
+					nd_sessionmsg_sendex((nd_handle)client,&net_msg->msg_hdr,flag) ;
 				}
 			}
 		}
@@ -418,7 +434,7 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 				if (!client)
 					continue ;
 				if (nd_connect_level_get(client)>= priv_level )	{
-					nd_sessionmsg_post(client,net_msg) ;
+					nd_sessionmsg_sendex((nd_handle)client,&net_msg->msg_hdr,flag) ;
 				}
 				pmanger->unlock(pmanger,session_id) ;
 			}
@@ -427,6 +443,7 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 	
 	net_msg->msg_hdr.packet_hdr.version = priv_level;	
 	ND_USERMSG_LEN(net_msg) = session_id;
+	net_msg->msg_hdr.packet_hdr.encrypt = iscrypt ;
 	
 	return 0 ;
 }

@@ -51,10 +51,22 @@ int addto_thread_pool(struct nd_client_map *, struct thread_pool_info * thpi) ;
 int delfrom_thread_pool(struct nd_client_map *, struct thread_pool_info * thpi) ;
 int _delfrom_thread_pool(NDUINT16 sid, struct thread_pool_info * pthinfo) ;
 int close_session_in_thread(struct thread_pool_info *thpi) ;
+
+ND_SRV_API int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle,int encrypt) ;
+ND_SRV_API int nd_sendto_all_ex(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level,int encrypt);
+
 //通过SESSIONid把消息发送给客户端
-ND_SRV_API int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) ;
+static __INLINE__ int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) 
+{
+	return nd_send_toclient_ex( sessionid,data, listen_handle, 0) ;
+}
 //send to all , implement not like broadcast 
-ND_SRV_API int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level) ;
+static __INLINE__ int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level) 
+{
+	return nd_sendto_all_ex(data, listen_handle, priv_level, 0) ;
+}
+
+
 //把消息交给session处理
 ND_SRV_API int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) ;
 
@@ -71,6 +83,7 @@ ND_SRV_API int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid);
 ND_SRV_API nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h,int session_number)  ;
 ND_SRV_API int nd_close_listen_thread(nd_listen_handle h,nd_thsrvid_t sid)  ;
 
+ND_SRV_API int nd_listen_get_threads(nd_listen_handle h) ;
 ND_SRV_API struct thread_pool_info *get_thread_poolinf(nd_listen_handle h, nd_thsrvid_t thid);
 ND_SRV_API int nd_fetch_sessions_in_thread(nd_listen_handle h,  ndthread_t *threadid_buf, int *count_buf, int size);
 

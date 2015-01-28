@@ -56,6 +56,8 @@ public :
 	int Ioctl(int cmd, void *val, int *size) ;
 	int SetDelayClose() ;
 	int LoadBalance() ;
+	
+	int CryptPackage(nd_usermsgbuf_t *msgBuf) ;
 #if 0
 	void *  operator new(size_t size,void *addr) throw (std::bad_alloc) ;
 	void operator delete(void *p) ;
