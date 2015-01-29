@@ -348,7 +348,7 @@ int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag)
     
 }
 
-int ndCryptMsg(netObject netObj,netObject msgObj, bool bEncrypt) 
+int ndCryptMsg(netObject netObj,netObject msgObj, int bEncrypt) 
 {
 	nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)msgObj ;
 	nd_assert(pwapper) ;
