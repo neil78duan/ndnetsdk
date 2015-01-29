@@ -40,6 +40,7 @@ public :
 	void Destroy(int flag = 0);
 	int Create(const char *protocol_name=NULL) ;
 	int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL);
+	int Open(ndip_t ip, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) ;
 	int Close(int force=0);
 
 	int Send(int maxid, int minid, void *data, size_t size) ;
@@ -49,6 +50,8 @@ public :
 	int RecvRawData(void *buf, size_t size, ndtime_t waittm) ;
 	
 	int BigDataSend(NDUINT64 param, void *data, size_t datalen);
+	
+	int CryptMsg(nd_usermsgbuf_t *msghdr, bool bEncrypt=true) ;
 	
 	int CheckValid();
 	int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100);
@@ -169,6 +172,11 @@ int NDConnector::Open(const char *host, int port,const char *protocol_name,nd_pr
 
 }
 
+int NDConnector::Open(ndip_t ip, int port,const char *protocol_name, nd_proxy_info *proxy) 
+{
+	return Open((char*)nd_inet_ntoa(ip,NULL), port, protocol_name, proxy) ;
+}
+
 int NDConnector::Reconnect(ndip_t IP, int port,nd_proxy_info *proxy)
 {
 	return ::nd_reconnect(m_objhandle,  IP,  port, (nd_proxy_info*)proxy) ;
@@ -261,6 +269,16 @@ int NDConnector::BigDataSend(NDUINT64 param,  void *data, size_t datalen)
 	return BigDataAsyncSend(m_objhandle, data, datalen,  param, NULL) ;
 }
 
+int NDConnector::CryptMsg(nd_usermsgbuf_t *msghdr, bool bEncrypt) 
+{
+	if (bEncrypt) {
+		return nd_packet_encrypt(m_objhandle, (nd_packetbuf_t*) msghdr) ;
+	}
+	else {
+		return nd_packet_encrypt(m_objhandle, (nd_packetbuf_t*)msghdr) ;
+	}
+	
+}
 
 int NDConnector::RecvRawData(void *buf, size_t size, ndtime_t waittm) 
 {

@@ -84,6 +84,9 @@ CPPAPI void ndSetBigDataHandler(netObject netObj,ndBigDataHandler entry) ;
 /* send a wrapped message */
 CPPAPI int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag) ;
 
+//crypt message 
+CPPAPI int ndCryptMsg(netObject netObj,netObject msgObj, bool bEncrypt) ;
+
 //install message handle functions
 CPPAPI int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID,const char *name) ;
 CPPAPI int ndSetDftMsgHandler(netObject netObj,ndNetFunc dftFunc) ;

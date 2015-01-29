@@ -60,6 +60,7 @@ class NDIConn
 {
 public :		
 	virtual int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
+	virtual int Open(ndip_t ip, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
 	virtual int Close(int force=0) = 0;
 	virtual int Send(int maxid, int minid, void *data, size_t size)  = 0;
 	virtual int SendMsg(NDSendMsg &msg, int flag=0) = 0;
@@ -67,7 +68,7 @@ public :
 	virtual int SendRawData(void *data , size_t size)  = 0;
 	virtual int RecvRawData(void *buf, size_t size, ndtime_t waittm) = 0 ;
 	virtual int BigDataSend(NDUINT64 param, void *data, size_t datalen) =0;
-	
+	virtual int CryptMsg(nd_usermsgbuf_t *msghdr, bool bEncrypt=true) = 0 ;
 	virtual int CheckValid() = 0;
 	virtual int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100) = 0;
 	virtual int Update(ndtime_t wait_time) = 0;

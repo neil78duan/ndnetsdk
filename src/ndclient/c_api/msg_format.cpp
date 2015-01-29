@@ -348,6 +348,21 @@ int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag)
     
 }
 
+int ndCryptMsg(netObject netObj,netObject msgObj, bool bEncrypt) 
+{
+	nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)msgObj ;
+	nd_assert(pwapper) ;
+	nd_assert(pwapper->size == sizeof(nd_message_out_wrapper));
+	nd_assert(pwapper->type == NDHANDLE_USER1 + 2);
+	
+	if (bEncrypt) {
+		return nd_packet_encrypt((nd_handle)netObj, (nd_packetbuf_t*) (pwapper->outStream.GetMsgAddr())) ;
+	}
+	else {
+		return nd_packet_encrypt((nd_handle)netObj, (nd_packetbuf_t*)(pwapper->outStream.GetMsgAddr())) ;
+	}
+	
+}
 
 int nd_checkErrorMsg(netObject nethandle,ndMsgData *msg)
 {
