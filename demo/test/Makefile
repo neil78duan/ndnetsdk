@@ -33,15 +33,3 @@ $(PROJS): $(OBJS) $(MYLIBS)
 clean:
 	rm -f *.o  $(PROJS) $(OBJS:.o=.d)
 	
-
-###############create dependence file #############
-.PHONY: clean
-
-
-include $(OBJS:.o=.d)
-
-$(OBJS:.o=.d): $(SRC)
-	set -e;\
-	$(CC) -MM  $(INCLUDE) $(CFLAGS) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$

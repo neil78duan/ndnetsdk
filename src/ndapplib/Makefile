@@ -3,11 +3,7 @@
 include ../Rules.make
 
 #create objdir
-objdir := $(shell  ls | grep obj )
-ifeq ($(objdir),obj)
-else
-	tmpobjdir := $(shell mkdir obj)
-endif
+objdir := $(shell [ -d obj ] || mkdir obj) 
 
 ##############set flag
 
@@ -56,18 +52,3 @@ $(PROJ_CLIENT):$(OBJDIR)/nd_msgpack.o
 clean:
 	rm -f $(PROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
 	
-
-###############create dependence file #############
-.PHONY: clean
-
-
-include $(PathOBJS:.o=.d)
-
-$(PathOBJS:.o=.d): $(SRC)
-	set -e;\
-	$(CC) -MM  $(INCLUDE) $(CFLAGS) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-
-#############################################################

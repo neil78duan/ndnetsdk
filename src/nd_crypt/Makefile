@@ -9,12 +9,11 @@
 
 include ../Rules.make
 
+
+
 #create objdir
-objdir := $(shell  ls | grep obj )
-ifeq ($(objdir),obj)
-else
-	tmpobjdir := $(shell mkdir obj)
-endif
+objdir := $(shell [ -d obj ] || mkdir obj) 
+
 
 ##############set flag
 
@@ -31,6 +30,7 @@ endif
 VPATH :=  $(SRCDIR)  $(OBJDIR) ./rsa
 
 SRC := $(shell cd ./src; ls | grep '\.c\>'	)
+
 
 OBJS := $(patsubst %.c, %.o,$(SRC) )  $(patsubst %.cpp, %.o,$(SRC) )
 
@@ -63,20 +63,4 @@ $(PROJS): $(OBJS)
 clean:
 	rm -f $(PROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
 
-
-###############create dependence file #############
-.PHONY: clean
-
-PathSRC :=$(patsubst %.c, ./src/%.c, $(SRC) ) 
-
-
-include $(PathOBJS:.o=.d)
-
-$(PathOBJS:.o=.d): $(PathSRC)
-	set -e;\
-	$(CC) -MM  $(INCLUDE) $(CFLAGS) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-#############################################################
 
