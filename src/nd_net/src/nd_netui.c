@@ -952,6 +952,12 @@ void nd_net_set_crypt(nd_netcrypt encrypt_func, nd_netcrypt decrypt_func,int cry
 /*加密数据包,返回加密后的实际长度,并且修改了封包的实际长度*/
 int nd_packet_encrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 {
+	nd_assert(net_handle) ;
+	nd_assert(msgbuf);
+
+	return nd_packet_encrypt_key(&(net_handle->crypt_key ), msgbuf) ;
+
+	/*
 	ENTER_FUNC() 
 	int datalen ;
 	nd_cryptkey *pcrypt_key ;
@@ -989,11 +995,57 @@ int nd_packet_encrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 	}
 	LEAVE_FUNC();
 	return 0 ;
+	 */
 }
-
+int nd_packet_encrypt_key(nd_cryptkey *pcrypt_key, nd_packetbuf_t *msgbuf)
+{
+	ENTER_FUNC() 
+	int datalen ;
+	
+	nd_assert(msgbuf);
+	
+	datalen = (int) nd_pack_len(&msgbuf->hdr) - ND_PACKET_HDR_SIZE;	
+	if(datalen<=0 || datalen> (ND_PACKET_DATA_SIZE - _crypt_unit_len)) {
+		LEAVE_FUNC();
+		return 0;
+	}
+	
+	//crypt 
+	if(__net_encrypt && is_valid_crypt(pcrypt_key)) {
+		
+		int new_len  ;
+		
+		new_len = __net_encrypt(msgbuf->data, datalen, pcrypt_key->key) ;
+		if(0==new_len) {
+			LEAVE_FUNC();
+			return 0 ;
+		}
+		
+		msgbuf->hdr.encrypt = 1 ;
+		if(new_len> datalen) {
+			msgbuf->hdr.stuff =1 ;
+			msgbuf->hdr.stuff_len = (new_len -datalen) ; 
+			msgbuf->hdr.length += msgbuf->hdr.stuff_len ;
+		}
+		LEAVE_FUNC();
+		return new_len ;
+	}
+	LEAVE_FUNC();
+	return 0 ;
+}
 /*解密数据包,返回解密后的实际长度,但是不修改封包的实际长度*/
 int nd_packet_decrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 {
+	int ret = nd_packet_decrypt_key(&(net_handle->crypt_key ), msgbuf) ;
+	if (-1==ret ) {
+		char buf[20] ;
+		SOCKADDR_IN *addr =& (net_handle->remote_addr );
+		nd_logdebug("[%s] send data error :unknow crypt data\n" AND nd_inet_ntoa( addr->sin_addr.s_addr, buf )) ;
+		return 0;
+	}
+	return ret;
+	
+	/*
 	ENTER_FUNC()
 	int datalen ;
 	nd_cryptkey *pcrypt_key ;
@@ -1022,6 +1074,46 @@ int nd_packet_decrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 		}
 		msgbuf->hdr.encrypt = 0 ;
 
+		if(msgbuf->hdr.stuff) {
+			LEAVE_FUNC();
+			nd_assert(msgbuf->hdr.stuff_len==msgbuf->data[datalen-1]) ;
+			if(nd_pack_len(&msgbuf->hdr) > msgbuf->data[datalen-1]) 
+				return (nd_pack_len(&msgbuf->hdr) - msgbuf->data[datalen-1]) ;
+			else 
+				return 0;
+		}
+	}
+	LEAVE_FUNC();
+	return nd_pack_len(&msgbuf->hdr) ;
+	 */
+}
+
+int nd_packet_decrypt_key(nd_cryptkey *pcrypt_key,nd_packetbuf_t *msgbuf)
+{
+	ENTER_FUNC()
+	int datalen ;
+	
+	nd_assert(msgbuf);
+	nd_assert(msgbuf->hdr.encrypt);
+	
+	datalen = (int) nd_pack_len(&msgbuf->hdr) - ND_PACKET_HDR_SIZE;	
+	if(datalen<=0 || datalen> (ND_PACKET_DATA_SIZE - _crypt_unit_len)){
+		LEAVE_FUNC();
+		return 0;
+	}
+	//decrypt 
+	if(__net_decrypt && is_valid_crypt(pcrypt_key)) {
+		
+		int new_len = __net_decrypt(msgbuf->data, datalen, pcrypt_key->key) ;
+		if(new_len <= 0 || new_len!=datalen) {
+			//char buf[20] ;
+			//SOCKADDR_IN *addr =& (net_handle->remote_addr );
+			//nd_logdebug("[%s] send data error :unknow crypt data\n" AND nd_inet_ntoa( addr->sin_addr.s_addr, buf )) ;
+			LEAVE_FUNC();
+			return -1 ;
+		}
+		msgbuf->hdr.encrypt = 0 ;
+		
 		if(msgbuf->hdr.stuff) {
 			LEAVE_FUNC();
 			nd_assert(msgbuf->hdr.stuff_len==msgbuf->data[datalen-1]) ;

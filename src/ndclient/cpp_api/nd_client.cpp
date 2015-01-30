@@ -302,6 +302,9 @@ int NDConnector::Update(ndtime_t wait_time)
 
 	int ret = 0;
 	//nd_msgui_buf msg_recv;
+	if (!m_objhandle) {
+		return -1;
+	}
 	if(m_objhandle->type==NDHANDLE_UDPNODE) {
 		nd_usermsgbuf_t msg_recv;
 RE_WAIT:

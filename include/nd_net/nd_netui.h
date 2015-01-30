@@ -144,6 +144,9 @@ ND_NET_API int nd_connector_raw_waitdata(nd_handle net_handle, void *buf, size_t
 ND_NET_API int nd_packet_encrypt(nd_handle net_handle, nd_packetbuf_t *msgbuf);
 ND_NET_API int nd_packet_decrypt(nd_handle net_handle, nd_packetbuf_t *msgbuf);
 
+ND_NET_API int nd_packet_encrypt_key(nd_cryptkey *pcrypt_key, nd_packetbuf_t *msgbuf);
+ND_NET_API int nd_packet_decrypt_key(nd_cryptkey *pcrypt_key,nd_packetbuf_t *msgbuf);
+
 //设置数据处理完毕
 //@size 被处理的数据长度
 ND_NET_API int nd_connector_handled_data(nd_handle net_handle, size_t size) ;
