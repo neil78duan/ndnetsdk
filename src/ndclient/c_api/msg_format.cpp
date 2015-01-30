@@ -350,18 +350,80 @@ int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag)
 
 int ndCryptMsg(netObject netObj,netObject msgObj, int bEncrypt) 
 {
-	nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)msgObj ;
-	nd_assert(pwapper) ;
-	nd_assert(pwapper->size == sizeof(nd_message_out_wrapper));
-	nd_assert(pwapper->type == NDHANDLE_USER1 + 2);
+	nd_assert(msgObj) ;
+	
+	nd_packetbuf_t* packet = NULL ;
+	nd_handle h = (nd_handle) msgObj ;
+	
+	if (h->type == (NDHANDLE_USER1 + 2))  {
+		nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)msgObj ;
+		nd_assert(pwapper) ;
+		nd_assert(pwapper->size == sizeof(nd_message_out_wrapper));
+		
+		packet = (nd_packetbuf_t*) pwapper->outStream.GetMsgAddr() ;
+	}
+	else if(h->type == (NDHANDLE_USER1 + 1)) {
+		nd_message_wrapper *pwapper = (nd_message_wrapper*)msgObj ;	
+		nd_assert(pwapper->size == sizeof(nd_message_wrapper));		
+		packet = (nd_packetbuf_t*) pwapper->inStream->GetMsgAddr() ;
+	}
+	if (!packet) {
+		return -1 ;
+	}
+	
 	
 	if (bEncrypt) {
-		return nd_packet_encrypt((nd_handle)netObj, (nd_packetbuf_t*) (pwapper->outStream.GetMsgAddr())) ;
+		return nd_packet_encrypt((nd_handle)netObj, packet) ;
 	}
 	else {
-		return nd_packet_encrypt((nd_handle)netObj, (nd_packetbuf_t*)(pwapper->outStream.GetMsgAddr())) ;
+		return nd_packet_encrypt((nd_handle)netObj, packet) ;
 	}
 	
+}
+
+int ndGetMsglen(netObject msgObj) 
+{
+	nd_assert(msgObj) ;
+	
+	nd_handle h = (nd_handle) msgObj ;	
+	if (h->type == (NDHANDLE_USER1 + 2))  {
+		nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)msgObj ;
+		nd_assert(pwapper) ;
+		nd_assert(pwapper->size == sizeof(nd_message_out_wrapper));
+		
+		return (int)pwapper->outStream.MsgLength() ;
+	}
+	else if(h->type == (NDHANDLE_USER1 + 1)) {
+		nd_message_wrapper *pwapper = (nd_message_wrapper*)msgObj ;	
+		nd_assert(pwapper->size == sizeof(nd_message_wrapper));		
+		return (int) pwapper->inStream->MsgLength() ;
+	}
+	
+	return 0;
+
+}
+
+char* ndGetMsgAddr(netObject msgObj) 
+{
+	nd_assert(msgObj) ;
+	
+	nd_handle h = (nd_handle) msgObj ;
+	
+	if (h->type == (NDHANDLE_USER1 + 2))  {
+		nd_message_out_wrapper *pwapper = (nd_message_out_wrapper*)msgObj ;
+		nd_assert(pwapper) ;
+		nd_assert(pwapper->size == sizeof(nd_message_out_wrapper));
+		
+		return  (char*) pwapper->outStream.GetMsgAddr() ;
+	}
+	else if(h->type == (NDHANDLE_USER1 + 1)) {
+		nd_message_wrapper *pwapper = (nd_message_wrapper*)msgObj ;	
+		nd_assert(pwapper->size == sizeof(nd_message_wrapper));		
+		return  (char*) pwapper->inStream->GetMsgAddr() ;
+	}
+	
+	return 0 ;
+
 }
 
 int nd_checkErrorMsg(netObject nethandle,ndMsgData *msg)
