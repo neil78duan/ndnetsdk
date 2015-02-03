@@ -107,6 +107,7 @@ int nd_run_cmdline(struct nd_cmdline_root *root, int argc, const char *argv[] )
 			if (root->exit_stat) {
 				break ;
 			}
+			root->last_retval =ret ;
 			
 			fprintf(stdout, ">%s>", root->tips ) ;
 			fflush(stdout) ;	
@@ -160,6 +161,15 @@ int nd_cmdline_help(struct nd_cmdline_root *root, int argc, const char *argv[])
 	for (i=0; i< root->number; ++i) {
 		myargv[0] = root->entries[i].name ;
 		root->entries[i].entry(root, 2, myargv) ;
+	}
+	return 0;
+}
+
+int nd_cmdline_check_and_eixt(struct nd_cmdline_root *root, int argc, const char *argv[])
+{
+	ND_CMDLINE_CHECK_SHOW_HELP(argc, argv, "checkexit") ;
+	if (root->last_retval) {
+		exit(root->last_retval) ;
 	}
 	return 0;
 }

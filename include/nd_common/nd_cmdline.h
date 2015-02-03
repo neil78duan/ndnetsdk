@@ -27,7 +27,8 @@ struct nd_cmdline_node
 
 struct nd_cmdline_root
 {
-	int exit_stat ;
+	int exit_stat ;	
+	int last_retval;
 	char tips[ND_COMMAND_LINE_SIZE] ;	
 	void *userdata ;
 	nd_cmdline_entry update_func ; //return 0 nothing todo , -1 error ,else need renew screen
@@ -42,6 +43,7 @@ ND_COMMON_API int _check_is_run_helper(int argc, const char *argv[], const char 
 ND_COMMON_API int nd_cmdline_help(struct nd_cmdline_root *root, int argc, const char *argv[]);
 
 ND_COMMON_API int nd_cmd_push_next(struct nd_cmdline_root *root, const char *next_cmd_text);
+ND_COMMON_API int nd_cmdline_check_and_eixt(struct nd_cmdline_root *root, int argc, const char *argv[]) ;
 
 static __INLINE__ void nd_cmdline_quit(struct nd_cmdline_root *root) 
 {
