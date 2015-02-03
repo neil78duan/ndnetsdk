@@ -74,6 +74,7 @@ int nd_run_cmdline(struct nd_cmdline_root *root, int argc, const char *argv[] )
 	fprintf(stdout, "%s>", root->tips ) ;
 	fflush(stdout) ;
 	while (root->exit_stat==0) {
+		int read_flag = 0;
 		if (root->update_func) {
 			ret = root->update_func(root, 0, NULL) ;
 			if (ret > 0) {				
@@ -87,8 +88,18 @@ int nd_run_cmdline(struct nd_cmdline_root *root, int argc, const char *argv[] )
 			}
 		}
 		
-		memset(buf, 0, sizeof(buf)) ;		
-		if(fgets( buf, sizeof(buf), stdin ) ) {
+		memset(buf, 0, sizeof(buf)) ;	
+		if (root->next_cmd) {
+			strncpy(buf, root->next_cmd, sizeof(buf)) ;
+			read_flag = 1 ;
+			free(root->next_cmd) ;
+			root->next_cmd = 0;
+		}
+		else if(fgets( buf, sizeof(buf), stdin ) ) {
+			read_flag = 1 ;
+		}
+		
+		if (read_flag) {
 			ret = _parse_input_and_run(root, buf) ;
 			if(ret == -1) {
 				fprintf(stderr, "bad command: %s\n", buf ) ;
@@ -100,12 +111,31 @@ int nd_run_cmdline(struct nd_cmdline_root *root, int argc, const char *argv[] )
 			fprintf(stdout, ">%s>", root->tips ) ;
 			fflush(stdout) ;	
 		}
-		
+		read_flag = 0 ;
 			
 	}
 	return 0;
 }
 
+
+int nd_cmd_push_next(struct nd_cmdline_root *root, const char *next_cmd_text)
+{
+	int size = 0;
+	if (!next_cmd_text || next_cmd_text[0]) {
+		return -1;
+	}
+	
+	size =strlen(next_cmd_text) ;
+	if (root->next_cmd) {
+		free(root->next_cmd) ;
+		root->next_cmd = 0 ;
+	}
+	root->next_cmd = malloc(size + 1) ;
+	if (root->next_cmd) {
+		strncpy(root->next_cmd, next_cmd_text, size) ;
+	}
+	return 0;
+}
 
 int _check_is_run_helper(int argc, const char *argv[], const char *help_tips)
 {

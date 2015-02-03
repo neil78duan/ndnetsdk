@@ -389,21 +389,70 @@ int kbhit ( void )
 
 
 #include <sys/resource.h>
-int set_maxopen_fd(int max_fd)
+size_t set_maxopen_fd(size_t max_fd)
 {
-	struct rlimit rt;
-    /* …Ë÷√√ø∏ˆΩ¯≥Ã‘ –Ì¥Úø™µƒ◊Ó¥ÛŒƒº˛ ˝ */
-    /*–Ë“™“‘root‘À––*/
-    rt.rlim_max = rt.rlim_cur = max_fd;
-    setrlimit(RLIMIT_NOFILE, &rt) ;
-    
-    return  getdtablesize() ;
+	struct rlimit rt={0};
+	if(0!=getrlimit(RLIMIT_NOFILE, &rt) ) {
+		return 0 ;
+	}
+
+	rt.rlim_max = max(rt.rlim_max ,max_fd) ;
+	
+	rt.rlim_cur = max(rt.rlim_cur ,max_fd) ;
+	
+    setrlimit(RLIMIT_NOFILE, &rt) ;    
+    return  get_maxopen_fd() ;
+}
+size_t get_maxopen_fd()
+{
+	struct rlimit rt={0};
+	if(0==getrlimit(RLIMIT_NOFILE, &rt) ) {
+		return rt.rlim_max ;
+	}
+#ifdef __LINUX__
+	return 1024 ;
+#else
+	return 256;
+#endif
+}
+
+int enable_core_dump(void)
+{
+	struct rlimit   limit;
+	limit.rlim_cur = RLIM_INFINITY;
+	limit.rlim_max = RLIM_INFINITY;
+	return setrlimit(RLIMIT_CORE, &limit);
+}
+
+#define GET_RLIMIT_INFO(_name,_buf, size)  do {\
+	struct rlimit   limit = {0};	\
+	if( getrlimit(_name, &limit) == 0 && size > 0) {\
+		int _len = snprintf(_buf, size, "%s:cur=%llu max=%llu\n",  #_name, limit.rlim_cur, limit.rlim_max) ; 	\
+		size -= _len ;				\
+		_buf += _len ;				\
+	} \
+}while(0) 
+
+char* get_rlimit_info(char *buf, int buf_size) 
+{
+	char *p = buf ;
+	GET_RLIMIT_INFO(RLIMIT_CORE, p, buf_size) ;
+	GET_RLIMIT_INFO(RLIMIT_CPU,  p, buf_size) ;
+	GET_RLIMIT_INFO(RLIMIT_DATA, p, buf_size) ;
+	GET_RLIMIT_INFO(RLIMIT_FSIZE,p, buf_size) ;
+	GET_RLIMIT_INFO(RLIMIT_MEMLOCK,p, buf_size) ;
+	GET_RLIMIT_INFO(RLIMIT_NOFILE, p, buf_size) ;
+	GET_RLIMIT_INFO(RLIMIT_NPROC,  p, buf_size) ;
+	GET_RLIMIT_INFO(RLIMIT_RSS,    p, buf_size) ;
+	GET_RLIMIT_INFO(RLIMIT_STACK,  p, buf_size) ;
+	
+	return buf;
 }
 
 int create_filemap(const char *filename, size_t size,nd_filemap_t *out_handle)
 {
 	int fd =-1,ret=0;
-	char temp;
+	//char temp;
 
 	if (filename) {
 		fd=open(filename,O_CREAT|O_RDWR|O_TRUNC,00644);

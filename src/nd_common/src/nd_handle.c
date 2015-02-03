@@ -201,6 +201,7 @@ int nd_object_del_destroy_cb(nd_handle handle,nd_object_destroy_callback callbac
 //call when destory or something 
 int _nd_object_on_destroy(nd_handle handle,int type) 
 {
+	ENTER_FUNC() ;
 	struct list_head *source_hdr = &handle->__release_cb_hdr ;
 	struct release_callback_source_node *node,*next ;
 	if (list_empty(source_hdr)) {
@@ -213,6 +214,7 @@ int _nd_object_on_destroy(nd_handle handle,int type)
 			free(node) ;
 		}
 	}
+	LEAVE_FUNC() ;
 	return 0;
 }
 

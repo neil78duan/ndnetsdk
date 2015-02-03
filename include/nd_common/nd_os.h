@@ -29,7 +29,10 @@
 	__INLINE__ int nd_thread_equal(ndthread_t t1, ndthread_t t2){return (t1==t2) ;}
 	
 	//typedef volatile long atomic_t ;
-	static __INLINE__ int set_maxopen_fd(int max_fd) {return 0;}
+	static __INLINE__ size_t set_maxopen_fd(size_t max_fd) {return 0xffff;}
+	static __INLINE__ size_t get_maxopen_fd() {return 0xffff;}
+	ND_COMMON_API char* get_rlimit_info(char *buf, int buf_size) ;
+		
 	#define nd_close_handle(h)	CloseHandle(h)
 
 #else //if __LINUX__		//UNIX OR linux platform
@@ -37,8 +40,12 @@
 	typedef pthread_t		ndth_handle ;	//线程句柄
 	typedef pthread_t 		ndthread_t;		//线程ID
 	#define  nd_thread_equal	pthread_equal
-	ND_COMMON_API int set_maxopen_fd(int max_fd) ;
+	ND_COMMON_API size_t set_maxopen_fd(size_t max_fd) ;
+	ND_COMMON_API size_t get_maxopen_fd();
 	#define nd_close_handle(h)	(void)0
+	ND_COMMON_API int enable_core_dump(void);
+	ND_COMMON_API char* get_rlimit_info(char *buf, int buf_size) ;
+
 #endif
 
 #define ND_INFINITE		0xffffffff

@@ -41,6 +41,8 @@ enum eNDMsgSys{
 	
 	ND_MSG_BIG_DATA_TRANSFER ,
 	
+	ND_MSG_SYS_GET_RLIMIT ,
+	
     ND_MSG_SYS_NUMBER
 };
 

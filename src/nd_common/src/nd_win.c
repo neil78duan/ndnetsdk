@@ -69,6 +69,11 @@ const char *nd_last_error()
 {
 	return nd_str_error((int)GetLastError() );
 }
+char* get_rlimit_info(char *buf, int buf_size) 
+{
+	strncpy(buf, "unknow", buf_size) ;
+	return buf;
+}
 
 #ifdef ND_OPEN_TRACE
 int MyDbgReport(const char *file, int line, const char *stm, ...)

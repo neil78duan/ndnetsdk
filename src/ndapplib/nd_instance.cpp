@@ -136,6 +136,11 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 			fprintf(stdout, "version : %s \n" , __g_version_desc) ;
 			exit(0) ;
 		}
+		else if(0==strcmp(argv[i],"-l") || 0==strcmp(argv[i],"--rlimit") ) {
+			char buf[1024] ;
+			fprintf(stdout, "rlimit: \n %s\n" , get_rlimit_info(buf, sizeof(buf)) ) ;
+			exit(0) ;
+		}
 
         else if(0==strcmp(argv[i],"-pid") && i<argc -1){
             FILE *pf = fopen(argv[i+1], "w") ;
@@ -165,11 +170,19 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 	
 	nd_set_exit_callback(applib_exit_callback) ;
 
-#ifndef ND_UNIX
 	if (m_config.i_cfg.open_dump){
+#ifndef ND_UNIX
 		::SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)nd_unhandler_except);
+#else
+		enable_core_dump() ;
+#endif
 	}
-#endif 
+	size_t max_connector = m_config.l_cfg.max_connect ;
+	if ( max_connector > get_maxopen_fd() ) {
+		size_t new_fd_num = set_maxopen_fd(max_connector) ;
+		nd_logmsg("set max connect %d real max connect =%d\n",m_config.l_cfg.max_connect, (int) new_fd_num);
+	}
+	
 	if(logfileName && logfileName[0]) {
 		strncpy(m_config.i_cfg.log_file, logfileName, sizeof(m_config.i_cfg.log_file)) ;
 	}
@@ -716,6 +729,19 @@ MSG_ENTRY_INSTANCE(nd_get_app_ver_handler)
 	omsg.Write((NDUINT32)__g_version_id) ;
 	omsg.Write((NDUINT8*)__g_version_desc) ;
 		
+	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(),  h_listen) ;
+	return 0;
+}
+
+MSG_ENTRY_INSTANCE(nd_get_server_rlimit)
+{
+	ND_TRACE_FUNC() ;
+	char buf[1024];
+	NDOStreamMsg omsg(ND_USERMSG_MAXID(msg),ND_USERMSG_MINID(msg)) ;
+	
+	get_rlimit_info(buf, sizeof(buf)) ;
+	omsg.Write((NDUINT8*)buf) ;
+	
 	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(),  h_listen) ;
 	return 0;
 }

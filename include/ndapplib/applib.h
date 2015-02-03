@@ -131,9 +131,11 @@ extern void	  app_inst_set_hm(int _h, int _m);
 
 
 MSG_ENTRY_DECLARE(nd_transfer_to_session) ;
-MSG_ENTRY_INSTANCE(nd_transfer_to_client);
+MSG_ENTRY_DECLARE(nd_transfer_to_client);
 
 MSG_ENTRY_DECLARE(nd_get_message_name_handler) ;
-MSG_ENTRY_INSTANCE(nd_get_app_ver_handler) ;
+MSG_ENTRY_DECLARE(nd_get_app_ver_handler) ;
+
+MSG_ENTRY_DECLARE(nd_get_server_rlimit) ;
 
 #endif

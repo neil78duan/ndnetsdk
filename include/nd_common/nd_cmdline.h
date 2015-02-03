@@ -33,13 +33,15 @@ struct nd_cmdline_root
 	nd_cmdline_entry update_func ; //return 0 nothing todo , -1 error ,else need renew screen
 	nd_cmdline_entry init_func ;
 	int number ;
-	struct  nd_cmdline_node *entries ;	
+	struct  nd_cmdline_node *entries ;
+	char *next_cmd ;
 };
 
 ND_COMMON_API int nd_run_cmdline(struct nd_cmdline_root *root, int argc, const char *argv[] ) ;
 ND_COMMON_API int _check_is_run_helper(int argc, const char *argv[], const char *help_tips);
 ND_COMMON_API int nd_cmdline_help(struct nd_cmdline_root *root, int argc, const char *argv[]);
 
+ND_COMMON_API int nd_cmd_push_next(struct nd_cmdline_root *root, const char *next_cmd_text);
 
 static __INLINE__ void nd_cmdline_quit(struct nd_cmdline_root *root) 
 {

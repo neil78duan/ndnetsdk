@@ -255,17 +255,21 @@ int regeister_event(int event_id, int regid,void *udata)
 
 void update_epoll_event(struct kevent* ev_node,struct cm_manager *pmanger,struct thread_pool_info *thip)
 {
+	ENTER_FUNC()
+	
     struct nd_client_map *client_map;
     NDUINT32 udata = (NDUINT32) ev_node->udata ;
     intptr_t len = ev_node->data;
 
     int fd_tmp =(udata >> 16) & 0xffff;
     NDUINT16 session_id =(NDUINT16) (udata & 0xffff);
-
+	
+	
     client_map = pmanger->lock(pmanger,session_id) ;
-    if(!client_map )
+	if(!client_map ) {		
+		LEAVE_FUNC();
         return ;
-
+	}
     if(0==len || TCPNODE_CHECK_CLOSED(client_map)|| !check_connect_valid(& (client_map->connect_node))) {
         tcp_client_close(client_map,1) ;
     }
@@ -279,6 +283,8 @@ void update_epoll_event(struct kevent* ev_node,struct cm_manager *pmanger,struct
         }
     }
     pmanger->unlock(pmanger,session_id) ;
+	
+	LEAVE_FUNC();
 }
 
 
@@ -325,7 +331,8 @@ int kqueue_main(struct thread_pool_info *thip)
 
     //register
     if (-1==regeister_event(thip->iopc_handle, listen_fd,NULL)) {
-        nd_logerror("kqueue register fd ") ;
+		nd_logerror("kqueue register fd ") ;
+		LEAVE_FUNC();
         return -1;
     }
 
@@ -500,6 +507,7 @@ int listen_thread_createex(struct thread_pool_info *ic)
 
 int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thpi)
 {
+	ENTER_FUNC() ;
 	int i ,sleep=0;
 	struct nd_client_map  *client;
 	
@@ -519,6 +527,7 @@ int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thp
 		}
 		pmanger->unlock(pmanger,session_id) ;
 	}
+	LEAVE_FUNC() ;
 	return sleep;
 }
 
