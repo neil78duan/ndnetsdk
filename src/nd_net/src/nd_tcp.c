@@ -611,7 +611,10 @@ void nd_tcpnode_reset(struct nd_tcp_node *conn_node)
 	if(conn_node->fd){
 		nd_socket_close(conn_node->fd) ;
 		conn_node->fd = 0 ;
-	}	
+	}
+	
+	_nd_object_on_destroy((nd_handle)conn_node,0)  ;
+	
 	conn_node->sys_error = 0 ;
 	conn_node->last_push = nd_time();
 	ndlbuf_reset(&(conn_node->recv_buffer)) ;		/* buffer store data recv from net */
@@ -638,6 +641,9 @@ void _tcp_connector_init(struct nd_tcp_node *conn_node)
 	conn_node->disconn_timeout = ND_DFT_DISSCONN_TIMEOUT ;	
 	init_crypt_key(&conn_node->crypt_key);
 	conn_node->type = NDHANDLE_TCPNODE ;
+	
+	INIT_LIST_HEAD(&conn_node->__release_cb_hdr) ;
+	
 	LEAVE_FUNC();
 }
 void nd_tcpnode_init(struct nd_tcp_node *conn_node) 
@@ -659,7 +665,9 @@ void nd_tcpnode_deinit(struct nd_tcp_node *conn_node)
 	conn_node->status = ETS_DEAD ;
 	ndlbuf_destroy(&(conn_node->recv_buffer)) ;
 	ndlbuf_destroy(&(conn_node->send_buffer)) ;
-
+	
+	_nd_object_on_destroy((nd_handle)conn_node,0)  ;
+	
 }
 
 #define ND_DEFAULT_TCP_WINDOWS_BUF (1024 * 128)

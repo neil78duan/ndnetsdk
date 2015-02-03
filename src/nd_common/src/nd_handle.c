@@ -214,6 +214,8 @@ int _nd_object_on_destroy(nd_handle handle,int type)
 			free(node) ;
 		}
 	}
+	
+	INIT_LIST_HEAD(&handle->__release_cb_hdr) ;
 	LEAVE_FUNC() ;
 	return 0;
 }

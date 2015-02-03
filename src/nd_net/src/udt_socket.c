@@ -562,6 +562,7 @@ void _udt_connector_init(nd_udt_node *socket_node)
 	socket_node->retrans_timeout = RETRANSLATE_TIME*TIME_OUT_BETA ;			//超时重传时间和等待关闭时间(记录时间间隔不是绝对时间)
 	init_crypt_key(&socket_node->crypt_key) ;		//加密解密密钥(对称密钥)
 
+	INIT_LIST_HEAD(&socket_node->__release_cb_hdr) ;
 }
 
 void nd_udtnode_init(nd_udt_node *socket_node)
@@ -577,6 +578,8 @@ void nd_udtnode_reset(nd_udt_node *socket_node)
 	nd_udt_node tmp_node = *socket_node;
 	nd_assert(socket_node) ;
 
+	_nd_object_on_destroy((nd_handle)socket_node,0)  ;
+	
 	udt_reset(socket_node,0);	
 
 	_udt_connector_init(socket_node) ;
@@ -611,6 +614,7 @@ void _deinit_udt_socket(nd_udt_node *socket_node)
 
 	ndlbuf_destroy(&(socket_node->recv_buffer)) ;
 	ndlbuf_destroy(&(socket_node->send_buffer)) ;
-
+	_nd_object_on_destroy((nd_handle)socket_node,0)  ;
+	
 }
 
