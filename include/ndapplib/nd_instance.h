@@ -56,6 +56,8 @@ public :
 	bool CheckReliable(NDSession *psession) ;
 	bool CheckReliableConn(nd_handle hsession);
 	virtual bool CheckIsDeveVer() ;
+	int GetVersionID() ;
+	const char *GetVersionDesc() ;
 	bool CheckNormalExit() {return m_bNormalExit==0 ? true : false ;}
 	void SetExitCode(int exitcode = 0) {m_bNormalExit = exitcode ;}
 	void trytoDaemon() ;

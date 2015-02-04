@@ -334,6 +334,15 @@ bool NDInstanceBase::CheckIsDeveVer()
 	return m_un_develop?false:true;
 }
 
+int NDInstanceBase::GetVersionID() 
+{
+	return __g_version_id ; 
+}
+const char *NDInstanceBase::GetVersionDesc() 
+{
+	return __g_version_desc ;
+}
+
 void NDInstanceBase::StartStaticsMem2()
 {
 #if defined(_WIN32)
@@ -727,6 +736,11 @@ MSG_ENTRY_INSTANCE(nd_get_app_ver_handler)
 	NDOStreamMsg omsg(ND_USERMSG_MAXID(msg),ND_USERMSG_MINID(msg)) ;
 	
 	omsg.Write((NDUINT32)__g_version_id) ;
+#ifdef ND_DEBUG
+	omsg.Write((NDUINT8)1) ;
+#else
+	omsg.Write((NDUINT8)0) ;
+#endif
 	omsg.Write((NDUINT8*)__g_version_desc) ;
 		
 	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(),  h_listen) ;
