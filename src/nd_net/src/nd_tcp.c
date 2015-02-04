@@ -674,31 +674,43 @@ void nd_tcpnode_deinit(struct nd_tcp_node *conn_node)
 /* set ndnet connector default options */
 void _set_ndtcp_conn_dft_option(ndsocket_t sock_fd)
 {
-	int sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF *2 , new_bufsize ;
-	int output_len ;
+	size_t sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF *2  ;
+	socklen_t output_len ;
 	
 	struct linger lin ;
 	lin.l_onoff = 1 ;		//delay close 2 seconds 
 	lin.l_linger = 2 ;
 
 	//set receive buffer
-	setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)&sock_bufsize, sizeof(sock_bufsize)) ;
+	output_len = sizeof(sock_bufsize) ;
+	if(-1==setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)&sock_bufsize,output_len ) ) {
+		nd_logerror("set socket receive buffer error %s\n" AND nd_last_error() ) ;
+	}
+	
+	/*
 	new_bufsize = 0 ;
 	output_len = sizeof(new_bufsize) ;
-	getsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)&new_bufsize, (socklen_t*)&output_len) ;
+	getsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)&new_bufsize, &output_len) ;
 	if (new_bufsize != sock_bufsize){
 		nd_logerror("set socket receive buffer error setval =%d new val=%d\n" AND sock_bufsize AND  new_bufsize ) ;
-	}
+	}*/
 
 	//set send buffer
-	sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF * 2;
-	setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&sock_bufsize, sizeof(sock_bufsize)) ;
+	sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF * 2;	
+	output_len = sizeof(sock_bufsize) ;
+	
+	if(-1==setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&sock_bufsize, sizeof(sock_bufsize)) ){
+		nd_logerror("set socket send buffer error %s\n" AND nd_last_error() ) ;
+	}
+	
+	/*
 	new_bufsize = 0 ;
 	output_len = sizeof(new_bufsize) ;
-	getsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&new_bufsize, (socklen_t*)&output_len) ;
+	getsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&new_bufsize, &output_len) ;
 	if (new_bufsize != sock_bufsize){
 		nd_logerror("set socket send buffer error setval =%d new val=%d\n" AND sock_bufsize AND  new_bufsize ) ;
-	}
+	}*/
+	
 	//set delay close
 	setsockopt(sock_fd, SOL_SOCKET, SO_LINGER, (sock_opval_t)&lin, sizeof(lin)) ;		
 }
@@ -707,27 +719,22 @@ void _set_ndtcp_conn_dft_option(ndsocket_t sock_fd)
 /* set ndnet connector default options */
 void _set_ndtcp_session_dft_option(ndsocket_t sock_fd)
 {
-	int sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF , new_bufsize ;
+	int sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF  ;
 	int output_len ;
 	
 	//set receive buffer
-	setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)&sock_bufsize, sizeof(sock_bufsize)) ;
-	new_bufsize = 0 ;
-	output_len = sizeof(new_bufsize) ;
-	getsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)&new_bufsize, (socklen_t*)&output_len) ;
-	if (new_bufsize != sock_bufsize){
-		nd_logerror("set socket receive buffer error setval =%d new val=%d\n" AND sock_bufsize AND  new_bufsize ) ;
+	output_len = sizeof(sock_bufsize) ;
+	if(-1==setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)&sock_bufsize,output_len ) ) {
+		nd_logerror("set socket receive buffer error %s\n" AND nd_last_error() ) ;
 	}
-
+	
 	//set send buffer
-	sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF ;
-	setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&sock_bufsize, sizeof(sock_bufsize)) ;
-	new_bufsize = 0 ;
-	output_len = sizeof(new_bufsize) ;
-	getsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&new_bufsize, (socklen_t*)&output_len) ;
-	if (new_bufsize != sock_bufsize){
-		nd_logerror("set socket send buffer error setval =%d new val=%d\n" AND sock_bufsize AND  new_bufsize ) ;
+	sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF ;	
+	output_len = sizeof(sock_bufsize) ;	
+	if(-1==setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&sock_bufsize, sizeof(sock_bufsize)) ){
+		nd_logerror("set socket send buffer error %s\n" AND nd_last_error() ) ;
 	}
+	
 }
 
 /* set socket attribute */
