@@ -149,6 +149,12 @@ CPPAPI void ndMsgfuncInit(netObject netObj) ;
 CPPAPI int nd_exchange_key(netObject nethandle,void *output_key) ;
 CPPAPI int nd_checkErrorMsg(netObject nethandle,struct ndMsgData *msg) ;
 
+//add function call when object destroyed
+typedef void (*nd_conn_close_entry)(netObject handle, void *param) ;
+CPPAPI int ndAddOnCloseCallback(netObject handle,nd_conn_close_entry callback, void *param) ;
+CPPAPI int ndAddOnDestroyCallback(netObject handle,nd_conn_close_entry callback, void *param) ;
+CPPAPI int ndDelDestroyCallback(netObject handle,nd_conn_close_entry callback, void *param) ;
+
 /*
 CPPAPI netObject ndGetConnector() ;
 CPPAPI int SendFormat(int maxid, int minid, int argc, ...) ;

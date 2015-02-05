@@ -188,7 +188,7 @@ struct release_callback_source_node
 	void *param ;
 };
 //add function call when object destroyed
-ND_COMMON_API int nd_object_add_destroy_cb(nd_handle handle,nd_object_destroy_callback callback, void *param,int type) ;
+ND_COMMON_API int nd_object_add_destroy_cb(nd_handle handle,nd_object_destroy_callback callback, void *param,int type) ; //type default 0 , if the handle is connector or session ,when type ==1 ,it will call on close , type ==0 will call on destroy
 ND_COMMON_API int nd_object_del_destroy_cb(nd_handle handle,nd_object_destroy_callback callback, void *param) ;
 ND_COMMON_API int _nd_object_on_destroy(nd_handle handle,int type) ;
 

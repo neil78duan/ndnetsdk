@@ -96,6 +96,20 @@ ndNetFunc ndSetTerminateFunc(ndNetFunc func)
 	return ret ;
 }
 
+int ndAddOnCloseCallback(netObject handle,nd_conn_close_entry callback, void *param) 
+{
+	return nd_object_add_destroy_cb((nd_handle)handle,(nd_object_destroy_callback)callback, param, 1) ; 
+	
+}
+int ndAddOnDestroyCallback(netObject handle,nd_conn_close_entry callback, void *param) 
+{
+	return nd_object_add_destroy_cb((nd_handle)handle,(nd_object_destroy_callback)callback, param, 0) ;	
+}
+int ndDelDestroyCallback(netObject handle,nd_conn_close_entry callback, void *param) 
+{	
+	return nd_object_del_destroy_cb((nd_handle) handle,(nd_object_destroy_callback)callback, param) ;
+}
+
 
 int ndGetLastError(netObject netObj) 
 {
