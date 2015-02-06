@@ -6,18 +6,20 @@ include $(NDHOME)/src/Rules.make
 
 SUBDIRS =  srvDemo ndclient tool test
 
-all: subdirs
 
-subdirs:
-	for n in $(SUBDIRS); do $(MAKE) -C $$n || exit 1; done
+all: debug
 
-cleangame:
-	rm -f *. 
-	for n in $(SUBDIRS); do $(MAKE) -C $$n clean; done
+debug:
+	for n in $(SUBDIRS); do $(MAKE) -C $$n DEBUG="y" PROFILE="y" || exit 1; done
+
+release:
+	for n in $(SUBDIRS); do $(MAKE) -C $$n DEBUG="n" PROFILE="n" || exit 1; done
+
 	
 clean:
 	rm -f *.o *~
-	for n in $(SUBDIRS); do $(MAKE) -C $$n clean; done
+	for n in $(SUBDIRS); do $(MAKE) -C $$n clean DEBUG="n" PROFILE="n"; done
+	for n in $(SUBDIRS); do $(MAKE) -C $$n clean DEBUG="y" PROFILE="y" || exit 1; done
 
 checkthem:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n checkthem; done

@@ -7,20 +7,22 @@ include ./Rules.make
 
 SUBDIRS =  nd_common nd_crypt nd_net nd_srvcore ndapplib ndclient
 
-all: subdirs
 
-subdirs:
-	for n in $(SUBDIRS); do $(MAKE) -C $$n || exit 1; done
-	cp -f $(TOPDIR)/src/build-lib $(LIBDIR)/Makefile; cd $(LIBDIR) ; make
+all: debug
+
+debug:
+	for n in $(SUBDIRS); do $(MAKE) -C $$n DEBUG="y" PROFILE="y" || exit 1; done
+	cp -f $(TOPDIR)/src/build-lib $(LIBDIR)/Makefile; cd $(LIBDIR) ; make DEBUG="y" PROFILE="y" 
+
+release:
+	for n in $(SUBDIRS); do $(MAKE) -C $$n DEBUG="n" PROFILE="n" || exit 1; done
+	cp -f $(TOPDIR)/src/build-lib $(LIBDIR)/Makefile; cd $(LIBDIR) ; make DEBUG="n" PROFILE="n"
 
 
-cleangame:
-	rm -f *. 
-	for n in $(SUBDIRS); do $(MAKE) -C $$n clean; done
-	
 clean:
 	rm -f *.o *~
-	for n in $(SUBDIRS); do $(MAKE) -C $$n clean; done
+	for n in $(SUBDIRS); do $(MAKE) -C $$n clean DEBUG="n" PROFILE="n"; done
+	for n in $(SUBDIRS); do $(MAKE) -C $$n clean DEBUG="y" PROFILE="y" || exit 1; done
 
 checkthem:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n checkthem; done
