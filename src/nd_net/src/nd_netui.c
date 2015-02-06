@@ -1116,8 +1116,11 @@ int nd_packet_decrypt_key(nd_cryptkey *pcrypt_key,nd_packetbuf_t *msgbuf)
 		
 		if(msgbuf->hdr.stuff) {
 			LEAVE_FUNC();
-			nd_assert(msgbuf->hdr.stuff_len==msgbuf->data[datalen-1]) ;
-			if(nd_pack_len(&msgbuf->hdr) > msgbuf->data[datalen-1]) 
+			
+			if (msgbuf->hdr.stuff_len!=msgbuf->data[datalen-1]) {
+				return 0;
+			}
+			else if(nd_pack_len(&msgbuf->hdr) > msgbuf->data[datalen-1]) 
 				return (nd_pack_len(&msgbuf->hdr) - msgbuf->data[datalen-1]) ;
 			else 
 				return 0;
