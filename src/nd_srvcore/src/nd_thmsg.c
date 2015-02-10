@@ -265,7 +265,7 @@ int _session_delfrom(NDUINT16 sessionid, nd_handle listen_handle,ndthread_t thid
 int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid)
 {
 	int ret ;
-	struct listen_contex *listen_info = (struct listen_contex *) h ;
+	//struct listen_contex *listen_info = (struct listen_contex *) h ;
 
 	ndthread_t thid = nd_thread_self() ;
 
@@ -273,6 +273,10 @@ int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid)
 	struct cm_manager *pmanger;
 	struct nd_client_map *client;
 
+	nd_assert(h) ;
+	nd_assert(sessionid) ;
+	nd_assert(aimid);
+	
 	if (thid == aimid) {
 		return 0 ;
 	}
