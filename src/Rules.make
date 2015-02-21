@@ -6,17 +6,16 @@
 #to make all 
 
 #debug flag 
-DEBUG =y
+#DEBUG =y
 
 
 #profile , hot spot find
-PROFILE=y
+#PROFILE=y
 
 ARCH_MACHINE = $(shell uname -m)
 OS_kernel = $(shell uname -s | tr '[A-Z]' '[a-z]')
 
 AIM_NAME = $(OS_kernel)_$(ARCH_MACHINE)
-
 
 TOPDIR = $(NDHOME)
 CURDIR = .

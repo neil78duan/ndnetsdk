@@ -17,6 +17,7 @@ struct msg_entry_node
 {
 	NDUINT32			level:16 ;	//权限等级
 	NDUINT32			sys_msg:1 ;	//是否是系统消息
+    NDUINT32            is_log:1;   //log current message
 	nd_usermsg_func		entry ;	//入口函数
 #ifdef ND_DEBUG
 	char name[NET_MSG_NAME_SIZE];
@@ -434,6 +435,11 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 			}
 		}		
 	}
+#if defined(ND_OPEN_TRACE)
+    if (node && node->is_log) {
+        nd_logmsg("recvived message(%d, %d)\n", usermsg->maxid,  usermsg->minid) ;
+    }
+#endif
 		
 	LEAVE_FUNC();	
 	return  ret==-1 ? -1 : data_len ;
@@ -549,9 +555,25 @@ int connector_default_handler1(NDUINT16 session_id , nd_usermsgbuf_t *msg,nd_han
 	return 0;
 }
 
+int nd_message_set_log(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int is_log)
+{
+    
+    ENTER_FUNC() ;
+    struct msg_entry_node * node ;
+    
+    int ret = -1;
+    node = _nd_msgentry_get_node(handle, maxid, minid) ;
+    if (node) {
+        ret = node->is_log ? 1 :0 ;
+        node->is_log = is_log ? 1 : 0 ;
+    }
+    
+    LEAVE_FUNC();
+    return ret ;
+}
+
 int nd_message_set_system(nd_netui_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int issystem) 
 {
-	
 	struct msgentry_root *root_entry= NULL;
 	nd_assert(handle) ;
 

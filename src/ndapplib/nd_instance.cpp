@@ -759,3 +759,37 @@ MSG_ENTRY_INSTANCE(nd_get_server_rlimit)
 	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(),  h_listen) ;
 	return 0;
 }
+
+MSG_ENTRY_INSTANCE(nd_set_netmsg_log)
+{
+    ND_TRACE_FUNC() ;
+    NDIStreamMsg inmsg(msg) ;
+    NDOStreamMsg omsg(inmsg.MsgMaxid(),inmsg.MsgMinid()) ;
+    NDUINT16 maxID, minID ;
+    NDUINT8 isOpen = 0 ;
+    
+    if (-1==inmsg.Read(maxID)) {
+        return 0 ;
+    }
+    if (-1==inmsg.Read(minID)) {
+        return 0 ;
+    }
+    if (-1==inmsg.Read(isOpen)) {
+        return 0 ;
+    }
+    int ret = nd_message_set_log(h_listen, maxID, minID,(int) isOpen) ;
+    if (-1==ret) {
+        isOpen = 0xff ;
+    }
+    else {
+        isOpen = ret;
+    }
+
+    omsg.Write(maxID) ;
+    omsg.Write(minID) ;
+    omsg.Write(isOpen) ;
+    
+    ND_MSG_SEND(nethandle, omsg.GetMsgAddr(),  h_listen) ;
+    return 0;
+}
+

@@ -93,6 +93,7 @@ ND_NET_API int nd_msgtable_create(nd_handle  handle, int mainmsg_num, int base_m
 
 ND_NET_API void nd_msgtable_destroy(nd_handle  handle, int flag) ;
 ND_NET_API int nd_message_set_system(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int issystem) ;
+ND_NET_API int nd_message_set_log(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int is_log) ;
 
 /*在handle句柄上安装网络消息处理函数*/
 ND_NET_API int nd_msgentry_install(nd_handle  handle, nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid,int level, const char *name) ;

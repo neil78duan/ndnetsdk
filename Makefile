@@ -1,5 +1,6 @@
 
 
+home_dir = $(shell pwd)
 MY_ARCH = $(shell uname -m)
 MY_OS_kernel = $(shell uname -s | tr '[A-Z]' '[a-z]')
 SUB_AIM_DIR = $(MY_OS_kernel)_$(MY_ARCH)
@@ -17,10 +18,10 @@ release:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n release || exit 1; done
 	
 clean:
-	for n in $(SUBDIRS); do $(MAKE) -C $$n clean; done
+	for n in $(SUBDIRS); do $(MAKE) -C $$n clean ; done
 
 checkthem:
-	for n in $(SUBDIRS); do $(MAKE) -C $$n checkthem; done
+	for n in $(SUBDIRS); do $(MAKE) -C $$n checkthem ; done
 
 check:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n check; done

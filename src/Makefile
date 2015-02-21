@@ -1,5 +1,3 @@
-
-topdir=(shell pwd)
 VPATH = .
 
 include ./Rules.make
