@@ -12,6 +12,8 @@
 #ifndef _NET_CONN_H_
 #define _NET_CONN_H_
 
+#include <stdlib.h>
+
 typedef void* netObject ;
 
 #ifndef CPPAPI
@@ -56,7 +58,7 @@ struct ndMsgData
 
 typedef int (*ndNetFunc)(netObject netObj, unsigned char *data, int dataLen );
 
-typedef int (*ndBigDataHandler)(nd_handle nethandle,  NDUINT64 param , void *data, size_t datalen) ;
+typedef int (*ndBigDataHandler)(netObject nethandle,unsigned long long param , void *data, size_t datalen) ;
 
 #define NDNET_INSTALL_MSG(netObj, msgFunc, maxID, minID) \
 	ndNetFuncInstall(netObj,msgFunc, maxID, minID, "msgName_" #maxID"-"#minID) 
@@ -78,7 +80,7 @@ CPPAPI int ndSendMsg(netObject netObj,struct ndMsgData *data, int flag) ;
 CPPAPI int ndSendRaw(netObject netObj,char *data, int size) ;
 
 /* send data that the data len more than 64k */
-CPPAPI int ndBigDataSend(netObject netObj,NDUINT64 param, void *data, size_t datalen) ;
+CPPAPI int ndBigDataSend(netObject netObj,unsigned long long param, void *data, size_t datalen) ;
 CPPAPI void ndSetBigDataHandler(netObject netObj,ndBigDataHandler entry) ;
 
 /* send a wrapped message */

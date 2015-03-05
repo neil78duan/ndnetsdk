@@ -13,8 +13,8 @@
 		0729DF7B19A8ED3D002F8A75 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0729DF7919A8ED3D002F8A75 /* Main.storyboard */; };
 		0729DF7D19A8ED3D002F8A75 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0729DF7C19A8ED3D002F8A75 /* Images.xcassets */; };
 		0729DF8919A8ED3D002F8A75 /* iosDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0729DF8819A8ED3D002F8A75 /* iosDemoTests.m */; };
-		0729DF9519A9683E002F8A75 /* libndclient_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0729DF9419A9683E002F8A75 /* libndclient_ios.a */; };
 		0729DF9C19A97265002F8A75 /* netmsgHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0729DF9A19A97265002F8A75 /* netmsgHandler.cpp */; };
+		07318CA71A9B50890024B78F /* libndclient_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07318CA61A9B50890024B78F /* libndclient_ios.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,9 +40,9 @@
 		0729DF8219A8ED3D002F8A75 /* iosDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0729DF8719A8ED3D002F8A75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0729DF8819A8ED3D002F8A75 /* iosDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iosDemoTests.m; sourceTree = "<group>"; };
-		0729DF9419A9683E002F8A75 /* libndclient_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libndclient_ios.a; path = "../../../../../Library/Developer/Xcode/DerivedData/ndsdkxcode-hcupniqwmhivkefcedgnfgupthhn/Build/Products/Debug-iphoneos/libndclient_ios.a"; sourceTree = "<group>"; };
 		0729DF9A19A97265002F8A75 /* netmsgHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = netmsgHandler.cpp; sourceTree = "<group>"; };
 		0729DF9B19A97265002F8A75 /* netmsgHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = netmsgHandler.h; sourceTree = "<group>"; };
+		07318CA61A9B50890024B78F /* libndclient_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libndclient_ios.a; path = "../ndclient_ios/build/Debug-iphoneos/libndclient_ios.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,7 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0729DF9519A9683E002F8A75 /* libndclient_ios.a in Frameworks */,
+				07318CA71A9B50890024B78F /* libndclient_ios.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,7 +67,7 @@
 		0729DF6319A8ED3C002F8A75 = {
 			isa = PBXGroup;
 			children = (
-				0729DF9419A9683E002F8A75 /* libndclient_ios.a */,
+				07318CA61A9B50890024B78F /* libndclient_ios.a */,
 				0729DF6E19A8ED3C002F8A75 /* iosDemo */,
 				0729DF8519A8ED3D002F8A75 /* iosDemoTests */,
 				0729DF6D19A8ED3C002F8A75 /* Products */,
@@ -353,10 +353,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = iosDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/ndsdkxcode-hcupniqwmhivkefcedgnfgupthhn/Build/Products/Debug-iphoneos",
+					"/Users/duan/Documents/work/ndsdk.github/apple/ndclient_ios/build/Debug-iphoneos",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -368,10 +370,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = iosDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/ndsdkxcode-hcupniqwmhivkefcedgnfgupthhn/Build/Products/Debug-iphoneos",
+					"/Users/duan/Documents/work/ndsdk.github/apple/ndclient_ios/build/Debug-iphoneos",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -430,6 +434,7 @@
 				0729DF8E19A8ED3D002F8A75 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0729DF8F19A8ED3D002F8A75 /* Build configuration list for PBXNativeTarget "iosDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -438,6 +443,7 @@
 				0729DF9119A8ED3D002F8A75 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

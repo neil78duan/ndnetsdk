@@ -145,27 +145,38 @@ void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf,
 	 return ret ;
  }
 
+int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header)
+{
+    FILE *fp;
+    ndxml *sub_xml;
+    struct list_head *pos = xmlroot->lst_xml.next ;
+    
+    fp = fopen(file, "w") ;
+    if(!fp) {
+        return -1;
+    }
+    if (header) {
+        fprintf(fp, "<? %s ?>\n", header) ;
+    }
+    
+    while (pos!=&xmlroot->lst_xml) {
+        sub_xml = list_entry(pos,struct tagxml, lst_self) ;
+        pos = pos->next ;
+        xml_write(sub_xml,fp, 0) ;
+        
+    }
+    
+    fclose(fp) ;
+    
+    return 0;
+    
+}
+
 int ndxml_save(ndxml_root *xmlroot, const char *file)
 {
-	FILE *fp;
-	ndxml *sub_xml; 
-	struct list_head *pos = xmlroot->lst_xml.next ;
-
-	fp = fopen(file, "w") ;
-	if(!fp) {
-		return -1;
-	}
-	while (pos!=&xmlroot->lst_xml) {
-		sub_xml = list_entry(pos,struct tagxml, lst_self) ;
-		pos = pos->next ;
-		xml_write(sub_xml,fp, 0) ;
-		
-	}
-
-	fclose(fp) ;
-	
-	return 0;
+    return ndxml_save_ex(xmlroot, file, NULL) ;
 }
+
 
 int ndxml_merge(ndxml_root *host, ndxml_root *merged) 
 {

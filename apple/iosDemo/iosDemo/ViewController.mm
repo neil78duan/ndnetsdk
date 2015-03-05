@@ -70,7 +70,7 @@
         hConn = NULL ;
     }
     else {
-        hConn = ndOpenConnect("100.100.0.168", 7828) ;
+        hConn = ndOpenConnect("192.168.0.107", 6000) ;
         /*if(!conn) {
             conn =  CreateConnectorObj("tcp-connector") ;
             if (!conn) {

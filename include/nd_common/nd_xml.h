@@ -99,6 +99,9 @@ ND_COMMON_API void ndxml_destroy(ndxml_root *xmlroot) ;
 
 //把xml保存到文件中
 ND_COMMON_API int ndxml_save(ndxml_root *xmlroot, const char *file) ;
+
+ND_COMMON_API int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header) ;
+
 //引用一个子节点
 ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;
 

@@ -400,6 +400,7 @@ ndsocket_t nd_socket_connect(const char *host_name, short port,int sock_type, SO
 		return -1;
 	}
 	if(-1==connect(conn_sock,(LPSOCKADDR)&their_addr, sizeof(struct sockaddr)) ) {
+        nd_logdebug("connect to %s:%d error %s\n", host_name, port, nd_last_error()) ;
 		LEAVE_FUNC() ;
 		return -1 ;
 	}

@@ -73,12 +73,12 @@ nd_msgentry_install(FRGetConnector(), _f,_maxid, _minid,EPL_CONNECT)
 
 void init_messageHandler(NDIConn *pconn)
 {
-    pconn->InstallMsgFunc(netmsg_sys_echo,ND_MAIN_ID_SYS,ND_MSG_SYS_ECHO) ;
+    //pconn->InstallMsgFunc(netmsg_sys_echo,ND_MAIN_ID_SYS,ND_MSG_SYS_ECHO) ;
     
-    pconn->InstallMsgFunc(netmsg_sys_error,ND_MAIN_ID_SYS,ND_MSG_SYS_ERROR) ;
+    //pconn->InstallMsgFunc(netmsg_sys_error,ND_MAIN_ID_SYS,ND_MSG_SYS_ERROR) ;
     
-    pconn->InstallMsgFunc(netmsg_sys_time,ND_MAIN_ID_SYS,ND_MSG_SYS_TIME) ;
-    pconn->InstallMsgFunc( netmsg_login_ack,ND_MAIN_ID_LOGIN,EFRMSG_LOGIN) ;
+    //pconn->InstallMsgFunc(netmsg_sys_time,ND_MAIN_ID_SYS,ND_MSG_SYS_TIME) ;
+    //pconn->InstallMsgFunc( netmsg_login_ack,ND_MAIN_ID_LOGIN,EFRMSG_LOGIN) ;
 }
 
 int timeTick(NDIConn *pconn)
