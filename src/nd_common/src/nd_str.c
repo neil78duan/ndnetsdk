@@ -365,6 +365,7 @@ int ndstr_get_ip(char *src, ndip_t *ip)
 /*读取一个字符串，知道遇到一个制定的结束字符为止*/
 char *ndstr_str_end(char *src, char *outstr, const char end)
 {
+    *outstr = 0 ;
 	while(*src) {
 		if(end== *src ){
 			break ;

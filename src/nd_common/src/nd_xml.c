@@ -788,16 +788,17 @@ struct ndxml_attr *alloc_attrib_node(const char *name, const char *value)
 	char *p ;
 	struct ndxml_attr *pnode ;
 	int len = (int) strlen(name) ;
-	int val_len = (int) strlen(value) ;
-	if(!len || !val_len)  {
-		return NULL;
-	}
+    int val_reallen =(int) strlen(value) ;
+	int val_len = val_reallen ;
+	//if(!len || !val_len)  {
+	//	return NULL;
+	//}
 	len += 4 ;
 	len &= ~3 ;
-
-	val_len += 4 ;
-	val_len &= ~3 ;
-
+    
+    val_len += 4 ;
+    val_len &= ~3 ;
+    
 	pnode = malloc(sizeof(struct ndxml_attr) + len + val_len) ;
 	if(!pnode) {
 		return NULL ;
@@ -812,7 +813,12 @@ struct ndxml_attr *alloc_attrib_node(const char *name, const char *value)
 	strcpy(p , name) ;
 
 	p += len ;
-	strcpy(p, value) ;
+    if (val_reallen > 0) {
+        strcpy(p, value) ;
+    }
+    else {
+        *p = 0;
+    }
 
 	return pnode ;
 }
@@ -878,9 +884,14 @@ int xml_write(ndxml *xmlnode, FILE *fp , int deep)
 	pos = xmlnode->lst_attr.next ;
 	while (pos != &xmlnode->lst_attr){
 		struct ndxml_attr *xml_attr = list_entry(pos, struct ndxml_attr, lst) ;
+        char *attr_val1 = (char*)(xml_attr + 1) +xml_attr->name_size ;
 		pos = pos->next ;
-		//if(xml_attr->name && xml_attr->value)
-			fprintf(fp, " %s=\"%s\"", (char*)(xml_attr + 1),(char*)(xml_attr + 1) +xml_attr->name_size) ;
+        if( attr_val1[0] ) {
+			fprintf(fp, " %s=\"%s\"", (char*)(xml_attr + 1),attr_val1) ;
+        }
+        else {
+            fprintf(fp, " %s=\"\"", (char*)(xml_attr + 1)) ;
+        }
 	}
 	
 	//save value of sub-xmlnode
