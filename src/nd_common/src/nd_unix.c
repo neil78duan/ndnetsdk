@@ -535,4 +535,38 @@ int nd_getcpu_num()
 {
 	return sysconf(_SC_NPROCESSORS_ONLN);
 }
-#endif 
+
+#include <execinfo.h>
+
+int nd_get_sys_callstack(char *buf, size_t size)
+{
+	void* callstack[128];
+	int i, frames = backtrace(callstack, 128);
+	char** strs = backtrace_symbols(callstack, frames);
+	char *p= buf ;
+	int ret = 0 ;
+	for (i = 0; i < frames; ++i) {
+		int len = snprintf(p, (size - ret), "%s\n", strs[i]);
+		ret += len ;
+		p += len ;
+	}
+	free(strs);
+	return ret;
+}
+
+int nd_sys_callstack_dump(nd_out_func func,FILE *outfile)
+{
+	void* callstack[128];
+	int i, frames = backtrace(callstack, 128);
+	char** strs = backtrace_symbols(callstack, frames);
+	int ret = 0 ;
+	for (i = 0; i < frames; ++i) {
+		
+		int len = func(outfile, "%s\n",strs[i] ) ;
+		ret += len ;
+	}
+	free(strs);
+	return ret;
+}
+
+#endif

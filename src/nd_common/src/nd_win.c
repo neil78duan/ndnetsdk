@@ -249,5 +249,15 @@ int open_filemap(char *map_name, nd_filemap_t *out_handle)
 	return 0;
 }
 
+int nd_get_sys_callstack(char *buf, size_t size)
+{
+	return snprintf(buf, size, "call-stack-unknow\n") ;
+}
+
+int nd_sys_callstack_dump(nd_out_func func,FILE *outfile)
+{
+	return func(outfile,"%s\n", "call-stack-unknow\n") ;
+	
+}
 #endif
 	

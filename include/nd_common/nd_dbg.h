@@ -12,6 +12,7 @@
 #include "nd_common/nd_comcfg.h"
 #include "nd_common/ndchar.h"
 
+typedef int (*nd_out_func)(FILE *outfile,const char *stm,...) ;
 /* 
 pro compile out put message 
    #pragma ndpreMSG(need to do someting)
@@ -199,7 +200,6 @@ ND_COMMON_API void pop_func();
 ND_COMMON_API char *nd_get_callstack_desc(char *buf, size_t size) ;
 
 
-typedef int (*nd_out_func)(FILE *outfile,const char *stm,...) ;
 ND_COMMON_API int nd_callstack_monitor_dump(nd_out_func func,FILE *outfile);
 
 ND_COMMON_API int nd_show_cur_stack(nd_out_func func,FILE *outfile) ;
@@ -225,4 +225,5 @@ static int inline CALLSTACK_INIT(const char *filename)
 #endif		//ND_CALLSTACK_TRACE
 
 
+ND_COMMON_API int nd_sys_callstack_dump(nd_out_func func,FILE *outfile);
 #endif
