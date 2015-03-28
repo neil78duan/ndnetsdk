@@ -242,6 +242,8 @@ int NDInstanceBase::Open(int session_size )
 		DestructListener() ;
 		return -1 ;
 	}
+	OnListenerCreate() ;
+	
 	pListen->SetAccept(1) ;
 	int ret = pListen->Open(m_config.l_cfg.port,m_config.l_cfg.thread_pool_num) ;
     if (ret != 0) {

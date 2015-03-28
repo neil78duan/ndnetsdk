@@ -36,6 +36,7 @@ void nd_listen_contex_init(nd_listen_handle handle)
 
 	nd_srv_set_cm_init(&handle->tcp,(cm_init )nd_tcpcm_init) ;
 	
+	INIT_LIST_HEAD(&handle->list_ext_ports) ;
 }
 
 int nd_listensrv_close(nd_listen_handle handle, int flag) 
@@ -49,6 +50,19 @@ int nd_listensrv_close(nd_listen_handle handle, int flag)
 	if(handle->listen_id) {
 		nd_thsrv_destroy(handle->listen_id, 0) ;
 	}
+	
+	if (!list_empty(&handle->list_ext_ports)){
+		struct listen_port_node *node, *next ;
+		list_for_each_entry_safe(node, next, &handle->list_ext_ports, struct listen_port_node, list) {
+			if (node->fd) {
+				nd_socket_close(node->fd) ;
+				node->fd =  0 ;
+				free(node) ;
+			}
+		}
+		INIT_LIST_HEAD(&handle->list_ext_ports) ;
+	};
+	
 	destroy_listen_thread_pool(handle,0);
 
 	nd_close_all_session(handle) ;
@@ -65,6 +79,30 @@ int nd_listensrv_close(nd_listen_handle handle, int flag)
 	LEAVE_FUNC();
 	return 0 ;
 }
+
+int nd_listensrv_add_port(nd_listen_handle handle , int port, ndip_t bindip )
+{
+	struct listen_port_node *node = malloc(sizeof(struct listen_port_node)) ;
+	if (!node) {
+		return -1;
+	}
+	memset(node, 0, sizeof(*node)) ;
+	INIT_LIST_HEAD(&node->list) ;
+	
+	node->fd = nd_socket_openport( port,  handle->tcp.sock_type, handle->tcp.protocol , bindip, 10) ;
+	if (node->fd) {
+		list_add_tail(&node->list, &handle->list_ext_ports) ;
+		
+		
+		return node->fd;
+	}
+	else {
+		free(node) ;
+		return -1 ;
+	}
+	
+}
+
 int nd_listensrv_checkvalid(nd_listen_handle handle) 
 {
 	return get_listen_fd((struct listen_contex *)handle) ;
@@ -149,7 +187,7 @@ void nd_listensrv_set_entry(nd_listen_handle handle, accept_callback income, dea
 
 
 /* accept incoming  connect*/
-struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info)
+struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info, ndsocket_t sock_fd)
 {
 	ENTER_FUNC()
 	NDUINT16  session_id ;
@@ -163,7 +201,7 @@ struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info)
 	cli_len = sizeof(*client_map);
 
 	cli_len = sizeof (client_addr);
-	newconnect_fd = (ndsocket_t)accept(get_listen_fd(listen_info), (struct sockaddr*)&client_addr, &cli_len);
+	newconnect_fd = (ndsocket_t)accept(sock_fd, (struct sockaddr*)&client_addr, &cli_len);
 	if(newconnect_fd < 0){
 		LEAVE_FUNC();
 		return 0 ;

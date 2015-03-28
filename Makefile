@@ -35,6 +35,9 @@ run:
 run-cli:
 	$(BIN_AIM)/client_test localhost 7828 10
 
+run-cli2:
+	$(BIN_AIM)/client_test localhost 9000 10
+
 config:
 	./config.sh
 

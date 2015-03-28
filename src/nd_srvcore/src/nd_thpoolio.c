@@ -335,10 +335,25 @@ int thpool_main(struct thread_pool_info *thip)
 		if (listen_info->close_accept==0){
 			ret =nd_socket_wait_read(listen_info->tcp.fd,0) ;
 			if(ret> 0) {
-				struct nd_client_map*accepted = accetp_client_connect(listen_info) ;
+				struct nd_client_map*accepted = accetp_client_connect(listen_info,get_listen_fd(listen_info)) ;
 				if(accepted) {
 					addto_thread_pool(accepted, thip) ;
 					sleep = 0 ;
+				}
+			}
+			//listen port list
+			if (!list_empty(&listen_info->list_ext_ports) ){
+				struct listen_port_node *node ;
+				list_for_each_entry(node, &listen_info->list_ext_ports, struct listen_port_node, list) {
+					
+					ret =nd_socket_wait_read(node->fd,0) ;
+					if(ret> 0) {
+						struct nd_client_map*accepted = accetp_client_connect(listen_info,node->fd) ;
+						if(accepted) {
+							addto_thread_pool(accepted, thip) ;
+							sleep = 0 ;
+						}
+					}
 				}
 			}
 		}

@@ -33,6 +33,13 @@ enum ND_LISTEN_MOD{
 
 typedef int (*listen_thread_update)(nd_handle h_listen, nd_handle th_handle) ;
 
+//listen more than one port
+struct listen_port_node
+{
+	struct list_head list;
+	ndsocket_t fd ;
+};
+
 /* listen service contex*/
 struct listen_contex
 {
@@ -52,6 +59,7 @@ struct listen_contex
 	struct list_head list_thread;				//list of thread
 	listen_thread_update pre_update ;
 	listen_thread_update end_update ;
+	struct list_head list_ext_ports ;
 } ;
 
 #ifdef IMPLEMENT_LISTEN_HANDLE
@@ -71,6 +79,9 @@ ND_SRV_API int nd_listensrv_session_info(nd_listen_handle handle, int max_client
 ND_SRV_API void nd_listensrv_set_entry(nd_listen_handle handle, accept_callback income,  deaccept_callback outcome) ;
 
 ND_SRV_API nd_handle nd_listensrv_get_cmallocator(nd_listen_handle handle) ;
+
+//add another port to listen list 
+ND_SRV_API int nd_listensrv_add_port(nd_listen_handle handle , int port, ndip_t bindip ) ;
 
 //得到连接管理器
 ND_SRV_API struct cm_manager *nd_listensrv_get_cmmamager(nd_listen_handle handle) ;
@@ -105,7 +116,7 @@ static __INLINE__ ndsocket_t get_listen_fd(struct listen_contex * handle)
 	return handle->tcp.fd;
 }
 
-struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info) ;
+struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info,ndsocket_t sock_fd) ;
 
 
 /*deal with received net message*/

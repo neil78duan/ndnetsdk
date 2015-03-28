@@ -315,6 +315,16 @@ int NDListener::Deattach(NDConnector &conn,nd_thsrvid_t thid)
 	}
 	return -1 ;
 }
+
+
+int NDListener::AttachPort(int port, ndip_t bindIP)
+{
+	if(-1==nd_listensrv_add_port((nd_listen_handle) m_objhandle, port, bindIP) ) {
+		return -1 ;
+	}
+	return 0;
+}
+
 ndthread_t NDListener::GetListenThid() 
 {
 	ND_TRACE_FUNC();

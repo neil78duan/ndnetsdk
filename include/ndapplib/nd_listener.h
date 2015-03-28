@@ -46,6 +46,8 @@ public:
 
 	int Attach(NDConnector &conn, nd_thsrvid_t thid = 0);
 	int Deattach(NDConnector &conn,nd_thsrvid_t thid = 0);
+	
+	int AttachPort(int port, ndip_t bindIP=0) ;
 
 	int GetMsgBase() {return m_msg_base;}
 	void SetMsgBase(int n) {m_msg_base=n;}

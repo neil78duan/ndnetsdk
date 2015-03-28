@@ -66,6 +66,7 @@ protected :
 	int ReadConfig(const char *configname) ;		//read config from file
 	virtual NDListener*ConstructListener() ;
 	virtual void DestructListener() ;
+	virtual void OnListenerCreate() {} ;
 	
 	NDListener *pListen ;
 	

@@ -51,12 +51,26 @@ int epoll_main(struct thread_pool_info *thip)
 		return -1 ;
 	}
 
-	ev_listen.data.u32 = (__uint32_t)0 ;
+	ev_listen.data.u32 = (__uint32_t)  ((listen_fd<<16) & 0xffff0000);
 	ev_listen.events = EPOLLIN ;
 
 	if(-1==epoll_ctl(thip->iopc_handle,EPOLL_CTL_ADD, listen_fd,&ev_listen) ) {
 		nd_logerror("epoll ctrl error :%s" AND nd_last_error()) ;
 		goto LISTEN_EXIT ;
+	}
+	
+	if (!list_empty(&listen_info->list_ext_ports) ){
+		struct listen_port_node *node ;
+		list_for_each_entry(node, &listen_info->list_ext_ports, struct listen_port_node, list) {
+			
+			ev_listen.data.u32 =  ((node->fd<<16) & 0xffff0000) ;
+			ev_listen.events = EPOLLIN ;
+			if(-1==epoll_ctl(thip->iopc_handle,EPOLL_CTL_ADD, node->fd, &ev_listen) ) {
+				nd_logerror("epoll ctrl error :%s" AND nd_last_error()) ;
+				goto LISTEN_EXIT ;
+			}
+			
+		}
 	}
 
 	while (!nd_thsrv_isexit(thread_handle)){
@@ -78,8 +92,10 @@ int epoll_main(struct thread_pool_info *thip)
         nfds = epoll_wait(thip->iopc_handle,ev_buf,event_num,50) ;
 
 		for (i=0; i<nfds; i++){
-			if(ev_buf[i].data.u32==(__uint32_t)0) {
-				struct nd_client_map *client_map = accetp_client_connect(listen_info) ;
+			if((ev_buf[i].data.u32 & 0xffff)==0) {
+				ndsocket_t fd = ev_buf[i].data.u32 >> 16 ;
+				
+				struct nd_client_map *client_map = accetp_client_connect(listen_info,fd) ;
 				if(client_map && client_map->connect_node.session_id) {
 					nd_socket_nonblock(client_map->connect_node.fd, 1) ;
 					if (-1==addto_thread_pool(client_map,thip))	{

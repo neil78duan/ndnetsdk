@@ -18,7 +18,17 @@
 
 int InitMsgHandler(NDInstanceBase &inst) ;
 
-NDInstance g_instance_srv ;
+class TestInst : public NDInstance
+{
+public:
+	
+	void OnListenerCreate() {
+		GetDeftListener()->AttachPort(9000);
+	} ;
+	
+};
+
+TestInst g_instance_srv ;
 
 NDInstanceBase &get_instance()
 {
