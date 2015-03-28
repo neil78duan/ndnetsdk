@@ -33,7 +33,7 @@ run:
 	$(BIN_AIM)/srvDemo -f ./cfg/config.xml -c test_srv_config
 
 run-cli:
-	$(BIN_AIM)/client_test localhost 7828 1
+	$(BIN_AIM)/client_test localhost 7828 10
 
 config:
 	./config.sh
