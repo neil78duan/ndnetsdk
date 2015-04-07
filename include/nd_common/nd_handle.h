@@ -40,7 +40,7 @@ enum eObjectClose{
 	char inst_name[32];				\
 	NDUINT32 __objid ;				\
 	struct nd_rb_node  __self_rbnode ; \
-	struct list_head __release_cb_hdr ;
+	struct list_head __release_cb_hdr 
 #else 
 
 #define ND_OBJ_BASE \
@@ -49,7 +49,7 @@ enum eObjectClose{
 	NDUINT16 myerrno;	\
 	nd_close_callback close_entry ;\
 	ndatomic_t __created  ;\
-	struct list_head __release_cb_hdr ;
+	struct list_head __release_cb_hdr 
 
 #endif
 

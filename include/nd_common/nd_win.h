@@ -80,8 +80,9 @@
 
 #define __ndthread  __declspec(thread)
 
-ND_COMMON_API char *nd_process_name() ;
-ND_COMMON_API int nd_arg(int argc, char *argv[]);
+ND_COMMON_API const char *nd_process_name();
+ND_COMMON_API int nd_arg(int argc, const char *argv[]);
+
 
 // compatible for unix
 #define snprintf _snprintf

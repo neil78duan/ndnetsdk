@@ -16,7 +16,6 @@ static ND_LIST_HEAD(__reg_list) ;
 
 static ND_LIST_HEAD(__alloced_obj_list) ;
 
-//º«¬ºÀ˘”–◊¢≤·µƒ∂‘œÛ¿‡–Õ
 struct register_object_info
 {
 	struct list_head list ;
@@ -24,7 +23,6 @@ struct register_object_info
 
 };
 
-//“—æ≠∂ØÃ¨∑÷≈‰µƒ∂‘œÛ¡–±Ì
 struct alloced_objects 
 {
 	struct list_head list ;
@@ -42,7 +40,7 @@ nd_error_convert nd_register_error_convert( nd_error_convert func)
 	return ret ;
 }
 
-/*¥¥Ω®“ª∏ˆ∂‘œÛ µ¿˝*/
+
 nd_handle _object_create(const char *name)
 {
 	struct register_object_info *objlist ;
@@ -90,7 +88,6 @@ nd_handle _object_create(const char *name)
 }
 
 
-/* πÿ±’“ª∏ˆæ‰±˙*/
 int _object_destroy(nd_handle handle, int flag) 
 {
 	int ret = -1;
@@ -128,7 +125,7 @@ int _object_destroy(nd_handle handle, int flag)
 	return ret ;
 }
 
-//◊¢≤·“ª∏ˆæ‰±˙¿‡–Õ,¿‡À∆”⁄windows¥∞ø⁄¿‡–Õµƒ◊¢≤·
+
 int nd_object_register(struct nd_handle_reginfo *reginfo) 
 {
 	struct register_object_info *pobj;
@@ -337,7 +334,6 @@ struct tag_nd_handle * _search_handle(NDUINT32 objid)
 	return NULL;
 }
 
-//µ«º«“ª∏ˆ¥¥Ω®∫√µƒæ‰±˙
 int nd_reg_handle(nd_handle hobj) 
 {
 	struct tag_nd_handle *handle = (struct tag_nd_handle *) hobj ;
@@ -426,7 +422,7 @@ int nd_handle_checkvalid(nd_handle hobj, NDUINT16 objtype)
 }
 #else 
 
-//µ«º«“ª∏ˆ¥¥Ω®∫√µƒæ‰±˙
+
 int nd_reg_handle(nd_handle hobj) 
 {
 	nd_atomic_set(&((struct tag_nd_handle *)hobj)->__created,1) ;

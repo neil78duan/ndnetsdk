@@ -13,35 +13,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef CPPAPI
-#ifdef __cplusplus
-#define CPPAPI extern "C" 
-#else 
-#define CPPAPI 
-#endif 
-#endif
-
-#ifdef _MSC_VER
-
-#ifdef CONN_CLI_EXPORTS
-#define ND_CONNCLI_API 				CPPAPI  __declspec(dllexport)
-#define ND_CONNCLI_CLASS 			__declspec(dllexport)
-#else 
-#define ND_CONNCLI_API 				CPPAPI __declspec(dllimport)
-#define ND_CONNCLI_CLASS 			__declspec(dllimport)
-#endif
-
-#else
-
-#define ND_CONNCLI_API 				CPPAPI
-#define ND_CONNCLI_CLASS 			
-#endif
-
 
 #include "nd_common/nd_common.h"
 #include "nd_net/nd_netlib.h"
 #include "nd_crypt/nd_crypt.h"
 #include "ndapplib/nd_msgpacket.h"
+#include "ndcli/nd_api_c.h"
 
 
 class NDIConn ;
