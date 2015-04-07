@@ -14,11 +14,33 @@
 
 #include <stdlib.h>
 
+#ifndef CPPAPI
+#ifdef __cplusplus
+#define CPPAPI extern "C" 
+#else 
+#define CPPAPI 
+#endif 
+#endif
+
+#ifdef _MSC_VER
+
+#ifdef CONN_CLI_EXPORTS
+#define ND_CONNCLI_API 				CPPAPI  __declspec(dllexport)
+#define ND_CONNCLI_CLASS 			__declspec(dllexport)
+#else 
+#define ND_CONNCLI_API 				CPPAPI __declspec(dllimport)
+#define ND_CONNCLI_CLASS 			__declspec(dllimport)
+#endif
+
+#else
+
+#define ND_CONNCLI_API 				CPPAPI
+#define ND_CONNCLI_CLASS 			
+#endif
+
+
 typedef void* netObject ;
 
-#ifndef CPPAPI
-#define CPPAPI extern "C" 
-#endif 
 
 enum eNDSendFlag {
     ND_ESF_NORMAL = 0 ,		// normal
@@ -64,98 +86,98 @@ typedef int (*ndBigDataHandler)(netObject nethandle,unsigned long long param , v
 	ndNetFuncInstall(netObj,msgFunc, maxID, minID, "msgName_" #maxID"-"#minID) 
 
 //connect server
-CPPAPI netObject ndOpenConnect(const char *host, int port) ;
-CPPAPI void ndClostConnect(netObject netObj) ;
+ND_CONNCLI_API netObject ndOpenConnect(const char *host, int port);
+ND_CONNCLI_API void ndClostConnect(netObject netObj);
 
 //send message
 /* send message and data */
-CPPAPI int ndSend(netObject netObj,int maxid, int minid, void *data, unsigned int size) ;
+ND_CONNCLI_API int ndSend(netObject netObj, int maxid, int minid, void *data, unsigned int size);
 /* send message with format*/
-CPPAPI int ndSendFormat(netObject netObj,int maxid, int minid, int argc, ...) ;
+ND_CONNCLI_API int ndSendFormat(netObject netObj, int maxid, int minid, int argc, ...);
 /* send data ,before send the data need to convert to net byte-order*/
-CPPAPI int ndSendData(netObject netObj, char *data, int dataLen, int flag) ;
+ND_CONNCLI_API int ndSendData(netObject netObj, char *data, int dataLen, int flag);
 /* send struct message, ndMsgData::data need to convert to net byteoreder */
-CPPAPI int ndSendMsg(netObject netObj,struct ndMsgData *data, int flag) ;
+ND_CONNCLI_API int ndSendMsg(netObject netObj, struct ndMsgData *data, int flag);
 /* send raw data , this function do not convert or format data */
-CPPAPI int ndSendRaw(netObject netObj,char *data, int size) ;
+ND_CONNCLI_API int ndSendRaw(netObject netObj, char *data, int size);
 
 /* send data that the data len more than 64k */
-CPPAPI int ndBigDataSend(netObject netObj,unsigned long long param, void *data, size_t datalen) ;
-CPPAPI void ndSetBigDataHandler(netObject netObj,ndBigDataHandler entry) ;
+ND_CONNCLI_API int ndBigDataSend(netObject netObj, unsigned long long param, void *data, size_t datalen);
+ND_CONNCLI_API void ndSetBigDataHandler(netObject netObj, ndBigDataHandler entry);
 
 /* send a wrapped message */
-CPPAPI int ndSendWrapMsg(netObject netObj,netObject msgObj, int flag) ;
+ND_CONNCLI_API int ndSendWrapMsg(netObject netObj, netObject msgObj, int flag);
 
 
 //install message handle functions
-CPPAPI int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID,const char *name) ;
-CPPAPI int ndSetDftMsgHandler(netObject netObj,ndNetFunc dftFunc) ;
+ND_CONNCLI_API int ndNetFuncInstall(netObject netObj, ndNetFunc func, int maxID, int minID, const char *name);
+ND_CONNCLI_API int ndSetDftMsgHandler(netObject netObj, ndNetFunc dftFunc);
 
 //tic net message , maybe you need a single thread to call this function
-CPPAPI int ndUpdateConnect(netObject netObj, int timeOutMS) ;
+ND_CONNCLI_API int ndUpdateConnect(netObject netObj, int timeOutMS);
 //wait net message untill timeout, when you get the data ,you need handle it yourself
-CPPAPI int ndWaitMsg(netObject netObj, char *buf, int timeOutMS) ;
+ND_CONNCLI_API int ndWaitMsg(netObject netObj, char *buf, int timeOutMS);
 
 //set terminate callback function , return old function
-CPPAPI ndNetFunc ndSetTerminateFunc(ndNetFunc func) ;
+ND_CONNCLI_API ndNetFunc ndSetTerminateFunc(ndNetFunc func);
 
-CPPAPI int ndGetLastError(netObject netObj) ;
+ND_CONNCLI_API int ndGetLastError(netObject netObj);
 
-CPPAPI const char *ndGetLastErrorDesc(netObject netObj) ;
+ND_CONNCLI_API const char *ndGetLastErrorDesc(netObject netObj);
 
 //init/deinit net 
-CPPAPI int ndInitNet() ;
-CPPAPI void ndDeinitNet() ;
+ND_CONNCLI_API int ndInitNet();
+ND_CONNCLI_API void ndDeinitNet();
 
 //create message wrapper
-CPPAPI netObject ndMsgInputWrapperCreate(unsigned char *data, int dataLen);
-CPPAPI int ndMsgInputWrapperDestroy(netObject msgWrapper , int flag);
+ND_CONNCLI_API netObject ndMsgInputWrapperCreate(unsigned char *data, int dataLen);
+ND_CONNCLI_API int ndMsgInputWrapperDestroy(netObject msgWrapper, int flag);
 
 //crypt message 
-CPPAPI int ndCryptMsg(netObject netObj,netObject msgObj, int bEncrypt) ;
-CPPAPI int ndGetMsglen(netObject msgObj) ;
-CPPAPI char* ndGetMsgAddr(netObject msgObj) ;
+ND_CONNCLI_API int ndCryptMsg(netObject netObj, netObject msgObj, int bEncrypt);
+ND_CONNCLI_API int ndGetMsglen(netObject msgObj);
+ND_CONNCLI_API char* ndGetMsgAddr(netObject msgObj);
 
 // message read wrapper
-CPPAPI unsigned char ndMsgWrapperReadInt8(netObject msgWrapper) ;
-CPPAPI unsigned short ndMsgWrapperReadInt16(netObject msgWrapper) ;
-CPPAPI unsigned int ndMsgWrapperReadInt32(netObject msgWrapper) ;
-CPPAPI unsigned long long ndMsgWrapperReadInt64(netObject msgWrapper) ;
-CPPAPI float ndMsgWrapperReadFloat(netObject msgWrapper) ;
-CPPAPI double ndMsgWrapperReadDouble(netObject msgWrapper) ;
-CPPAPI unsigned int ndMsgWrapperReadText(netObject msgWrapper, unsigned char *buf, int size) ;
-CPPAPI unsigned int ndMsgWrapperReadBin (netObject msgWrapper, unsigned char *buf, int size_buf) ;
+ND_CONNCLI_API unsigned char ndMsgWrapperReadInt8(netObject msgWrapper);
+ND_CONNCLI_API unsigned short ndMsgWrapperReadInt16(netObject msgWrapper);
+ND_CONNCLI_API unsigned int ndMsgWrapperReadInt32(netObject msgWrapper);
+ND_CONNCLI_API unsigned long long ndMsgWrapperReadInt64(netObject msgWrapper);
+ND_CONNCLI_API float ndMsgWrapperReadFloat(netObject msgWrapper);
+ND_CONNCLI_API double ndMsgWrapperReadDouble(netObject msgWrapper);
+ND_CONNCLI_API unsigned int ndMsgWrapperReadText(netObject msgWrapper, unsigned char *buf, int size);
+ND_CONNCLI_API unsigned int ndMsgWrapperReadBin(netObject msgWrapper, unsigned char *buf, int size_buf);
 
-CPPAPI int ndMsgWrapperReadMaxID (netObject msgWrapper) ;
-CPPAPI int ndMsgWrapperReadMinID (netObject msgWrapper) ;
+ND_CONNCLI_API int ndMsgWrapperReadMaxID(netObject msgWrapper);
+ND_CONNCLI_API int ndMsgWrapperReadMinID(netObject msgWrapper);
 
 //output Message wrapper
 
-CPPAPI netObject ndMsgOutputWrapperCreate(int maxID, int minID);
-CPPAPI int ndMsgOuputWrapperDestroy(netObject msgWrapper , int flag);
+ND_CONNCLI_API netObject ndMsgOutputWrapperCreate(int maxID, int minID);
+ND_CONNCLI_API int ndMsgOuputWrapperDestroy(netObject msgWrapper, int flag);
 
-CPPAPI int ndMsgWrapperWriteInt8(netObject msgWrapper,unsigned char val);
-CPPAPI int ndMsgWrapperWriteInt16(netObject msgWrapper,unsigned short val);
-CPPAPI int ndMsgWrapperWriteInt32(netObject msgWrapper,unsigned int val);
-CPPAPI int ndMsgWrapperWriteInt64(netObject msgWrapper,unsigned long long val);
-CPPAPI int ndMsgWrapperWriteFloat(netObject msgWrapper,float val);
-CPPAPI int ndMsgWrapperWriteDouble(netObject msgWrapper,double val);
-CPPAPI int ndMsgWrapperWriteText(netObject msgWrapper, const char *text);
-CPPAPI int ndMsgWrapperWriteBin (netObject msgWrapper,  char *buf, int size_buf);
+ND_CONNCLI_API int ndMsgWrapperWriteInt8(netObject msgWrapper, unsigned char val);
+ND_CONNCLI_API int ndMsgWrapperWriteInt16(netObject msgWrapper, unsigned short val);
+ND_CONNCLI_API int ndMsgWrapperWriteInt32(netObject msgWrapper, unsigned int val);
+ND_CONNCLI_API int ndMsgWrapperWriteInt64(netObject msgWrapper, unsigned long long val);
+ND_CONNCLI_API int ndMsgWrapperWriteFloat(netObject msgWrapper, float val);
+ND_CONNCLI_API int ndMsgWrapperWriteDouble(netObject msgWrapper, double val);
+ND_CONNCLI_API int ndMsgWrapperWriteText(netObject msgWrapper, const char *text);
+ND_CONNCLI_API int ndMsgWrapperWriteBin(netObject msgWrapper, char *buf, int size_buf);
 
 // for test
-CPPAPI int ndSentTest(netObject netObj) ;
-CPPAPI void ndMsgfuncInit(netObject netObj) ;
+ND_CONNCLI_API int ndSentTest(netObject netObj);
+ND_CONNCLI_API void ndMsgfuncInit(netObject netObj);
 
 
-CPPAPI int nd_exchange_key(netObject nethandle,void *output_key) ;
-CPPAPI int nd_checkErrorMsg(netObject nethandle,struct ndMsgData *msg) ;
+ND_CONNCLI_API int nd_exchange_key(netObject nethandle, void *output_key);
+ND_CONNCLI_API int nd_checkErrorMsg(netObject nethandle, struct ndMsgData *msg);
 
 //add function call when object destroyed
 typedef void (*nd_conn_close_entry)(netObject handle, void *param) ;
-CPPAPI int ndAddOnCloseCallback(netObject handle,nd_conn_close_entry callback, void *param) ;
-CPPAPI int ndAddOnDestroyCallback(netObject handle,nd_conn_close_entry callback, void *param) ;
-CPPAPI int ndDelDestroyCallback(netObject handle,nd_conn_close_entry callback, void *param) ;
+ND_CONNCLI_API int ndAddOnCloseCallback(netObject handle, nd_conn_close_entry callback, void *param);
+ND_CONNCLI_API int ndAddOnDestroyCallback(netObject handle, nd_conn_close_entry callback, void *param);
+ND_CONNCLI_API int ndDelDestroyCallback(netObject handle, nd_conn_close_entry callback, void *param);
 
 /*
 CPPAPI netObject ndGetConnector() ;

@@ -63,37 +63,37 @@ ND_COMMON_API const char *nd_get_datetimestr(void);		//µÃµ½×Ö·û´®ÐÎÊ½µÄÊ±¼äºÍÈÕÆ
 #ifdef ND_OPEN_LOG_COMMON
 	#define nd_logmsg(msg) _logmsg(__FUNC__, __FILE__, __LINE__, ND_MSG ,## msg)
 #else 
-	#define nd_logmsg(msg) (void) 0
+	#define nd_logmsg(msg) //(void) 0
 #endif
 
 #ifdef ND_OPEN_LOG_DEBUG
 #define nd_logdebug(msg) _logmsg(__FUNC__,__FILE__, __LINE__, ND_MSGDEBUG , ##msg)
 #else 
-#define nd_logdebug(msg) (void)0
+#define nd_logdebug(msg) //(void)0
 #endif
 
 #ifdef ND_OPEN_LOG_WARN
 	#define nd_logwarn(msg) _logmsg(__FUNC__,__FILE__, __LINE__, ND_WARN , ##msg)
 #else 
-#define nd_logwarn(msg) (void) 0
+#define nd_logwarn(msg) //(void) 0
 #endif
 
 #ifdef ND_OPEN_LOG_ERROR
 	#define nd_logerror(msg) _logmsg(__FUNC__,__FILE__, __LINE__, ND_ERROR ,## msg)
 #else 
-#define nd_logerror(msg) (void) 0
+#define nd_logerror(msg) //(void) 0
 #endif
 
 #ifdef ND_OPEN_LOG_FATAL
 	#define nd_logfatal(msg) _logmsg(__FUNC__,__FILE__, __LINE__, ND_FATAL_ERR ,## msg)
 #else 
-#define nd_logfatal(msg) (void) 0
+#define nd_logfatal(msg) //(void) 0
 #endif
 
 #if defined(ND_OUT_LOG_2CTRL) && defined(ND_DEBUG) 
-#define  nd_log_screen(msg) _logmsg_screen(__FILE__, __LINE__, ##arg)
+#define  nd_log_screen(msg) _logmsg_screen(__FILE__, __LINE__, ## msg)
 #else 
-#define  nd_log_screen (void)0
+#define  nd_log_screen //(void)0
 #endif 
 
 //////////////////////////////////////////////////////////////////////////

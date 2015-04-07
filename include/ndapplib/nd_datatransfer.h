@@ -11,6 +11,7 @@
 
 #include "nd_net/nd_netlib.h"
 #include "nd_common/nd_common.h"
+#include "ndcli/nd_api_c.h"
 
 typedef void (*data_transfer_callback) (nd_handle nethandle, NDUINT64 param , int error_code);
 
