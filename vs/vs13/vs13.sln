@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nd_cli", "nd_cli\nd_cli.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nd_srv_static", "nd_srv_static\nd_srv_static.vcxproj", "{68736C6C-450A-4452-BD9B-C2AB19B945CE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ndcli_static", "ndcli_static\ndcli_static.vcxproj", "{802187A3-3751-4A52-9E09-EE06DF1F7411}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{68736C6C-450A-4452-BD9B-C2AB19B945CE}.Debug|Win32.Build.0 = Debug|Win32
 		{68736C6C-450A-4452-BD9B-C2AB19B945CE}.Release|Win32.ActiveCfg = Release|Win32
 		{68736C6C-450A-4452-BD9B-C2AB19B945CE}.Release|Win32.Build.0 = Release|Win32
+		{802187A3-3751-4A52-9E09-EE06DF1F7411}.Debug|Win32.ActiveCfg = Debug|Win32
+		{802187A3-3751-4A52-9E09-EE06DF1F7411}.Debug|Win32.Build.0 = Debug|Win32
+		{802187A3-3751-4A52-9E09-EE06DF1F7411}.Release|Win32.ActiveCfg = Release|Win32
+		{802187A3-3751-4A52-9E09-EE06DF1F7411}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

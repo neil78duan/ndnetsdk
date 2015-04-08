@@ -464,9 +464,6 @@
     <ClCompile Include="..\..\..\src\nd_srvcore\src\client_map.c">
       <Filter>src\srvcoe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_session.c">
-      <Filter>src\srvcoe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thmsg.c">
       <Filter>src\srvcoe</Filter>
     </ClCompile>
@@ -547,6 +544,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_crypt\rsa\rsa.c">
       <Filter>src\crypt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\session.c">
+      <Filter>src\srvcoe</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

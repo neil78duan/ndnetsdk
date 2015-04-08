@@ -8,12 +8,6 @@
 
 #if !defined(ND_UNIX) 
 
-#if defined(ND_DEBUG)
-#pragma comment(lib,"srv_libs_dbg.lib")
-#else
-#pragma comment(lib,"srv_libs.lib")
-#endif
-
 #pragma comment(lib,"Psapi.lib")
 
 #pragma comment(lib,"Ws2_32.lib")

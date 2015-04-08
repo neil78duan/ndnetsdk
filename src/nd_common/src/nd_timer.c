@@ -203,7 +203,7 @@ int  nd_timer_update(nd_handle handle)
 static void _del_from_list(struct nd_timer_root *root, ndtimer_t id) 
 {
 	struct list_head *pos ;
-	struct timer_node *node ;
+	struct timer_node *node =0;
 	nd_assert(root) ;
 
 	nd_mutex_lock(&root->list_lock) ;

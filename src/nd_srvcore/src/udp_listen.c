@@ -41,7 +41,7 @@ int udp_server_entry(struct listen_contex *listen_info)
 	int ret  ;
 	nd_handle context  = nd_thsrv_gethandle(0) ;
 	nd_udtsrv *root = &listen_info->udt ;
-	udp_entry  udp_func ;
+	udp_entry  udp_func=0 ;
 
 	//struct udp_thpool *pool=NULL;
 
