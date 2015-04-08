@@ -536,6 +536,7 @@ int nd_getcpu_num()
 	return sysconf(_SC_NPROCESSORS_ONLN);
 }
 
+#ifndef ND_ANDROID
 #include <execinfo.h>
 
 int nd_get_sys_callstack(char *buf, size_t size)
@@ -568,5 +569,18 @@ int nd_sys_callstack_dump(nd_out_func func,FILE *outfile)
 	free(strs);
 	return ret;
 }
+#else
+
+int nd_get_sys_callstack(char *buf, size_t size)
+{
+	return 0;
+}
+
+int nd_sys_callstack_dump(nd_out_func func,FILE *outfile)
+{
+	
+	return 0;
+}
+#endif
 
 #endif
