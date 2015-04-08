@@ -53,7 +53,7 @@ int _parse_input_and_run(struct nd_cmdline_root *root,char *input_text)
 //		fprintf(stdout, "\t %s\n", argv[i]) ;
 //	}
 	
-	return _command_line(root, argc, argv) ;
+	return _command_line(root, argc, (const char**)argv) ;
 	
 }
 
