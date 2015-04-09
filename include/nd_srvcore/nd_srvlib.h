@@ -12,9 +12,9 @@
 
 #if defined(ND_COMPILE_AS_DLL) && (defined(_WINDOWS) || defined(WIN32) || defined(WIN64))
 	#if  defined(ND_SRVCORE_EXPORTS) 
-	# define ND_SRV_API 				CPPAPI __declspec(dllexport)
+# define ND_SRV_API 				CPPAPI  __declspec(dllexport)
 	#else
-	# define ND_SRV_API 				CPPAPI __declspec(dllimport)
+# define ND_SRV_API 				CPPAPI  __declspec(dllimport)
 	#endif
 #else 
 	# define ND_SRV_API 				CPPAPI

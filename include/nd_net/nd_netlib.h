@@ -12,12 +12,12 @@
 
 #if  defined(ND_COMPILE_AS_DLL) && (defined(WIN32) || defined(_WINDOWS) || defined(WIN64))
 	#if  defined(ND_NET_EXPORTS) 
-	# define ND_NET_API 				CPPAPI __declspec(dllexport)
+# define ND_NET_API 				CPPAPI __declspec(dllexport)
 	#else
-	# define ND_NET_API 				CPPAPI __declspec(dllimport)
+# define ND_NET_API 				CPPAPI __declspec(dllimport)
 	#endif
 #else 
-	# define ND_NET_API 				CPPAPI
+# define ND_NET_API 				CPPAPI 
 #endif 
 
 #include "nd_common/nd_common.h"

@@ -15,7 +15,7 @@
 
 #define ND_ESC			0x1b
 #ifdef __cplusplus
-#define CPPAPI extern "C" 
+#define CPPAPI extern "C"
 #else 
 #define CPPAPI 
 #endif

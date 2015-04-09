@@ -60,6 +60,7 @@
 #pragma warning(disable:4512)
 
 #pragma  warning(disable: 4996)
+#pragma  warning(disable: 4819)
 
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -67,12 +68,12 @@
 
 #ifdef ND_COMPILE_AS_DLL
 	#if  defined(ND_COMMON_EXPORTS) 
-		#define ND_COMMON_API 				CPPAPI  __declspec(dllexport)
+#define ND_COMMON_API 				CPPAPI  __declspec(dllexport)
 	#else
-		#define ND_COMMON_API 				CPPAPI __declspec(dllimport)
+#define ND_COMMON_API 				CPPAPI  __declspec(dllimport)
 	#endif
 #else 
-	#define ND_COMMON_API 				CPPAPI 
+#define ND_COMMON_API 				CPPAPI 
 #endif
 
 #define __INLINE__			__inline	

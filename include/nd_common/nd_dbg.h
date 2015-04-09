@@ -55,43 +55,44 @@ ND_COMMON_API const char *nd_get_datetimestr(void);		//µÃµ½×Ö·û´®ÐÎÊ½µÄÊ±¼äºÍÈÕÆ
 //////////////////////////////////////////////////////////////////////////
 //windows
 #if !defined(ND_UNIX) 
+//#if 0
 
 #ifdef ND_OPEN_TRACE
 #else 
 #endif
 
 #ifdef ND_OPEN_LOG_COMMON
-	#define nd_logmsg(msg) _logmsg(__FUNC__, __FILE__, __LINE__, ND_MSG ,## msg)
+#define nd_logmsg(msg,...) _logmsg(__FUNC__, __FILE__, __LINE__, ND_MSG ,msg,__VA_ARGS__)
 #else 
 	#define nd_logmsg(msg) //(void) 0
 #endif
 
 #ifdef ND_OPEN_LOG_DEBUG
-#define nd_logdebug(msg) _logmsg(__FUNC__,__FILE__, __LINE__, ND_MSGDEBUG , ##msg)
+#define nd_logdebug(msg,...) _logmsg(__FUNC__,__FILE__, __LINE__, ND_MSGDEBUG ,msg,__VA_ARGS__)
 #else 
 #define nd_logdebug(msg) //(void)0
 #endif
 
 #ifdef ND_OPEN_LOG_WARN
-	#define nd_logwarn(msg) _logmsg(__FUNC__,__FILE__, __LINE__, ND_WARN , ##msg)
+#define nd_logwarn(msg,...) _logmsg(__FUNC__,__FILE__, __LINE__, ND_WARN ,msg,__VA_ARGS__)
 #else 
 #define nd_logwarn(msg) //(void) 0
 #endif
 
 #ifdef ND_OPEN_LOG_ERROR
-	#define nd_logerror(msg) _logmsg(__FUNC__,__FILE__, __LINE__, ND_ERROR ,## msg)
+#define nd_logerror(msg,...) _logmsg(__FUNC__,__FILE__, __LINE__, ND_ERROR ,msg,__VA_ARGS__)
 #else 
 #define nd_logerror(msg) //(void) 0
 #endif
 
 #ifdef ND_OPEN_LOG_FATAL
-	#define nd_logfatal(msg) _logmsg(__FUNC__,__FILE__, __LINE__, ND_FATAL_ERR ,## msg)
+#define nd_logfatal(msg,...) _logmsg(__FUNC__,__FILE__, __LINE__, ND_FATAL_ERR ,msg,__VA_ARGS__)
 #else 
 #define nd_logfatal(msg) //(void) 0
 #endif
 
 #if defined(ND_OUT_LOG_2CTRL) && defined(ND_DEBUG) 
-#define  nd_log_screen(msg) _logmsg_screen(__FILE__, __LINE__, ## msg)
+#define  nd_log_screen(msg,...) _logmsg_screen(__FILE__, __LINE__,msg,__VA_ARGS__)
 #else 
 #define  nd_log_screen //(void)0
 #endif 
