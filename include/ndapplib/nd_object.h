@@ -52,12 +52,16 @@ public :
     
     virtual nd_handle GetMmpool() ;
     virtual int SetMmpool(nd_handle pool) ;
-    
+	
+	void SetUserObj(NDObject *obj) {m_userData = obj ;}
+	NDObject *GetUserObj() {return m_userData ;}
+
 protected:
     NDUINT8 m_bPoolOwner ;
     nd_handle m_pool ;
     
     nd_handle m_objhandle ;
+	NDObject *m_userData ;
 };
 
 typedef void (NDObject::*NDObjectFunc)();
