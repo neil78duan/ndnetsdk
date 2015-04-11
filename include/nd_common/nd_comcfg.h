@@ -90,11 +90,11 @@
 #ifndef BUILD_AS_STATIC_LIB
 #define BUILD_AS_STATIC_LIB
 #endif
-
-#ifdef BUILD_AS_STATIC_LIB
-#else
-#define ND_COMPILE_AS_DLL	1			//编译成动态库
-#endif
+// 
+// #ifdef BUILD_AS_STATIC_LIB
+// #else
+// #define ND_COMPILE_AS_DLL	1			//编译成动态库
+// #endif
 
 //不支持unicode
 //#define ND_UNICODE			1

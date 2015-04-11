@@ -11,13 +11,13 @@
 #if !defined(ND_UNIX) 
 #pragma comment(lib, "Ws2_32.lib") 
 
-#if defined(ND_COMPILE_AS_DLL)
-#ifdef ND_DEBUG
-#pragma comment(lib, "nd_common_dbg.lib") 
-#else 
-#pragma comment(lib, "nd_common.lib") 
-#endif
-#endif
+// #if defined(ND_COMPILE_AS_DLL)
+// #ifdef ND_DEBUG
+// #pragma comment(lib, "nd_common_dbg.lib") 
+// #else 
+// #pragma comment(lib, "nd_common.lib") 
+// #endif
+// #endif
 #endif
 
 int register_connector(void) ;

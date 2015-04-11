@@ -22,21 +22,21 @@
 #endif 
 #endif
 
-#ifdef _MSC_VER
-
-#ifdef CONN_CLI_EXPORTS
-#define ND_CONNCLI_API 				CPPAPI  __declspec(dllexport)
-#define ND_CONNCLI_CLASS 			__declspec(dllexport)
-#else 
-#define ND_CONNCLI_API 				CPPAPI __declspec(dllimport)
-#define ND_CONNCLI_CLASS 			__declspec(dllimport)
-#endif
-
-#else
+//#ifdef _MSC_VER
+// 
+// #ifdef CONN_CLI_EXPORTS
+// #define ND_CONNCLI_API 				CPPAPI  __declspec(dllexport)
+// #define ND_CONNCLI_CLASS 			__declspec(dllexport)
+// #else 
+// #define ND_CONNCLI_API 				CPPAPI __declspec(dllimport)
+// #define ND_CONNCLI_CLASS 			__declspec(dllimport)
+// #endif
+// 
+// #else
 
 #define ND_CONNCLI_API 				CPPAPI
 #define ND_CONNCLI_CLASS 			
-#endif
+//#endif
 
 
 typedef void* netObject ;
