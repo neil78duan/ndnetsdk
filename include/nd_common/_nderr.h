@@ -5,6 +5,9 @@
 //  Created by duanxiuyun on 14-12-19.
 //  Copyright (c) 2014年 duanxiuyun. All rights reserved.
 //
+#ifdef _MSC_VER
+#pragma  warning(disable: 4819)
+#endif
 
 //
 
