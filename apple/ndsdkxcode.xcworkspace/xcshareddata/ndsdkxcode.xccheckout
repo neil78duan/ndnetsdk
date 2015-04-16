@@ -10,10 +10,12 @@
 	<string>ndsdkxcode</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+		<key>03af6e4e-7da2-4934-b5c6-be35d2e8c180++505</key>
+		<string>svn://192.168.2.133/war_hero/trunk</string>
+		<key>03af6e4e-7da2-4934-b5c6-be35d2e8c180++5180</key>
+		<string>https://xp-dev.com/svn/Atlantis/trunk/servers/ndsdk</string>
 		<key>25D6EC0C77C89BD90FA34F787672A1EFC7388E9B</key>
 		<string>https://github.com/neil78duan/ndnetsdk.git</string>
-		<key>8380c137-5d9a-9b42-ad95-97fdc4d01f8b++1263</key>
-		<string>https://xp-dev.com/svn/Atlantis/trunk/servers/ndsdk</string>
 		<key>8380c137-5d9a-9b42-ad95-97fdc4d01f8b++8518</key>
 		<string>https://xp-dev.com/svn/Atlantis/trunk/server</string>
 	</dict>
@@ -21,16 +23,20 @@
 	<string>apple/ndsdkxcode.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
+		<key>03af6e4e-7da2-4934-b5c6-be35d2e8c180++505</key>
+		<string>../../..</string>
+		<key>03af6e4e-7da2-4934-b5c6-be35d2e8c180++5180</key>
+		<string>../../../ndsdk</string>
 		<key>25D6EC0C77C89BD90FA34F787672A1EFC7388E9B</key>
 		<string>../..</string>
-		<key>8380c137-5d9a-9b42-ad95-97fdc4d01f8b++1263</key>
-		<string>../../../ndsdk</string>
 		<key>8380c137-5d9a-9b42-ad95-97fdc4d01f8b++8518</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectRepositoryRootDictionary</key>
 	<dict>
-		<key>8380c137-5d9a-9b42-ad95-97fdc4d01f8b++1263</key>
+		<key>03af6e4e-7da2-4934-b5c6-be35d2e8c180++505</key>
+		<string>svn://192.168.2.133/war_hero</string>
+		<key>03af6e4e-7da2-4934-b5c6-be35d2e8c180++5180</key>
 		<string>https://xp-dev.com/svn/Atlantis</string>
 		<key>8380c137-5d9a-9b42-ad95-97fdc4d01f8b++8518</key>
 		<string>https://xp-dev.com/svn/Atlantis</string>
@@ -43,6 +49,14 @@
 	<string>25D6EC0C77C89BD90FA34F787672A1EFC7388E9B</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>03af6e4e-7da2-4934-b5c6-be35d2e8c180++505</string>
+			<key>IDESourceControlWCCName</key>
+			<string></string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.subversion</string>
@@ -63,7 +77,7 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.subversion</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>8380c137-5d9a-9b42-ad95-97fdc4d01f8b++1263</string>
+			<string>03af6e4e-7da2-4934-b5c6-be35d2e8c180++5180</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ndsdk</string>
 		</dict>
