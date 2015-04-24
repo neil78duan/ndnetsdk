@@ -324,6 +324,7 @@ void nd_mempool_root_release()
 	}
 	list_for_each_safe(pos,next,&__mem_root.inuser_list) {
 		pool = list_entry(pos,struct nd_mm_pool, self_list ) ;
+		list_del_init(&pool->self_list);
 		nd_pool_destroy(pool,0) ;
 	}
 
@@ -499,6 +500,7 @@ int nd_pool_destroy(nd_mmpool_t *pool, int flag)
 	node->size = size ;
 
 	__sys_page_free(pool) ;
+	
 	return 0 ;
 }
 
@@ -577,7 +579,14 @@ void nd_pool_reset(nd_mmpool_t *pool)
 
 	list_for_each_safe(pos,list_next, &page) {
 		struct big_chunk_list *chunk = list_entry(pos,struct big_chunk_list, list) ;
-		__sys_page_free(chunk) ;
+		struct alloc_node *addr = (struct alloc_node *)chunk;
+		
+		size_t size = chunk->size & ~3;
+		size = size + sizeof(struct big_chunk_list) - sizeof(allocheader_t) ;
+		
+		addr->size = size ;
+		
+		__sys_page_free(addr) ;
 	}
 }
 
@@ -894,6 +903,7 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 		alloc_addr->size = alloc_size - sizeof(struct big_chunk_list) + sizeof(allocheader_t) ;
 		alloc_addr->pool = pool;
 		INIT_LIST_HEAD(&alloc_addr->list);
+		
 
 		nd_mutex_lock(&pool->lock);
 			pool->allocated_size += alloc_addr->size ;

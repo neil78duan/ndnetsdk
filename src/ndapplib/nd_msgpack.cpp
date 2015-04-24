@@ -52,6 +52,12 @@ NDOStreamMsg::NDOStreamMsg(int maxid, int minid) : NDSendMsg(maxid, minid)
 	_op_addr = NDSendMsg::MsgData()  ;
 	_end = (char*) ((&_packet) + 1) ;
 }
+
+NDOStreamMsg::NDOStreamMsg(NDUINT16 msgID) : NDSendMsg(ND_HIBYTE(msgID), ND_LOBYTE(msgID))
+{
+	_op_addr = NDSendMsg::MsgData()  ;
+	_end = (char*) ((&_packet) + 1) ;
+}
 NDOStreamMsg::~NDOStreamMsg() 
 {
 }
@@ -198,6 +204,27 @@ int NDOStreamMsg::WriteBin(void *data, size_t size)
 		return 0 ;
 	}
 	return -1;
+}
+
+
+int NDOStreamMsg::WriteStream(char *stream_buf, size_t dataLen)
+{
+	
+	if (_end <= _op_addr ){
+		return -1 ;
+	}
+	size_t free_size = _end - _op_addr ;
+	if (free_size < dataLen) {
+		return -1;
+	}
+	
+	if(dataLen>0) {
+		memcpy(_op_addr, stream_buf, dataLen) ;
+		MsgLength() += (NDUINT16) dataLen ;
+		_op_addr += dataLen ;
+	}
+	return 0;
+	
 }
 //
 ////在脚本中使用
@@ -427,6 +454,23 @@ int NDIStreamMsg::Read(NDOStreamMsg &omsg)
 
 	return (int) data_size;
 
+}
+
+
+//read all left data to stream_buf
+size_t NDIStreamMsg::ReadLeftStream(char *stream_buf, size_t buf_size)
+{
+	size_t data_size = _end - _op_addr ;
+	if (data_size == 0) {
+		return 0 ;
+	}
+	if (buf_size < data_size) {
+		return 0 ;
+	}
+	memcpy(stream_buf, _op_addr, data_size) ;
+	_op_addr = _end ;
+	
+	return  data_size;
 }
 
 //

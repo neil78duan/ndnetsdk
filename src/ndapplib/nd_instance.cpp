@@ -653,7 +653,7 @@ int instance_tick_entry(void *param)
 }
 
 
-MSG_ENTRY_INSTANCE(nd_transfer_to_session)
+MSG_ENTRY_INSTANCE(nd_transfer_to_msgproc)
 {
 	ND_TRACE_FUNC() ;
 	NDUINT16 sid ;
@@ -669,8 +669,11 @@ MSG_ENTRY_INSTANCE(nd_transfer_to_session)
 		h_listen = getbase_inst()->GetDeftListener()->GetHandle() ;
 		nd_assert(h_listen) ;
 	}
+	
+	NDOStreamMsg omsg(inmsg.MsgMaxid(), inmsg.MsgMinid()) ;
+	inmsg.Read(omsg) ;
 
-	if(-1==nd_netmsg_handle(sid,(nd_usermsghdr_t*)msg, h_listen) ){
+	if(-1==nd_netmsg_handle(sid,(nd_usermsghdr_t*)omsg.GetMsgAddr(), h_listen) ){
 		nd_logmsg("nd_netmsg_handle() to %d error\n", sid) ;		
 	}
 	return 0 ;

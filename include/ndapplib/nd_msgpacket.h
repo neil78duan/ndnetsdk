@@ -40,6 +40,8 @@ public :
 	void Reset();
 	NDOStreamMsg() ;
 	NDOStreamMsg(int maxid, int minid) ;
+	
+	NDOStreamMsg(NDUINT16 msgID) ;
 	virtual ~NDOStreamMsg() ;
 	int Write(NDUINT32 ) ;
 	int Write(NDUINT16 ) ;
@@ -49,6 +51,8 @@ public :
 	int Write(float) ;
 	int Write(double ) ;
 	int WriteBin(void *data, size_t size) ;
+	
+	int WriteStream(char *stream_buf, size_t dataLen);
 
 //    
 //	int WriteByte(int ) ;
@@ -94,6 +98,9 @@ public :
 	size_t Read(NDUINT8 *buf, size_t size) ;
 	size_t ReadBin (void *buf, size_t size_buf) ;
 	int Read(NDOStreamMsg &omsg) ;
+	
+	//read all left data to stream_buf
+	size_t ReadLeftStream(char *stream_buf, size_t buf_size) ;
 
 //	int ReadByte() ;
 //	int ReadShort() ;
