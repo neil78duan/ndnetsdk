@@ -24,8 +24,6 @@ ifeq ($(OS_kernel),darwin)
     CFLAGS += -D__MAC_OS__
 endif
 
-CFLAGS += -c -w -O  -DND_UNIX
-LFLAGS +=  -lpthread  -lm
 
 
 ifeq ($(DEBUG),y)
@@ -49,6 +47,10 @@ ifeq ($(PLATFORM_BITS),64)
 	CFLAGS += -DX86_64
 else
 endif
+
+
+CFLAGS += -c -w -O  -DND_UNIX -I$(NDHOME)/include
+LFLAGS +=  -lpthread  -lm -L$(NDHOME)/lib
 
 
 #create objdir

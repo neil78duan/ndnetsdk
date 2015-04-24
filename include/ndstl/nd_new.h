@@ -61,24 +61,14 @@ inline void operator delete[](void *p,nd_handle pool) throw()
 	_free_delete(p, pool) ;
 }
 
-inline void *operator new(size_t size) __new_throw
-{
-	return _alloc_new( size, NULL);
-}
-inline void *operator new[](size_t size)  __new_throw
-{
-	return _alloc_new( size, NULL);
-}
-inline void operator delete(void *p) throw()
-{
-	_free_delete(p, NULL) ;
-}
-inline void operator delete[](void *p) throw()
-{
-	_free_delete(p, NULL) ;
-}
 #pragma auto_inline (on)
 #pragma optimize( "", on ) 
+
+void *operator new(size_t size) __new_throw;
+void *operator new[](size_t size)  __new_throw;
+
+void operator delete(void *p) throw();
+void operator delete[](void *p) throw();
 
 //#endif //ND_UNUSE_STDC_ALLOC
 
