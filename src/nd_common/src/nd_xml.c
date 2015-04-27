@@ -178,6 +178,29 @@ int ndxml_save(ndxml_root *xmlroot, const char *file)
 }
 
 
+ndxml *ndxml_copy(ndxml *node)
+{
+	int i;
+	ndxml *newnode = NULL ;
+	
+	if (!node) {
+		return NULL;
+	}
+	
+	newnode = _create_xmlnode(node->name, node->value) ;
+	
+	for (i=0; i<ndxml_getattr_num(node); ++i) {
+		ndxml_addattrib(newnode, ndxml_getattr_name(node, i), ndxml_getattr_vali(node, i)) ;
+	}
+	for (i=0; i<ndxml_getsub_num(node); ++i) {
+		ndxml *sub_new = ndxml_copy( ndxml_refsubi(node, i)) ;
+		if (sub_new) {
+			list_add_tail(&sub_new->lst_self, &newnode->lst_sub) ;
+		}
+	}
+	return newnode ;
+}
+
 int ndxml_merge(ndxml_root *host, ndxml_root *merged) 
 {
 	if(merged->num > 0) {

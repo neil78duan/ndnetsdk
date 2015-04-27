@@ -102,6 +102,8 @@ ND_COMMON_API int ndxml_save(ndxml_root *xmlroot, const char *file) ;
 
 ND_COMMON_API int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header) ;
 
+ND_COMMON_API ndxml *ndxml_copy(ndxml *node) ;
+
 //引用一个子节点
 ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;
 
