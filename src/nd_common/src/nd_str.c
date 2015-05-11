@@ -475,3 +475,4 @@ char *ndstr_reverse_chr(char *src, char ch, char *end)
 
 	return NULL;
 }
+

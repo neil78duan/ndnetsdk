@@ -12,6 +12,17 @@
 #profile , hot spot find
 #PROFILE=y
 
+tme23456=$(DEBUG)XX
+ifeq ($(tme23456),XX)
+DEBUG = y
+endif
+
+tme23457=$(PROFILE)XX
+ifeq ($(PROFILE),XX)
+PROFILE = y
+endif
+
+
 ARCH_MACHINE = $(shell uname -m)
 OS_kernel = $(shell uname -s | tr '[A-Z]' '[a-z]')
 

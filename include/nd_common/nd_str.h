@@ -69,4 +69,5 @@ ND_COMMON_API char *ndstr_reverse_chr(char *src, char ch, char *end) ;
 #define nd_atoi64 atoll
 #endif
 
+
 #endif 
