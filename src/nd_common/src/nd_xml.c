@@ -66,8 +66,8 @@ int ndxml_load(const char *file,ndxml_root *xmlroot)
 		char *error_addr = 0;
 		ndxml *xmlnode = parse_xmlbuf(parse_addr, data_len, &parse_addr, &error_addr);
 		if(xmlnode) {
-			list_add_tail(&xmlnode->lst_self, &xmlroot->lst_xml);
-			xmlroot->num++ ;
+			list_add_tail(&xmlnode->lst_self, &xmlroot->lst_sub);
+			xmlroot->sub_num++ ;
 		}
 		else if(error_addr) {
 			ndxml_destroy(xmlroot) ;
@@ -84,8 +84,8 @@ int ndxml_load(const char *file,ndxml_root *xmlroot)
 void ndxml_destroy(ndxml_root *xmlroot)
 {
 	ndxml *sub_xml; 
-	struct list_head *pos = xmlroot->lst_xml.next ;
-	while (pos!=&xmlroot->lst_xml) {
+	struct list_head *pos = xmlroot->lst_sub.next;
+	while (pos != &xmlroot->lst_sub) {
 		sub_xml = list_entry(pos,struct tagxml, lst_self) ;
 		pos = pos->next ;
 		dealloc_xml(sub_xml) ;
@@ -149,7 +149,7 @@ int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header)
 {
     FILE *fp;
     ndxml *sub_xml;
-    struct list_head *pos = xmlroot->lst_xml.next ;
+	struct list_head *pos = xmlroot->lst_sub.next;
     
     fp = fopen(file, "w") ;
     if(!fp) {
@@ -159,7 +159,7 @@ int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header)
         fprintf(fp, "<? %s ?>\n", header) ;
     }
     
-    while (pos!=&xmlroot->lst_xml) {
+	while (pos != &xmlroot->lst_sub) {
         sub_xml = list_entry(pos,struct tagxml, lst_self) ;
         pos = pos->next ;
         xml_write(sub_xml,fp, 0) ;
@@ -193,19 +193,26 @@ ndxml *ndxml_copy(ndxml *node)
 		ndxml_addattrib(newnode, ndxml_getattr_name(node, i), ndxml_getattr_vali(node, i)) ;
 	}
 	for (i=0; i<ndxml_getsub_num(node); ++i) {
-		ndxml *sub_new = ndxml_copy( ndxml_refsubi(node, i)) ;
+		ndxml *sub1 = ndxml_refsubi(node, i);
+		ndxml *sub_new = ndxml_copy(sub1);
 		if (sub_new) {
 			list_add_tail(&sub_new->lst_self, &newnode->lst_sub) ;
+			newnode->sub_num++;
 		}
 	}
 	return newnode ;
 }
 
+int ndxml_insert(ndxml *parent, ndxml*child)
+{
+	list_add_tail(&child->lst_self, &parent->lst_sub);
+	return 0;
+}
 int ndxml_merge(ndxml_root *host, ndxml_root *merged) 
 {
-	if(merged->num > 0) {
-		list_join(&merged->lst_xml, &host->lst_xml) ;
-		host->num += merged->num ;
+	if(merged->sub_num > 0) {
+		list_join(&merged->lst_sub, &host->lst_sub);
+		host->sub_num += merged->sub_num ;
 
 		ndxml_initroot(merged);
 	}
@@ -215,8 +222,8 @@ int ndxml_merge(ndxml_root *host, ndxml_root *merged)
 ndxml *ndxml_getnode(ndxml_root *xmlroot,const  char *name)
 {
 	ndxml *sub_xml; 
-	struct list_head *pos = xmlroot->lst_xml.next ;
-	while (pos!=&xmlroot->lst_xml) {
+	struct list_head *pos = xmlroot->lst_sub.next;
+	while (pos != &xmlroot->lst_sub) {
 		sub_xml = list_entry(pos,struct tagxml, lst_self) ;
 		pos = pos->next ;
 		if (0==ndstricmp((char*)name,sub_xml->name)){
@@ -229,9 +236,9 @@ ndxml *ndxml_getnodei(ndxml_root *xmlroot, int index)
 {
 	int i = 0 ;
 	ndxml *sub_xml; 
-	struct list_head *pos = xmlroot->lst_xml.next ;
+	struct list_head *pos = xmlroot->lst_sub.next;
 
-	while (pos!=&xmlroot->lst_xml) {
+	while (pos != &xmlroot->lst_sub) {
 		sub_xml = list_entry(pos,struct tagxml, lst_self) ;
 		pos = pos->next ;
 		if(i==index){
@@ -246,8 +253,8 @@ ndxml *ndxml_addnode(ndxml_root *xmlroot, const char *name,const char *value)
 {
 	ndxml *xmlnode = _create_xmlnode(name, value) ;
 	if(xmlnode){
-		list_add_tail(&xmlnode->lst_self, &xmlroot->lst_xml);
-		xmlroot->num++ ;
+		list_add_tail(&xmlnode->lst_self, &xmlroot->lst_sub);
+		xmlroot->sub_num++ ;
 	}
 	return xmlnode ;
 }
@@ -258,7 +265,7 @@ int ndxml_delnode(ndxml_root *xmlroot,const  char *name)
 	if(!node)
 		return -1 ;
 	list_del(&node->lst_self) ;
-	xmlroot->num-- ;
+	xmlroot->sub_num-- ;
 	dealloc_xml(node);
 	return 0 ;
 }
@@ -268,7 +275,7 @@ int ndxml_delnodei(ndxml_root *xmlroot, int index)
 	if(!node)
 		return -1 ;
 	list_del(&node->lst_self) ;
-	xmlroot->num-- ;
+	xmlroot->sub_num-- ;
 	dealloc_xml(node);
 	return 0 ;
 }
@@ -686,7 +693,10 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 				list_add_tail(&new_xml->lst_self, &xmlnode->lst_sub);
 				xmlnode->sub_num++ ;
 			}
-			else if(*error_addr || NULL==parsed) {
+			else /*if(*error_addr || NULL==parsed)*/ {
+				if (!error_addr) {
+					*error_addr = paddr;
+				}
 				//parse error 
 				dealloc_xml(xmlnode) ;
 				*parse_end = NULL ;
@@ -942,4 +952,9 @@ int xml_write(ndxml *xmlnode, FILE *fp , int deep)
 void _errlog (const char *errdesc)
 {
 	fprintf(stderr,"%s", errdesc) ;	
+}
+
+int ndxml_output(ndxml *node, FILE *pf)
+{
+	return xml_write(node, pf, 0);
 }

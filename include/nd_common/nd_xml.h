@@ -7,7 +7,7 @@
 
 #ifndef _ND_XML_H_
 #define _ND_XML_H_
-
+#include "nd_common/list.h"
 #define MAX_XMLNAME_SIZE 64
 
 typedef void (*xml_errlog) (const char *errdesc) ;		//错误描述函数
@@ -30,11 +30,12 @@ typedef struct tagxml
 
 //xml的根节点,保存多个ndxml,
 //主要是在文件加载和保存时使用
-typedef struct tagxmlroot
-{
-	int num ;
-	struct list_head lst_xml ;	
-}ndxml_root;
+typedef struct tagxml ndxml_root;
+// typedef struct tagxmlroot
+// {
+// 	int num ;
+// 	struct list_head lst_xml ;	
+// }ndxml_root;
 
 //xml属性节点
 /*struct ndxml_attr {
@@ -73,8 +74,9 @@ static __INLINE__ void init_xml_node(ndxml *xmlnode)
 
 static __INLINE__ void ndxml_initroot(ndxml_root *root)
 {
-	root->num = 0 ;
-	INIT_LIST_HEAD(&root->lst_xml) ;
+	init_xml_node((ndxml *)root);
+// 	root->num = 0 ;
+// 	INIT_LIST_HEAD(&root->lst_xml) ;
 }
 
 //设置xml解析出错时的log函数,返回默认函数
@@ -102,7 +104,8 @@ ND_COMMON_API int ndxml_save(ndxml_root *xmlroot, const char *file) ;
 
 ND_COMMON_API int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header) ;
 
-ND_COMMON_API ndxml *ndxml_copy(ndxml *node) ;
+ND_COMMON_API ndxml *ndxml_copy(ndxml *node);
+ND_COMMON_API int ndxml_insert(ndxml *parent, ndxml*child);
 
 //引用一个子节点
 ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;
@@ -140,6 +143,9 @@ ND_COMMON_API int ndxml_delattribi(ndxml *parent, int index) ;
 //删除一个子节点
 ND_COMMON_API int ndxml_delsubnode(ndxml *parent, const char *name) ;
 ND_COMMON_API int ndxml_delsubnodei(ndxml *parent, int index) ;
+
+ND_COMMON_API int ndxml_output(ndxml *node, FILE *pf);
+
 //////////////////////////////////////////////////////////////////////////
 
 static __INLINE__ const char *ndxml_getname(ndxml *node)
@@ -152,7 +158,7 @@ static __INLINE__ int ndxml_getattr_num(ndxml *node)
 }
 static __INLINE__ int ndxml_num(ndxml_root *root)
 {
-	return root->num ;
+	return root->sub_num;
 }
 static __INLINE__ int ndxml_getsub_num(ndxml *node)
 {

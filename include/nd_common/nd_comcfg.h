@@ -12,13 +12,14 @@
 #define ND_VERSION "3.0"
 
 //#define ND_GB2312		1
-#define ND_UTF_8		1
+//#define ND_UTF_8		1
 
-// #ifdef _MSC_VER
-// #define ND_GB2312		1
-// #else
-// #define ND_ANSI			1
-// #endif
+#ifdef _MSC_VER
+#define ND_GB2312		1
+#else
+#define ND_UTF_8
+//#define ND_ANSI			1
+#endif
 
 //#define ND_USE_GPERF		1		//使用GOOGLE的内存优化库
 

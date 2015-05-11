@@ -171,8 +171,8 @@ ND_COMMON_API const char *nd_str_error(int errcode) ; //把系统错误号转变成描述
 //定义TRACK
 #ifdef ND_OPEN_TRACE
 ND_COMMON_API int MyDbgReport(const char *file, int line, const char *stm, ...);
-#define NDTRACF(msg)  MyDbgReport(__FILE__, __LINE__,msg) 
-#define NDTRAC(msg)  MyDbgReport(NULL, 0 ,msg) 
+#define NDTRACF(msg,...)  MyDbgReport(__FILE__, __LINE__,msg,__VA_ARGS__) 
+#define NDTRAC(msg,...)  MyDbgReport(NULL, 0 ,msg,__VA_ARGS__) 
 
 #else 
 #define MyDbgReport 
