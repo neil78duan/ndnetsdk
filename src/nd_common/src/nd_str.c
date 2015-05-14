@@ -9,30 +9,44 @@
 #include "nd_common/nd_str.h"
 #include "nd_common/nd_comcfg.h"
 
+static __ndthread int __s_code_type = E_SRC_CODE_ANSI;
+
+int ndstr_set_code(int type)
+{
+	int ret = __s_code_type;
+	__s_code_type = type;
+	return ret;
+}
+
 static __INLINE__ int _read_word(unsigned  char** dest, unsigned char **src)
 {
-#if defined(ND_GB2312)
-	if (**src > (unsigned  char)0x80){
-		**dest = **src ; ++(*src) ; ++(*dest) ;
-		**dest = **src ; ++(*src) ; ++(*dest) ;
-		return 2;
-	}
-#elif defined(ND_UTF_8)
-	if (**src > (unsigned  char)0x80){
-		int ret =1 ;
-		if (**src >=(unsigned  char)224)	{
-			**dest = **src ; ++(*src) ; ++(*dest) ;
-			**dest = **src ; ++(*src) ; ++(*dest) ;
-			ret += 2 ;
+//#if defined(ND_GB2312)
+	if (__s_code_type == E_SRC_CODE_GBK) {
+		if (**src > (unsigned  char)0x80){
+			**dest = **src; ++(*src); ++(*dest);
+			**dest = **src; ++(*src); ++(*dest);
+			return 2;
 		}
-		else if(**src >=(unsigned  char)192)	{
-			**dest = **src ; ++(*src) ; ++(*dest) ;
-			++ret ;
-		}
-		**dest = **src ; ++(*src) ; ++(*dest) ;
-		return ret;
 	}
-#endif
+//#elif defined(ND_UTF_8)
+	else if (__s_code_type == E_SRC_CODE_UTF_8) {
+		if (**src > (unsigned  char)0x80){
+			int ret = 1;
+			if (**src >= (unsigned  char)224)	{
+				**dest = **src; ++(*src); ++(*dest);
+				**dest = **src; ++(*src); ++(*dest);
+				ret += 2;
+			}
+			else if (**src >= (unsigned  char)192)	{
+				**dest = **src; ++(*src); ++(*dest);
+				++ret;
+			}
+			**dest = **src; ++(*src); ++(*dest);
+			return ret;
+		}
+	}	
+//#endif
+
 	**dest = **src ;
 	++(*src) ;
 	++(*dest) ;
@@ -160,13 +174,13 @@ char *ndstr_parse_word(char *src, char *outstr)
 		if(IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a=='_' ){
 			*outstr++ = *src++ ;
 		}
-#ifndef ND_ANSI
-		else if(a>(unsigned char)0x80){		//chinese
+//#ifndef ND_ANSI
+		else if (__s_code_type !=E_SRC_CODE_ANSI && a>(unsigned char)0x80){		//chinese
 			_read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
 			//*outstr++ = *src++ ;
 			//*outstr++ = *src++ ;
 		}
-#endif
+//#endif
 		else{
 			break ;
 		}
@@ -213,14 +227,14 @@ char *ndstr_parse_word_n(char *src, char *outstr, int n)
 			*outstr++ = *src++ ;
 		}
 
-#ifndef ND_ANSI
-		else if(a>(unsigned char)0x80){		//chinese
+//#ifndef ND_ANSI
+		else if (__s_code_type != E_SRC_CODE_ANSI && a>(unsigned char)0x80){		//chinese
 			int ret  = _read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
 			n -= ret -1 ;
 			//*outstr++ = *src++ ;
 			//*outstr++ = *src++ ;
 		}
-#endif
+//#endif
 		else{
 			break ;
 		}

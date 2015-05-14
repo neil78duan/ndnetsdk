@@ -77,6 +77,8 @@ static __INLINE__ void nd_usermsghdr_init(nd_usermsghdr_t *hdr)
  */
 typedef int (*nd_usermsg_func)(nd_handle  handle, nd_usermsgbuf_t *msg , nd_handle listener);
 
+typedef int(*nd_msg_script_entry)(void *script_engine,nd_handle  handle, nd_usermsgbuf_t *msg, const char *script);
+
 /*拦截封包的函数
  *如果使用了拦截函数那么用户不在需要 nd_msgtable_create()和 nd_msgentry_install()
  *而是自行处理被拦截的封包
@@ -97,6 +99,12 @@ ND_NET_API int nd_message_set_log(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t 
 
 /*在handle句柄上安装网络消息处理函数*/
 ND_NET_API int nd_msgentry_install(nd_handle  handle, nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid,int level, const char *name) ;
+
+/* install message script-function */
+ND_NET_API int nd_msgentry_script_install(nd_handle handle, const char*script, ndmsgid_t maxid, ndmsgid_t minid, int level);
+/* set script engine */
+ND_NET_API int nd_message_set_script_engine(nd_handle handle, void *script_engine, nd_msg_script_entry entry);
+
 
 /* 设置默认消息处理函数*/
 ND_NET_API int nd_msgentry_def_handler(nd_handle handle, nd_usermsg_func func)  ;

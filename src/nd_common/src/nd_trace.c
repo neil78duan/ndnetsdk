@@ -208,6 +208,25 @@ int _logmsg_screen(const char *filePath, int line, const char *stm,...)
 	return done ;
 }
 
+int nd_logtext(const char *buf)
+{
+	int ret = 0;
+#ifdef 	ND_OUT_LOG_2CTRL
+	if (__close_screen_log == 0) {
+		ret = fprintf(stderr, "%s", buf);
+	}
+#endif
+
+	if (__log_func)	{
+		__log_func(buf);
+	}
+	else {
+#ifdef ND_OUT_LOG_2FILE
+		nd_default_filelog(buf);
+#endif
+	}
+	return ret;
+}
 int _logmsg(const char *func, const char *filePath, int line, int level, const char *stm,...) 
 {
 	char buf[1024*4] ;
@@ -229,25 +248,7 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 	done = vsnprintf (p, sizeof(buf),stm, arg);
 	va_end (arg);
 
-#ifdef 	ND_OUT_LOG_2CTRL
-	if (__close_screen_log==0) {
-		if (level==ND_ERROR || level == ND_FATAL_ERR){
-			fprintf(stderr, "%s", buf) ;
-		}
-		else {
-			fprintf(stdout, "%s", buf) ;
-		}
-	}	
-#endif
-
-	if (__log_func)	{
-		__log_func(buf) ;
-	}
-	else {
-#ifdef ND_OUT_LOG_2FILE
-		nd_default_filelog(buf) ;
-#endif
-	}
+	nd_logtext(buf);
 	return done ;
 }
 

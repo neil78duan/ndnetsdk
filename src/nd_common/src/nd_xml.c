@@ -22,13 +22,18 @@ ndxml *_create_xmlnode(const char *name, const char *value)  ;
 static void _errlog (const char *errdesc) ;
 static void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf, size_t size) ;
 
+static int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, char **erraddr);
+
+static int xml_set_code_type(ndxml_root *xmlroot);
 static xml_errlog __xml_logfunc = _errlog ;
 
 int ndxml_load(const char *file,ndxml_root *xmlroot)
 {
+	int codeType = -1;
 	int data_len,buf_size ;
 	FILE *fp;
-	char *text_buf= NULL , *parse_addr;
+	char *text_buf = NULL, *parse_addr;
+	char *error_addr = 0;
 
 	fp = fopen(file, "r+b") ;
 	if(!fp) {
@@ -61,9 +66,16 @@ int ndxml_load(const char *file,ndxml_root *xmlroot)
 	
 	//ndxml_root *xmlroot;
 	ndxml_initroot(xmlroot) ;
-	parse_addr = text_buf ;
+	if (-1 == xml_parse_fileinfo(xmlroot, text_buf, &parse_addr, &error_addr)) {
+		fclose(fp);
+		free(text_buf);
+		ndxml_destroy(xmlroot);
+		show_xmlerror(file, error_addr, text_buf, (size_t)data_len);
+		return -1;
+	}
+	codeType = xml_set_code_type(xmlroot);
+	//parse_addr = text_buf ;
 	do {
-		char *error_addr = 0;
 		ndxml *xmlnode = parse_xmlbuf(parse_addr, data_len, &parse_addr, &error_addr);
 		if(xmlnode) {
 			list_add_tail(&xmlnode->lst_self, &xmlroot->lst_sub);
@@ -77,6 +89,10 @@ int ndxml_load(const char *file,ndxml_root *xmlroot)
 	} while(parse_addr && *parse_addr);
 
 	free(text_buf) ;
+
+	if (codeType!= -1) {
+		ndstr_set_code(codeType);
+	}
 	return 0 ;
 
 }
@@ -94,6 +110,93 @@ void ndxml_destroy(ndxml_root *xmlroot)
 	ndxml_initroot(xmlroot) ;
 }
 
+int xml_set_code_type(ndxml_root *xmlroot)
+{
+	int oldType = -1;
+	const char *p = ndxml_getattr_val(xmlroot, "encoding");
+	if (p){
+		if (ndstricmp(p, "gbk") == 0 || ndstricmp(p, "gb2312") == 0){
+			oldType = E_SRC_CODE_GBK;
+		}
+		else if (ndstricmp(p, "utf-8") == 0) {
+			oldType = E_SRC_CODE_UTF_8;
+		}
+		else {
+			oldType = E_SRC_CODE_ANSI;
+		}
+		oldType = ndstr_set_code(oldType);
+	}
+	return oldType;
+}
+int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, char **erraddr)
+{
+	char *p = start;
+	char *pEnd;
+	
+	*endaddr = start;
+
+	p = ndstr_first_valid(p);
+	if (!p){
+		*erraddr = start;
+		return -1;
+	}
+	
+	p = strstr(p, "<?");
+	if (!p){
+		return 0;
+	}
+
+	p = strstr(p, "xml");
+	if (!p){
+		return 0;
+	}
+	p += 3;
+
+	pEnd = strstr(p, "?>");
+	if (!pEnd){
+		*endaddr = p;
+		*erraddr = p;
+		return -1;
+	}
+
+	//parse attribute 
+	while (p < pEnd) {
+		struct ndxml_attr *attrib_node;
+		char attr_name[MAX_XMLNAME_SIZE];
+		char valbuf[1024];
+
+		p = ndstr_first_valid(p);
+		*endaddr = p;
+		*erraddr = start;
+		
+		attr_name[0] = 0;
+		p = ndstr_parse_word(p, attr_name);
+		if (attr_name[0] == 0)	{
+			break;
+		}
+		p = strchr(p, _ND_QUOT);
+		if (!p) {
+			return -1;
+		}
+		++p;
+		//read attrib VALUE
+		valbuf[0] = 0;
+		p = ndstr_str_end(p, valbuf, _ND_QUOT);
+		++p;
+
+		attrib_node = alloc_attrib_node(attr_name, valbuf);
+		if (attrib_node) {
+			list_add_tail(&attrib_node->lst, &xmlroot->lst_attr);
+			(xmlroot->attr_num)++;
+		}
+	}
+
+
+	*endaddr = pEnd + 2;
+	*erraddr = 0;
+	return 0;
+
+}
 //ÏÔÊ¾xml´íÎó
 void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf, size_t size)
 {
@@ -116,16 +219,7 @@ void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf,
 		pnext  ;
 		++line ;
 		if(error_addr>=pline && error_addr< pnext) {
-//			size_t l_size ;
-//			char line_text[512] ;
-			//found error code 
 			pline = ndstr_first_valid(pline) ;
-
-//			l_size = pnext - pline ;
-//			l_size = min(l_size, 512) ;
-			//strncpy(line_text, pline, l_size) ;
-//			ndstr_nstr_end(pline, line_text, '\n', 512) ;
-			//snprintf(errbuf, 1024, "error %s %d lines [%s]", file, line, line_text) ;
 			snprintf(errbuf, 1024, "parse error in file %s  line %d \n", file, line) ;
 			break ;				
 		}
@@ -155,8 +249,8 @@ int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header)
     if(!fp) {
         return -1;
     }
-    if (header) {
-        fprintf(fp, "<? %s ?>\n", header) ;
+    if (header && header[0]) {
+        fprintf(fp, "<?xml %s ?>\n", header) ;
     }
     
 	while (pos != &xmlroot->lst_sub) {
@@ -174,7 +268,40 @@ int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header)
 
 int ndxml_save(ndxml_root *xmlroot, const char *file)
 {
-    return ndxml_save_ex(xmlroot, file, NULL) ;
+	char buf[4096];
+	struct list_head *pos;
+	int size = 0;
+	char *p = buf;
+	int bufsize = sizeof(buf);
+
+	buf[0] = 0;
+	//save attribute to file 
+	pos = xmlroot->lst_attr.next;
+	while (pos != &xmlroot->lst_attr){
+		struct ndxml_attr *xml_attr = list_entry(pos, struct ndxml_attr, lst);
+		char *attr_val1 = (char*)(xml_attr + 1) + xml_attr->name_size;
+		pos = pos->next;
+		if (attr_val1[0]) {
+			size = snprintf(p, bufsize, " %s=\"%s\"", (char*)(xml_attr + 1), attr_val1);
+			bufsize -= size;
+			p += size;
+		}
+		else {
+			size =  snprintf(p, bufsize, " %s=\"\"", (char*)(xml_attr + 1));
+			bufsize -= size;
+			p += size;
+		}
+	}
+	if (buf[0] == 0){
+#if defined(ND_GB2312)  || defined(ND_GBK)
+		snprintf(p, bufsize, "version=\"1.0\" encoding=\"GBK\"");
+#elif defined(ND_UTF_8)
+		snprintf(p, bufsize, "version=\"1.0\" encoding=\"utf-8\"");
+#else 
+		snprintf(p, bufsize, "version=\"1.0\" encoding=\"ANSI\"");
+#endif
+	}
+    return ndxml_save_ex(xmlroot, file, buf) ;
 }
 
 
@@ -206,6 +333,7 @@ ndxml *ndxml_copy(ndxml *node)
 int ndxml_insert(ndxml *parent, ndxml*child)
 {
 	list_add_tail(&child->lst_self, &parent->lst_sub);
+	parent->sub_num++;
 	return 0;
 }
 int ndxml_merge(ndxml_root *host, ndxml_root *merged) 
@@ -693,7 +821,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 				list_add_tail(&new_xml->lst_self, &xmlnode->lst_sub);
 				xmlnode->sub_num++ ;
 			}
-			else /*if(*error_addr || NULL==parsed)*/ {
+			else if(*error_addr && NULL==parsed) {
 				if (!error_addr) {
 					*error_addr = paddr;
 				}
@@ -958,3 +1086,4 @@ int ndxml_output(ndxml *node, FILE *pf)
 {
 	return xml_write(node, pf, 0);
 }
+

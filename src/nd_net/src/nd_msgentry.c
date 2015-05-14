@@ -10,7 +10,7 @@
 typedef struct netui_info *nd_handle;
 
 #include "nd_net/nd_netlib.h"
-#define NET_MSG_NAME_SIZE 128
+#define NET_MSG_NAME_SIZE 64
  
 //消息入口函数节点
 struct msg_entry_node
@@ -18,10 +18,9 @@ struct msg_entry_node
 	NDUINT32			level:16 ;	//权限等级
 	NDUINT32			sys_msg:1 ;	//是否是系统消息
     NDUINT32            is_log:1;   //log current message
+	NDUINT32			is_script : 1;// handle message with script
 	nd_usermsg_func		entry ;	//入口函数
-#ifdef ND_DEBUG
-	char name[NET_MSG_NAME_SIZE];
-#endif
+	char* name;
 };
 
 /*主消息结果*/
@@ -36,7 +35,9 @@ struct msgentry_root
 	ND_OBJ_BASE;
 	NDUINT16	main_num ;			//包含多少个消息类别
 	NDUINT16	msgid_base ;		//主消息号起始地址
-	NDUINT32	msg_node_size ;
+	NDUINT32	msg_node_size;
+	void		*script_engine;
+	nd_msg_script_entry script_entry;
 	nd_usermsg_func		def_entry ;	//默认入口函数
 	struct sub_msgentry sub_buf[0] ;
 };
@@ -66,6 +67,26 @@ static struct msgentry_root *create_msgroot(int max_mainmsg, int base)
 	return root ;	
 };
 
+static void destroy_msgroot(struct msgentry_root *root)
+{
+	int i = 0;
+	for (i = 0; i < root->main_num;i++) {
+		int j = 0;
+		struct sub_msgentry *psub = &root->sub_buf[i];
+		for (j = 0; j < SUB_MSG_NUM; j++) {
+			struct  msg_entry_node *node = &psub->msg_buf[j];
+			if (node->name)	{
+				free(node->name);
+				node->name = 0;
+			}
+			if (node->is_script)	{
+				free((void*)node->entry);
+				node->entry = NULL;
+			}
+		}
+	}
+	free(root);
+}
 /* 为连接句柄创建消息入口表
  * @mainmsg_num 主消息的个数(有多数类消息
  * @base_msgid 主消息开始号
@@ -111,28 +132,23 @@ void nd_msgtable_destroy(nd_handle handle, int flag)
 		
 	if(handle->type==NDHANDLE_TCPNODE){
 		if(((struct nd_tcp_node*)handle)->msg_handle) {
-			free(((struct nd_tcp_node*)handle)->msg_handle) ;
+			destroy_msgroot(((struct nd_tcp_node*)handle)->msg_handle);
 			((struct nd_tcp_node*)handle)->msg_handle = 0 ;
 		}
 	}
 	else if(handle->type==NDHANDLE_UDPNODE) {
 		if(((nd_udt_node*)handle)->msg_handle) {
-			free(((nd_udt_node*)handle)->msg_handle) ;
+			destroy_msgroot(((nd_udt_node*)handle)->msg_handle);
 			((nd_udt_node*)handle)->msg_handle = 0 ;
 		}
 	}
 	else {
-
 		struct nd_srv_node* srv_node = (struct nd_srv_node* )handle ;
-
 		if(srv_node->msg_handle) {
-			free(srv_node->msg_handle) ;
+			destroy_msgroot(srv_node->msg_handle);
 			srv_node->msg_handle = 0 ;
-
 		}
-
 	}
-
 }
 
 
@@ -158,21 +174,8 @@ nd_handle nd_get_msg_hadle(nd_netui_handle handle)
 
 int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func) 
 {
-	struct msgentry_root *root_entry= NULL;
-	nd_assert(handle) ;
+	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
 
-	if(handle->type==NDHANDLE_TCPNODE){
-		root_entry = (struct msgentry_root *) (((struct nd_tcp_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_UDPNODE){
-		root_entry = (struct msgentry_root *) (((nd_udt_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_LISTEN){
-		root_entry = (struct msgentry_root *) (((struct nd_srv_node* )handle )->msg_handle ) ; 
-	}
-	else {
-		return -1;
-	}
 	if(root_entry) {
 		root_entry->def_entry = func ;
 		return 0 ;
@@ -182,21 +185,8 @@ int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func)
 
 static struct msg_entry_node *_nd_msgentry_get_node(nd_netui_handle handle, ndmsgid_t maxid, ndmsgid_t minid) 
 {
-	struct msgentry_root *root_entry= NULL;
-	nd_assert(handle) ;
-	
-	if(handle->type==NDHANDLE_TCPNODE){
-		root_entry = (struct msgentry_root *) (((struct nd_tcp_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_UDPNODE){
-		root_entry = (struct msgentry_root *) (((nd_udt_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_LISTEN){
-		root_entry = (struct msgentry_root *) (((struct nd_srv_node* )handle )->msg_handle ) ; 
-	}
-	else {
-		return NULL;
-	}
+	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
+
 	if(root_entry) {
 		ndmsgid_t main_index =(ndmsgid_t) (maxid - root_entry->msgid_base );
 		if(main_index >= root_entry->main_num ) {
@@ -219,13 +209,16 @@ nd_usermsg_func nd_msgentry_get_func(nd_netui_handle handle, ndmsgid_t maxid, nd
 	
 	node = _nd_msgentry_get_node(handle,   maxid,  minid) ;
 	LEAVE_FUNC();
+	if (node->is_script)	{
+		return NULL;
+	}
 	
 	return node ? node->entry : NULL;
 }
 
 const char * nd_msgentry_get_name(nd_netui_handle handle, ndmsgid_t maxid, ndmsgid_t minid)
 {
-#ifdef ND_DEBUG
+#if 1
 	struct msg_entry_node * node ;
 	ENTER_FUNC() ;
 	
@@ -254,11 +247,19 @@ int nd_msgentry_install(nd_netui_handle handle, nd_usermsg_func func, ndmsgid_t 
 	
 	node = _nd_msgentry_get_node(handle,   maxid,  minid) ;
 	if (node) {	
+		if (node->is_script && node->entry)	{
+			free(node->entry);
+		}
 		node->entry = func ;
 		node->level = level ;
-#ifdef ND_DEBUG
-		if (name) {
-			strncpy(node->name, name, sizeof(node->name)) ;			
+		node->is_script = 0;
+#if 1
+		if (name && name[0]) {
+			int len = strlen(name) + 1;
+			node->name = malloc(len);
+			if (name) {
+				strncpy(node->name, name, len);
+			}
 		}
 #endif
 		ret = 0 ;
@@ -270,51 +271,65 @@ int nd_msgentry_install(nd_netui_handle handle, nd_usermsg_func func, ndmsgid_t 
 	LEAVE_FUNC();	
 	return  ret ;
 
-	/*
-	struct msgentry_root *root_entry= NULL;
-	nd_assert(handle) ;
-		
-	if(handle->type==NDHANDLE_TCPNODE){
-		root_entry = (struct msgentry_root *) (((struct nd_tcp_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_UDPNODE){
-		root_entry = (struct msgentry_root *) (((nd_udt_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_LISTEN){
-		root_entry = (struct msgentry_root *) (((struct nd_srv_node* )handle )->msg_handle ) ; 
-	}
-	else {
-		return -1;
-	}
-	if(root_entry) {
-		ndmsgid_t main_index =(ndmsgid_t) (maxid - root_entry->msgid_base );
-		struct msg_entry_node *node ;
-		if(main_index >= root_entry->main_num ) {
-			nd_logerror("MAIN MESSAGE ERROR input %d  limited %d\n"AND main_index AND root_entry->main_num ) ;
-			return -1 ;
-		}
-		if(minid>=SUB_MSG_NUM ){
-			nd_logerror("MIN MESSAGE ERROR input %d  limited %d\n"AND minid AND SUB_MSG_NUM ) ;
-			return -1 ;
-		}
-		node = &(root_entry->sub_buf[main_index].msg_buf[minid]) ;
-		
-
-		node->entry = func ;
-		node->level = level ;
-#ifdef ND_DEBUG
-		if (name) {
-			strncpy(node->name, name, sizeof(node->name)) ;
-			
-		}
-#endif
-		return 0 ;
-	}
-	nd_object_seterror(handle, NDERR_NOSOURCE) ;
-	return -1;
-	 */
 }
 
+int nd_msgentry_script_install(nd_handle handle, const char*script, ndmsgid_t maxid, ndmsgid_t minid, int level)
+{
+	struct msg_entry_node * node;
+	int ret = -1;
+	ENTER_FUNC();
+	node = _nd_msgentry_get_node(handle, maxid, minid);
+	if (script && script[0] && node) {
+		int len = strlen(script) + 1;
+		if (node->is_script && node->entry)	{
+			free(node->entry);
+		}
+		node->entry = (nd_usermsg_func)malloc(len);
+		strncpy((char*)node->entry, script, len);
+		node->level = level;
+		node->is_script = 1;
+		ret = 0;
+	}
+	else {
+		nd_object_seterror(handle, NDERR_NOSOURCE);
+	}
+
+	LEAVE_FUNC();
+	return  ret;
+}
+
+int nd_message_set_script_engine(nd_handle handle, void *script_engine, nd_msg_script_entry entry)
+{
+	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
+	if (root_entry) {
+		root_entry->script_engine = script_engine;
+		root_entry->script_entry = entry;
+		return 0;
+	}
+	return -1;
+}
+
+static int _call_message_func(struct msgentry_root *root,struct msg_entry_node * node, nd_usermsgbuf_t*msg, nd_netui_handle conn, nd_handle lh)
+{
+	int ret = 0;
+	if (!node || !node->entry) {
+		if (root->def_entry){
+			ret = root->def_entry(conn, msg, lh);
+		}
+		else{
+			nd_logmsg("received message (%d,%d) UNHANDLED\n" AND msg->msg_hdr.maxid AND msg->msg_hdr.minid);
+		}
+	}
+	else {
+		if (!node->is_script){
+			ret = node->entry(conn, msg, lh);
+		}
+		else {
+			ret = root->script_entry(root->script_engine, conn, msg, (const char*)node->entry);
+		}
+	}
+	return ret;
+}
 int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle) 
 {
 	ENTER_FUNC()	
@@ -323,75 +338,16 @@ int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_h
 	int data_len = nd_pack_len(msg);
 	struct msgentry_root *root_entry= (struct msgentry_root *) connect_handle->msg_handle;
 	nd_usermsghdr_t *usermsg = (nd_usermsghdr_t *) (msg) ;	
-	nd_usermsg_func func ;
-	
-	nd_netmsg_ntoh(usermsg) ; 
-	func = nd_msgentry_get_func(connect_handle, usermsg->maxid,  usermsg->minid);
-	
-	func = func? func : root_entry->def_entry ;
-	
-	if (func){
-		ret = func(connect_handle,(nd_usermsgbuf_t*)usermsg,NULL) ;
-	}
-	else {
-		nd_logmsg("received message (%d,%d) UNHANDLED\n" AND usermsg->maxid AND usermsg->minid) ;		
-	}
+	//nd_usermsg_func func ;
+	struct msg_entry_node * node;
+
+	nd_netmsg_ntoh(usermsg);
+	node = _nd_msgentry_get_node(connect_handle, usermsg->maxid, usermsg->minid);
+	ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, connect_handle, listen_handle);
 	
 	LEAVE_FUNC();
 	return  ret ==-1? -1: data_len ;
 	
-	/*
-	ENTER_FUNC()
-	int ret = 0 ;
-	int data_len = nd_pack_len(msg);
-	struct msgentry_root *root_entry= NULL;
-	nd_usermsg_func  func = NULL ;
-	nd_usermsghdr_t *usermsg =  (nd_usermsghdr_t *) msg ;
-
-	nd_assert(msg) ;
-	nd_assert(connect_handle) ;
-
-	root_entry =(struct msgentry_root *) connect_handle->msg_handle ;
-
-	if(root_entry) {
-		ndmsgid_t main_index , minid;
-		//int level = (int) nd_connect_level_get(connect_handle);
-        
-        nd_netmsg_ntoh(usermsg) ;
-		main_index = usermsg->maxid - root_entry->msgid_base;
-		minid = usermsg->minid ;
-		if(main_index >= root_entry->main_num || minid>=SUB_MSG_NUM){
-			nd_object_seterror(connect_handle, NDERR_UNHANDLED_MSG) ;
-			LEAVE_FUNC();
-			return -1 ;
-		}
-
-		func = root_entry->sub_buf[main_index].msg_buf[minid].entry ;
-
-		if(func)
-			ret = func(connect_handle,(nd_usermsgbuf_t*)usermsg,NULL) ;
-
-		else if(root_entry->def_entry){
-			ret = root_entry->def_entry(connect_handle,(nd_usermsgbuf_t*)usermsg,NULL) ;
-		}
-		else {
-			nd_logmsg("received message (%d,%d) UNHANDLED\n"  AND main_index AND minid) ;
-#ifdef ND_DEBUG			
-			nd_logdebug(" UNHANDLED %s message \n"  AND root_entry->sub_buf[main_index].msg_buf[minid].name) ;
-#endif
-		}
-
-		if(-1==ret) {
-			nd_object_seterror(connect_handle, NDERR_USER) ;			
-#ifdef ND_DEBUG			
-			nd_logdebug("Message %s handle error return -1\n"  AND root_entry->sub_buf[main_index].msg_buf[minid].name) ;
-#endif
-		}
-	}
-
-	LEAVE_FUNC();
-	return  data_len ;
-	 */
 }
 
 
@@ -428,8 +384,9 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 			}
 		}		
 		else {
-			nd_usermsg_func func = node->entry ? node->entry : root_entry->def_entry ;
-			ret = func(connect_handle,(nd_usermsgbuf_t*)usermsg,listen_handle) ; 
+			ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, connect_handle, listen_handle);
+			//nd_usermsg_func func = node->entry ? node->entry : root_entry->def_entry ;
+			//ret = func(connect_handle,(nd_usermsgbuf_t*)usermsg,listen_handle) ; 
 			if (-1==ret) {
 				nd_object_seterror(connect_handle, NDERR_USER) ;
 			}
@@ -444,87 +401,6 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 	LEAVE_FUNC();	
 	return  ret==-1 ? -1 : data_len ;
 	
-	/*
-	ENTER_FUNC()
-	int ret = 0 ;
-	int data_len = nd_pack_len(msg);
-	struct nd_srv_node* srv_node = (struct nd_srv_node* )listen_handle ;
-	struct msgentry_root *root_entry= NULL;
-	nd_usermsg_func  func = NULL ;
-	nd_usermsghdr_t *usermsg =  (nd_usermsghdr_t *) msg ;
-
-	nd_assert(data_len > 0) ;
-	nd_assert(msg) ;
-	nd_assert(connect_handle) ;
-	
-	nd_assert(srv_node) ;
-
-	root_entry = (struct msgentry_root *) (srv_node->msg_handle ) ; 
-		
-	if(root_entry) {
-		ndmsgid_t  main_index , minid;
-		NDUINT16 level = (NDUINT16) nd_connect_level_get(connect_handle)
-		nd_netmsg_ntoh(usermsg) ;
-		main_index = usermsg->maxid - root_entry->msgid_base;
-		minid = usermsg->minid ;
-		if(main_index >= root_entry->main_num || minid>=SUB_MSG_NUM ){
-			nd_logdebug(("received error message maxid =%d minid =%d\n") AND main_index AND minid) ;
-			nd_object_seterror(connect_handle, NDERR_UNHANDLED_MSG) ;
-			LEAVE_FUNC();
-			return srv_node->unreg_msg_close ? -1 : data_len ;
-		}
-
-		if(level < (NDUINT16) root_entry->sub_buf[main_index].msg_buf[minid].level){
-			nd_object_seterror(connect_handle, NDERR_NO_PRIVILAGE) ;
-			nd_log_screen(("PRIVILAGE error message maxid =%d minid =%d\n") AND main_index AND minid) ;
-			LEAVE_FUNC();
-			return srv_node->error_privilage_close ? -1 : data_len ;
-		}
-		if (root_entry->sub_buf[main_index].msg_buf[minid].sys_msg){
-			if (!msg->ndsys_msg){
-				nd_log_screen(("STATE error message maxid =%d minid =%d is system message\n") AND main_index AND minid) ;
-				LEAVE_FUNC();
-				return srv_node->error_privilage_close ? -1 : data_len ;
-			}
-		}
-
-		func = root_entry->sub_buf[main_index].msg_buf[minid].entry ;
-		if(func) {
-			ret = func(connect_handle,(nd_usermsgbuf_t*)usermsg,listen_handle) ;
-		}
-
-		else if(root_entry->def_entry){
-			ret = root_entry->def_entry(connect_handle,(nd_usermsgbuf_t*)usermsg,listen_handle) ;
-		}
-		else {
-			SOCKADDR_IN *addr =& (connect_handle->remote_addr );
-			nd_logwarn(("received message from [%s] (%d,%d) UNHANDLED\n") AND 
-				nd_inet_ntoa( addr->sin_addr.s_addr, NULL ) AND main_index AND minid) ;
-#ifdef ND_DEBUG			
-			nd_logdebug(" UNHANDLED %s message \n"  AND root_entry->sub_buf[main_index].msg_buf[minid].name) ;
-#endif
-			if (srv_node->unreg_msg_close) {
-				nd_object_seterror(connect_handle, NDERR_UNHANDLED_MSG) ;    			
-			}
-			LEAVE_FUNC();
-			return srv_node->unreg_msg_close ? -1 : data_len ;
-		}
-		
-		if (ret == -1) {
-			nd_object_seterror(connect_handle, NDERR_USER) ;
-			nd_logwarn("run message (%d,%d)error connect would be close\n" AND   main_index AND minid);
-			
-#ifdef ND_DEBUG			
-			nd_logdebug("Message %s handle error return -1\n"  AND root_entry->sub_buf[main_index].msg_buf[minid].name) ;
-#endif
-			LEAVE_FUNC();
-			return -1;
-		}
-	}
-
-	LEAVE_FUNC();
-	return  data_len ;
-	*/
 }
 
 NDUINT32 nd_connect_level_get(nd_netui_handle handle) 
@@ -574,21 +450,8 @@ int nd_message_set_log(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int i
 
 int nd_message_set_system(nd_netui_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int issystem) 
 {
-	struct msgentry_root *root_entry= NULL;
-	nd_assert(handle) ;
+	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
 
-	if(handle->type==NDHANDLE_TCPNODE){
-		root_entry = (struct msgentry_root *) (((struct nd_tcp_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_UDPNODE){
-		root_entry = (struct msgentry_root *) (((nd_udt_node*)handle)->msg_handle ) ; 
-	}
-	else if(handle->type==NDHANDLE_LISTEN){
-		root_entry = (struct msgentry_root *) (((struct nd_srv_node* )handle )->msg_handle ) ; 
-	}
-	else {
-		return -1;
-	}
 	if(root_entry) {
 		int i;
 		ndmsgid_t main_index =(ndmsgid_t) (maxid - root_entry->msgid_base );

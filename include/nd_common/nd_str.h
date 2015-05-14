@@ -69,5 +69,12 @@ ND_COMMON_API char *ndstr_reverse_chr(char *src, char ch, char *end) ;
 #define nd_atoi64 atoll
 #endif
 
+enum source_code_type
+{
+	E_SRC_CODE_ANSI = 0 ,
+	E_SRC_CODE_GBK,
+	E_SRC_CODE_UTF_8
+};
 
+ND_COMMON_API int ndstr_set_code(int type);
 #endif 

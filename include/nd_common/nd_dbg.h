@@ -44,6 +44,7 @@ ND_COMMON_API NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size); // set log file
 
 //log file operate
 
+ND_COMMON_API int nd_logtext(const char *text);
 ND_COMMON_API int _logmsg_screen(const char *filePath, int line, const char *stm,...) ;
 ND_COMMON_API int _logmsg(const char *func, const char *file, int line, int level, const char *stm,...) ;
 ND_COMMON_API const char *nd_get_timestr(void);			//得到字符串形式的时间
