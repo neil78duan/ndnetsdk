@@ -59,6 +59,11 @@ ND_COMMON_API int nd_existfile(const char *pachfilename);
 //创建一个新文件
 ND_COMMON_API int nd_mkfile(const char *file);
 
+
+ND_COMMON_API  const char * nd_filename(const char *filenamePath);
+
+ND_COMMON_API  const char * nd_getpath(const char *filenamePath, char *pathbuf, size_t size);
+
 #define nd_access access
 
 

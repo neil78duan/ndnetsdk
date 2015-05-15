@@ -187,7 +187,7 @@ int nd_renfile(const char *oldfile,const  char *newfile)
 //改变工作目录
 int nd_chdir(const char *dir)
 {
-	if(0==SetCurrentDirectory((LPCTSTR)dir) ) {			
+	if(SetCurrentDirectory((LPCTSTR)dir) ) {			
 		GetCurrentDirectory( sizeof(_current_dir),(LPTSTR)_current_dir);
 		return 0;
 	}
@@ -261,3 +261,35 @@ int nd_mkfile(const char *file)
 }
 
 #endif
+
+const char * nd_filename(const char *filenamePath)
+{
+	const char * ret = filenamePath;
+	const char *p = filenamePath;
+	while (*p) {
+		if (*p == '/' || *p == '\\') {
+			ret = p + 1;
+		}
+		++p;
+	}
+
+	return ret;
+}
+
+const char * nd_getpath(const char *filenamePath, char *pathbuf, size_t size)
+{
+	const char *end = nd_filename(filenamePath);
+	if (end != filenamePath){
+		int len = 0;
+		--end;
+		if (*end == '/' || *end == '\\')	{
+			len = end - filenamePath;
+			len = NDMIN(len, size);
+			memcpy(pathbuf, filenamePath, len);
+			pathbuf[len] = 0;
+			return pathbuf;
+		}
+		
+	}
+	return NULL;
+}

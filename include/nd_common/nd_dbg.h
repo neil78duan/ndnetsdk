@@ -36,6 +36,8 @@ typedef enum _error_ID{
 
 typedef void (*logfunc)(const char* text) ;
 ND_COMMON_API void nd_setlog_func(logfunc f) ;
+ND_COMMON_API int nd_log_no_file(int without_file);
+ND_COMMON_API int nd_log_no_time(int without_time);
 ND_COMMON_API void nd_log_close_screen(int flag);
 ND_COMMON_API void set_log_file(const char *file_name)  ;
 ND_COMMON_API void nd_output(const char *text)  ;	//screen output

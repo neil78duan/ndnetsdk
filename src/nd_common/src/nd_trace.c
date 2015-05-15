@@ -23,6 +23,23 @@ static ndatomic_t __log_write_len = 0 ;
 static NDUINT32 __log_file_length = -1 ;
 static NDUINT8 __close_screen_log = 0 ;
 
+static NDUINT8 __without_file_info = 0;
+static NDUINT8 __without_file_time = 0;
+
+int nd_log_no_file(int without_file)
+{
+	int ret = __without_file_info;
+	__without_file_info = without_file;
+	return ret;
+}
+int nd_log_no_time(int without_time)
+{
+	int ret = __without_file_time;
+	__without_file_time = without_time;
+	return ret;
+
+}
+
 void nd_setlog_func(logfunc f) 
 {
 	__log_func = f ;
@@ -234,13 +251,17 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 	va_list arg;
 	int done;
 	const char *file = _getfilename(filePath) ;
-
+	
 #ifdef	ND_LOG_WITH_TIME
-	p += snprintf(p, 4096,"%s ", nd_get_datetimestr()) ;
+	if (__without_file_time==0) {
+		p += snprintf(p, 4096, "%s ", nd_get_datetimestr());
+	}
 #endif
 
 #ifdef	ND_LOG_WITH_SOURCE
-	p += snprintf(p, 4096," %s() [%d:%s] ",  func, line, file) ;
+	if (__without_file_info==0){
+		p += snprintf(p, 4096, " %s() [%d:%s] ", func, line, file);
+	}
 #endif
 	p += snprintf(p, 4096,"%s:", log_level_str(level)) ;
 
