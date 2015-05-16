@@ -53,6 +53,10 @@ ND_COMMON_API char *ndstr_parse_string(char *src, char *outstr) ;
 ND_COMMON_API char *ndstr_str_end(char *src, char *outstr, const char end);
 ND_COMMON_API char *ndstr_nstr_end(char *src, char *outstr, const char end, int n) ;
 
+/* read text from src to outstr, until to end, only input ansi text*/
+ND_COMMON_API char *ndstr_str_ansi(char *src, char *outstr, const char end);
+ND_COMMON_API char *ndstr_nstr_ansi(char *src, char *outstr, const char end, int n);
+
 /*不区分大小写,比较字符串*/
 ND_COMMON_API int ndstricmp(char *src, char *desc) ;
 

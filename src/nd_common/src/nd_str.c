@@ -413,6 +413,30 @@ char *ndstr_nstr_end(char *src, char *outstr, const char end, int n)
 	return src ;
 }
 
+char *ndstr_str_ansi(char *src, char *outstr, const char end)
+{
+	while (*src) {
+		if (end == *src){
+			break;
+		}
+		*outstr++ = *src++ ;
+	}
+	*outstr = 0;
+	return src;
+}
+char *ndstr_nstr_ansi(char *src, char *outstr, const char end, int n)
+{
+	while (*src && n > 0) {
+		if (end == *src){
+			break;
+		}
+		
+		*outstr++ = *src++ ;
+		--n ;
+	}
+	*outstr = 0;
+	return src;
+}
 /*不区分大小写,比较字符串*/
 int ndstricmp(char *src, char *desc)
 {
