@@ -59,7 +59,7 @@ int NDAlarm::Create()
 	time_t now ;
 	struct tm *gtm ;
 
-	time(&now) ;
+	app_inst_time(&now) ;
 	gtm = localtime( &now );
 	
 	if ((gtm->tm_hour > m_daily_hour) || (gtm->tm_hour == m_daily_hour&& gtm->tm_min >= m_daily_minute)) {		
@@ -197,7 +197,7 @@ void NDAlarm::update_alarm()
 	time_t now ;
 	struct tm *gtm ,tmnow;
 
-	time(&now) ;
+	app_inst_time(&now) ;
 	gtm = localtime( &now );
 	tmnow = *gtm;
 	gtm = &tmnow;
@@ -268,7 +268,7 @@ void NDAlarm::SetDailyTime(int hour_index,int minute_index)
 	time_t now ;
 	struct tm *gtm ;
 
-	time(&now) ;
+	app_inst_time(&now) ;
 	gtm = localtime( &now );
 	
 	if ((gtm->tm_hour > m_daily_hour) || (gtm->tm_hour == m_daily_hour&& gtm->tm_min > m_daily_minute)) {
@@ -295,7 +295,7 @@ void NDAlarm::SetWeekTime(int day_index,int hour_index, int minute_index )
 
 	time_t now ;
 	struct tm *gtm ;
-	time(&now) ;
+	app_inst_time(&now) ;
 	gtm = localtime( &now );
 
 	//每周定时器
