@@ -53,6 +53,8 @@ ND_COMMON_API const char *nd_get_timestr(void);			//得到字符串形式的时间
 ND_COMMON_API const char *nd_get_datestr(void);			//得到字符串形式的日期
 ND_COMMON_API const char *nd_get_datetimestr(void);		//得到字符串形式的时间和日期
 
+ND_COMMON_API const char *nd_get_datetimestr_ex(time_t in_tm, char *buf, int size);
+
 #define AND ,
 
 //////////////////////////////////////////////////////////////////////////

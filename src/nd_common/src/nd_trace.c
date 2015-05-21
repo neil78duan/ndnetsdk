@@ -160,17 +160,32 @@ const char *nd_get_datestr(void)
 //得到字符串形式的时间和日期
 const char *nd_get_datetimestr(void)
 {
-	static __ndthread  char timebuf[64] ;
-	time_t nowtm ;
-	struct tm *gtm ;
+	static __ndthread  char timebuf[64];
+	time_t nowtm;
+	time(&nowtm);
+	return nd_get_datetimestr_ex(nowtm,timebuf,64);
+// 	static __ndthread  char timebuf[64] ;
+// 	time_t nowtm ;
+// 	struct tm *gtm ;
+// 
+// 	time(&nowtm) ;
+// 	gtm = localtime( &nowtm );
+// 
+// 	snprintf(timebuf, 64, "%d-%d-%d %d:%d:%d", 
+// 		gtm->tm_year+1900,gtm->tm_mon+1,gtm->tm_mday,
+// 		gtm->tm_hour,gtm->tm_min,gtm->tm_sec) ;
+// 	return (const char *)timebuf ;
+}
 
-	time(&nowtm) ;
-	gtm = localtime( &nowtm );
+const char *nd_get_datetimestr_ex(time_t in_tm, char *timebuf, int size)
+{
+	struct tm *gtm;
+	gtm = localtime(&in_tm);
 
-	snprintf(timebuf, 64, "%d-%d-%d %d:%d:%d", 
-		gtm->tm_year+1900,gtm->tm_mon+1,gtm->tm_mday,
-		gtm->tm_hour,gtm->tm_min,gtm->tm_sec) ;
-	return (const char *)timebuf ;
+	snprintf(timebuf, size, "%d-%d-%d %d:%d:%d",
+		gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
+		gtm->tm_hour, gtm->tm_min, gtm->tm_sec);
+	return (const char *)timebuf;
 }
 
 const char * _getfilename(const char *filenamePath) 
