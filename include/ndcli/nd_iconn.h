@@ -28,7 +28,7 @@ typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
 	(connect)->InstallMsgFunc(msgFunc, maxID, minID, #maxID"-"#minID) 
 
 #define CONNECT_INSTALL_MSG_INT16(connect, msgFunc, msgID) \
-	(connect)->InstallMsgFunc(msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID), nu)
+	(connect)->InstallMsgFunc(msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID), 0)
 
 
 typedef int (*nd_bigdata_handler)(nd_handle nethandle,  NDUINT64 param , void *data, size_t datalen) ;
