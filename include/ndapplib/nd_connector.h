@@ -14,10 +14,10 @@
 #include "nd_net/nd_netioctl.h"
 
 #define CONNECT_INSTALL_MSG(connect, msgFunc, maxID, minID) \
-	(connect)->InstallMsgFunc(msgFunc, maxID, minID, "msgName_" #maxID"-"#minID) 
+	(connect)->InstallMsgFunc(msgFunc, maxID, minID, #maxID"-"#minID) 
 
 #define CONNECT_INSTALL_MSG_INT16(connect, msgFunc, msgID) \
-	(connect)->InstallMsgFunc(msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID), "msgName_"#msgID)
+	(connect)->InstallMsgFunc(msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID), #msgID)
 //net connector 
 class NDConnector : public NDObject 
 {

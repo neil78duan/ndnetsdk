@@ -407,6 +407,32 @@ int ndxml_delnodei(ndxml_root *xmlroot, int index)
 	dealloc_xml(node);
 	return 0 ;
 }
+
+int ndxml_delxml(ndxml *node, ndxml *xmlParent)
+{
+	int ret = -1;
+	struct list_head *pos = xmlParent->lst_sub.next;
+
+	if (!node || !xmlParent)
+		return -1;
+	while (pos != &xmlParent->lst_sub) {
+		ndxml *sub_xml = list_entry(pos, struct tagxml, lst_self);
+		pos = pos->next;
+		if (sub_xml == node){
+			ret = 0; 
+			break;
+		}
+		
+	}
+	if (ret ==-1)	{
+		return ret;
+	}
+	list_del(&node->lst_self);
+	xmlParent->sub_num--;
+	dealloc_xml(node);
+	return 0;
+
+}
 //引用一个子节点
 ndxml *ndxml_refsub(ndxml *root, const char *name) 
 {
@@ -676,6 +702,7 @@ int ndxml_delsubnode(ndxml *parent, const char *name)
 	dealloc_xml(node);
 	return 0 ;
 }
+
 int ndxml_delsubnodei(ndxml *parent, int index) 
 {
 	ndxml *node = ndxml_refsubi(parent,index) ;

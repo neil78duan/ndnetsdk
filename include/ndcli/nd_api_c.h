@@ -83,7 +83,7 @@ typedef int (*ndNetFunc)(netObject netObj, unsigned char *data, int dataLen );
 typedef int (*ndBigDataHandler)(netObject nethandle,unsigned long long param , void *data, size_t datalen) ;
 
 #define NDNET_INSTALL_MSG(netObj, msgFunc, maxID, minID) \
-	ndNetFuncInstall(netObj,msgFunc, maxID, minID, "msgName_" #maxID"-"#minID) 
+	ndNetFuncInstall(netObj,msgFunc, maxID, minID, #maxID"-"#minID) 
 
 //connect server
 ND_CONNCLI_API netObject ndOpenConnect(const char *host, int port);

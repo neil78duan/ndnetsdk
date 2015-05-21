@@ -94,7 +94,8 @@ ND_COMMON_API ndxml *ndxml_addnode(ndxml_root *xmlroot, const char *name,const c
 
 //删除一个XML节点
 ND_COMMON_API int ndxml_delnode(ndxml_root *xmlroot, const char *name) ;
-ND_COMMON_API int ndxml_delnodei(ndxml_root *xmlroot, int index) ;
+ND_COMMON_API int ndxml_delnodei(ndxml_root *xmlroot, int index);
+ND_COMMON_API int ndxml_delxml(ndxml *delnode, ndxml *xmlParent);
 
 //销毁这个xml集合
 ND_COMMON_API void ndxml_destroy(ndxml_root *xmlroot) ;
@@ -141,7 +142,7 @@ ND_COMMON_API int ndxml_setval(ndxml *node , const char *val) ;
 ND_COMMON_API int ndxml_delattrib(ndxml *parent, const char *name) ;
 ND_COMMON_API int ndxml_delattribi(ndxml *parent, int index) ;
 //删除一个子节点
-ND_COMMON_API int ndxml_delsubnode(ndxml *parent, const char *name) ;
+ND_COMMON_API int ndxml_delsubnode(ndxml *parent, const char *name);
 ND_COMMON_API int ndxml_delsubnodei(ndxml *parent, int index) ;
 
 ND_COMMON_API int ndxml_output(ndxml *node, FILE *pf);

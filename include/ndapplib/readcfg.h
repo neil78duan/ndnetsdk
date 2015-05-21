@@ -8,8 +8,8 @@
 #ifndef _READCFG_H_
 #define _READCFG_H_
 
-#define HOST_NAME_SIZE 256 
-#define FILE_PATH_SIZE 256
+#define ND_HOST_NAME_SIZE 256 
+#define ND_FILE_PATH_SIZE 256
 struct listen_config
 {
 	int port ;
@@ -29,7 +29,7 @@ struct connect_config
 	int port ;
 	int tmout ;
 	char protocol_name[32] ;
-	char host[HOST_NAME_SIZE] ;
+	char host[ND_HOST_NAME_SIZE];
 	struct nd_proxy_info proxy_info ;
 };
 
@@ -39,7 +39,7 @@ struct instance_config
 	int open_dump ;				//是否打开dump
 	int single_thread;			//是否使用单线程逻辑
 	NDUINT32 log_file_size ;
-	char inet_ip[HOST_NAME_SIZE] ;
+	char inet_ip[ND_HOST_NAME_SIZE];
 	char callstack_file[256] ;
 	char log_file[256] ;
 	char data_dir[256] ;
@@ -60,7 +60,7 @@ struct server_config
 // struct connect_in_server
 // {
 // 	int port ;
-// 	char host[HOST_NAME_SIZE] ;
+// 	char host[ND_HOST_NAME_SIZE] ;
 // };
 
 //读取端口基数

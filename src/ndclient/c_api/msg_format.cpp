@@ -13,6 +13,7 @@
 #include "ndapplib/nd_msgpacket.h"
 #include "ndapplib/nd_datatransfer.h"
 #include "ndcli/nd_api_c.h"
+#include "ndapplib/applib.h"
 
 #include "nd_msg.h"
 #include <stdarg.h>
@@ -507,9 +508,11 @@ MSG_ENTRY_INSTANCE(netmsg_sys_error)
 
 MSG_ENTRY_INSTANCE(netmsg_sys_time)
 {
-    nd_log_screen("recv system time ") ;
-    return 0 ;
+	nd_log_screen("recv time ");
+	return 0;
 }
+
+
 
 MSG_ENTRY_INSTANCE(__data_recv_handler)
 {
@@ -528,7 +531,7 @@ MSG_ENTRY_INSTANCE(__data_recv_handler)
 
 
 #define MSG_HANDLER_INS(_f, _maxid, _minid) \
-nd_msgentry_install((nd_handle)netObj, _f,_maxid, _minid,EPL_CONNECT,"msgName_" #_maxid "_" #_minid )
+nd_msgentry_install((nd_handle)netObj, _f,_maxid, _minid,EPL_CONNECT,#_maxid "_" #_minid )
 
 void ndMsgfuncInit(netObject netObj)
 {
@@ -537,9 +540,10 @@ void ndMsgfuncInit(netObject netObj)
     
     MSG_HANDLER_INS(netmsg_sys_error,ND_MAIN_ID_SYS,ND_MSG_SYS_ERROR) ;
     
-    MSG_HANDLER_INS(netmsg_sys_time,ND_MAIN_ID_SYS,ND_MSG_SYS_TIME) ;
+    //MSG_HANDLER_INS(netmsg_sys_time,ND_MAIN_ID_SYS,ND_MSG_SYS_TIME) ;
 	
 	MSG_HANDLER_INS(__data_recv_handler,ND_MAIN_ID_SYS,ND_MSG_BIG_DATA_TRANSFER) ;
+
 }
 
 

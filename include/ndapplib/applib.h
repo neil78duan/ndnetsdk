@@ -137,6 +137,9 @@ MSG_ENTRY_DECLARE(nd_get_message_name_handler) ;
 MSG_ENTRY_DECLARE(nd_get_app_ver_handler) ;
 
 MSG_ENTRY_DECLARE(nd_get_server_rlimit) ;
-MSG_ENTRY_INSTANCE(nd_set_netmsg_log);
+MSG_ENTRY_DECLARE(nd_set_netmsg_log);
+
+MSG_ENTRY_DECLARE(nd_get_sys_time);
+MSG_ENTRY_DECLARE(nd_get_game_time);
 
 #endif

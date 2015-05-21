@@ -231,6 +231,33 @@ const char * nd_msgentry_get_name(nd_netui_handle handle, ndmsgid_t maxid, ndmsg
 #endif
 }
 
+NDUINT32 nd_msgentry_get_id(nd_handle handle, const char *msgname)
+{
+	int i, x;
+	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
+	if (!root_entry){
+		return (NDUINT32)-1;
+	}
+	if (!msgname || !msgname[0]){
+		return (NDUINT32)-1;
+	}
+
+	for ( i = 0; i < root_entry->main_num; i++)	{
+		for (x = 0; x < SUB_MSG_NUM; x++){
+			struct msg_entry_node*node = &(root_entry->sub_buf[i].msg_buf[x]);
+			if (!node->name || !node->name[0]){
+				continue;
+			}
+			if (ndstricmp((char*)msgname, node->name)==0 ) {
+				NDUINT32 maxid = root_entry->msgid_base + i;
+				return ND_MAKE_DWORD(maxid, x);
+			}
+		}
+	}
+
+	return (NDUINT32)-1;
+}
+
 
 nd_usermsg_func nd_msgentry_get_def_func(nd_netui_handle handle) 
 {

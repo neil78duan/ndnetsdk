@@ -44,7 +44,7 @@ enum eNDMsgSys{
 	ND_MSG_SYS_GET_RLIMIT ,
     
     ND_MSG_SYS_SET_MSGLOG ,
-	
+	ND_MSG_SYS_GAME_TIME ,
     ND_MSG_SYS_NUMBER
 };
 

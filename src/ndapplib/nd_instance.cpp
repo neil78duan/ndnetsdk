@@ -746,6 +746,28 @@ MSG_ENTRY_INSTANCE(nd_get_app_ver_handler)
 	return 0;
 }
 
+MSG_ENTRY_INSTANCE(nd_get_sys_time)
+{
+	NDIStreamMsg inmsg(msg);
+	NDOStreamMsg omsg(inmsg.MsgMaxid(), inmsg.MsgMinid());
+	NDUINT64 tm1 = (NDUINT64)time(NULL);
+	omsg.Write(tm1);
+
+	nd_connector_send(nethandle, (nd_packhdr_t*)(omsg.GetMsgAddr()), ESF_URGENCY);
+
+	return 0;
+}
+MSG_ENTRY_INSTANCE(nd_get_game_time)
+{
+	NDIStreamMsg inmsg(msg);
+	NDOStreamMsg omsg(inmsg.MsgMaxid(), inmsg.MsgMinid());
+	NDUINT64 tm1 = (NDUINT64)app_inst_time(NULL);
+	omsg.Write(tm1);
+
+	nd_connector_send(nethandle, (nd_packhdr_t*)(omsg.GetMsgAddr()), ESF_URGENCY);
+
+	return 0;
+}
 MSG_ENTRY_INSTANCE(nd_get_server_rlimit)
 {
 	ND_TRACE_FUNC() ;
