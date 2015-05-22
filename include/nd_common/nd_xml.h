@@ -96,6 +96,8 @@ ND_COMMON_API ndxml *ndxml_addnode(ndxml_root *xmlroot, const char *name,const c
 ND_COMMON_API int ndxml_delnode(ndxml_root *xmlroot, const char *name) ;
 ND_COMMON_API int ndxml_delnodei(ndxml_root *xmlroot, int index);
 ND_COMMON_API int ndxml_delxml(ndxml *delnode, ndxml *xmlParent);
+ND_COMMON_API int ndxml_remove(ndxml *node, ndxml *xmlParent); //remove not dealloc-memory
+
 
 //销毁这个xml集合
 ND_COMMON_API void ndxml_destroy(ndxml_root *xmlroot) ;
@@ -107,6 +109,8 @@ ND_COMMON_API int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char
 
 ND_COMMON_API ndxml *ndxml_copy(ndxml *node);
 ND_COMMON_API int ndxml_insert(ndxml *parent, ndxml*child);
+ND_COMMON_API int ndxml_insert_ex(ndxml *parent, ndxml*child, int index);
+ND_COMMON_API int ndxml_get_index(ndxml *parent, ndxml*child);
 
 //引用一个子节点
 ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;

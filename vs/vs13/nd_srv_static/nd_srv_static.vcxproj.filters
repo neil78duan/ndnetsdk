@@ -55,6 +55,9 @@
     <Filter Include="src\crypt">
       <UniqueIdentifier>{b7529381-956d-48a8-a554-218b2797d2db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\ndstl">
+      <UniqueIdentifier>{80723c92-d00f-4027-a5c7-12fc9edc0412}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -293,6 +296,42 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.h">
       <Filter>src\srvcoe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_allocator.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_array.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_new.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_rbtree.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_reftree.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_safemap.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_stllist.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_stlmap.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_stlset.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_text.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_utility.h">
+      <Filter>include\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_vector.h">
+      <Filter>include\ndstl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

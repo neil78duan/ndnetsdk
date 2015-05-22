@@ -336,6 +336,37 @@ int ndxml_insert(ndxml *parent, ndxml*child)
 	parent->sub_num++;
 	return 0;
 }
+
+int ndxml_get_index(ndxml *parent, ndxml*child)
+{
+	int i = 0;
+	struct list_head *pos;
+	list_for_each(pos, &parent->lst_sub) {
+		if (pos == &(child->lst_self)) {
+			return i;
+		}
+		++i;
+	}
+	return -1;
+}
+int ndxml_insert_ex(ndxml *parent, ndxml*child, int index)
+{
+	int i = 0;
+	struct list_head *pos;
+	list_for_each(pos, &parent->lst_sub) {
+		if (index <= i)	{
+			list_add(&child->lst_self, pos); 
+			parent->sub_num++;
+			return 0;
+		}
+		++i;
+	}
+
+	list_add_tail(&child->lst_self, &parent->lst_sub);
+	parent->sub_num++;
+	return 0;
+	
+}
 int ndxml_merge(ndxml_root *host, ndxml_root *merged) 
 {
 	if(merged->sub_num > 0) {
@@ -408,7 +439,8 @@ int ndxml_delnodei(ndxml_root *xmlroot, int index)
 	return 0 ;
 }
 
-int ndxml_delxml(ndxml *node, ndxml *xmlParent)
+
+int ndxml_remove(ndxml *node, ndxml *xmlParent)
 {
 	int ret = -1;
 	struct list_head *pos = xmlParent->lst_sub.next;
@@ -419,19 +451,25 @@ int ndxml_delxml(ndxml *node, ndxml *xmlParent)
 		ndxml *sub_xml = list_entry(pos, struct tagxml, lst_self);
 		pos = pos->next;
 		if (sub_xml == node){
-			ret = 0; 
+			ret = 0;
 			break;
 		}
-		
+
 	}
-	if (ret ==-1)	{
+	if (ret == -1)	{
 		return ret;
 	}
 	list_del(&node->lst_self);
 	xmlParent->sub_num--;
-	dealloc_xml(node);
 	return 0;
-
+}
+int ndxml_delxml(ndxml *node, ndxml *xmlParent)
+{
+	if (0 == ndxml_remove(node, xmlParent)) {
+		dealloc_xml(node);
+		return 0;
+	}
+	return -1;
 }
 //引用一个子节点
 ndxml *ndxml_refsub(ndxml *root, const char *name) 
