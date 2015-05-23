@@ -10,20 +10,20 @@
 #include "nd_net/nd_netui.h"
 
 
-#define PACKET_SIZE		1024	//¶¨ÒåÒ»¸ö·â°üµÄ×î´ó³¤¶È
+#define PACKET_SIZE		1024	//å®šä¹‰ä¸€ä¸ªå°åŒ…çš„æœ€å¤§é•¿åº¦
 
-#define PACKET_HEAD_SIZE 8   //ÍøÂçÊý¾Ý°üµÄÍ·²¿³¤¶È
+#define PACKET_HEAD_SIZE 8   //ç½‘ç»œæ•°æ®åŒ…çš„å¤´éƒ¨é•¿åº¦
 #define PACKET_DATA_SIZE (PACKET_SIZE-8)
 
-//¶¨ÒåÍøÂçÏûÏ¢
-#define DNM_RENEW		0			//ÏòÆäËû»úÆ÷¸üÐÂ×Ô¼º
-#define DNM_REQUEST		1			//ÏòÆäËû»úÆ÷ÇëÇóÐÅÏ¢
-#define DNM_CHAT		2			//ÁÄÌìÐÅÏ¢
-#define DNM_EXIT		3			//Àë¿ªÐÅÏ¢
+//å®šä¹‰ç½‘ç»œæ¶ˆæ¯
+#define DNM_RENEW		0			//å‘å…¶ä»–æœºå™¨æ›´æ–°è‡ªå·±
+#define DNM_REQUEST		1			//å‘å…¶ä»–æœºå™¨è¯·æ±‚ä¿¡æ¯
+#define DNM_CHAT		2			//èŠå¤©ä¿¡æ¯
+#define DNM_EXIT		3			//ç¦»å¼€ä¿¡æ¯
 
 typedef struct tagNetMsg 
 {
-	WORD checkSum ;			//Ð£ÑéÂë
+	WORD checkSum ;			//æ ¡éªŒç 
 	WORD msgid ;
 	DWORD param ;
 
@@ -31,23 +31,23 @@ typedef struct tagNetMsg
 }NetMsg_t;
 
 
-//ÍøÂçÏûÏ¢Èë¿Ú
+//ç½‘ç»œæ¶ˆæ¯å…¥å£
 int NetMsgEntry(int fd , NetMsg_t *pMsg, int size, SOCKADDR_IN *addr_in)
 {
 	int len ;
 	switch(pMsg->msgid)
 	{
-	case	DNM_RENEW:			//ÊÕµ½ÆäËû»úÆ÷·¢À´µÄ¸üÐÂÐÅÏ¢
+	case	DNM_RENEW:			//æ”¶åˆ°å…¶ä»–æœºå™¨å‘æ¥çš„æ›´æ–°ä¿¡æ¯
 		
 		break ;
 
-	case DNM_REQUEST:			//ÊÕµ½ÁËÆäËû»úÆ÷·¢ËÍÀ´µÄÇëÇó,
-		//UpdateInNet(addr_in,0) ;		//°Ñ×Ô¼ºµÄÐÅÏ¢·¢ËÍ¸ø¶Ô·½
+	case DNM_REQUEST:			//æ”¶åˆ°äº†å…¶ä»–æœºå™¨å‘é€æ¥çš„è¯·æ±‚,
+		//UpdateInNet(addr_in,0) ;		//æŠŠè‡ªå·±çš„ä¿¡æ¯å‘é€ç»™å¯¹æ–¹
 		strcpy(pMsg->data, "linux") ;
 		size = PACKET_HEAD_SIZE + 7 ;
 		nd_socket_udp_write(fd, (char*)pMsg, size ,addr_in);
 		break ;
-	case DNM_CHAT:				//ÁÄÌìÐÅÏ¢
+	case DNM_CHAT:				//èŠå¤©ä¿¡æ¯
 		
 		len = size - PACKET_HEAD_SIZE ;
 		if(len>0 && len<=PACKET_DATA_SIZE) {

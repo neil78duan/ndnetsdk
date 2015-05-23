@@ -394,7 +394,7 @@ void NDInstanceBase::EndStaticsMem()
 }
 #endif 
 
-//添加一个定时器到监听主线程
+//娣诲姞涓�涓畾鏃跺櫒鍒扮洃鍚富绾跨▼
 int NDInstanceBase::AddSysTimer(nd_timer_entry tmfunc, void *param, ndtime_t interval )
 {
 	nd_handle hl= GetDeftListener()->GetHandle() ;

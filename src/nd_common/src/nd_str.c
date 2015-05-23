@@ -54,7 +54,7 @@ static __INLINE__ int _read_word(unsigned  char** dest, unsigned char **src)
 
 }
 
-/* È¥µô×Ö·û´®¿ªÍ·²¿·ÖÎŞÓÃµÄ×Ö·û£¨²»¿É´òÓ¡µÄ×Ö·û£©*/
+/* å»æ‰å­—ç¬¦ä¸²å¼€å¤´éƒ¨åˆ†æ— ç”¨çš„å­—ç¬¦ï¼ˆä¸å¯æ‰“å°çš„å­—ç¬¦ï¼‰*/
 char *ndstr_first_valid(const char *src)
 {
 	unsigned char *tmp = (unsigned char *)src ;
@@ -68,7 +68,7 @@ char *ndstr_first_valid(const char *src)
 
 }
 
-/* ¼ì²â×Ö·ûÊÇ·ñÊÇÓĞĞ§µÄÊı×Ö*/
+/* æ£€æµ‹å­—ç¬¦æ˜¯å¦æ˜¯æœ‰æ•ˆçš„æ•°å­—*/
 int ndstr_is_numerals(const char *src)
 {
 	int dot = 0 ;
@@ -98,7 +98,7 @@ int ndstr_is_numerals(const char *src)
 	return ret ;
 }
 
-//¼ì²â×Ö·û´®ÊÇ·ñ×ÔÈ»Êı
+//æ£€æµ‹å­—ç¬¦ä¸²æ˜¯å¦è‡ªç„¶æ•°
 int ndstr_is_naturalnumber(const char *src)
 {
 	int ret = 1 ;
@@ -122,7 +122,7 @@ int ndstr_is_naturalnumber(const char *src)
 }
 
 
-/* ¶ÁÈ¡ÓĞĞ§Êı×Ö,*isok == 0³ö´í*/
+/* è¯»å–æœ‰æ•ˆæ•°å­—,*isok == 0å‡ºé”™*/
 char *ndstr_read_numerals(const char *src, char *desc, int *isok)
 {
 	int dot = 0 ;
@@ -165,7 +165,7 @@ char *ndstr_read_numerals(const char *src, char *desc, int *isok)
 }
 
 
-//·Ö½âÒ»¸öµ¥´Ê,µ¥´ÊÖ»ÄÜÊÇÊı×Ö,×ÖÄ¸ºÍÏÂ»®Ïß
+//åˆ†è§£ä¸€ä¸ªå•è¯,å•è¯åªèƒ½æ˜¯æ•°å­—,å­—æ¯å’Œä¸‹åˆ’çº¿
 char *ndstr_parse_word(const char *src, char *outstr)
 {
 	register unsigned char a ;
@@ -189,7 +189,7 @@ char *ndstr_parse_word(const char *src, char *outstr)
 	return *src?src:NULL ;
 }
 
-//·Ö½â¿ÉÏÔÊ¾µÄ×Ö·û´²
+//åˆ†è§£å¯æ˜¾ç¤ºçš„å­—ç¬¦åºŠ
 char *ndstr_parse_string(const char *src, char *outstr)
 {
 	register unsigned char a ;
@@ -376,7 +376,7 @@ int ndstr_get_ip(const char *src, ndip_t *ip)
 	return 0;
 }
 
-/*¶ÁÈ¡Ò»¸ö×Ö·û´®£¬ÖªµÀÓöµ½Ò»¸öÖÆ¶¨µÄ½áÊø×Ö·ûÎªÖ¹*/
+/*è¯»å–ä¸€ä¸ªå­—ç¬¦ä¸²ï¼ŒçŸ¥é“é‡åˆ°ä¸€ä¸ªåˆ¶å®šçš„ç»“æŸå­—ç¬¦ä¸ºæ­¢*/
 char *ndstr_str_end(const char *src, char *outstr, const char end)
 {
     *outstr = 0 ;
@@ -437,7 +437,7 @@ char *ndstr_nstr_ansi(const char *src, char *outstr, const char end, int n)
 	*outstr = 0;
 	return src;
 }
-/*²»Çø·Ö´óĞ¡Ğ´,±È½Ï×Ö·û´®*/
+/*ä¸åŒºåˆ†å¤§å°å†™,æ¯”è¾ƒå­—ç¬¦ä¸²*/
 int ndstricmp(const char *src, const char *desc)
 {
 	int ret ;
@@ -462,7 +462,7 @@ int ndstricmp(const char *src, const char *desc)
 	return ret ;
 }
 
-//ÔÚsrcÖĞ²éÕÒdesc ²»Çø·Ö´óĞ¡Ğ´
+//åœ¨srcä¸­æŸ¥æ‰¾desc ä¸åŒºåˆ†å¤§å°å†™
 char *ndstristr(const char *src, const char *desc)
 {
 	int ret=0 ;
@@ -500,8 +500,8 @@ char *ndstristr(const char *src, const char *desc)
 	return NULL ;
 }
 
-//´ÓsrcËùÖ¸µÄ·½ÏòÏòÇ°²éÕÒ×Ö·ûch,
-//Èç¹ûÕÒµ½endÎ»ÖÃ»¹Ã»ÓĞÕÒµ½Ôò·µ»Ønull
+//ä»srcæ‰€æŒ‡çš„æ–¹å‘å‘å‰æŸ¥æ‰¾å­—ç¬¦ch,
+//å¦‚æœæ‰¾åˆ°endä½ç½®è¿˜æ²¡æœ‰æ‰¾åˆ°åˆ™è¿”å›null
 char *ndstr_reverse_chr(const char *src, char ch, const char *end)
 {
 	while(end <= src) {

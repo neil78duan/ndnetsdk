@@ -10,9 +10,9 @@
 #include "nd_common/list.h"
 #define MAX_XMLNAME_SIZE 64
 
-typedef void (*xml_errlog) (const char *errdesc) ;		//´íÎóÃèÊöº¯Êı
+typedef void (*xml_errlog) (const char *errdesc) ;		//é”™è¯¯æè¿°å‡½æ•°
 //typedef struct tagxml ndxml ;
-//xml ½Úµã,¿ÉÒÔµ¥¶À²Ù×÷
+//xml èŠ‚ç‚¹,å¯ä»¥å•ç‹¬æ“ä½œ
 typedef struct tagxml 
 {
 	struct list_head  lst_self ;
@@ -28,8 +28,8 @@ typedef struct tagxml
 	
 } ndxml;
 
-//xmlµÄ¸ù½Úµã,±£´æ¶à¸öndxml,
-//Ö÷ÒªÊÇÔÚÎÄ¼ş¼ÓÔØºÍ±£´æÊ±Ê¹ÓÃ
+//xmlçš„æ ¹èŠ‚ç‚¹,ä¿å­˜å¤šä¸ªndxml,
+//ä¸»è¦æ˜¯åœ¨æ–‡ä»¶åŠ è½½å’Œä¿å­˜æ—¶ä½¿ç”¨
 typedef struct tagxml ndxml_root;
 // typedef struct tagxmlroot
 // {
@@ -37,7 +37,7 @@ typedef struct tagxml ndxml_root;
 // 	struct list_head lst_xml ;	
 // }ndxml_root;
 
-//xmlÊôĞÔ½Úµã
+//xmlå±æ€§èŠ‚ç‚¹
 /*struct ndxml_attr {
 	char *name ;
 	char *value ;
@@ -79,30 +79,30 @@ static __INLINE__ void ndxml_initroot(ndxml_root *root)
 // 	INIT_LIST_HEAD(&root->lst_xml) ;
 }
 
-//ÉèÖÃxml½âÎö³ö´íÊ±µÄlogº¯Êı,·µ»ØÄ¬ÈÏº¯Êı
+//è®¾ç½®xmlè§£æå‡ºé”™æ—¶çš„logå‡½æ•°,è¿”å›é»˜è®¤å‡½æ•°
 ND_COMMON_API xml_errlog nd_setxml_log(xml_errlog logfunc) ;
-//´ÓÎÄ¼şÖĞ¼ÓÔØÒ»¸öxmlÁĞ±í
+//ä»æ–‡ä»¶ä¸­åŠ è½½ä¸€ä¸ªxmlåˆ—è¡¨
 ND_COMMON_API int ndxml_load(const char *file,ndxml_root *xmlroot) ;
 
-//²éÕÒµ½Ò»¸öxml½Óµã
+//æŸ¥æ‰¾åˆ°ä¸€ä¸ªxmlæ¥ç‚¹
 ND_COMMON_API ndxml *ndxml_getnode(ndxml_root *xmlroot, const char *name) ;
 ND_COMMON_API ndxml *ndxml_getnodei(ndxml_root *xmlroot, int index) ;
 
 ND_COMMON_API int ndxml_merge(ndxml_root *host, ndxml_root *merged) ;
-//Ìí¼ÓÒ»¸öxml½Úµã
+//æ·»åŠ ä¸€ä¸ªxmlèŠ‚ç‚¹
 ND_COMMON_API ndxml *ndxml_addnode(ndxml_root *xmlroot, const char *name,const char *value) ;
 
-//É¾³ıÒ»¸öXML½Úµã
+//åˆ é™¤ä¸€ä¸ªXMLèŠ‚ç‚¹
 ND_COMMON_API int ndxml_delnode(ndxml_root *xmlroot, const char *name) ;
 ND_COMMON_API int ndxml_delnodei(ndxml_root *xmlroot, int index);
 ND_COMMON_API int ndxml_delxml(ndxml *delnode, ndxml *xmlParent);
 ND_COMMON_API int ndxml_remove(ndxml *node, ndxml *xmlParent); //remove not dealloc-memory
 
 
-//Ïú»ÙÕâ¸öxml¼¯ºÏ
+//é”€æ¯è¿™ä¸ªxmlé›†åˆ
 ND_COMMON_API void ndxml_destroy(ndxml_root *xmlroot) ;
 
-//°Ñxml±£´æµ½ÎÄ¼şÖĞ
+//æŠŠxmlä¿å­˜åˆ°æ–‡ä»¶ä¸­
 ND_COMMON_API int ndxml_save(ndxml_root *xmlroot, const char *file) ;
 
 ND_COMMON_API int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header) ;
@@ -112,40 +112,40 @@ ND_COMMON_API int ndxml_insert(ndxml *parent, ndxml*child);
 ND_COMMON_API int ndxml_insert_ex(ndxml *parent, ndxml*child, int index);
 ND_COMMON_API int ndxml_get_index(ndxml *parent, ndxml*child);
 
-//ÒıÓÃÒ»¸ö×Ó½Úµã
+//å¼•ç”¨ä¸€ä¸ªå­èŠ‚ç‚¹
 ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;
 
-//ÒıÓÃÒ»¸ö×Ó½Úµã
+//å¼•ç”¨ä¸€ä¸ªå­èŠ‚ç‚¹
 ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;
 
-//Í¨¹ıÏÂ±êÒıÓÃÒ»¸ö×Ó½Úµã
+//é€šè¿‡ä¸‹æ ‡å¼•ç”¨ä¸€ä¸ªå­èŠ‚ç‚¹
 ND_COMMON_API ndxml *ndxml_refsubi(ndxml *root, int index) ;
 
-//µÃµ½xmlµÄÖµ
+//å¾—åˆ°xmlçš„å€¼
 ND_COMMON_API char *ndxml_getval(ndxml *node);
 ND_COMMON_API char *ndxml_getval_buf(ndxml *node, char *buf, size_t size);
 ND_COMMON_API int ndxml_getval_int(ndxml *node);
 ND_COMMON_API float ndxml_getval_float(ndxml *node);
-//µÃµ½ÊôĞÔ½Úµã
+//å¾—åˆ°å±æ€§èŠ‚ç‚¹
 ND_COMMON_API struct ndxml_attr *ndxml_getattrib(ndxml *node , const char *name);
 ND_COMMON_API struct ndxml_attr  *ndxml_getattribi(ndxml *node, int index);
 
 //////////////////////////////////////////////////////////////////////////
-//¸øxmlÔö¼ÓÒ»¸öÊôĞÔ,
+//ç»™xmlå¢åŠ ä¸€ä¸ªå±æ€§,
 ND_COMMON_API struct ndxml_attr  *ndxml_addattrib(ndxml *parent, const char *name, const char *value) ;
 
-//ÉèÖÃxmlÊôĞÔÖµ
+//è®¾ç½®xmlå±æ€§å€¼
 ND_COMMON_API int ndxml_setattrval(ndxml *parent, const char *name,const char *value) ;
 ND_COMMON_API int ndxml_setattrvali(ndxml *parent, int index, const char *value) ;
 
-//¸øxmlÔö¼ÓÒ»¸ö×Ó½ÚµãĞèÒªÊäÈëĞÂ½ÚµãµÄÃû×ÖºÍÖµ,·µ»ØĞÂ½ÚµãµØÖ·
+//ç»™xmlå¢åŠ ä¸€ä¸ªå­èŠ‚ç‚¹éœ€è¦è¾“å…¥æ–°èŠ‚ç‚¹çš„åå­—å’Œå€¼,è¿”å›æ–°èŠ‚ç‚¹åœ°å€
 ND_COMMON_API ndxml *ndxml_addsubnode(ndxml *parent, const char *name, const char *value) ;
-//ÉèÖÃXMLµÄÖµ
+//è®¾ç½®XMLçš„å€¼
 ND_COMMON_API int ndxml_setval(ndxml *node , const char *val) ;
-//É¾³ıÒ»¸öÊôĞÔ½Úµã
+//åˆ é™¤ä¸€ä¸ªå±æ€§èŠ‚ç‚¹
 ND_COMMON_API int ndxml_delattrib(ndxml *parent, const char *name) ;
 ND_COMMON_API int ndxml_delattribi(ndxml *parent, int index) ;
-//É¾³ıÒ»¸ö×Ó½Úµã
+//åˆ é™¤ä¸€ä¸ªå­èŠ‚ç‚¹
 ND_COMMON_API int ndxml_delsubnode(ndxml *parent, const char *name);
 ND_COMMON_API int ndxml_delsubnodei(ndxml *parent, int index) ;
 

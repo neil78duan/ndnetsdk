@@ -4,7 +4,7 @@
  * 2007-10
  */
 
-/* ÕâÀïĞèÒªÖØĞÂ±àĞ´²âÊÔ³ÌĞò,Éú²úÕß´ÓÎÄ¼ş¶ÁÈ¡Êı¾İ,Ïû·ÑÕß°ÑÊı¾İĞ´ÈëÎÄ¼ş,×îºó¼ì²âÎÄ¼şÊÇ·ñ³ö´í*/
+/* è¿™é‡Œéœ€è¦é‡æ–°ç¼–å†™æµ‹è¯•ç¨‹åº,ç”Ÿäº§è€…ä»æ–‡ä»¶è¯»å–æ•°æ®,æ¶ˆè´¹è€…æŠŠæ•°æ®å†™å…¥æ–‡ä»¶,æœ€åæ£€æµ‹æ–‡ä»¶æ˜¯å¦å‡ºé”™*/
 #include "nd_common/nd_alloc.h"
 #include "nd_common/nd_common.h"
 
@@ -23,7 +23,7 @@ int nslots = BUFSIZE;
 int producer_done = 0;
 int nitems = 0;
 
-#define CALC(n) (n)		//Ö´ĞĞµÄ¼ÆËãÊ½
+#define CALC(n) (n)		//æ‰§è¡Œçš„è®¡ç®—å¼
 
 static nd_mutex buffer_lock ;
 
@@ -124,7 +124,7 @@ static  void* consumer(void *arg2)
 	return (void*)0 ;
 }
 
-//²âÊÔº¯Êı
+//æµ‹è¯•å‡½æ•°
 int mutex_test() 
 {
 	int ret ;

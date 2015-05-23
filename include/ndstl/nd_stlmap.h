@@ -1,6 +1,6 @@
 /* file nd_stlmap.h
  *
- * ɽկstl map
+ * 山寨stl map
  *
  * create by duan
  * 2012/6/21 18:28:31

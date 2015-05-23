@@ -15,8 +15,8 @@
 #define _MINUS '-' 
 #define _ND_SPACE			0x20
 #define _ND_TAB				0x09
-#define _ND_QUOT			0x22		//Ë«ÒýºÅ
-#define _ND_SINGLE_QUOT		0x27		//µ¥ÒýºÅ
+#define _ND_QUOT			0x22		//åŒå¼•å·
+#define _ND_SINGLE_QUOT		0x27		//å•å¼•å·
 #define IS_NUMERALS(a)		((a) >= '0' && (a) <='9')
 
 #define IS_PRINTABLE(a)		((a) >= 0x20 && (a) < 0x7f)
@@ -26,18 +26,18 @@
 #define BIG_2_LITTLE(a)		(a)+0x20 
 #define LITTLE_2_BIG(a)		(a)-0x20 
 
-/* È¥µô×Ö·û´®¿ªÍ·²¿·ÖÎÞÓÃµÄ×Ö·û£¨²»¿É´òÓ¡µÄ×Ö·û£©*/
+/* åŽ»æŽ‰å­—ç¬¦ä¸²å¼€å¤´éƒ¨åˆ†æ— ç”¨çš„å­—ç¬¦ï¼ˆä¸å¯æ‰“å°çš„å­—ç¬¦ï¼‰*/
 ND_COMMON_API char *ndstr_first_valid(const char *src) ;
 
-/* ¼ì²â×Ö·ûÊÇ·ñÊÇÓÐÐ§µÄÊý×Ö*/
+/* æ£€æµ‹å­—ç¬¦æ˜¯å¦æ˜¯æœ‰æ•ˆçš„æ•°å­—*/
 ND_COMMON_API int ndstr_is_numerals(const char *src);
 
-//¼ì²â×Ö·û´®ÊÇ·ñ×ÔÈ»Êý
+//æ£€æµ‹å­—ç¬¦ä¸²æ˜¯å¦è‡ªç„¶æ•°
 ND_COMMON_API int ndstr_is_naturalnumber(const char *src);
 
 ND_COMMON_API char *ndstr_read_numerals(const char *src, char *desc, int *isok) ;
 
-//·Ö½âÒ»¸öµ¥´Ê,µ¥´ÊÖ»ÄÜÊÇÊý×Ö,×ÖÄ¸ºÍÏÂ»®Ïß
+//åˆ†è§£ä¸€ä¸ªå•è¯,å•è¯åªèƒ½æ˜¯æ•°å­—,å­—æ¯å’Œä¸‹åˆ’çº¿
 ND_COMMON_API char *ndstr_parse_word(const char *src, char *outstr);
 ND_COMMON_API char *ndstr_parse_word_n(const char *src, char *outstr, int n);
 
@@ -46,10 +46,10 @@ ND_COMMON_API int ndstr_parse_command(const char *input_text, char *argv[], int 
 
 ND_COMMON_API int ndstr_get_ip(const char *src, ndip_t *ip);
 
-//·Ö½â¿ÉÏÔÊ¾µÄ×Ö·û´²
+//åˆ†è§£å¯æ˜¾ç¤ºçš„å­—ç¬¦åºŠ
 ND_COMMON_API char *ndstr_parse_string(const char *src, char *outstr);
 
-/*¶ÁÈ¡Ò»¸ö×Ö·û´®£¬ÖªµÀÓöµ½Ò»¸öÖÆ¶¨µÄ½áÊø×Ö·ûÎªÖ¹*/
+/*è¯»å–ä¸€ä¸ªå­—ç¬¦ä¸²ï¼ŒçŸ¥é“é‡åˆ°ä¸€ä¸ªåˆ¶å®šçš„ç»“æŸå­—ç¬¦ä¸ºæ­¢*/
 ND_COMMON_API char *ndstr_str_end(const char *src, char *outstr, const char end);
 ND_COMMON_API char *ndstr_nstr_end(const char *src, char *outstr, const char end, int n);
 
@@ -57,14 +57,14 @@ ND_COMMON_API char *ndstr_nstr_end(const char *src, char *outstr, const char end
 ND_COMMON_API char *ndstr_str_ansi(const char *src, char *outstr, const char end);
 ND_COMMON_API char *ndstr_nstr_ansi(const char *src, char *outstr, const char end, int n);
 
-/*²»Çø·Ö´óÐ¡Ð´,±È½Ï×Ö·û´®*/
+/*ä¸åŒºåˆ†å¤§å°å†™,æ¯”è¾ƒå­—ç¬¦ä¸²*/
 ND_COMMON_API int ndstricmp(const char *src, const char *desc);
 
-//ÔÚsrcÖÐ²éÕÒdesc ²»Çø·Ö´óÐ¡Ð´
+//åœ¨srcä¸­æŸ¥æ‰¾desc ä¸åŒºåˆ†å¤§å°å†™
 ND_COMMON_API char *ndstristr(const char *src, const char *desc);
 
-//´ÓsrcËùÖ¸µÄ·½ÏòÏòÇ°²éÕÒ×Ö·ûch,
-//Èç¹ûÕÒµ½endÎ»ÖÃ»¹Ã»ÓÐÕÒµ½Ôò·µ»Ønull
+//ä»Žsrcæ‰€æŒ‡çš„æ–¹å‘å‘å‰æŸ¥æ‰¾å­—ç¬¦ch,
+//å¦‚æžœæ‰¾åˆ°endä½ç½®è¿˜æ²¡æœ‰æ‰¾åˆ°åˆ™è¿”å›žnull
 ND_COMMON_API char *ndstr_reverse_chr(const char *src, char ch, const char *end);
 
 #ifdef _MSC_VER

@@ -13,7 +13,7 @@
 #ifdef ND_UNIX
 #include <locale.h>
 #endif
-const char *__g_process_name = NULL;			//进程名字
+const char *__g_process_name = NULL;			//杩涚▼鍚嶅瓧
 static int __s_common_init = 0 ;
 static ndtime_t __s_common_init_base_tick = 0;
 static time_t	__s_common_init_base_time = 0;
@@ -98,7 +98,7 @@ int nd_common_init()
 
 	NDTRAC("%s common init\n" AND nd_process_name() ) ;
 #ifdef ND_UNIX
-	setlocale(LC_CTYPE, "zh-CN.UTF-8");  //支持中文
+	setlocale(LC_CTYPE, "zh-CN.UTF-8");  //鏀寔涓枃
 #else 
 	
 #endif

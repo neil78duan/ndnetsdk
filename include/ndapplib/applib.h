@@ -1,7 +1,7 @@
 /*
  * file applib.h
  *
- * ·şÎñÆ÷³ÌĞòÔËÓÃ¿ò¼Ü£¬¶ÔÍøÂç·şÎñÆ÷SDKµÄ¼òµ¥·â×°
+ * æœåŠ¡å™¨ç¨‹åºè¿ç”¨æ¡†æ¶ï¼Œå¯¹ç½‘ç»œæœåŠ¡å™¨SDKçš„ç®€å•å°è£…
  *
  * create by duan 
  *
@@ -84,7 +84,7 @@ CPPAPI void nd_sys_exit(int exitcode) ;
 #endif
 
 CPPAPI int set_mp() ;
-//¶¨ÒåÏûÏ¢·¢ËÍº¯Êı
+//å®šä¹‰æ¶ˆæ¯å‘é€å‡½æ•°
 #define ND_SENDEX(nethandle, msg, flag, h_listen)	nd_sessionmsg_sendex(nethandle, msg, flag )
 #define ND_MSG_SEND(nethandle, msg,  h_listen)		nd_sessionmsg_send(nethandle, msg )
 #define ND_MSG_WRITEBUF(nethandle, msg,  h_listen)	nd_sessionmsg_writebuf(nethandle, msg )
@@ -104,11 +104,11 @@ static inline int nd_check_coming_our_server(nd_usermsgbuf_t *msg)
 {
 	return ND_USERMSG_SYS_RESERVED(msg) ? 1: 0 ;
 }
-//¶¨ÒåÏûÏ¢´¦Àíº¯Êı
+//å®šä¹‰æ¶ˆæ¯å¤„ç†å‡½æ•°
 #define MSG_ENTRY_INSTANCE(name) \
 	int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen) 
 
-//ÉêÃ÷ÏûÏ¢´¦Àíº¯Êı
+//ç”³æ˜æ¶ˆæ¯å¤„ç†å‡½æ•°
 #define MSG_ENTRY_DECLARE(name) \
 	CPPAPI int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen)
 

@@ -6,8 +6,8 @@
  */
 
 /*
- * µ±ÓÃudpÊµÏÖÀàtcp¹¦ÄÜµÄÊ±ºòĞèÒªÕâÑùµÄ»º³å,ËùÒÔÖØĞ´Ò»¸ö´úÌæ
- * c++ µÄclass (ND_CRecyBuf)
+ * å½“ç”¨udpå®ç°ç±»tcpåŠŸèƒ½çš„æ—¶å€™éœ€è¦è¿™æ ·çš„ç¼“å†²,æ‰€ä»¥é‡å†™ä¸€ä¸ªä»£æ›¿
+ * c++ çš„class (ND_CRecyBuf)
  */
 
 #ifndef _CBUF_H_
@@ -18,20 +18,20 @@ typedef struct nd_recbuf
 {
 	char *m_pstart, *m_pend ;	
 #ifdef ND_DEBUG
-	int m_nInit ;		//ÊÇ·ñ³õÊ¼»¯
+	int m_nInit ;		//æ˜¯å¦åˆå§‹åŒ–
 #endif
 	char m_buf[C_BUF_SIZE] ;
 }ndrecybuf_t ;	
 
 enum _eNDRecyRead{
-	EBUF_ALL=0,	//¶ÁÈ¡Èç¹û»º³åÊı¾İÉÙÓÚÖ¸¶¨³¤¶È,Ôò¶ÁÈ¡»º³åÖĞËùÓĞÊı¾İ.Ğ´ÈëÊ±»º³å²»¹»ÔòÌîÂú»º³å
-	EBUF_SPECIFIED	//¶ÁÈ¡(Ğ´Èë)Ö¸¶¨³¤,Èç¹ûÊı¾İ(¿Õ¼ä)²»¹ı·µ»Ø
+	EBUF_ALL=0,	//è¯»å–å¦‚æœç¼“å†²æ•°æ®å°‘äºæŒ‡å®šé•¿åº¦,åˆ™è¯»å–ç¼“å†²ä¸­æ‰€æœ‰æ•°æ®.å†™å…¥æ—¶ç¼“å†²ä¸å¤Ÿåˆ™å¡«æ»¡ç¼“å†²
+	EBUF_SPECIFIED	//è¯»å–(å†™å…¥)æŒ‡å®šé•¿,å¦‚æœæ•°æ®(ç©ºé—´)ä¸è¿‡è¿”å›
 };
 
 static __INLINE__ size_t cbuf_capacity(ndrecybuf_t *pbuf) 
 {
 	return (size_t)C_BUF_SIZE;
-}	//µÃµ½ÈİÁ¿
+}	//å¾—åˆ°å®¹é‡
 
 static __INLINE__ void ndcbuf_reset(ndrecybuf_t *pbuf)
 {
@@ -65,17 +65,17 @@ static __INLINE__ void ndcbuf_add_data(ndrecybuf_t *pbuf,size_t len)
 	pbuf->m_pend += len ;
 }
 
-//·µ»ØÊı¾İ´æ·ÅµÄË³Ğò 0 start < end 
+//è¿”å›æ•°æ®å­˜æ”¾çš„é¡ºåº 0 start < end 
 static __INLINE__ int cbuf_order(ndrecybuf_t *pbuf)	
 {
 	return (pbuf->m_pend>=pbuf->m_pstart) ;
 }
 
 ND_COMMON_API void ndcbuf_sub_data(ndrecybuf_t *pbuf,size_t len);
-ND_COMMON_API size_t ndcbuf_datalen(ndrecybuf_t *pbuf); //·µ»ØÊı¾İµÄ³¤¶È
-ND_COMMON_API size_t ndcbuf_freespace(ndrecybuf_t *pbuf);//µÃµ½¿ÕÏĞ»º³å³¤¶È
+ND_COMMON_API size_t ndcbuf_datalen(ndrecybuf_t *pbuf); //è¿”å›æ•°æ®çš„é•¿åº¦
+ND_COMMON_API size_t ndcbuf_freespace(ndrecybuf_t *pbuf);//å¾—åˆ°ç©ºé—²ç¼“å†²é•¿åº¦
 
-//¶ÁĞ´Êı¾İ
+//è¯»å†™æ•°æ®
 //return value -1error else return data length of  read/write 
 ND_COMMON_API int ndcbuf_read(ndrecybuf_t *pbuf,void *buf, size_t size,int flag);
 ND_COMMON_API int ndcbuf_write(ndrecybuf_t *pbuf,void *data, size_t datalen,int flag);
@@ -92,7 +92,7 @@ struct nd_linebuf
 	char *__buf;
 };
 
-//¶¨ÒåÏßĞÔ»º³åÍ·
+//å®šä¹‰çº¿æ€§ç¼“å†²å¤´
 struct line_buf_hdr
 {
 	size_t buf_capacity ;
@@ -101,7 +101,7 @@ struct line_buf_hdr
 static __INLINE__ size_t _lbuf_capacity(struct nd_linebuf *pbuf) 
 {
 	return (size_t)pbuf->buf_capacity;
-}	//µÃµ½ÈİÁ¿
+}	//å¾—åˆ°å®¹é‡
 
 
 static __INLINE__ size_t _lbuf_datalen(struct nd_linebuf *pbuf)
@@ -112,7 +112,7 @@ static __INLINE__ size_t _lbuf_datalen(struct nd_linebuf *pbuf)
 static __INLINE__ size_t _lbuf_free_capacity(struct nd_linebuf *pbuf) 
 {
 	return _lbuf_capacity(pbuf) - _lbuf_datalen(pbuf);
-}	//µÃµ½ÈİÁ¿
+}	//å¾—åˆ°å®¹é‡
 
 
 static __INLINE__ void _lbuf_reset(struct nd_linebuf *pbuf)
@@ -144,12 +144,12 @@ static __INLINE__ size_t _lbuf_freespace(struct nd_linebuf *pbuf)
 	return (size_t) (pbuf->__buf + _lbuf_capacity(pbuf) - pbuf->__end) ;
 }
 ND_COMMON_API void _lbuf_add_data(struct nd_linebuf *pbuf,size_t len);
-//¶ÁĞ´Êı¾İ
+//è¯»å†™æ•°æ®
 ND_COMMON_API int _lbuf_read(struct nd_linebuf *pbuf,void *buf, size_t size,int flag);
 ND_COMMON_API int _lbuf_write(struct nd_linebuf *pbuf,void *data, size_t datalen,int flag);
 
 ND_COMMON_API void _lbuf_sub_data(struct nd_linebuf *pbuf,size_t len);
-//°ÑÊı¾İÒÆ¶¯µ½buf head
+//æŠŠæ•°æ®ç§»åŠ¨åˆ°buf head
 ND_COMMON_API void _lbuf_move_ahead(struct nd_linebuf *pbuf) ;
 ND_COMMON_API void _lbuf_tryto_move_ahead(struct nd_linebuf *pbuf) ;
 ND_COMMON_API int _lbuf_init(struct nd_linebuf *pbuf, size_t data_size) ;
@@ -158,8 +158,8 @@ ND_COMMON_API  int _lbuf_realloc(struct nd_linebuf *pbuf, size_t newsize);
 //////////////////////////////////////////////////////////////////////////
 
 /*
-¶¨ÒåÒ»ÏÂºêµÄÄ¿µÄÊÇÎªÁËÄÜ¹»²Ù×÷ÈÎÒâ´óĞ¡µÄ»º³å¡£
-Ö»Òª·ûºÏÒ»ÏÂ¸ñÊ½¼´¿É
+å®šä¹‰ä¸€ä¸‹å®çš„ç›®çš„æ˜¯ä¸ºäº†èƒ½å¤Ÿæ“ä½œä»»æ„å¤§å°çš„ç¼“å†²ã€‚
+åªè¦ç¬¦åˆä¸€ä¸‹æ ¼å¼å³å¯
 struct nd_linebuf_xx
 {
 	struct line_buf_hdr  hdr ;

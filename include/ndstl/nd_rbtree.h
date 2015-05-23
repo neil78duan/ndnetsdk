@@ -568,7 +568,7 @@ protected:
 };
 // end nd_base_rbtree
 
-//与stlmap类似的rbtree
+//涓巗tlmap绫讳技鐨剅btree
 #include "nd_allocator.h"
 template<class _Tfirst, class _Ttype,class _Alloc = nd_stlalloc<typename nd_base_rbtree<_Tfirst, _Ttype>::value_node> >
 class nd_std_rbtree : public nd_base_rbtree<_Tfirst, _Ttype>

@@ -24,8 +24,8 @@
 #if !defined(ND_UNIX) 
 #include "nd_common/nd_win.h"
 
-	typedef HANDLE			ndth_handle ;	//Ïß³Ì¾ä±ú
-	typedef DWORD 			ndthread_t;	//Ïß³Ìid
+	typedef HANDLE			ndth_handle ;	//çº¿ç¨‹å¥æŸ„
+	typedef DWORD 			ndthread_t;	//çº¿ç¨‹id
 	__INLINE__ int nd_thread_equal(ndthread_t t1, ndthread_t t2){return (t1==t2) ;}
 	
 	//typedef volatile long atomic_t ;
@@ -37,8 +37,8 @@
 
 #else //if __LINUX__		//UNIX OR linux platform
 #include "nd_common/nd_unix.h"	
-	typedef pthread_t		ndth_handle ;	//Ïß³Ì¾ä±ú
-	typedef pthread_t 		ndthread_t;		//Ïß³ÌID
+	typedef pthread_t		ndth_handle ;	//çº¿ç¨‹å¥æŸ„
+	typedef pthread_t 		ndthread_t;		//çº¿ç¨‹ID
 	#define  nd_thread_equal	pthread_equal
 	ND_COMMON_API size_t set_maxopen_fd(size_t max_fd) ;
 	ND_COMMON_API size_t get_maxopen_fd();
@@ -52,19 +52,19 @@
 
 #include "nd_common/nd_atomic.h"
 
-typedef void* (*NDTH_FUNC)(void* param) ;		//Ïß³Ìº¯Êı
+typedef void* (*NDTH_FUNC)(void* param) ;		//çº¿ç¨‹å‡½æ•°
 enum {
 	NDT_PRIORITY_NORMAL,
 	NDT_PRIORITY_HIGHT,
 	NDT_PRIORITY_LOW
 };
-//´´½¨Ïß³Ìº¯Êı
+//åˆ›å»ºçº¿ç¨‹å‡½æ•°
 ND_COMMON_API ndth_handle nd_createthread(NDTH_FUNC func, void* param,ndthread_t *thid,int priority);
-//Ç¿ÆÈÏß³ÌÈÃ³öÖ´ĞĞÊ±¼ä
+//å¼ºè¿«çº¿ç¨‹è®©å‡ºæ‰§è¡Œæ—¶é—´
 ND_COMMON_API int nd_threadsched(void) ;
-//Ç¿ÆÈÏß³ÌÍË³ö
+//å¼ºè¿«çº¿ç¨‹é€€å‡º
 ND_COMMON_API void nd_threadexit(int exitcode);
-//µÈ´ıÒ»¸öÏß³ÌµÄ½áÊø
+//ç­‰å¾…ä¸€ä¸ªçº¿ç¨‹çš„ç»“æŸ
 ND_COMMON_API int nd_waitthread(ndth_handle handle) ;
 
 ND_COMMON_API int nd_terminal_thread(ndth_handle handle,int exit_code);
@@ -110,14 +110,14 @@ ND_COMMON_API int broadcastCondVar(NDCondVar *v) ;
 typedef NDMutex					nd_mutex ;
 typedef NDCondVar 				nd_cond ;
 
-//¶¨Òå»¥³â½Ó¿Ú
-#define nd_mutex_init(m)	initNDMutex(m)	//³õÊ¼»¯»¥³â
+//å®šä¹‰äº’æ–¥æ¥å£
+#define nd_mutex_init(m)	initNDMutex(m)	//åˆå§‹åŒ–äº’æ–¥
 #define nd_mutex_lock(m) 	entryMutex(m)	//lock
 #define nd_mutex_trylock(m) tryEntryMutex(m) 
 #define nd_mutex_unlock(m) 	leaveMutex(m) 
 #define nd_mutex_destroy(m) destoryMutex(m) 
 
-//¶¨ÒåÌõ¼ş±äÁ¿½Ó¿Ú
+//å®šä¹‰æ¡ä»¶å˜é‡æ¥å£
 #define nd_cond_init(c)				initNDCondVar(c)
 #define nd_cond_destroy(c)			destoryCondVar(c)
 #define nd_cond_wait(c, m)			waitCondVar(c, m)
@@ -146,7 +146,7 @@ static  __INLINE__ int nd_key_esc()
 	return 0 ;
 }
 #include <time.h>
-ND_COMMON_API int nd_time_day_interval(time_t end_tm, time_t start_tm)  ;	//¼ÆËãÁ½¸öÊ±¼äµÄÌìÊı¼ä¸ô
+ND_COMMON_API int nd_time_day_interval(time_t end_tm, time_t start_tm)  ;	//è®¡ç®—ä¸¤ä¸ªæ—¶é—´çš„å¤©æ•°é—´éš”
 
 #define NDMIN(a,b) ((a) < (b) ? (a) : (b))
 #define NDMAX(a,b) ((a) > (b) ? (a) : (b))
