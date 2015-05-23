@@ -1,4 +1,4 @@
-/* file : nd_trace.c
+ï»¿/* file : nd_trace.c
  * trace log function 
  *
  * author : neil duan 
@@ -129,7 +129,7 @@ static __INLINE__ const char *log_level_str(int level)
 /* log_msg mutex */
 //static nd_mutex 		log_mutex  ;
 
-//µÃµ½×Ö·û´®ĞÎÊ½µÄÊ±¼ä
+//å¾—åˆ°å­—ç¬¦ä¸²å½¢å¼çš„æ—¶é—´
 const char *nd_get_timestr(void)
 {
 	static __ndthread  char timebuf[64] ;
@@ -143,7 +143,7 @@ const char *nd_get_timestr(void)
 		gtm->tm_min,gtm->tm_sec) ;
 	return (const char *)timebuf ;
 }
-//µÃµ½×Ö·û´®ĞÎÊ½µÄÈÕÆÚ
+//å¾—åˆ°å­—ç¬¦ä¸²å½¢å¼çš„æ—¥æœŸ
 const char *nd_get_datestr(void)
 {
 	static __ndthread  char datebuf[64] ;
@@ -157,7 +157,7 @@ const char *nd_get_datestr(void)
 		gtm->tm_mday) ;
 	return (const char *)datebuf ;
 }
-//µÃµ½×Ö·û´®ĞÎÊ½µÄÊ±¼äºÍÈÕÆÚ
+//å¾—åˆ°å­—ç¬¦ä¸²å½¢å¼çš„æ—¶é—´å’Œæ—¥æœŸ
 const char *nd_get_datetimestr(void)
 {
 	static __ndthread  char timebuf[64];
