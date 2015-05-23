@@ -3,7 +3,7 @@
 //  srvtest1
 //
 //  Created by duanxiuyun on 14-6-24.
-//  Copyright (c) 2014年 duanxiuyun. All rights reserved.
+//  Copyright (c) 2014 duanxiuyun. All rights reserved.
 //
 
 #ifndef _ND_MSG_ID_H_

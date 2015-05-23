@@ -3,7 +3,7 @@
 //  FlashRoutes
 //
 //  Created by duanxiuyun on 14-6-25.
-//  Copyright (c) 2014年 duanxiuyun. All rights reserved.
+//  Copyright (c) 2014 duanxiuyun. All rights reserved.
 //
 
 #include "nd_common/nd_common.h"

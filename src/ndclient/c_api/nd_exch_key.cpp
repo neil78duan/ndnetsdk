@@ -3,7 +3,7 @@
 //  ndclient_mac
 //
 //  Created by duanxiuyun on 14-11-13.
-//  Copyright (c) 2014年 duanxiuyun. All rights reserved.
+//  Copyright (c) 2014 duanxiuyun. All rights reserved.
 //
 
 
