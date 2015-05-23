@@ -18,6 +18,17 @@ int ndstr_set_code(int type)
 	return ret;
 }
 
+int nd_get_encode_val(const char *encodeText)
+{
+	if (0 == ndstricmp(encodeText, "gbk") || 0 == ndstricmp(encodeText, "gbk2312")){
+		return E_SRC_CODE_GBK;
+	}
+	else if (0 == ndstricmp(encodeText, "utf8") || 0 == ndstricmp(encodeText, "utf-8")){
+		return E_SRC_CODE_UTF_8;
+	}
+	return E_SRC_CODE_ANSI;
+}
+
 static __INLINE__ int _read_word(unsigned  char** dest, unsigned char **src)
 {
 //#if defined(ND_GB2312)

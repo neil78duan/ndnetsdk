@@ -6,6 +6,7 @@
  */
 
 #include "nd_common/nd_common.h"
+#include "nd_common/nd_iconv.h"
 
 #define MAX_FILE_SIZE 4*4096
 #define XML_H_END   0x3e2f			// /> xml node end mark
@@ -27,8 +28,31 @@ static int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, 
 static int xml_set_code_type(ndxml_root *xmlroot);
 static xml_errlog __xml_logfunc = _errlog ;
 
+int xml_load_from_buf(char *buf, size_t size, ndxml_root *xmlroot,const char *filename)
+{
+	int data_len = (int)size;
+	char *parse_addr = buf;
+	char *error_addr = 0;
+	do {
+		ndxml *xmlnode = parse_xmlbuf(parse_addr, data_len, &parse_addr, &error_addr);
+		if (xmlnode) {
+			list_add_tail(&xmlnode->lst_self, &xmlroot->lst_sub);
+			xmlroot->sub_num++;
+		}
+		else if (error_addr) {
+			ndxml_destroy(xmlroot);
+			show_xmlerror(filename, error_addr, buf, (size_t)data_len);
+			return -1;
+		}
+	} while (parse_addr && *parse_addr);
+
+	return 0;
+}
+
 int ndxml_load(const char *file,ndxml_root *xmlroot)
 {
+	return ndxml_load_ex(file, xmlroot, NULL);
+	/*
 	int codeType = -1;
 	int data_len,buf_size ;
 	FILE *fp;
@@ -94,6 +118,88 @@ int ndxml_load(const char *file,ndxml_root *xmlroot)
 		ndstr_set_code(codeType);
 	}
 	return 0 ;
+	*/
+}
+
+int ndxml_load_ex(const char *file, ndxml_root *xmlroot, const char*encodeType)
+{
+	int codeType = -1;
+	int ret = 0;
+	size_t size = 0;
+	char *pAddr, *pErrorAddr=0;
+	const char *pTextEncode = 0;
+	char*pBuf = nd_load_file(file, &size);
+	if (!pBuf){
+		return -1;
+	}
+	//ndxml_root *xmlroot;
+	ndxml_initroot(xmlroot);
+	if (-1 == xml_parse_fileinfo(xmlroot, pBuf, &pAddr, &pErrorAddr)) {
+		ret = -1;
+		ndxml_destroy(xmlroot);
+		show_xmlerror(file, pErrorAddr, pBuf, (size_t)size);
+		goto EXIT_ERROR ;
+	}
+	
+	pTextEncode = ndxml_getattr_val(xmlroot,"encoding");
+	if (!pTextEncode){
+		ret = -1;
+		_errlog("unknow xml-encode \n");
+		goto EXIT_ERROR;
+	}
+	if (encodeType && encodeType[0]) {
+		int nTextType = nd_get_encode_val(pTextEncode);
+		int nNeedType = nd_get_encode_val(encodeType);
+		char *pconvertbuf;
+		const char *encodeTextType = 0;
+		typedef char(*__convert_function)(const char *, char *, int)  ;
+		__convert_function func = NULL;
+		//CONVERT CODE 
+		if (nNeedType == E_SRC_CODE_UTF_8 && nTextType != E_SRC_CODE_UTF_8)	{			
+			func = nd_gbk_to_utf8;
+			encodeTextType = "utf8";
+		}
+		else if (nNeedType != E_SRC_CODE_UTF_8 && nTextType == E_SRC_CODE_UTF_8)	{			
+			func = nd_utf8_to_gbk;
+			encodeTextType = "utf8";
+		}
+
+		if (func){
+			char *pconvertbuf = malloc(size * 2);
+			if (!pconvertbuf)	{
+				ret = -1;
+				goto EXIT_ERROR;
+			}
+			if (func(pBuf, pconvertbuf, size * 2)) {
+				nd_unload_file(pBuf);
+				pBuf = pconvertbuf;
+				size = strlen(pconvertbuf);
+			}
+			else {
+				free(pconvertbuf);
+				ret = -1;
+				goto EXIT_ERROR;
+			}
+			ndxml_setattrval(xmlroot, "encoding", encodeTextType);
+		}
+		codeType = ndstr_set_code(nNeedType);
+	}
+	else {
+		codeType = xml_set_code_type(xmlroot);
+	}
+	
+
+	if (-1 == xml_load_from_buf(pBuf, size, xmlroot, file)) {
+		ret = -1;
+	}
+
+	if (codeType != -1) {
+		ndstr_set_code(codeType);
+	}
+
+EXIT_ERROR :
+	nd_unload_file(pBuf);
+	return ret;
 
 }
 
@@ -115,15 +221,8 @@ int xml_set_code_type(ndxml_root *xmlroot)
 	int oldType = -1;
 	const char *p = ndxml_getattr_val(xmlroot, "encoding");
 	if (p){
-		if (ndstricmp(p, "gbk") == 0 || ndstricmp(p, "gb2312") == 0){
-			oldType = E_SRC_CODE_GBK;
-		}
-		else if (ndstricmp(p, "utf-8") == 0) {
-			oldType = E_SRC_CODE_UTF_8;
-		}
-		else {
-			oldType = E_SRC_CODE_ANSI;
-		}
+		oldType = nd_get_encode_val(p);
+
 		oldType = ndstr_set_code(oldType);
 	}
 	return oldType;

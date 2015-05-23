@@ -47,6 +47,8 @@
 #include "nd_common/nddir.h"
 #include "nd_common/nd_cmdline.h"
 
+#include "nd_common/nd_iconv.h"
+
 ND_COMMON_API ndtime_t		nd_time(void) ;
 ND_COMMON_API ndbigtime_t	nd_bigtime(void);
 ND_COMMON_API int nd_common_init();
