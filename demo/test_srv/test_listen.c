@@ -23,8 +23,8 @@ int listen_netmsg_entry(struct nd_client_map*cli_map,struct ndnet_msg *msg)
 	static FILE *file1 = NULL;
 //	if(s1!=msg->msg_hdr.param)
 //		nd_assert(0);
-	//windowså¹³å°åªæœ‰åœ¨è¿™é‡ŒåŠ äº†æ‰“å°æ‰èƒ½æ­£ç¡®å‘é€æ•°æ®,éš¾é“æ˜¯å¤šçº¿ç¨‹åˆ‡æ¢éœ€è¦ä½¿ç”¨printf
-	//ä¹Ÿè¡Œéœ€è¦æä¾›listençº¿ç¨‹çš„ä¼˜å…ˆçº§
+	//windowsÆ½Ì¨Ö»ÓÐÔÚÕâÀï¼ÓÁË´òÓ¡²ÅÄÜÕýÈ··¢ËÍÊý¾Ý,ÄÑµÀÊÇ¶àÏß³ÌÇÐ»»ÐèÒªÊ¹ÓÃprintf
+	//Ò²ÐÐÐèÒªÌá¹©listenÏß³ÌµÄÓÅÏÈ¼¶
 	ndprintf(_NDT("%d [send %d]received len=%d\n"),s1,msg->msg_hdr.param,
 		msg->msg_hdr.data_length + ND_MSGHRD_LEN);
 //	ndprintf(_NDT("%d received message %d total recv=%d\n"),s1,NDNET_MSGID(msg), cli_map->connect_node.recv_len);

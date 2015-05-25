@@ -11,18 +11,18 @@
 #include <string.h>
 
 /*
-	æŒ‡ä»¤ç»“æ„ :
-	| 1bytes |  (1 bytes) |   4bytes  |  (1 bytes) |   4bytes  |  ä¸‹ä¸€ä¸ªæ¡æŒ‡ä»¤
+	Ö¸Áî½á¹¹ :
+	| 1bytes |  (1 bytes) |   4bytes  |  (1 bytes) |   4bytes  |  ÏÂÒ»¸öÌõÖ¸Áî
 		|			|			|
-	  æŒ‡ä»¤       æºæ“ä½œæ•°æº	 æºæ“ä½œæ•°å€¼,	ç›®çš„æ“ä½œæ•°				æˆ–è€…åœ°å€
+	  Ö¸Áî       Ô´²Ù×÷ÊıÔ´	 Ô´²Ù×÷ÊıÖµ,	Ä¿µÄ²Ù×÷Êı				»òÕßµØÖ·
 	 
-	æ¯æ¡æŒ‡ä»¤åŒ…æ‹¬3ä¸ªéƒ¨åˆ†,æŒ‡ä»¤,æ“ä½œæ•°æºå’Œæ“ä½œæ•°å€¼
-	æŒ‡ä»¤æ˜¯CPUåŠ¨ä½œ,æ‰§è¡Œ+ - * / ç­‰ åŠŸèƒ½
-	æ“ä½œæ•°æ¥æº: ç«‹å³æ•°æˆ–è€…æ˜¯å†…å­˜åœ°å€(ä¸æ˜¯æ‰€æœ‰çš„æŒ‡ä»¤éƒ½æœ‰)
-	æ“ä½œæ•°å€¼,æˆ–è€…åœ°å€ : æŒ‡æ˜æ“çš„æ˜¯ç«‹å³æ•°è¿˜æ˜¯å†…å­˜åœ°å€.	
+	Ã¿ÌõÖ¸Áî°üÀ¨3¸ö²¿·Ö,Ö¸Áî,²Ù×÷ÊıÔ´ºÍ²Ù×÷ÊıÖµ
+	Ö¸ÁîÊÇCPU¶¯×÷,Ö´ĞĞ+ - * / µÈ ¹¦ÄÜ
+	²Ù×÷ÊıÀ´Ô´: Á¢¼´Êı»òÕßÊÇÄÚ´æµØÖ·(²»ÊÇËùÓĞµÄÖ¸Áî¶¼ÓĞ)
+	²Ù×÷ÊıÖµ,»òÕßµØÖ· : Ö¸Ã÷²ÙµÄÊÇÁ¢¼´Êı»¹ÊÇÄÚ´æµØÖ·.	
 */
 
-//åˆå§‹åŒ–ä¸€ä¸ªè™šæ‹Ÿæœºå™¨
+//³õÊ¼»¯Ò»¸öĞéÄâ»úÆ÷
 void vm_machine_init(struct vm_cpu *vm, vm_value *mm_addr,size_t mm_size)
 {
 	memset(vm, 0, sizeof(*vm)) ;
@@ -67,7 +67,7 @@ static __INLINE__ vm_value _read_data(struct vm_cpu *vm)
 	return _FETCH_AND_INC_ADDR(vm_value,vm->ip) ;
 }
 
-/*å¾—åˆ°å†…å­˜åœ°å€,ä¸»è¦æ˜¯ä¸ºäº†æ‰“å°è°ƒè¯•ä¿¡æ¯*/
+/*µÃµ½ÄÚ´æµØÖ·,Ö÷ÒªÊÇÎªÁË´òÓ¡µ÷ÊÔĞÅÏ¢*/
 vm_value* _get_memory(struct vm_cpu *vm, vm_adddress index)
 {
 	if(index>=0 && index<=(vm_adddress)(vm->mem_size) ){
@@ -82,7 +82,7 @@ vm_value* _get_memory(struct vm_cpu *vm, vm_adddress index)
 	return 0 ;
 }
 
-//å¾—åˆ°æ“ä½œæ•°æ•°ç›®
+//µÃµ½²Ù×÷ÊıÊıÄ¿
 int get_operand_num(vm_ins instruction)
 {
 	if(EOP_NOP==instruction) {
@@ -113,7 +113,7 @@ int check_instruction_valid(vm_ins instruction)
 	return 0 ;
 }
 
-//æŠŠæŒ‡ä»¤æµå˜æˆnodeç»“æ„
+//°ÑÖ¸ÁîÁ÷±ä³Énode½á¹¹
 int vm_instruction_2node(struct vm_instruction_node *node , void **ins_start , void *ins_end)
 {
 	int num ;
@@ -141,7 +141,7 @@ int vm_instruction_2node(struct vm_instruction_node *node , void **ins_start , v
 	return 0 ;
 
 }
-//å•æ­¥è¯»å–å¹¶æ‰§è¡Œä¸€ä¸ªæŒ‡ä»¤
+//µ¥²½¶ÁÈ¡²¢Ö´ĞĞÒ»¸öÖ¸Áî
 int vm_step(struct vm_cpu *vm, void *ins_start , void *ins_end)
 {
 	struct vm_instruction_node node = {0};
@@ -157,7 +157,7 @@ int vm_step(struct vm_cpu *vm, void *ins_start , void *ins_end)
 
 }
 
-//æ‰§è¡Œä¸€ä¸ªæŒ‡ä»¤æµ
+//Ö´ĞĞÒ»¸öÖ¸ÁîÁ÷
 int vm_run_cmd(struct vm_cpu *vm,void *ins_addr, size_t ins_size) 
 {
 	
@@ -174,7 +174,7 @@ int vm_run_cmd(struct vm_cpu *vm,void *ins_addr, size_t ins_size)
 	return 0 ;
 }
 
-//æŠŠæŒ‡ä»¤èŠ‚ç‚¹è½¬å˜æˆæµå¼æŒ‡ä»¤,ä¾¿äºä¿å­˜åˆ°æ–‡ä»¶æˆ–è€…ç¼“å†²ä¸­
+//°ÑÖ¸Áî½Úµã×ª±ä³ÉÁ÷Ê½Ö¸Áî,±ãÓÚ±£´æµ½ÎÄ¼ş»òÕß»º³åÖĞ
 size_t vm_instruct_2buf(struct vm_instruction_node *node, void *buf) 
 {
 	size_t size = 0 ;
@@ -210,7 +210,7 @@ size_t vm_instruct_2buf(struct vm_instruction_node *node, void *buf)
 	return size ;
 }
 
-//å¾—åˆ°æ“ä½œæ•°çš„å€¼
+//µÃµ½²Ù×÷ÊıµÄÖµ
 vm_value vm_getvalue(vm_data_src ds,vm_value val, struct vm_cpu *vm)
 {
 	if(EDS_IMMEDIATE==ds) {
@@ -223,7 +223,7 @@ vm_value vm_getvalue(vm_data_src ds,vm_value val, struct vm_cpu *vm)
 		return vm->reg2;
 	}
 	else if(EDS_STACK==ds) {
-		//è¯»å–å †æ ˆ
+		//¶ÁÈ¡¶ÑÕ»
 		vm_adddress index = *((vm_adddress*) &val) ;
 		if( index < 0  ) {
 			if(vm->stack <= (vm->sp + index))
@@ -252,7 +252,7 @@ vm_value vm_getvalue(vm_data_src ds,vm_value val, struct vm_cpu *vm)
 	return (vm_value)0;
 }
 
-//å¾—åˆ°æ“ä½œæ•°çš„å¯¹åº”çš„åœ°å€
+//µÃµ½²Ù×÷ÊıµÄ¶ÔÓ¦µÄµØÖ·
 vm_value* vm_ref_operand(vm_data_src ds,vm_value val, struct vm_cpu *vm)
 {
 	if(EDS_REG1==ds) {
@@ -262,7 +262,7 @@ vm_value* vm_ref_operand(vm_data_src ds,vm_value val, struct vm_cpu *vm)
 		return &(vm->reg2);
 	}
 	else if(EDS_STACK==ds) {
-		//è¯»å–å †æ ˆ
+		//¶ÁÈ¡¶ÑÕ»
 		vm_adddress index = *((vm_adddress*) &val) ;
 		if( index < 0  ) {
 			if(vm->stack <= (vm->sp + index))
@@ -290,7 +290,7 @@ vm_value* vm_ref_operand(vm_data_src ds,vm_value val, struct vm_cpu *vm)
 
 
 vm_value vm_rand(vm_value val1, vm_value val2) ;
-//æ‰§è¡Œä¸€ä¸ªèŠ‚ç‚¹æŒ‡ä»¤
+//Ö´ĞĞÒ»¸ö½ÚµãÖ¸Áî
 int vm_run_insnode(struct vm_instruction_node *node,struct vm_cpu *vm)
 {
 	vm_value *val1, val2;
@@ -374,7 +374,7 @@ int vm_run_insnode(struct vm_instruction_node *node,struct vm_cpu *vm)
 		}
 	case EOP_LTZERO:
 		{	
-			//æµ‹è¯•æ“ä½œæ•°æ˜¯å¦å°äº0 ,å°äº0è¿”å›1 å¤§äº0 è¿”å›0 
+			//²âÊÔ²Ù×÷ÊıÊÇ·ñĞ¡ÓÚ0 ,Ğ¡ÓÚ0·µ»Ø1 ´óÓÚ0 ·µ»Ø0 
 			val2 = vm_getvalue(node->ds1,node->val1, vm) ;
 			if(val2 < 0)
 				vm->reg1 = (vm_value)1.0 ;
@@ -384,7 +384,7 @@ int vm_run_insnode(struct vm_instruction_node *node,struct vm_cpu *vm)
 		}
 	case EOP_PROB:
 		{
-			//æ¨¡æ‹Ÿä¸€ä¸ªæ¦‚ç‡
+			//Ä£ÄâÒ»¸ö¸ÅÂÊ
 			vm_value vt ;
 			val2 = vm_getvalue(node->ds1,node->val1, vm) ;
 			vt = vm_rand(1, 100) ;
@@ -398,7 +398,7 @@ int vm_run_insnode(struct vm_instruction_node *node,struct vm_cpu *vm)
 
 	case EOP_SQRT:
 		{
-			//å¼€æ–¹
+			//¿ª·½
 			val2 = vm_getvalue(node->ds1,node->val1, vm) ;
 			if (val2 > 0){
 				vm->reg1 = (vm_value)sqrt(val2) ;
@@ -423,7 +423,7 @@ int vm_run_insnode(struct vm_instruction_node *node,struct vm_cpu *vm)
 		}
 	}
 
-	//æ˜¾ç¤ºè¿è¡Œç»“æœ
+	//ÏÔÊ¾ÔËĞĞ½á¹û
 	if(vm->echo_res){
 		vm_echo_res(node,vm);
 	}
@@ -449,7 +449,7 @@ int vm_check_insnode(struct vm_instruction_node *node)
 	return (0==vm_run_insnode(node, &vm) ) ;
 }
 
-//è®¡ç®—éšæœºæ•°
+//¼ÆËãËæ»úÊı
 vm_value vm_rand(vm_value val1, vm_value val2)
 {
 	int val ;
@@ -471,7 +471,7 @@ vm_value vm_rand(vm_value val1, vm_value val2)
 
 
 #pragma warning(disable: 4996) 
-//å¾—åˆ°æ“ä½œæ•°çš„åå­—
+//µÃµ½²Ù×÷ÊıµÄÃû×Ö
 char* vm_operand_name(vm_data_src ds,vm_value val, struct vm_cpu *vm, char *buf)
 {
 	if(EDS_REG1==ds) {
@@ -483,7 +483,7 @@ char* vm_operand_name(vm_data_src ds,vm_value val, struct vm_cpu *vm, char *buf)
 		//return &(vm->reg2);
 	}
 	else if(EDS_STACK==ds) {
-		//è¯»å–å †æ ˆ
+		//¶ÁÈ¡¶ÑÕ»
 		vm_adddress index = *((vm_adddress*) &val) ;
 		if( index < 0  ) {
 			if(vm->stack <= (vm->sp + index)) {
@@ -513,7 +513,7 @@ char* vm_operand_name(vm_data_src ds,vm_value val, struct vm_cpu *vm, char *buf)
 	return buf;
 }
 
-//æ˜¾ç¤ºè¿è¡Œç»“æœ
+//ÏÔÊ¾ÔËĞĞ½á¹û
 int vm_echo_res(struct vm_instruction_node *node,struct vm_cpu *vm)
 {
 	switch (node->ins){

@@ -14,7 +14,7 @@
 #define _CRTTRAC(msg) do { if ((1 == _CrtDbgReport(_CRT_WARN, NULL, 0, NULL, "%s", msg))) _CrtDbgBreak(); } while (0)
 
 
-//å¦‚æžœé”™è¯¯å¼¹å‡ºé”™è¯¯æç¤ºçª—å£
+//Èç¹û´íÎóµ¯³ö´íÎóÌáÊ¾´°¿Ú
 DWORD _ErrBox(char *file, int line)
 {
 	const char *perrdesc=nd_last_error() ;
@@ -150,7 +150,7 @@ void nd_threadexit(int exitcode)
 {
 	ExitThread(exitcode) ;
 }
-//ç­‰å¾…ä¸€ä¸ªçº¿ç¨‹çš„ç»“æŸ
+//µÈ´ýÒ»¸öÏß³ÌµÄ½áÊø
 int nd_waitthread(ndth_handle handle) 
 {
 	DWORD dwRet = WaitForSingleObject(handle,INFINITE) ;
@@ -228,7 +228,7 @@ int close_filemap(nd_filemap_t *mapinfo)
 	return 0;
 }
 
-//æ‰“å¼€ä¸€ä¸ªå†…å­˜æ˜ åƒæ–‡ä»¶
+//´ò¿ªÒ»¸öÄÚ´æÓ³ÏñÎÄ¼þ
 int open_filemap(char *map_name, nd_filemap_t *out_handle) 
 {
 	out_handle->hFile = INVALID_HANDLE_VALUE ;

@@ -11,14 +11,14 @@
 #include <stdio.h>
 
 #ifdef _ND_MEMORY_H_
-//è¿™é‡Œéœ€è¦ä½¿ç”¨libcçš„mallocå‡½æ•°
+//ÕâÀïĞèÒªÊ¹ÓÃlibcµÄmallocº¯Êı
 #error do not include nd_alloc.h
 #endif
 
 #ifdef ND_SOURCE_TRACE
 
 #ifdef ND_MULTI_THREADED
-//ä½¿ç”¨å¤šçº¿ç¨‹
+//Ê¹ÓÃ¶àÏß³Ì
 static nd_mutex __S_source_lock ;
 static int __s_source_init = 0 ;
 nd_handle __s_srclog_pool ;
@@ -37,7 +37,7 @@ static ND_LIST_HEAD(__s_source_head) ;
 static int _source_numbers = 0 ;
 #define SOURCE_DUMP(msg) nd_logfatal(msg)
 //fprintf(stderr,msg) 
-//å®šä¹‰èµ„æºè®°å½•å™¨çš„æ•°æ®ç»“æœ
+//¶¨Òå×ÊÔ´¼ÇÂ¼Æ÷µÄÊı¾İ½á¹û
 struct _Source_loginfo{
 	void *__source ;
 	int __line ;			//line munber in file

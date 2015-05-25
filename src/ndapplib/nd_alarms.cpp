@@ -298,9 +298,9 @@ void NDAlarm::SetWeekTime(int day_index,int hour_index, int minute_index )
 	app_inst_time(&now) ;
 	gtm = localtime( &now );
 
-	//æ¯å‘¨å®šæ—¶å™¨
+	//Ã¿ÖÜ¶¨Ê±Æ÷
 	if (m_week_day == gtm->tm_wday ){
-		//é—¹é“ƒæ²¡æœ‰æ‰§è¡Œ
+		//ÄÖÁåÃ»ÓÐÖ´ÐÐ
 		if ((gtm->tm_hour > m_week_hour) || (gtm->tm_hour == m_week_hour&& gtm->tm_min > m_week_minute)) {
 			NDUINT32 wkindex = (NDUINT32)(now / (60*60 * 24 *7)) ;
 			m_week_last_runweek = wkindex;

@@ -9,16 +9,16 @@
 #ifndef _ND_THREADMSG_H_
 #define _ND_THREADMSG_H_
 
-//线程通讯消息编号
+//�߳�ͨѶ��Ϣ���
 enum eThreadMsgID 
 {
-	E_THMSGID_ADDTO_THREAD,		//把session添加到目标线程
-	E_THMSGID_NETMSG_HANDLE,	//把消息让目标线程作为网络消息处理
-	E_THMSGID_SENDTO_CLIENT ,	//把消息发送给目标session
-	E_THMSGID_DELFROM_THREAD,	//把session从线程中删除
-	E_THMSGID_CLOSE_SESSION,	//关闭session
+	E_THMSGID_ADDTO_THREAD,		//��session���ӵ�Ŀ���߳�
+	E_THMSGID_NETMSG_HANDLE,	//����Ϣ��Ŀ���߳���Ϊ������Ϣ����
+	E_THMSGID_SENDTO_CLIENT ,	//����Ϣ���͸�Ŀ��session
+	E_THMSGID_DELFROM_THREAD,	//��session���߳���ɾ��
+	E_THMSGID_CLOSE_SESSION,	//�ر�session
 	E_THMSG_NUMBER
 };
 
-#define THMSGID_USER_START 128	//用户消息起始编号
+#define THMSGID_USER_START 128	//�û���Ϣ��ʼ���
 #endif 

@@ -13,8 +13,8 @@
 #include "nd_srvcore/client_map.h"
 
 /*
- * å½“æ¯ä¸ªå®¢æˆ·ç«¯è¿æ¥åˆ°æœåŠ¡å™¨ä»¥å,ä¼šåœ¨æœåŠ¡å™¨ä¸Šäº§ç”Ÿä¸€ä¸ªå¯¹äºçš„è¿æ¥,
- * æˆ‘æŠŠè¿™ä¸ªè¿æ¥ç§°ä¸ºä¸€ä¸ªsession.
+ * µ±Ã¿¸ö¿Í»§¶ËÁ¬½Óµ½·şÎñÆ÷ÒÔºó,»áÔÚ·şÎñÆ÷ÉÏ²úÉúÒ»¸ö¶ÔÓÚµÄÁ¬½Ó,
+ * ÎÒ°ÑÕâ¸öÁ¬½Ó³ÆÎªÒ»¸ösession.
  */
 
 typedef struct netui_info  *nd_session_handle ;
@@ -22,7 +22,7 @@ typedef struct netui_info  *nd_session_handle ;
 //close tcp connect
 int tcp_client_close(struct nd_client_map* cli_map, int force) ;
 
-//é‡Šæ”¾æ­»è¿æ¥
+//ÊÍ·ÅËÀÁ¬½Ó
 #define tcp_release_death_node(c, f) tcp_client_close((struct nd_client_map*)c, f) 
 /* close connect*/
 ND_SRV_API int nd_session_close(nd_handle session_handle, int force);
@@ -32,14 +32,14 @@ static __INLINE__ NDUINT16  nd_session_getid(nd_handle session_handle)
 {
 	return ((nd_session_handle)session_handle)->session_id ; 
 }
-//æœåŠ¡å™¨çš„è¿æ¥èŠ‚ç‚¹å‘å®¢æˆ·ç«¯å‘é€æ•°æ®
-//å‘é€ä¸€ä¸ªå°åŒ…æ ¼å¼çš„æ•°æ®
+//·şÎñÆ÷µÄÁ¬½Ó½ÚµãÏò¿Í»§¶Ë·¢ËÍÊı¾İ
+//·¢ËÍÒ»¸ö·â°ü¸ñÊ½µÄÊı¾İ
 static __INLINE__ int  nd_session_sendex(nd_handle session_handle,nd_packhdr_t  *msg_buf, int flag) 
 {
 	return nd_connector_send(session_handle, msg_buf, flag) ;
 }
 
-//å‘é€æ¶ˆæ¯ä¸ªæ•°çš„æ•°æ®
+//·¢ËÍÏûÏ¢¸öÊıµÄÊı¾İ
 static __INLINE__ int nd_sessionmsg_sendex(nd_handle session_handle,nd_usermsghdr_t  *msg, int flag)
 {
 	ND_USERMSG_SYS_RESERVED(msg) = 0 ; //session , connector not allow send system message 
@@ -49,16 +49,16 @@ static __INLINE__ int nd_sessionmsg_sendex(nd_handle session_handle,nd_usermsghd
 	return nd_connector_send(session_handle, (nd_packhdr_t *)msg, flag) ;
 }
 
-//é€šè¯ä¼šè¯å¥æŸ„å‘é€éæ ¼å¼åŒ–çš„æ•°æ®
+//Í¨»°»á»°¾ä±ú·¢ËÍ·Ç¸ñÊ½»¯µÄÊı¾İ
 #define nd_session_raw_write(session, data, size)	nd_connector_raw_write(session, data, size)
-/*å‘å®¢æˆ·ç«¯å‘é€ç½‘ç»œæ¶ˆæ¯*/
+/*Ïò¿Í»§¶Ë·¢ËÍÍøÂçÏûÏ¢*/
 #define nd_sessionmsg_send(session,msg) nd_sessionmsg_sendex((nd_handle)(session),(nd_usermsghdr_t*)(msg),ESF_NORMAL) 
 #define nd_sessionmsg_writebuf(session,msg) nd_sessionmsg_sendex((nd_handle)(session),(nd_usermsghdr_t*)(msg),ESF_WRITEBUF) 
 #define nd_sessionmsg_send_urgen(session,msg) nd_sessionmsg_sendex((nd_handle)(session),(nd_usermsghdr_t*)(msg),ESF_URGENCY) 
 #define nd_sessionmsg_post(session,msg) nd_sessionmsg_sendex((nd_handle)(session),(nd_usermsghdr_t*)(msg),ESF_POST)
 #define nd_session_valid nd_connector_valid
 
-/* å‘é€ç¼“å†²æ“ä½œ*/
+/* ·¢ËÍ»º³å²Ù×÷*/
 ND_SRV_API int nd_session_flush_sendbuf(nd_handle session_handle, int flag)  ;
 
 //broadcast netmessage 

@@ -39,7 +39,7 @@ NDConnector::~NDConnector()
 	//Destroy() ;
 }
 
-//è®¾ç½®æ¶ˆæ¯æ˜ å°„è¡¨å¤§å°,å¿…é¡»åœ¨OPENå‡½æ•°å‰è°ƒç”¨
+//ÉèÖÃÏûÏ¢Ó³Éä±í´óĞ¡,±ØĞëÔÚOPENº¯ÊıÇ°µ÷ÓÃ
 void NDConnector::SetMsgNum(int maxmsg_num , int maxid_start) 
 {
 	msg_kinds = maxmsg_num;

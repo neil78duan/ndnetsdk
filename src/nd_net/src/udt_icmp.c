@@ -18,7 +18,7 @@ typedef struct _udt_icmp_hdr
 	u_8   icmp_type;
 	u_8   icmp_code;
 	u_16  icmp_checksum;
-	u_16  receive_id;				//鎺ユ敹杩橮ROCESS id
+	u_16  receive_id;				//接收这PROCESS id
 	u_16  receive_port;				// port(like udp/tcp port)
 	u_16  send_id;
 	u_16  send_port;
@@ -76,7 +76,7 @@ static int icmp_udt_make(void *buf, char *data, int len, SOCKADDR_IN *src,SOCKAD
 	u_packet->icmp.icmp_code = 0 ;
 	u_packet->icmp.icmp_type = ICMP_ECHOREPLY ;
 	u_packet->icmp.icmp_checksum =0;
-	u_packet->icmp.receive_id =icmp_info->receive_id;				//鎺ユ敹杩橮ROCESS id
+	u_packet->icmp.receive_id =icmp_info->receive_id;				//接收这PROCESS id
 	u_packet->icmp.receive_port =icmp_info->receive_port;				// port(like udp/tcp port)
 	u_packet->icmp.send_id =icmp_info->send_id;
 	u_packet->icmp.send_port =icmp_info->send_port;	

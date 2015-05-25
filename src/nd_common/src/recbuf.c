@@ -9,26 +9,26 @@
 #include "nd_common/nd_common.h"
 #include "nd_common/nd_recbuf.h"
 
-//è¯»å†™æ•°æ®çš„ç›´æ¥æ¨¡å¼,å¦‚æœåªæ˜¯åœ¨ä¸€ä¸ªçº¿ç¨‹ä¸­ä½¿ç”¨buf
-//å¯ä»¥ç”¨_cbuf_write/_cbuf_readæ¥è¯»å†™æ•°æ®æé«˜æ•ˆç‡
-//ä½†æ˜¯ä¸æ¨èä½¿ç”¨
-//å¾€ç¼“å†²åŒºç§å†™æ•°æ®çš„åº•å±‚å¸®åŠ©å‡½æ•°
+//¶ÁĞ´Êı¾İµÄÖ±½ÓÄ£Ê½,Èç¹ûÖ»ÊÇÔÚÒ»¸öÏß³ÌÖĞÊ¹ÓÃbuf
+//¿ÉÒÔÓÃ_cbuf_write/_cbuf_readÀ´¶ÁĞ´Êı¾İÌá¸ßĞ§ÂÊ
+//µ«ÊÇ²»ÍÆ¼öÊ¹ÓÃ
+//Íù»º³åÇøÖÖĞ´Êı¾İµÄµ×²ã°ïÖúº¯Êı
 int _cbuf_write(ndrecybuf_t *pbuf,char *data, size_t len);
-//ä»ç¼“å†²åŒºä¸­è¯»å–æ•°æ®
-//bufæ•°æ®è¢«è¯»å…¥çš„åœ°å€,sizeéœ€è¦è¯»å–å­—ç¬¦çš„é•¿åº¦
-//return value è¯»å–æ•°æ®çš„é•¿åº¦
+//´Ó»º³åÇøÖĞ¶ÁÈ¡Êı¾İ
+//bufÊı¾İ±»¶ÁÈëµÄµØÖ·,sizeĞèÒª¶ÁÈ¡×Ö·ûµÄ³¤¶È
+//return value ¶ÁÈ¡Êı¾İµÄ³¤¶È
 int _cbuf_read(ndrecybuf_t *pbuf,char *buf, size_t size);
 
 //__INLINE__ char *cbuf_addr(ndrecybuf_t *pbuf) {return pbuf->m_buf ;}
 static __INLINE__ char *cbuf_tail(ndrecybuf_t *pbuf)
-	{return (char*)pbuf->m_buf+(size_t)C_BUF_SIZE;}	//ç¼“å†²å°¾å·´
+	{return (char*)pbuf->m_buf+(size_t)C_BUF_SIZE;}	//»º³åÎ²°Í
 
-//è¿”å›æ•°æ®å­˜æ”¾çš„é¡ºåº0 start < end 
+//·µ»ØÊı¾İ´æ·ÅµÄË³Ğò0 start < end 
 //__INLINE__ int cbuf_order(ndrecybuf_t *pbuf)	
 //{return (pbuf->m_pend>=pbuf->m_pstart) ;}
 
 
-//è¿”å›æ•°æ®çš„é•¿åº¦
+//·µ»ØÊı¾İµÄ³¤¶È
 size_t ndcbuf_datalen(ndrecybuf_t *pbuf)
 {
 	nd_assert(pbuf->m_nInit) ;
@@ -40,8 +40,8 @@ size_t ndcbuf_datalen(ndrecybuf_t *pbuf)
 	}
 }
 
-//å¾—åˆ°ç©ºé—²ç¼“å†²é•¿åº¦
-//èƒ½å­˜å‚¨æ•°æ®çš„å®¹é‡å§‹ç»ˆæ¯”capacity å°‘ä¸€ä¸ª,å¦‚æœç›¸ç­‰æˆ‘ä¼šè®¤ä¸ºæ˜¯ç©ºçš„
+//µÃµ½¿ÕÏĞ»º³å³¤¶È
+//ÄÜ´æ´¢Êı¾İµÄÈİÁ¿Ê¼ÖÕ±Ècapacity ÉÙÒ»¸ö,Èç¹ûÏàµÈÎÒ»áÈÏÎªÊÇ¿ÕµÄ
 size_t ndcbuf_freespace(ndrecybuf_t *pbuf)
 {
 	size_t ret  ;
@@ -54,7 +54,7 @@ size_t ndcbuf_freespace(ndrecybuf_t *pbuf)
 	return ret -1 ;
 }
 
-//è¯»å†™æ•°æ®
+//¶ÁĞ´Êı¾İ
 int ndcbuf_read(ndrecybuf_t *pbuf,void *buf, size_t size,int flag)
 {
 	size_t datalen = ndcbuf_datalen(pbuf) ;
@@ -91,23 +91,23 @@ void ndcbuf_sub_data(ndrecybuf_t *pbuf,size_t len)
 	if(pbuf->m_pstart==pbuf->m_pend )
 		ndcbuf_reset(pbuf);
 }
-//å¾€ç¼“å†²åŒºç§å†™æ•°æ®çš„åº•å±‚å¸®åŠ©å‡½æ•°
+//Íù»º³åÇøÖÖĞ´Êı¾İµÄµ×²ã°ïÖúº¯Êı
 int _cbuf_write(ndrecybuf_t *pbuf,char *data, size_t len)
 {
 	size_t ret = len ;
 	size_t  taillen ;
 	/*size_t spaceLen = cbuf_freespace(pbuf) ;
 	if(len>spaceLen) {
-		//ç­‰å¾…ç¼“å†²æ•°æ®è¢«è¯»èµ°
+		//µÈ´ı»º³åÊı¾İ±»¶Á×ß
 		//need to do something !
 		return -1 ;
 	}
 	*/
 	nd_assert(pbuf->m_nInit) ;
-	//ç¼“å†²å¤Ÿç”¨,å†™å…¥æ•°æ®
+	//»º³å¹»ÓÃ,Ğ´ÈëÊı¾İ
 	taillen = (size_t)(cbuf_tail(pbuf)-pbuf->m_pend );
 	if(taillen>=len){
-		//ç©ºé—´å¤Ÿç”¨ ä¸éœ€è¦å›å¤´
+		//¿Õ¼ä¹»ÓÃ ²»ĞèÒª»ØÍ·
 		memcpy((void*)pbuf->m_pend,(void*)data,len ) ;
 		pbuf->m_pend += len ;
 		if(pbuf->m_pend>=cbuf_tail(pbuf)){
@@ -116,7 +116,7 @@ int _cbuf_write(ndrecybuf_t *pbuf,char *data, size_t len)
 		
 	}
 	else {
-		//æ•°æ®å¼€å§‹å¾ªç¯
+		//Êı¾İ¿ªÊ¼Ñ­»·
 		memcpy((void*)pbuf->m_pend,(void*)data,taillen ) ;
 		len -= taillen ;
 		data += taillen ;
@@ -126,24 +126,24 @@ int _cbuf_write(ndrecybuf_t *pbuf,char *data, size_t len)
 	return (int)ret ;
 }
 
-//ä»ç¼“å†²åŒºä¸­è¯»å–æ•°æ®
-//bufæ•°æ®è¢«è¯»å…¥çš„åœ°å€,sizeéœ€è¦è¯»å–å­—ç¬¦çš„é•¿åº¦
-//return value è¯»å–æ•°æ®çš„é•¿åº¦
+//´Ó»º³åÇøÖĞ¶ÁÈ¡Êı¾İ
+//bufÊı¾İ±»¶ÁÈëµÄµØÖ·,sizeĞèÒª¶ÁÈ¡×Ö·ûµÄ³¤¶È
+//return value ¶ÁÈ¡Êı¾İµÄ³¤¶È
 int _cbuf_read(ndrecybuf_t *pbuf,char *buf, size_t size)
 {
 	size_t ret = size ;
 	size_t  taillen =0;
 	/*size_t data_len = cbuf_datalen(pbuf) ;
 	if(size>data_len) {
-		//æ²¡æœ‰è¿™ä¹ˆå¤šæ•°æ®,ç­‰å¾…æ•°æ®å†™å…¥
+		//Ã»ÓĞÕâÃ´¶àÊı¾İ,µÈ´ıÊı¾İĞ´Èë
 		//need to do something !
 		return -1 ;
 	}
 	*/
 	nd_assert(pbuf->m_nInit) ;
-	//ç¼“å†²æœ‰ç€ä¹ˆå¤šæ•°æ®å¤Ÿç”¨
+	//»º³åÓĞ×ÅÃ´¶àÊı¾İ¹»ÓÃ
 	if(cbuf_order(pbuf)){
-		//æ•°æ®æ²¡æœ‰å›å¤´
+		//Êı¾İÃ»ÓĞ»ØÍ·
 		memcpy((void*)buf,(void*)pbuf->m_pstart,size ) ;
 		pbuf->m_pstart += size ;
 		if(pbuf->m_pstart==pbuf->m_pend) {
@@ -152,10 +152,10 @@ int _cbuf_read(ndrecybuf_t *pbuf,char *buf, size_t size)
 		return (int)size ;
 	}
 
-	//æ•°æ®å¼€å§‹å¾ªç¯
+	//Êı¾İ¿ªÊ¼Ñ­»·
 	taillen = (size_t)(cbuf_tail(pbuf) - pbuf->m_pstart );
 	if(taillen>=size) {
-		//å°¾éƒ¨æ•°æ®å¤Ÿè¯»å–çš„é•¿åº¦
+		//Î²²¿Êı¾İ¹»¶ÁÈ¡µÄ³¤¶È
 		memcpy((void*)buf,(void*)pbuf->m_pstart,size ) ;		
 		pbuf->m_pstart += size ;
 		if(pbuf->m_pstart>=cbuf_tail(pbuf)) {

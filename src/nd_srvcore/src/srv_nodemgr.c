@@ -39,14 +39,14 @@ static ndthread_t  _nd_node_get_owner(struct node_root *root,NDUINT16 node_id ) 
 
 struct srvnode_info 
 {
-	ndatomic_t used;			//used statusæŒ‡ç¤ºæ­¤èŠ‚ç‚¹æ˜¯å¦ä½¿ç”¨
-	ndthread_t  owner;			//æ‹¥æœ‰è€…id
+	ndatomic_t used;			//used statusÖ¸Ê¾´Ë½ÚµãÊÇ·ñÊ¹ÓÃ
+	ndthread_t  owner;			//ÓµÓĞÕßid
 	ndthread_t locked_id;		//LOCKED BY THREAD
 	void *node_addr ;
 };
 
 
-//åªèƒ½ä½¿ç”¨é™æ€åˆ†é…å™¨
+//Ö»ÄÜÊ¹ÓÃ¾²Ì¬·ÖÅäÆ÷
 #define USER_STATIC_ALLOC 1
 
 #ifndef USER_STATIC_ALLOC
@@ -162,7 +162,7 @@ void nd_srvnode_destroy(struct node_root *root)
 	root->node_alloctor = 0 ;
 }
 
-//å‡å°‘è¿ç”¨è®¡æ•°
+//¼õÉÙÔËÓÃ¼ÆÊı
 static void __dec_ref(struct node_root *root, struct srvnode_info *node)
 {
 	ndatomic_t v = 0 ;
@@ -270,7 +270,7 @@ int nd_node_deaccept(struct node_root *root, NDUINT16 node_id)
 	return 0;
 }
 
-//å¢åŠ å¼•ç”¨æ¬¡æ•°
+//Ôö¼ÓÒıÓÃ´ÎÊı
 int nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
 {
 	ndatomic_t tmp ;
@@ -290,7 +290,7 @@ int nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
 	}
 	return -1 ;
 }
-//å‡å°‘å¼•ç”¨æ¬¡æ•°
+//¼õÉÙÒıÓÃ´ÎÊı
 void nd_node_dec_ref(struct node_root *root, NDUINT16 node_id)
 {
 	int index = node_id - root->base_id  ;

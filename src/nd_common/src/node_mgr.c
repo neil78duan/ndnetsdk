@@ -260,7 +260,7 @@ int nd_node_deaccept(struct node_root *root, NDUINT16 node_id)
 #endif
 }
 
-//å¢åŠ å¼•ç”¨æ¬¡æ•°
+//Ôö¼ÓÒıÓÃ´ÎÊı
 int nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
 {
 #if 0
@@ -276,7 +276,7 @@ int nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
 	nd_assert(node->__used>0) ;
 
 	while((tmp = nd_atomic_read(&(node->__used))) > 0) {
-		//é˜²æ­¢åœ¨read testå’Œswapä¹‹é—´å˜é‡è¢«ä¿®æ”¹
+		//·ÀÖ¹ÔÚread testºÍswapÖ®¼ä±äÁ¿±»ĞŞ¸Ä
 		if(nd_compare_swap(&node->__used,tmp,tmp+1)) {
 			return 0 ;
 		}
@@ -284,7 +284,7 @@ int nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
 #endif 
 	return -1 ;
 }
-//å‡å°‘å¼•ç”¨æ¬¡æ•°
+//¼õÉÙÒıÓÃ´ÎÊı
 void nd_node_dec_ref(struct node_root *root, NDUINT16 node_id)
 {
 #if 0
@@ -300,7 +300,7 @@ void nd_node_dec_ref(struct node_root *root, NDUINT16 node_id)
 	nd_assert(node->__used>1) ;
 
 	while((tmp = nd_atomic_read(&(node->__used))) > 1) {
-		//é˜²æ­¢åœ¨read testå’Œswapä¹‹é—´å˜é‡è¢«ä¿®æ”¹
+		//·ÀÖ¹ÔÚread testºÍswapÖ®¼ä±äÁ¿±»ĞŞ¸Ä
 		if(nd_compare_swap(&node->__used,tmp,tmp-1)) {
 			return  ;
 		}

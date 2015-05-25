@@ -7,8 +7,8 @@
  */
 
 /*
- * ç§»æ¤äº†linuxçš„å†…æ ¸ä»£ç ,ä¸ºäº†ä¸å†²çª
- * ä¸ºäº†ä¸å†²çª,åå­—éœ€è¦æ”¹ä¸€ä¸‹
+ * ÒÆÖ²ÁËlinuxµÄÄÚºË´úÂë,ÎªÁË²»³åÍ»
+ * ÎªÁË²»³åÍ»,Ãû×ÖĞèÒª¸ÄÒ»ÏÂ
  *
  desc :
  Linux's rbtree implementation lives in the file "lib/rbtree.c".  To use it,

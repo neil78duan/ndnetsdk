@@ -12,33 +12,33 @@ typedef struct netui_info *nd_handle;
 #include "nd_net/nd_netlib.h"
 #define NET_MSG_NAME_SIZE 64
  
-//æ¶ˆæ¯å…¥å£å‡½æ•°èŠ‚ç‚¹
+//ÏûÏ¢Èë¿Úº¯Êý½Úµã
 struct msg_entry_node
 {
-	NDUINT32			level:16 ;	//æƒé™ç­‰çº§
-	NDUINT32			sys_msg:1 ;	//æ˜¯å¦æ˜¯ç³»ç»Ÿæ¶ˆæ¯
+	NDUINT32			level:16 ;	//È¨ÏÞµÈ¼¶
+	NDUINT32			sys_msg:1 ;	//ÊÇ·ñÊÇÏµÍ³ÏûÏ¢
     NDUINT32            is_log:1;   //log current message
 	NDUINT32			is_script : 1;// handle message with script
-	nd_usermsg_func		entry ;	//å…¥å£å‡½æ•°
+	nd_usermsg_func		entry ;	//Èë¿Úº¯Êý
 	char* name;
 };
 
-/*ä¸»æ¶ˆæ¯ç»“æžœ*/
+/*Ö÷ÏûÏ¢½á¹û*/
 struct sub_msgentry 
 {
 	struct msg_entry_node   msg_buf[SUB_MSG_NUM] ;
 };
 
-/* æ¶ˆæ¯å¤„ç†ç»“æž„å…¥å£èŠ‚ç‚¹ */
+/* ÏûÏ¢´¦Àí½á¹¹Èë¿Ú½Úµã */
 struct msgentry_root
 {
 	ND_OBJ_BASE;
-	NDUINT16	main_num ;			//åŒ…å«å¤šå°‘ä¸ªæ¶ˆæ¯ç±»åˆ«
-	NDUINT16	msgid_base ;		//ä¸»æ¶ˆæ¯å·èµ·å§‹åœ°å€
+	NDUINT16	main_num ;			//°üº¬¶àÉÙ¸öÏûÏ¢Àà±ð
+	NDUINT16	msgid_base ;		//Ö÷ÏûÏ¢ºÅÆðÊ¼µØÖ·
 	NDUINT32	msg_node_size;
 	void		*script_engine;
 	nd_msg_script_entry script_entry;
-	nd_usermsg_func		def_entry ;	//é»˜è®¤å…¥å£å‡½æ•°
+	nd_usermsg_func		def_entry ;	//Ä¬ÈÏÈë¿Úº¯Êý
 	struct sub_msgentry sub_buf[0] ;
 };
 
@@ -87,9 +87,9 @@ static void destroy_msgroot(struct msgentry_root *root)
 	}
 	free(root);
 }
-/* ä¸ºè¿žæŽ¥å¥æŸ„åˆ›å»ºæ¶ˆæ¯å…¥å£è¡¨
- * @mainmsg_num ä¸»æ¶ˆæ¯çš„ä¸ªæ•°(æœ‰å¤šæ•°ç±»æ¶ˆæ¯
- * @base_msgid ä¸»æ¶ˆæ¯å¼€å§‹å·
+/* ÎªÁ¬½Ó¾ä±ú´´½¨ÏûÏ¢Èë¿Ú±í
+ * @mainmsg_num Ö÷ÏûÏ¢µÄ¸öÊý(ÓÐ¶àÊýÀàÏûÏ¢
+ * @base_msgid Ö÷ÏûÏ¢¿ªÊ¼ºÅ
  * return value : 0 success on error return -1
  */
 int nd_msgtable_create(nd_handle handle, int mainmsg_num, int base_msgid) 
@@ -265,7 +265,7 @@ nd_usermsg_func nd_msgentry_get_def_func(nd_netui_handle handle)
 	return root_entry->def_entry ;
 	
 }
-/*åœ¨handleè¿žæŽ¥å¥æŸ„ä¸Šå®‰è£…æ¶ˆæ¯å¤„ç†å‡½æ•°*/
+/*ÔÚhandleÁ¬½Ó¾ä±úÉÏ°²×°ÏûÏ¢´¦Àíº¯Êý*/
 int nd_msgentry_install(nd_netui_handle handle, nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level, const char *name) 
 {
 	struct msg_entry_node * node ;
@@ -435,7 +435,7 @@ NDUINT32 nd_connect_level_get(nd_netui_handle handle)
 	return handle->level ;
 }
 
-//æƒé™ç­‰çº§
+//È¨ÏÞµÈ¼¶
 void nd_connect_level_set(nd_netui_handle handle,NDUINT32 level) 
 {
 	handle->level = level ;

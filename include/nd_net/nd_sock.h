@@ -8,7 +8,7 @@
 #ifndef _ND_SOCK_H_
 #define _ND_SOCK_H_
 
-//#define DONOT_CONVERT_BIGEND	//ä¸è¦è¿›è¡Œå¤§å°å°¾æ•°è½¬æ¢
+//#define DONOT_CONVERT_BIGEND	//²»Òª½øĞĞ´óĞ¡Î²Êı×ª»»
 #if  !defined(ND_UNIX) 
 //#include "nd_common/nd_win.h"
 #ifndef _WINDOWS_
@@ -37,7 +37,7 @@
 	typedef void* sock_opval_t ;
 #endif //win32
 
-//å…³é—­ä¸€ä¸ªè¿æ¥
+//¹Ø±ÕÒ»¸öÁ¬½Ó
 ND_NET_API void nd_socket_close(ndsocket_t s) ;
 
 //send data from socket 
@@ -115,7 +115,7 @@ typedef void (*parse_ip) (char *buf, int len, SOCKADDR_IN *from) ;
 
 //send syn pocket 
 ND_NET_API int send_tcp_syn(ndsocket_t fd, SOCKADDR_IN *src, SOCKADDR_IN *dest);
-//å‘æŒ‡å®šçš„åœ°ç‚¹å‘é€IPåŒ…,å¹¶ä¸”æŠŠæºåœ°å€è®¾å®šä½src
+//ÏòÖ¸¶¨µÄµØµã·¢ËÍIP°ü,²¢ÇÒ°ÑÔ´µØÖ·Éè¶¨Î»src
 ND_NET_API int send_raw_udp(ndsocket_t fd, char *data, int len, SOCKADDR_IN *src, SOCKADDR_IN *dest);
 ND_NET_API int set_raw_iphdr(ndsocket_t fd, int flag) ;
 ND_NET_API int send_ping(ndsocket_t fd,  SOCKADDR_IN *dest,int seq_no, char *data, int len) ;
@@ -167,7 +167,7 @@ ND_NET_API int nd_proxy_sendtoex(ndsocket_t fd, const char *data, size_t size, c
 
 ND_NET_API int nd_proxy_sendto(ndsocket_t fd, void *data, size_t size,  SOCKADDR_IN *remoteaddr,SOCKADDR_IN *proxy);
 
-//æ¯”è¾ƒIP,å¦‚æœæ˜¯ 192.168.0.1 å’Œ192.168.1.255,æ˜¯ç›¸ç­‰çš„, 192.168.1.%å°†ä¼šè½¬å˜æˆ192.168.1.255
+//±È½ÏIP,Èç¹ûÊÇ 192.168.0.1 ºÍ192.168.1.255,ÊÇÏàµÈµÄ, 192.168.1.%½«»á×ª±ä³É192.168.1.255
 //return 0 success
 ND_NET_API int nd_sock_cmp_ip(ndip_t src, ndip_t desc, ndip_t ipmask) ;
 #endif

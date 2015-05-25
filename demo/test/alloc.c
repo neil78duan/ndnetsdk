@@ -144,7 +144,7 @@ int run_test_pool()
 	void *p  ;
 	size_t size = rand() % 4096 + 1 ;
 	size_t total_size ;
-	nd_handle pool =  nd_pool_create(EMEMPOOL_HUGE, "testalloc") ;			//鍒涘缓涓�涓唴瀛樻睜,杩斿洖鍐呭瓨姹犲湴鍧�
+	nd_handle pool =  nd_pool_create(EMEMPOOL_HUGE, "testalloc") ;			//创建一个内存池,返回内存池地址
 	
 	if(!pool) {
 		printf("create pool error\n") ;

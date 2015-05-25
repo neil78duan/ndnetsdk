@@ -3,7 +3,7 @@
 //  cliDemo
 //
 //  Created by duanxiuyun on 15-3-5.
-//  Copyright (c) 2015å¹´ duanxiuyun. All rights reserved.
+//  Copyright (c) 2015Äê duanxiuyun. All rights reserved.
 //
 
 
@@ -75,7 +75,7 @@ int set_xml_value(char *file, char *node_name_list, char *attr_name, char*attr_v
             success = true ;
         }
         if (success) {
-            ndxml_save_ex(&xmlfile,file,"xml version=\"1.0\"") ;
+            ndxml_save(&xmlfile,file) ;
         }
     }
     

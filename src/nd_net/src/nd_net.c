@@ -52,7 +52,7 @@ void nd_net_destroy(void)
 #endif
 }
 
-//æ³¨å†Œtcp udtè¿žæŽ¥å™¨
+//×¢²átcp udtÁ¬½ÓÆ÷
 int register_connector(void)
 {
 	int ret ;

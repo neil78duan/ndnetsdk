@@ -8,23 +8,23 @@
 #ifndef _ND_NODE_MGR_H_
 #define _ND_NODE_MGR_H_
 
-/*æ´»åŠ¨è¿æ¥çš„ç®¡ç†èŠ‚ç‚¹
- *æ”¯æŒå¤šçº¿ç¨‹çš„èŠ‚ç‚¹ç®¡ç†å™¨
- * èŠ‚ç‚¹ç®¡ç†å™¨æ”¯æŒ[1,65535]
+/*»î¶¯Á¬½ÓµÄ¹ÜÀí½Úµã
+ *Ö§³Ö¶àÏß³ÌµÄ½Úµã¹ÜÀíÆ÷
+ * ½Úµã¹ÜÀíÆ÷Ö§³Ö[1,65535]
  */
 struct node_root;
 
-typedef void *(*node_alloc)(nd_handle alloctor) ;							//ä»ç‰¹å®šåˆ†é…å™¨ä¸Šåˆ†é…ä¸€ä¸ªè¿æ¥å—å†…å­˜
-typedef void (*node_init)(void *node_addr, nd_handle owner) ;				//åˆå§‹åŒ–ä¸€ä¸ªèŠ‚ç‚¹owner:èŠ‚ç‚¹æ‹¥æœ‰è€…
-typedef void (*node_dealloc)(void *node_addr,nd_handle alloctor) ;		//ä»åˆ†é…å™¨ä¸Šé‡Šæ”¾è¿æ¥å—å†…å­˜
-typedef int (*node_freenum)(struct node_root *root) ;											//ç©ºé—²èŠ‚ç‚¹ä¸ªæ•°
-typedef int (*node_capacity)(struct node_root *root) ;											//å®¹é‡
+typedef void *(*node_alloc)(nd_handle alloctor) ;							//´ÓÌØ¶¨·ÖÅäÆ÷ÉÏ·ÖÅäÒ»¸öÁ¬½Ó¿éÄÚ´æ
+typedef void (*node_init)(void *node_addr, nd_handle owner) ;				//³õÊ¼»¯Ò»¸ö½Úµãowner:½ÚµãÓµÓĞÕß
+typedef void (*node_dealloc)(void *node_addr,nd_handle alloctor) ;		//´Ó·ÖÅäÆ÷ÉÏÊÍ·ÅÁ¬½Ó¿éÄÚ´æ
+typedef int (*node_freenum)(struct node_root *root) ;											//¿ÕÏĞ½Úµã¸öÊı
+typedef int (*node_capacity)(struct node_root *root) ;											//ÈİÁ¿
 
 typedef void(*node_walk_callback)(void *node_addr, void *param) ;
 typedef NDUINT16 (*node_accept)(struct node_root *root, void *node_addr);
-typedef int (*node_deaccept)(struct node_root *root, NDUINT16 node_id);	//è¿”å›0æˆåŠŸï¼Œï¼1å¤±è´¥å¦‚æœæ²¡æœ‰è¿”å›æˆåŠŸï¼Œå¾ˆå¯èƒ½æ˜¯å¼•ç”¨è®¡æ•°ä¸ä¸º0
-typedef int (*node_inc_ref)(struct node_root *root, NDUINT16 node_id);	//å¢åŠ å¼•ç”¨æ¬¡æ•° è¿”å›0æˆåŠŸï¼Œï¼1å¤±è´¥
-typedef void (*node_dec_ref)(struct node_root *root, NDUINT16 node_id);	//å‡å°‘å¼•ç”¨æ¬¡æ•°
+typedef int (*node_deaccept)(struct node_root *root, NDUINT16 node_id);	//·µ»Ø0³É¹¦£¬£­1Ê§°ÜÈç¹ûÃ»ÓĞ·µ»Ø³É¹¦£¬ºÜ¿ÉÄÜÊÇÒıÓÃ¼ÆÊı²»Îª0
+typedef int (*node_inc_ref)(struct node_root *root, NDUINT16 node_id);	//Ôö¼ÓÒıÓÃ´ÎÊı ·µ»Ø0³É¹¦£¬£­1Ê§°Ü
+typedef void (*node_dec_ref)(struct node_root *root, NDUINT16 node_id);	//¼õÉÙÒıÓÃ´ÎÊı
 typedef void *(*node_lock)(struct node_root *root, NDUINT16 node_id);
 typedef void *(*node_trylock)(struct node_root *root, NDUINT16 node_id);
 typedef void (*node_unlock)(struct node_root *root, NDUINT16 node_id);
@@ -41,30 +41,30 @@ typedef struct node_iterator
 	NDUINT16 total ;
 }node_iterator ;
 
-typedef void* (*node_lock_first)(struct node_root *root,node_iterator *it);	//æ‰€ä½é˜Ÿåˆ—ä¸­ç¬¬ä¸€ä¸ª,è¾“å…¥node_id 0
-typedef void* (*node_lock_next)(struct node_root *root, node_iterator *it);	//æ‰€ä½ä¸‹ä¸€ä¸ª,åŒæ—¶é‡Šæ”¾ä½†å‰è¾“å…¥node_idä½†å‰è¢«é”ä½çš„ID,è¾“å‡ºnode_idå·²ç»è¢«æ‰€ä½çš„ä¸‹ä¸€ä¸ªID,å¹¶ä¸”é‡Šæ”¾å½“å‰è¢«é”ä½çš„å¯¹è±¡
+typedef void* (*node_lock_first)(struct node_root *root,node_iterator *it);	//Ëù×¡¶ÓÁĞÖĞµÚÒ»¸ö,ÊäÈënode_id 0
+typedef void* (*node_lock_next)(struct node_root *root, node_iterator *it);	//Ëù×¡ÏÂÒ»¸ö,Í¬Ê±ÊÍ·Åµ«Ç°ÊäÈënode_idµ«Ç°±»Ëø×¡µÄID,Êä³önode_idÒÑ¾­±»Ëù×¡µÄÏÂÒ»¸öID,²¢ÇÒÊÍ·Åµ±Ç°±»Ëø×¡µÄ¶ÔÏó
 typedef void (*node_unlock_iterator)(struct node_root *root, node_iterator *it) ;
 
 struct node_info 
 {
-	ndatomic_t used;			//used statusæŒ‡ç¤ºæ­¤èŠ‚ç‚¹æ˜¯å¦ä½¿ç”¨
-	ndthread_t  owner;			//æ‹¥æœ‰è€…id
-	nd_mutex	lock ;			//å¯¹udt_socketçš„äº’æ–¥
+	ndatomic_t used;			//used statusÖ¸Ê¾´Ë½ÚµãÊÇ·ñÊ¹ÓÃ
+	ndthread_t  owner;			//ÓµÓĞÕßid
+	nd_mutex	lock ;			//¶Ôudt_socketµÄ»¥³â
 	void *node_addr ;
 };
 
 struct node_root
 {
-	int					max_conn_num;	//æœ€å¤§è¿æ¥ä¸ªæ•°
-	ndatomic_t			connect_num;	//å½“å‰è¿æ¥æ•°é‡
-	nd_sa_handle		node_alloctor;	//è¿æ¥åˆ†é…å™¨(æä¾›è¿æ¥å—å†…å­˜çš„åˆ†é…
-	int					base_id ;		//èŠ‚ç‚¹èµ·å§‹ç¼–å·,(å¯ä»¥è®©å¤šä¸ªç®¡ç†å™¨ååŒå·¥ä½œ)
+	int					max_conn_num;	//×î´óÁ¬½Ó¸öÊı
+	ndatomic_t			connect_num;	//µ±Ç°Á¬½ÓÊıÁ¿
+	nd_sa_handle		node_alloctor;	//Á¬½Ó·ÖÅäÆ÷(Ìá¹©Á¬½Ó¿éÄÚ´æµÄ·ÖÅä
+	int					base_id ;		//½ÚµãÆğÊ¼±àºÅ,(¿ÉÒÔÈÃ¶à¸ö¹ÜÀíÆ÷Ğ­Í¬¹¤×÷)
 	struct node_info	*connmgr_addr;	
 	nd_handle			mm_pool ;
 	size_t				node_size ;
 
 	node_alloc			alloc;
-	node_init			init ;		//åˆå§‹åŒ–å‡½æ•°
+	node_init			init ;		//³õÊ¼»¯º¯Êı
 	node_dealloc		dealloc ;
 	
 	node_freenum		free_num;

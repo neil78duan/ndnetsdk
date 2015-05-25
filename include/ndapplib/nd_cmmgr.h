@@ -48,7 +48,7 @@ public:
 private:
 	struct thread_pool_info *m_tpi;
 };
-//æ¯ä¸ªçº¿ç¨‹æ± çš„ä¼šè¯ç®¡ç†å™¨
+//Ã¿¸öÏß³Ì³ØµÄ»á»°¹ÜÀíÆ÷
 class NDThreadSessionMgr
 {
 public:

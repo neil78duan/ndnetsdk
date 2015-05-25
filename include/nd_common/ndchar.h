@@ -7,8 +7,8 @@
  */
 
 /*
- * ndchar ç±»ä¼¼äºTCHAR
- * å› ä¸ºæˆ‘ä¸æƒ³åˆ†åˆ«å®ç°ansiå’ŒunicodeäºŒè¿›åˆ¶ç‰ˆæœ¬,åªæ˜¯æƒ³åœ¨ç¼–è¯‘æ—¶æ–¹ä¾¿è¿›è¡Œé€‰æ‹©!
+ * ndchar ÀàËÆÓÚTCHAR
+ * ÒòÎªÎÒ²»Ïë·Ö±ğÊµÏÖansiºÍunicode¶ş½øÖÆ°æ±¾,Ö»ÊÇÏëÔÚ±àÒëÊ±·½±ã½øĞĞÑ¡Ôñ!
  */
 #ifndef _NDCHAR_H_
 #define _NDCHAR_H_
@@ -33,111 +33,111 @@
 
 #define ndchar_t wchar_t
 #define _NDT(x)		L ## x
-#define ndisalnum     iswalnum		//æµ‹è¯•å­—ç¬¦æ˜¯å¦ä¸ºæ•°å­—æˆ–å­—æ¯ 
-#define ndisalpha     iswalpha 		// æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å­—æ¯ 
-#define ndiscntrl     iswcntrl 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯æ§åˆ¶ç¬¦ 
-#define ndisdigit     iswdigit 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦ä¸ºæ•°å­— 
-#define ndisgraph     iswgraph 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å¯è§å­—ç¬¦ 
-#define ndislower     iswlower 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å°å†™å­—ç¬¦ 
-#define ndisprint     iswprint 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å¯æ‰“å°å­—ç¬¦ 
-#define ndispunct     iswpunct 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯æ ‡ç‚¹ç¬¦å· 
-#define ndisspace     iswspace 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯ç©ºç™½ç¬¦å· 
-#define ndisupper     iswupper 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å¤§å†™å­—ç¬¦ 
-#define ndisxdigit    iswxdigit		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯åå…­è¿›åˆ¶çš„æ•°å­— 
+#define ndisalnum     iswalnum		//²âÊÔ×Ö·ûÊÇ·ñÎªÊı×Ö»ò×ÖÄ¸ 
+#define ndisalpha     iswalpha 		// ²âÊÔ×Ö·ûÊÇ·ñÊÇ×ÖÄ¸ 
+#define ndiscntrl     iswcntrl 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ¿ØÖÆ·û 
+#define ndisdigit     iswdigit 		//²âÊÔ×Ö·ûÊÇ·ñÎªÊı×Ö 
+#define ndisgraph     iswgraph 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ¿É¼û×Ö·û 
+#define ndislower     iswlower 		//²âÊÔ×Ö·ûÊÇ·ñÊÇĞ¡Ğ´×Ö·û 
+#define ndisprint     iswprint 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ¿É´òÓ¡×Ö·û 
+#define ndispunct     iswpunct 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ±êµã·ûºÅ 
+#define ndisspace     iswspace 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ¿Õ°×·ûºÅ 
+#define ndisupper     iswupper 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ´óĞ´×Ö·û 
+#define ndisxdigit    iswxdigit		//²âÊÔ×Ö·ûÊÇ·ñÊÇÊ®Áù½øÖÆµÄÊı×Ö 
 
-#define ndtolower     towlower 		//æŠŠå­—ç¬¦è½¬æ¢ä¸ºå°å†™ 
-#define ndtoupper     towupper 		//æŠŠå­—ç¬¦è½¬æ¢ä¸ºå¤§å†™ 
-#define ndcscoll      wcscoll 		//æ¯”è¾ƒå­—ç¬¦ä¸² 
+#define ndtolower     towlower 		//°Ñ×Ö·û×ª»»ÎªĞ¡Ğ´ 
+#define ndtoupper     towupper 		//°Ñ×Ö·û×ª»»Îª´óĞ´ 
+#define ndcscoll      wcscoll 		//±È½Ï×Ö·û´® 
 
 /*
-æ‰“å°å’Œæ‰«æå­—ç¬¦ä¸²ï¼š 
-å®½å­—ç¬¦å‡½æ•°æè¿° 
+´òÓ¡ºÍÉ¨Ãè×Ö·û´®£º 
+¿í×Ö·ûº¯ÊıÃèÊö 
 */
-#define ndfprintf		fwprintf     //ä½¿ç”¨varargå‚é‡çš„æ ¼å¼åŒ–è¾“å‡º 
-#define ndprintf		wprintf      //ä½¿ç”¨varargå‚é‡çš„æ ¼å¼åŒ–è¾“å‡ºåˆ°æ ‡å‡†è¾“å‡º 
-#define ndsprintf		swprintf     //æ ¹æ®varargå‚é‡è¡¨æ ¼å¼åŒ–æˆå­—ç¬¦ä¸² 
-#define ndvfprintf		vfwprintf    //ä½¿ç”¨stdargå‚é‡è¡¨æ ¼å¼åŒ–è¾“å‡ºåˆ°æ–‡ä»¶ 
-#define ndvsprintf		vsnwprintf    //æ ¼å¼åŒ–stdargå‚é‡è¡¨å¹¶å†™åˆ°å­—ç¬¦ä¸² 
+#define ndfprintf		fwprintf     //Ê¹ÓÃvararg²ÎÁ¿µÄ¸ñÊ½»¯Êä³ö 
+#define ndprintf		wprintf      //Ê¹ÓÃvararg²ÎÁ¿µÄ¸ñÊ½»¯Êä³öµ½±ê×¼Êä³ö 
+#define ndsprintf		swprintf     //¸ù¾İvararg²ÎÁ¿±í¸ñÊ½»¯³É×Ö·û´® 
+#define ndvfprintf		vfwprintf    //Ê¹ÓÃstdarg²ÎÁ¿±í¸ñÊ½»¯Êä³öµ½ÎÄ¼ş 
+#define ndvsprintf		vsnwprintf    //¸ñÊ½»¯stdarg²ÎÁ¿±í²¢Ğ´µ½×Ö·û´® 
 
 #define ndsnprintf 		snwprintf
 
-#define ndstrtod 		wcstod    //æŠŠå®½å­—ç¬¦çš„åˆå§‹éƒ¨åˆ†è½¬æ¢ä¸ºåŒç²¾åº¦æµ®ç‚¹æ•° 
-#define ndstrtol		wcstol     //æŠŠå®½å­—ç¬¦çš„åˆå§‹éƒ¨åˆ†è½¬æ¢ä¸ºé•¿æ•´æ•° 
-#define ndstrtoul		wcstoul    //å®½å­—ç¬¦çš„åˆå§‹éƒ¨åˆ†è½¬æ¢ä¸ºæ— ç¬¦å·é•¿æ•´æ•° 
+#define ndstrtod 		wcstod    //°Ñ¿í×Ö·ûµÄ³õÊ¼²¿·Ö×ª»»ÎªË«¾«¶È¸¡µãÊı 
+#define ndstrtol		wcstol     //°Ñ¿í×Ö·ûµÄ³õÊ¼²¿·Ö×ª»»Îª³¤ÕûÊı 
+#define ndstrtoul		wcstoul    //¿í×Ö·ûµÄ³õÊ¼²¿·Ö×ª»»ÎªÎŞ·ûºÅ³¤ÕûÊı 
 
 /*
-å­—ç¬¦ä¸²æ“ä½œï¼š 
-å®½å­—ç¬¦å‡½æ•°        æ™®é€šCå‡½æ•°æè¿° 
+×Ö·û´®²Ù×÷£º 
+¿í×Ö·ûº¯Êı        ÆÕÍ¨Cº¯ÊıÃèÊö 
 */
-#define ndwitch		wcwidth			//æµ‹è¯•å•ä¸ªå­—ç¬¦å ç”¨çš„å†…å­˜å®½åº¦
-#define ndstrcat	wcscat			//strcatæŠŠä¸€ä¸ªå­—ç¬¦ä¸²æ¥åˆ°å¦ä¸€ä¸ªå­—ç¬¦ä¸²çš„å°¾éƒ¨ 
+#define ndwitch		wcwidth			//²âÊÔµ¥¸ö×Ö·ûÕ¼ÓÃµÄÄÚ´æ¿í¶È
+#define ndstrcat	wcscat			//strcat°ÑÒ»¸ö×Ö·û´®½Óµ½ÁíÒ»¸ö×Ö·û´®µÄÎ²²¿ 
 #define ndstrncat	wcsncat			//strncat
-#define ndstrchr	wcschr			//strchræŸ¥æ‰¾å­å­—ç¬¦ä¸²çš„ç¬¬ä¸€ä¸ªä½ç½® 
-#define ndstrrchr	wcsrchr			// strrchrï¼ˆï¼‰     ä»å°¾éƒ¨å¼€å§‹æŸ¥æ‰¾å­å­—ç¬¦ä¸²å‡ºç°çš„ç¬¬ä¸€ä¸ªä½ç½® 
-#define ndstrpbrk	wcspbrk         //strpbrkï¼ˆï¼‰     ä»ä¸€å­—ç¬¦å­—ç¬¦ä¸²ä¸­æŸ¥æ‰¾å¦ä¸€å­—ç¬¦ä¸²ä¸­ä»»ä½•ä¸€ä¸ªå­—ç¬¦ç¬¬ä¸€æ¬¡å‡ºç°çš„ä½ç½® 
-#define ndstrstr	wcsstr			//    strstrï¼ˆï¼‰     åœ¨ä¸€å­—ç¬¦ä¸²ä¸­æŸ¥æ‰¾å¦ä¸€å­—ç¬¦ä¸²ç¬¬ä¸€æ¬¡å‡ºç°çš„ä½ç½® 
-#define ndstrcspn	wcscspn			//ï¼ˆï¼‰         strcspnï¼ˆï¼‰     è¿”å›ä¸åŒ…å«ç¬¬äºŒä¸ªå­—ç¬¦ä¸²çš„çš„åˆå§‹æ•°ç›® 
-#define ndstrspn	wcsspn			//ï¼ˆï¼‰         strspnï¼ˆï¼‰     è¿”å›åŒ…å«ç¬¬äºŒä¸ªå­—ç¬¦ä¸²çš„åˆå§‹æ•°ç›® 
-#define ndstrcpy	wcscpy			//ï¼ˆï¼‰         strcpyï¼ˆï¼‰     æ‹·è´å­—ç¬¦ä¸² 
-#define ndstrncpy	wcsncpy			//ï¼ˆï¼‰         strncpyï¼ˆï¼‰     ç±»ä¼¼äºwcscpyï¼ˆï¼‰ï¼Œ åŒæ—¶æŒ‡å®šæ‹·è´çš„æ•°ç›® 
-#define ndstrcmp	wcscmp			//ï¼ˆï¼‰         strcmpï¼ˆï¼‰     æ¯”è¾ƒä¸¤ä¸ªå®½å­—ç¬¦ä¸² 
-#define ndstrncmp	wcsncmp			//ï¼ˆï¼‰         strncmpï¼ˆï¼‰     ç±»ä¼¼äºwcscmpï¼ˆï¼‰ï¼Œ è¿˜è¦æŒ‡å®šæ¯”è¾ƒå­—ç¬¦å­—ç¬¦ä¸²çš„æ•°ç›® 
-#define ndstrlen	wcslen			//ï¼ˆï¼‰         strlenï¼ˆï¼‰     è·å¾—å®½å­—ç¬¦ä¸²çš„æ•°ç›® 
-#define ndstrtok	wcstok			//ï¼ˆï¼‰         strtokï¼ˆï¼‰     æ ¹æ®æ ‡ç¤ºç¬¦æŠŠå®½å­—ç¬¦ä¸²åˆ†è§£æˆä¸€ç³»åˆ—å­—ç¬¦ä¸² 
+#define ndstrchr	wcschr			//strchr²éÕÒ×Ó×Ö·û´®µÄµÚÒ»¸öÎ»ÖÃ 
+#define ndstrrchr	wcsrchr			// strrchr£¨£©     ´ÓÎ²²¿¿ªÊ¼²éÕÒ×Ó×Ö·û´®³öÏÖµÄµÚÒ»¸öÎ»ÖÃ 
+#define ndstrpbrk	wcspbrk         //strpbrk£¨£©     ´ÓÒ»×Ö·û×Ö·û´®ÖĞ²éÕÒÁíÒ»×Ö·û´®ÖĞÈÎºÎÒ»¸ö×Ö·ûµÚÒ»´Î³öÏÖµÄÎ»ÖÃ 
+#define ndstrstr	wcsstr			//    strstr£¨£©     ÔÚÒ»×Ö·û´®ÖĞ²éÕÒÁíÒ»×Ö·û´®µÚÒ»´Î³öÏÖµÄÎ»ÖÃ 
+#define ndstrcspn	wcscspn			//£¨£©         strcspn£¨£©     ·µ»Ø²»°üº¬µÚ¶ş¸ö×Ö·û´®µÄµÄ³õÊ¼ÊıÄ¿ 
+#define ndstrspn	wcsspn			//£¨£©         strspn£¨£©     ·µ»Ø°üº¬µÚ¶ş¸ö×Ö·û´®µÄ³õÊ¼ÊıÄ¿ 
+#define ndstrcpy	wcscpy			//£¨£©         strcpy£¨£©     ¿½±´×Ö·û´® 
+#define ndstrncpy	wcsncpy			//£¨£©         strncpy£¨£©     ÀàËÆÓÚwcscpy£¨£©£¬ Í¬Ê±Ö¸¶¨¿½±´µÄÊıÄ¿ 
+#define ndstrcmp	wcscmp			//£¨£©         strcmp£¨£©     ±È½ÏÁ½¸ö¿í×Ö·û´® 
+#define ndstrncmp	wcsncmp			//£¨£©         strncmp£¨£©     ÀàËÆÓÚwcscmp£¨£©£¬ »¹ÒªÖ¸¶¨±È½Ï×Ö·û×Ö·û´®µÄÊıÄ¿ 
+#define ndstrlen	wcslen			//£¨£©         strlen£¨£©     »ñµÃ¿í×Ö·û´®µÄÊıÄ¿ 
+#define ndstrtok	wcstok			//£¨£©         strtok£¨£©     ¸ù¾İ±êÊ¾·û°Ñ¿í×Ö·û´®·Ö½â³ÉÒ»ÏµÁĞ×Ö·û´® 
 
 #else		//ansi
 #define _NDT(x) x
 #define ndchar_t char
 
-#define ndisalnum     isalnum		//æµ‹è¯•å­—ç¬¦æ˜¯å¦ä¸ºæ•°å­—æˆ–å­—æ¯ 
-#define ndisalpha     isalpha 		// æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å­—æ¯ 
-#define ndiscntrl     iscntrl 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯æ§åˆ¶ç¬¦ 
-#define ndisdigit     isdigit 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦ä¸ºæ•°å­— 
-#define ndisgraph     isgraph 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å¯è§å­—ç¬¦ 
-#define ndislower     islower 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å°å†™å­—ç¬¦ 
-#define ndisprint     isprint 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å¯æ‰“å°å­—ç¬¦ 
-#define ndispunct     ispunct 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯æ ‡ç‚¹ç¬¦å· 
-#define ndisspace     isspace 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯ç©ºç™½ç¬¦å· 
-#define ndisupper     isupper 		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯å¤§å†™å­—ç¬¦ 
-#define ndisxdigit    isxdigit		//æµ‹è¯•å­—ç¬¦æ˜¯å¦æ˜¯åå…­è¿›åˆ¶çš„æ•°å­— 
+#define ndisalnum     isalnum		//²âÊÔ×Ö·ûÊÇ·ñÎªÊı×Ö»ò×ÖÄ¸ 
+#define ndisalpha     isalpha 		// ²âÊÔ×Ö·ûÊÇ·ñÊÇ×ÖÄ¸ 
+#define ndiscntrl     iscntrl 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ¿ØÖÆ·û 
+#define ndisdigit     isdigit 		//²âÊÔ×Ö·ûÊÇ·ñÎªÊı×Ö 
+#define ndisgraph     isgraph 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ¿É¼û×Ö·û 
+#define ndislower     islower 		//²âÊÔ×Ö·ûÊÇ·ñÊÇĞ¡Ğ´×Ö·û 
+#define ndisprint     isprint 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ¿É´òÓ¡×Ö·û 
+#define ndispunct     ispunct 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ±êµã·ûºÅ 
+#define ndisspace     isspace 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ¿Õ°×·ûºÅ 
+#define ndisupper     isupper 		//²âÊÔ×Ö·ûÊÇ·ñÊÇ´óĞ´×Ö·û 
+#define ndisxdigit    isxdigit		//²âÊÔ×Ö·ûÊÇ·ñÊÇÊ®Áù½øÖÆµÄÊı×Ö 
 
-#define ndtolower     tolower 		//æŠŠå­—ç¬¦è½¬æ¢ä¸ºå°å†™ 
-#define ndtoupper     toupper 		//æŠŠå­—ç¬¦è½¬æ¢ä¸ºå¤§å†™ 
-#define ndcscoll     strcoll 		//æ¯”è¾ƒå­—ç¬¦ä¸² 
+#define ndtolower     tolower 		//°Ñ×Ö·û×ª»»ÎªĞ¡Ğ´ 
+#define ndtoupper     toupper 		//°Ñ×Ö·û×ª»»Îª´óĞ´ 
+#define ndcscoll     strcoll 		//±È½Ï×Ö·û´® 
 
 /*
-æ‰“å°å’Œæ‰«æå­—ç¬¦ä¸²ï¼š 
-å®½å­—ç¬¦å‡½æ•°æè¿° 
+´òÓ¡ºÍÉ¨Ãè×Ö·û´®£º 
+¿í×Ö·ûº¯ÊıÃèÊö 
 */
-#define ndwitch(ch)		1			//æµ‹è¯•å•ä¸ªå­—ç¬¦å ç”¨çš„å†…å­˜å®½åº¦
-#define ndfprintf		fprintf     //ä½¿ç”¨varargå‚é‡çš„æ ¼å¼åŒ–è¾“å‡º 
-#define ndprintf		printf      //ä½¿ç”¨varargå‚é‡çš„æ ¼å¼åŒ–è¾“å‡ºåˆ°æ ‡å‡†è¾“å‡º 
-#define ndsprintf		sprintf     //æ ¹æ®varargå‚é‡è¡¨æ ¼å¼åŒ–æˆå­—ç¬¦ä¸² 
-#define ndvfprintf		vfprintf    //ä½¿ç”¨stdargå‚é‡è¡¨æ ¼å¼åŒ–è¾“å‡ºåˆ°æ–‡ä»¶ 
-#define ndvsprintf		vsnprintf    //æ ¼å¼åŒ–stdargå‚é‡è¡¨å¹¶å†™åˆ°å­—ç¬¦ä¸² 
+#define ndwitch(ch)		1			//²âÊÔµ¥¸ö×Ö·ûÕ¼ÓÃµÄÄÚ´æ¿í¶È
+#define ndfprintf		fprintf     //Ê¹ÓÃvararg²ÎÁ¿µÄ¸ñÊ½»¯Êä³ö 
+#define ndprintf		printf      //Ê¹ÓÃvararg²ÎÁ¿µÄ¸ñÊ½»¯Êä³öµ½±ê×¼Êä³ö 
+#define ndsprintf		sprintf     //¸ù¾İvararg²ÎÁ¿±í¸ñÊ½»¯³É×Ö·û´® 
+#define ndvfprintf		vfprintf    //Ê¹ÓÃstdarg²ÎÁ¿±í¸ñÊ½»¯Êä³öµ½ÎÄ¼ş 
+#define ndvsprintf		vsnprintf    //¸ñÊ½»¯stdarg²ÎÁ¿±í²¢Ğ´µ½×Ö·û´® 
 #define ndsnprintf 		snprintf
 
-#define ndstrtod 		strtod		//æŠŠå®½å­—ç¬¦çš„åˆå§‹éƒ¨åˆ†è½¬æ¢ä¸ºåŒç²¾åº¦æµ®ç‚¹æ•° 
-#define ndstrtol		strtol		//æŠŠå®½å­—ç¬¦çš„åˆå§‹éƒ¨åˆ†è½¬æ¢ä¸ºé•¿æ•´æ•° 
-#define ndstrtoul		strtoul		//æŠŠå®½å­—ç¬¦çš„åˆå§‹éƒ¨åˆ†è½¬æ¢ä¸ºæ— ç¬¦å·é•¿æ•´æ•° 
+#define ndstrtod 		strtod		//°Ñ¿í×Ö·ûµÄ³õÊ¼²¿·Ö×ª»»ÎªË«¾«¶È¸¡µãÊı 
+#define ndstrtol		strtol		//°Ñ¿í×Ö·ûµÄ³õÊ¼²¿·Ö×ª»»Îª³¤ÕûÊı 
+#define ndstrtoul		strtoul		//°Ñ¿í×Ö·ûµÄ³õÊ¼²¿·Ö×ª»»ÎªÎŞ·ûºÅ³¤ÕûÊı 
 
 /*
-å­—ç¬¦ä¸²æ“ä½œï¼š 
-å®½å­—ç¬¦å‡½æ•°        æ™®é€šCå‡½æ•°æè¿° 
+×Ö·û´®²Ù×÷£º 
+¿í×Ö·ûº¯Êı        ÆÕÍ¨Cº¯ÊıÃèÊö 
 */
-#define ndstrcat	strcat			//æŠŠä¸€ä¸ªå­—ç¬¦ä¸²æ¥åˆ°å¦ä¸€ä¸ªå­—ç¬¦ä¸²çš„å°¾éƒ¨ 
-#define ndstrncat	strncat			//è€Œä¸”æŒ‡å®šç²˜æ¥å­—ç¬¦ä¸²çš„ç²˜æ¥é•¿åº¦. 
-#define ndstrchr	strchr			//æŸ¥æ‰¾å­å­—ç¬¦ä¸²çš„ç¬¬ä¸€ä¸ªä½ç½® 
-#define ndstrrchr	strrchr			//ä»å°¾éƒ¨å¼€å§‹æŸ¥æ‰¾å­å­—ç¬¦ä¸²å‡ºç°çš„ç¬¬ä¸€ä¸ªä½ç½® 
-#define ndstrpbrk	strpbrk			//ä»ä¸€å­—ç¬¦å­—ç¬¦ä¸²ä¸­æŸ¥æ‰¾å¦ä¸€å­—ç¬¦ä¸²ä¸­ä»»ä½•ä¸€ä¸ªå­—ç¬¦ç¬¬ä¸€æ¬¡å‡ºç°çš„ä½ç½® 
-#define ndstrstr	strstr			//åœ¨ä¸€å­—ç¬¦ä¸²ä¸­æŸ¥æ‰¾å¦ä¸€å­—ç¬¦ä¸²ç¬¬ä¸€æ¬¡å‡ºç°çš„ä½ç½® 
-#define ndstrcspn	strcspn			//è¿”å›ä¸åŒ…å«ç¬¬äºŒä¸ªå­—ç¬¦ä¸²çš„çš„åˆå§‹æ•°ç›® 
-#define ndstrspn	strspn			//è¿”å›åŒ…å«ç¬¬äºŒä¸ªå­—ç¬¦ä¸²çš„åˆå§‹æ•°ç›® 
-#define ndstrcpy	strcpy			//æ‹·è´å­—ç¬¦ä¸² 
-#define ndstrncpy	strncpy			//åŒæ—¶æŒ‡å®šæ‹·è´çš„æ•°ç›® 
-#define ndstrcmp	strcmp			//æ¯”è¾ƒä¸¤ä¸ªå®½å­—ç¬¦ä¸² 
-#define ndstrncmp	strncmp			//æŒ‡å®šæ¯”è¾ƒå­—ç¬¦å­—ç¬¦ä¸²çš„æ•°ç›® 
-#define ndstrlen	strlen			// è·å¾—å®½å­—ç¬¦ä¸²çš„æ•°ç›® 
+#define ndstrcat	strcat			//°ÑÒ»¸ö×Ö·û´®½Óµ½ÁíÒ»¸ö×Ö·û´®µÄÎ²²¿ 
+#define ndstrncat	strncat			//¶øÇÒÖ¸¶¨Õ³½Ó×Ö·û´®µÄÕ³½Ó³¤¶È. 
+#define ndstrchr	strchr			//²éÕÒ×Ó×Ö·û´®µÄµÚÒ»¸öÎ»ÖÃ 
+#define ndstrrchr	strrchr			//´ÓÎ²²¿¿ªÊ¼²éÕÒ×Ó×Ö·û´®³öÏÖµÄµÚÒ»¸öÎ»ÖÃ 
+#define ndstrpbrk	strpbrk			//´ÓÒ»×Ö·û×Ö·û´®ÖĞ²éÕÒÁíÒ»×Ö·û´®ÖĞÈÎºÎÒ»¸ö×Ö·ûµÚÒ»´Î³öÏÖµÄÎ»ÖÃ 
+#define ndstrstr	strstr			//ÔÚÒ»×Ö·û´®ÖĞ²éÕÒÁíÒ»×Ö·û´®µÚÒ»´Î³öÏÖµÄÎ»ÖÃ 
+#define ndstrcspn	strcspn			//·µ»Ø²»°üº¬µÚ¶ş¸ö×Ö·û´®µÄµÄ³õÊ¼ÊıÄ¿ 
+#define ndstrspn	strspn			//·µ»Ø°üº¬µÚ¶ş¸ö×Ö·û´®µÄ³õÊ¼ÊıÄ¿ 
+#define ndstrcpy	strcpy			//¿½±´×Ö·û´® 
+#define ndstrncpy	strncpy			//Í¬Ê±Ö¸¶¨¿½±´µÄÊıÄ¿ 
+#define ndstrcmp	strcmp			//±È½ÏÁ½¸ö¿í×Ö·û´® 
+#define ndstrncmp	strncmp			//Ö¸¶¨±È½Ï×Ö·û×Ö·û´®µÄÊıÄ¿ 
+#define ndstrlen	strlen			// »ñµÃ¿í×Ö·û´®µÄÊıÄ¿ 
 #define ndstrtok	strtok
 
 #endif //ND_UNICODE

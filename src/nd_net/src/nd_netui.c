@@ -7,7 +7,7 @@
  */
 
 /*
- * å®žçŽ°ä¸€ä¸ªåœ¨nd_engineä¸­æ‰€ä»¥ç½‘ç»œåè®®éƒ½ç»Ÿä¸€çš„ä¸€ä¸ªè¿ç”¨å±‚æŽ¥å£
+ * ÊµÏÖÒ»¸öÔÚnd_engineÖÐËùÒÔÍøÂçÐ­Òé¶¼Í³Ò»µÄÒ»¸öÔËÓÃ²ã½Ó¿Ú
  */
 #define ND_IMPLEMENT_HANDLE
 typedef struct netui_info *nd_handle;
@@ -16,12 +16,12 @@ typedef struct netui_info *nd_handle;
 #include "nd_net/nd_netlib.h"
 //#include "nd_common/nd_alloc.h"
 
-static int _crypt_unit_len ;		//åŠ å¯†å•å…ƒé•¿åº¦
+static int _crypt_unit_len ;		//¼ÓÃÜµ¥Ôª³¤¶È
 static nd_netcrypt __net_encrypt, __net_decrypt ;
 static int _min_packet_len = sizeof(nd_usermsghdr_t) ;
 static int nd_net_message_version_error(nd_netui_handle node) ;
 
-/* æ›´æ–°å®¢æˆ·ç«¯çš„ç½‘ç»œè¿žæŽ¥ */
+/* ¸üÐÂ¿Í»§¶ËµÄÍøÂçÁ¬½Ó */
 int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout) 
 {
 	ENTER_FUNC()
@@ -35,7 +35,7 @@ int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout)
 	}
 
 	if(net_handle->type==NDHANDLE_TCPNODE){
-		//æŠŠtcpçš„æµå¼åè®®å˜æˆæ¶ˆæ¯æ¨¡å¼
+		//°ÑtcpµÄÁ÷Ê½Ð­Òé±ä³ÉÏûÏ¢Ä£Ê½
 		struct nd_tcp_node *socket_node = (struct nd_tcp_node *) net_handle ;
 		
 		
@@ -137,7 +137,7 @@ RE_UDTREAD:
 	return ret;	
 }
 
-//å¤„ç†æŽ¥æ”¶åˆ°çš„æ•°æ®
+//´¦Àí½ÓÊÕµ½µÄÊý¾Ý
 int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 {
 	ENTER_FUNC()
@@ -168,7 +168,7 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 		nd_packetbuf_t pack_buf ;
 		nd_hdr_init(&pack_buf.hdr) ;
 
-		//æŠŠæ•°æ®æ‹·è´å‡ºæ¥åœ¨å¤„ç†,é˜²æ­¢è¿­ä»£
+		//°ÑÊý¾Ý¿½±´³öÀ´ÔÚ´¦Àí,·ÀÖ¹µü´ú
 		while((read_len = nd_net_fetch_msg(node, &pack_buf.hdr) ) > 0){
 			if (read_len != pack_buf.hdr.length){
 				nd_assert(0);
@@ -227,7 +227,7 @@ int _packet_handler(nd_netui_handle node,nd_packhdr_t *msg, nd_handle h_listen)
 		ret = node->msg_entry(node, msg,h_listen) ;
 		//ret = nd_translate_message((nd_netui_handle)node, msg ) ;
 		nd_pack_len(msg) = old_len ;
-		ret = old_len ; //è¿”å›žè§£å¯†ä¹‹å‰çš„æ•°æ®é•¿åº¦ï¼Œæ— è®ºå¦‚ä½•ï¼Œè§£å¯†åŽçš„æ•°æ®éƒ½è®¤ä¸ºæ˜¯å·²ç»è¢«å¤„ç†çš„
+		ret = old_len ; //·µ»Ø½âÃÜÖ®Ç°µÄÊý¾Ý³¤¶È£¬ÎÞÂÛÈçºÎ£¬½âÃÜºóµÄÊý¾Ý¶¼ÈÏÎªÊÇÒÑ¾­±»´¦ÀíµÄ
 	}
 	else {
 		CURRENT_IS_CRYPT(node) = 0 ;
@@ -238,7 +238,7 @@ int _packet_handler(nd_netui_handle node,nd_packhdr_t *msg, nd_handle h_listen)
 	return ret;
 }
 
-//å¤„ç†NDæ ¼å¼çš„ç½‘ç»œæ¶ˆæ¯
+//´¦ÀíND¸ñÊ½µÄÍøÂçÏûÏ¢
 //default net message handle , parse data to ND_PROTOCOL
 int nd_dft_packet_handler(nd_netui_handle node,void *data , size_t data_len , nd_handle h_listen)
 {
@@ -281,7 +281,7 @@ RE_MESSAGE:
 			return -1;
 		}
 		else if(0==user_ret) {
-			//ä¸Šå±‚å‡½æ•°æš‚æ—¶ä¸èƒ½å¤„ç†è¿™äº›æ•°æ®
+			//ÉÏ²ãº¯ÊýÔÝÊ±²»ÄÜ´¦ÀíÕâÐ©Êý¾Ý
 			node->myerrno = NDERR_SUCCESS ;
 			LEAVE_FUNC();
 			return ret ;
@@ -395,7 +395,7 @@ RE_FETCH:
 	return valid_len ;
 }
 
-//å‘é€tcpå°åŒ…
+//·¢ËÍtcp·â°ü
 static int _tcp_connector_send(struct nd_tcp_node* socket_addr, nd_packhdr_t *msg_buf, int flag) 
 {
 	ENTER_FUNC()
@@ -406,7 +406,7 @@ static int _tcp_connector_send(struct nd_tcp_node* socket_addr, nd_packhdr_t *ms
 		return -1 ;
 	}
 	socket_addr->myerrno = NDERR_SUCCESS ;
-	nd_send_lock((nd_netui_handle)socket_addr) ;	//æ³¨æ„åœ¨è¿™é‡Œå¦‚æžœç”¨çš„æ—¶IOCPæ¨¡å¼å°†ä¸èƒ½ä½¿ç”¨metux lock
+	nd_send_lock((nd_netui_handle)socket_addr) ;	//×¢ÒâÔÚÕâÀïÈç¹ûÓÃµÄÊ±IOCPÄ£Ê½½«²»ÄÜÊ¹ÓÃmetux lock
 	ret = nd_tcpnode_send( socket_addr,	msg_buf, flag) ;
 	nd_send_unlock((nd_netui_handle)socket_addr) ;
 
@@ -418,10 +418,10 @@ static int _tcp_connector_send(struct nd_tcp_node* socket_addr, nd_packhdr_t *ms
 	return ret ;
 }
 
-/* å‘é€ç½‘ç»œæ¶ˆæ¯ 
- * @net_handle ç½‘ç»œè¿žæŽ¥çš„å¥æŸ„,æŒ‡å‘struct nd_tcp_node(TCPè¿žæŽ¥)
- *		æˆ–è€…ndudt_socket(UDT)èŠ‚ç‚¹
- * @nd_msgui_buf å‘é€æ¶ˆæ¯å†…å®¹
+/* ·¢ËÍÍøÂçÏûÏ¢ 
+ * @net_handle ÍøÂçÁ¬½ÓµÄ¾ä±ú,Ö¸Ïòstruct nd_tcp_node(TCPÁ¬½Ó)
+ *		»òÕßndudt_socket(UDT)½Úµã
+ * @nd_msgui_buf ·¢ËÍÏûÏ¢ÄÚÈÝ
  * @flag ref send_flag
  */
 //int nd_connector_send(nd_netui_handle net_handle,nd_msgui_buf *msg_buf, int flag) 
@@ -473,7 +473,7 @@ int nd_connector_raw_write(nd_handle net_handle , void *data, size_t size)
 }
 
 /*
- * é‡æ–°è¿žæŽ¥åˆ°ä¸€ä¸ªæ–°çš„æœåŠ¡å™¨
+ * ÖØÐÂÁ¬½Óµ½Ò»¸öÐÂµÄ·þÎñÆ÷
  */
 int nd_reconnect(nd_netui_handle net_handle, ndip_t ip, int port, struct nd_proxy_info *proxy)
 {
@@ -493,7 +493,7 @@ int nd_reconnect(nd_netui_handle net_handle, ndip_t ip, int port, struct nd_prox
 }
 
 /*
- * é‡æ–°è¿žæŽ¥åˆ°ä¸€ä¸ªæ–°çš„æœåŠ¡å™¨
+ * ÖØÐÂÁ¬½Óµ½Ò»¸öÐÂµÄ·þÎñÆ÷
  */
 int nd_reconnectex(nd_netui_handle net_handle, const char *host, int port, struct nd_proxy_info *proxy)
 {
@@ -637,7 +637,7 @@ int nd_connector_close(nd_netui_handle net_handle, int flag)
 }
 
 /* reset connector
- * å…³é—­ç½‘ç»œè¿žæŽ¥å¹¶é‡æ–°åˆå§‹åŒ–è¿žæŽ¥çŠ¶æ€,ä½†ä¿ç•™ç”¨æˆ·è®¾ç½®ä¿¡æ¯(æ¶ˆæ¯å¤„ç†å‡½æ•°,åŠ å¯†å¯†é’¥)
+ * ¹Ø±ÕÍøÂçÁ¬½Ó²¢ÖØÐÂ³õÊ¼»¯Á¬½Ó×´Ì¬,µ«±£ÁôÓÃ»§ÉèÖÃÐÅÏ¢(ÏûÏ¢´¦Àíº¯Êý,¼ÓÃÜÃÜÔ¿)
  */
 int nd_connector_reset(nd_handle net_handle) 
 {
@@ -664,8 +664,8 @@ ndsocket_t nd_connector_fd(nd_handle net_handle)
 	
 }
 
-/* é”€æ¯è¿žæŽ¥å™¨
- * é€šè¿‡nd_object_destroyè°ƒç”¨æ­¤å‡½æ•°
+/* Ïú»ÙÁ¬½ÓÆ÷
+ * Í¨¹ýnd_object_destroyµ÷ÓÃ´Ëº¯Êý
  */
 int _connector_destroy(nd_handle net_handle, int force) 
 {
@@ -727,11 +727,11 @@ static int fetch_udp_message(nd_handle  node, nd_packhdr_t *msg , nd_handle list
 }
 
 
-/* ç­‰å¾…ç½‘ç»œæ¶ˆæ¯,åŠŸèƒ½åŒnd_connect_waitmsg,
- * ä½¿ç”¨è¿™ä¸ªå‡½æ•°çš„å¥½å¤„æ˜¯ç›´æŽ¥æŠŠæ¶ˆæ¯æ”¾åˆ°msgbufä¸­,
- * æ— éœ€å†ä½¿ç”¨nd_connect_getmsgå’Œnd_connect_delmsg
- * å‡ºé”™æ—¶è¿”å›ž-1 ç½‘ç»œéœ€è¦å…³é—­
- * å¦åˆ™è¿”å›žç­‰å¾…æ¥çš„æ•°æ®é•¿åº¦(0è¡¨ç¤ºæ²¡æœ‰æ•°æ®)
+/* µÈ´ýÍøÂçÏûÏ¢,¹¦ÄÜÍ¬nd_connect_waitmsg,
+ * Ê¹ÓÃÕâ¸öº¯ÊýµÄºÃ´¦ÊÇÖ±½Ó°ÑÏûÏ¢·Åµ½msgbufÖÐ,
+ * ÎÞÐèÔÙÊ¹ÓÃnd_connect_getmsgºÍnd_connect_delmsg
+ * ³ö´íÊ±·µ»Ø-1 ÍøÂçÐèÒª¹Ø±Õ
+ * ·ñÔò·µ»ØµÈ´ýÀ´µÄÊý¾Ý³¤¶È(0±íÊ¾Ã»ÓÐÊý¾Ý)
  */
 int nd_connector_waitmsg(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf, ndtime_t tmout)
 {
@@ -842,8 +842,8 @@ RE_WAIT:
 
 }
 
-//è®¾ç½®æ•°æ®å¤„ç†å®Œæ¯•
-//@size è¢«å¤„ç†çš„æ•°æ®é•¿åº¦
+//ÉèÖÃÊý¾Ý´¦ÀíÍê±Ï
+//@size ±»´¦ÀíµÄÊý¾Ý³¤¶È
 int nd_connector_handled_data(nd_netui_handle net_handle, size_t size) 
 {
 	
@@ -949,7 +949,7 @@ void nd_net_set_crypt(nd_netcrypt encrypt_func, nd_netcrypt decrypt_func,int cry
 	LEAVE_FUNC();
 }
 
-/*åŠ å¯†æ•°æ®åŒ…,è¿”å›žåŠ å¯†åŽçš„å®žé™…é•¿åº¦,å¹¶ä¸”ä¿®æ”¹äº†å°åŒ…çš„å®žé™…é•¿åº¦*/
+/*¼ÓÃÜÊý¾Ý°ü,·µ»Ø¼ÓÃÜºóµÄÊµ¼Ê³¤¶È,²¢ÇÒÐÞ¸ÄÁË·â°üµÄÊµ¼Ê³¤¶È*/
 int nd_packet_encrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 {
 	nd_assert(net_handle) ;
@@ -1033,7 +1033,7 @@ int nd_packet_encrypt_key(nd_cryptkey *pcrypt_key, nd_packetbuf_t *msgbuf)
 	LEAVE_FUNC();
 	return 0 ;
 }
-/*è§£å¯†æ•°æ®åŒ…,è¿”å›žè§£å¯†åŽçš„å®žé™…é•¿åº¦,ä½†æ˜¯ä¸ä¿®æ”¹å°åŒ…çš„å®žé™…é•¿åº¦*/
+/*½âÃÜÊý¾Ý°ü,·µ»Ø½âÃÜºóµÄÊµ¼Ê³¤¶È,µ«ÊÇ²»ÐÞ¸Ä·â°üµÄÊµ¼Ê³¤¶È*/
 int nd_packet_decrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 {
 	int ret = nd_packet_decrypt_key(&(net_handle->crypt_key ), msgbuf) ;

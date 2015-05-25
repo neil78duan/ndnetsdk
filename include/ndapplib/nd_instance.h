@@ -27,7 +27,7 @@
 class NDListener ;
 class NDConnector;
 class NDSafeListener;
-//æœåŠ¡å™¨å®ä¾‹
+//·şÎñÆ÷ÊµÀı
 
 
 class NDInstanceBase : public NDAlarm
@@ -40,7 +40,7 @@ public :
 
     int WaitServer();
 	
-	NDListener *GetDeftListener() {return pListen ;	}	//å¾—åˆ°é»˜è®¤ç›‘å¬å™¨
+	NDListener *GetDeftListener() {return pListen ;	}	//µÃµ½Ä¬ÈÏ¼àÌıÆ÷
 	
 	NDInstanceBase() ;
 	virtual ~NDInstanceBase() ;

@@ -16,7 +16,7 @@
 #include "nd_utility.h"
 
 //////////////////////////////////////////////////////////////////////////
-//ç‰¹æ®Šçš„RBæ ‘,å¯¹æ¯ä¸ªèŠ‚ç‚¹æ”¯æŒreference count
+//ÌØÊâµÄRBÊ÷,¶ÔÃ¿¸ö½ÚµãÖ§³Öreference count
 
 template<class _Ty>
 struct nd_rbnode_empty_cleanup
@@ -750,7 +750,7 @@ protected:
 		}
 	}
 
-	ndatomic_t m_self_ref ; //è¢«å¼•ç”¨æ¬¡æ•°
+	ndatomic_t m_self_ref ; //±»ÒıÓÃ´ÎÊı
 	int m_count;
 	nd_rb_root m_header;
 	struct rbtree_node* m_del_list ;//delete list

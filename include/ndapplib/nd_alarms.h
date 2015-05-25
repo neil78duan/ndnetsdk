@@ -41,9 +41,9 @@ private:
     void update_timer(ndtime_t tminterval) ;
 	//int m_alarm_serial ;
 	
-	NDUINT8 m_daily_hour;		//é—¹é“ƒåœ¨å‡ ç‚¹æ‰§è¡Œ
-	NDUINT8 m_daily_minute;		//é—¹é“ƒåœ¨å‡ ç‚¹å‡ åˆ†æ‰§è¡Œ
-	NDUINT8 m_daily_last_runday; //ä¸Šæ¬¡æ‰§è¡Œé—¹é“ƒçš„æ—¥æœŸ
+	NDUINT8 m_daily_hour;		//ÄÖÁåÔÚ¼¸µãÖ´ĞĞ
+	NDUINT8 m_daily_minute;		//ÄÖÁåÔÚ¼¸µã¼¸·ÖÖ´ĞĞ
+	NDUINT8 m_daily_last_runday; //ÉÏ´ÎÖ´ĞĞÄÖÁåµÄÈÕÆÚ
 	NDUINT8 m_week_hour;
 	NDUINT8 m_week_day;
 	NDUINT8 m_week_minute;

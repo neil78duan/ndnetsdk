@@ -65,7 +65,7 @@ typedef struct _iphdr
 	u_32 ip_src;
 	u_32 ip_dst;		/* source and dest address */
 }ip_hdr;
-//tcpå¤´
+//tcpÍ·
 
 typedef struct nd_tcphdr
  {
@@ -101,7 +101,7 @@ typedef struct nd_tcphdr
     u_16 urg_ptr;
 }tcp_hdr;
 
-//udpå¤´
+//udpÍ·
 typedef struct _udp_hdr
 {
     u_16 src_port;       // Source port no.
@@ -122,7 +122,7 @@ typedef struct _icmp_hdr
     u_32   icmp_timestamp;
 } icmp_hdr;
 
-//udpä¼ªå¤´éƒ¨,ç”¨æ¥è®¡ç®—CHECK SUM
+//udpÎ±Í·²¿,ÓÃÀ´¼ÆËãCHECK SUM
 typedef struct _psuedo_udp_hdr
 {
 	u_32 src_addr;
@@ -133,7 +133,7 @@ typedef struct _psuedo_udp_hdr
 	udp_hdr udp ;
 }psuedo_udp;
 
-//tcpä¼ªå¤´éƒ¨,ç”¨æ¥è®¡ç®—CHECK SUM
+//tcpÎ±Í·²¿,ÓÃÀ´¼ÆËãCHECK SUM
 typedef struct pseudo_tcp_header
 {
 	u_32 src_addr;
@@ -144,7 +144,7 @@ typedef struct pseudo_tcp_header
 	tcp_hdr tcp;
 } pseudo_tcp;
 
-//tcpä¼ªå¤´éƒ¨,ç”¨æ¥è®¡ç®—CHECK SUM
+//tcpÎ±Í·²¿,ÓÃÀ´¼ÆËãCHECK SUM
 typedef struct pseudo_icmp_header
 {
 	u_32 src_addr;

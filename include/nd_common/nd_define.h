@@ -21,8 +21,8 @@ typedef unsigned int	NDUINT32 ;
 
 typedef unsigned int	NDBOOL ;
 
-typedef unsigned int	ndtime_t ;	//鏃堕棿 1/1000 s
-typedef long long		ndbigtime_t;	//瓒呯骇鏃堕棿锛宼ime_t*1000+tick
+typedef unsigned int	ndtime_t ;	//时间 1/1000 s
+typedef long long		ndbigtime_t;	//超级时间，time_t*1000+tick
 
 typedef unsigned int ndip_t ;
 

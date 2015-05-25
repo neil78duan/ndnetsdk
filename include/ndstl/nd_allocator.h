@@ -8,7 +8,7 @@
 #ifndef _ND_ALLOCATOR_H_
 #define _ND_ALLOCATOR_H_
 
-//åœ¨stlä¸­ä½¿ç”¨nd_stlalloc
+//ÔÚstlÖĞÊ¹ÓÃnd_stlalloc
 #define USE_ND_ALLOCATOR 
 
 
@@ -25,8 +25,8 @@ void _free_pool(void *p,void *pool=NULL) ;
 
 #define _ND_ROUNTD(size) 	(((size)+7) & (~7)) 
 
-/* å®ç°ä¸€ä¸ªä»é™æ€æ•°ç»„ä¸­åˆ†é…å†…å­˜çš„åˆ†é…å™¨
- * è™½ç„¶é•¿çš„å¾ˆåƒstl::allocatorä½†æ˜¯ä¸èƒ½åœ¨stlæ¨¡æ¿ä¸­ä½¿ç”¨
+/* ÊµÏÖÒ»¸ö´Ó¾²Ì¬Êı×éÖĞ·ÖÅäÄÚ´æµÄ·ÖÅäÆ÷
+ * ËäÈ»³¤µÄºÜÏñstl::allocatorµ«ÊÇ²»ÄÜÔÚstlÄ£°åÖĞÊ¹ÓÃ
  */
 template<class T ,  int _numbers>
 class static_alloc {
@@ -113,7 +113,7 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////
-/*ç”¨å†…å­˜æ± ä»£æ›¿æ ‡å‡†çš„stl allocator*/
+/*ÓÃÄÚ´æ³Ø´úÌæ±ê×¼µÄstl allocator*/
 template <class T> 
 class nd_stlalloc
 {

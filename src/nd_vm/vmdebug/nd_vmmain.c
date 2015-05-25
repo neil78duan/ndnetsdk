@@ -17,14 +17,14 @@ extern void vm_start_debug() ;
 extern void vm_end_debug() ;
 
 #define NDVM_BIN_HDR 0x4e44564d 
-//æ–‡ä»¶å¤´
+//ÎÄ¼şÍ·
 struct nd_binfile_header {
 	unsigned int flag ;
 	short	header_size ;
 	size_t  file_size ;
 };
 
-//è™šæ‹Ÿæœºå™¨å¤´
+//ĞéÄâ»úÆ÷Í·
 struct nd_binvm_header
 {
 	short  vm_hdr_size;
@@ -67,25 +67,25 @@ void bin_write_hdr(FILE *fp)
 	fwrite(&h, sizeof(h), 1, fp) ;
 }
 
-//æ‰§è¡Œæ§åˆ¶å°ç¨‹åº
+//Ö´ĞĞ¿ØÖÆÌ¨³ÌĞò
 int run_control(void) 
 {
 	return 0;
 }
 
-//ç¼–è¯‘æ–‡ä»¶
+//±àÒëÎÄ¼ş
 int run_compile(char *src_file, char *dest_file) 
 {
 	return 0 ;
 }
 
-//åæ±‡ç¼–æ–‡ä»¶
+//·´»ã±àÎÄ¼ş
 int run_rcompile(char *src_file, char*dest_file) 
 {
 	return 0;
 }
 
-//æ‰§è¡Œæ–‡ä»¶(äºŒè¿›åˆ¶æˆ–è€…æ±‡ç¼–)
+//Ö´ĞĞÎÄ¼ş(¶ş½øÖÆ»òÕß»ã±à)
 int run_file(char *file)
 {
 	int ret ;

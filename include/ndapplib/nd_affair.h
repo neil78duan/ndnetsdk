@@ -11,7 +11,7 @@
 #define _ND_AFFAIR_H_
 
 #include "ndapplib/applib.h"
-//äº‹åŠ¡æ‰“å¼€,ä¿å­˜,åŒæ­¥å¼€å…³
+//ÊÂÎñ´ò¿ª,±£´æ,Í¬²½¿ª¹Ø
 template<class TAfair>
 class EnableAffairHelper
 {
@@ -273,7 +273,7 @@ public:
 	}
 	int GetAffairStat() {return m_affair_stat;}
 
-	//è®¾ç½®æ˜¯å¦é€šçŸ¥å®¢æˆ·ç«¯ flag = 0 ä¸é€šçŸ¥,è¿”å›åŸæ¥çš„å€¼
+	//ÉèÖÃÊÇ·ñÍ¨Öª¿Í»§¶Ë flag = 0 ²»Í¨Öª,·µ»ØÔ­À´µÄÖµ
 	bool SetNotify(bool bflag )
 	{
 		bool ret =	m_notify ? true : false ;
@@ -325,10 +325,10 @@ public:
 
 protected:
 
-	int m_nCount;           // æäº¤è®¡æ•°, è§£å†³å¤šæ¬¡begin, å¤šæ¬¡commitçš„é—®é¢˜.(è¿™æ˜¯æš‚è¡Œæ–¹æ¡ˆ)
+	int m_nCount;           // Ìá½»¼ÆÊı, ½â¾ö¶à´Îbegin, ¶à´ÎcommitµÄÎÊÌâ.(ÕâÊÇÔİĞĞ·½°¸)
 	NDUINT32 m_num:16 ;
 	NDUINT32 m_affair_stat:1 ;   //0 not set 1 begin 
-	NDUINT32 m_enable:1 ;		//æ˜¯å¦æ‰“å¼€äº‹åŠ¡
+	NDUINT32 m_enable:1 ;		//ÊÇ·ñ´ò¿ªÊÂÎñ
 	NDUINT32 m_notify:1 ;
 	NDUINT32 m_syncdb:1 ;
 	back_op m_buf[number] ;
