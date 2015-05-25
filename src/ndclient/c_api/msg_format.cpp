@@ -13,7 +13,7 @@
 #include "ndapplib/nd_msgpacket.h"
 #include "ndapplib/nd_datatransfer.h"
 #include "ndcli/nd_api_c.h"
-#include "ndapplib/applib.h"
+//#include "ndapplib/applib.h"
 
 #include "nd_msg.h"
 #include <stdarg.h>

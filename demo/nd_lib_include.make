@@ -32,7 +32,9 @@ ifeq ($(OS_kernel),linux)
     CFLAGS += -D__LINUX__
 endif
 ifeq ($(OS_kernel),darwin)
-    CFLAGS += -D__MAC_OS__
+	CFLAGS += -D__MAC_OS__
+	LFLAGS += -liconv
+
 endif
 
 

@@ -70,6 +70,8 @@
 		07CBF85B19C974BC002EE541 /* nd_connector.c in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF85619C974BC002EE541 /* nd_connector.c */; };
 		07CBF85C19C974BC002EE541 /* nd_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF85819C974BC002EE541 /* nd_client.cpp */; };
 		07CBF85D19C974BC002EE541 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF85919C974BC002EE541 /* Makefile */; };
+		07CFB0451B1309720061C219 /* nd_iconv.c in Sources */ = {isa = PBXBuildFile; fileRef = 07CFB0441B1309720061C219 /* nd_iconv.c */; };
+		07CFB07F1B130A680061C219 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 07CFB07E1B130A680061C219 /* libiconv.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -237,6 +239,9 @@
 		07CBF85619C974BC002EE541 /* nd_connector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_connector.c; sourceTree = "<group>"; };
 		07CBF85819C974BC002EE541 /* nd_client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_client.cpp; sourceTree = "<group>"; };
 		07CBF85919C974BC002EE541 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		07CFB0441B1309720061C219 /* nd_iconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_iconv.c; sourceTree = "<group>"; };
+		07CFB07D1B130A290061C219 /* nd_iconv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconv.h; sourceTree = "<group>"; };
+		07CFB07E1B130A680061C219 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,6 +249,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07CFB07F1B130A680061C219 /* libiconv.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,6 +259,7 @@
 		07A2695319C80B1500F51698 = {
 			isa = PBXGroup;
 			children = (
+				07CFB07E1B130A680061C219 /* libiconv.dylib */,
 				07A2696619C80D8300F51698 /* ndsdk */,
 				07A2695E19C80B1500F51698 /* ndcli_unity_mac */,
 				07A2695D19C80B1500F51698 /* Products */,
@@ -313,6 +320,7 @@
 		07A2696819C80DA500F51698 /* nd_common */ = {
 			isa = PBXGroup;
 			children = (
+				07CFB07D1B130A290061C219 /* nd_iconv.h */,
 				07A2696919C80DA500F51698 /* list.h */,
 				07A2696A19C80DA500F51698 /* nd_alloc.h */,
 				07A2696B19C80DA500F51698 /* nd_atomic.h */,
@@ -486,6 +494,7 @@
 		07A269F019C80DA600F51698 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				07CFB0441B1309720061C219 /* nd_iconv.c */,
 				07647B511A400D7F00A96620 /* nd_cmdline.c */,
 				07A269F119C80DA600F51698 /* bintree.c */,
 				07A269F219C80DA600F51698 /* callstack.c */,
@@ -728,6 +737,7 @@
 				07A26BBB19C80DA600F51698 /* ipraw.c in Sources */,
 				07A26B5919C80DA600F51698 /* nd_handle.c in Sources */,
 				07A26B6119C80DA600F51698 /* nd_win.c in Sources */,
+				07CFB0451B1309720061C219 /* nd_iconv.c in Sources */,
 				07501E3C1A161207003DE0CA /* nd_exch_key.cpp in Sources */,
 				07A26B9C19C80DA600F51698 /* ndrsa.c in Sources */,
 				07A26B9D19C80DA600F51698 /* tea.c in Sources */,

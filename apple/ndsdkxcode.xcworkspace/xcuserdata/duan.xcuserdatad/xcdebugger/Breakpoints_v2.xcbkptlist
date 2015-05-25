@@ -187,7 +187,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "820"
             endingLineNumber = "820"
-            landmarkName = "alloc_attrib_node()"
+            landmarkName = "ndxml_delattribi()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -203,7 +203,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "893"
             endingLineNumber = "893"
-            landmarkName = "xml_write()"
+            landmarkName = "parse_xmlbuf()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

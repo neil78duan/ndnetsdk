@@ -15,6 +15,7 @@
 		0729DF8919A8ED3D002F8A75 /* iosDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0729DF8819A8ED3D002F8A75 /* iosDemoTests.m */; };
 		0729DF9C19A97265002F8A75 /* netmsgHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0729DF9A19A97265002F8A75 /* netmsgHandler.cpp */; };
 		07318CA71A9B50890024B78F /* libndclient_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07318CA61A9B50890024B78F /* libndclient_ios.a */; };
+		07CFB07A1B1309F20061C219 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 07CFB0791B1309F20061C219 /* libiconv.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		0729DF9A19A97265002F8A75 /* netmsgHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = netmsgHandler.cpp; sourceTree = "<group>"; };
 		0729DF9B19A97265002F8A75 /* netmsgHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = netmsgHandler.h; sourceTree = "<group>"; };
 		07318CA61A9B50890024B78F /* libndclient_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libndclient_ios.a; path = "../ndclient_ios/build/Debug-iphoneos/libndclient_ios.a"; sourceTree = "<group>"; };
+		07CFB0791B1309F20061C219 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07CFB07A1B1309F20061C219 /* libiconv.dylib in Frameworks */,
 				07318CA71A9B50890024B78F /* libndclient_ios.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -67,6 +70,7 @@
 		0729DF6319A8ED3C002F8A75 = {
 			isa = PBXGroup;
 			children = (
+				07CFB0791B1309F20061C219 /* libiconv.dylib */,
 				07318CA61A9B50890024B78F /* libndclient_ios.a */,
 				0729DF6E19A8ED3C002F8A75 /* iosDemo */,
 				0729DF8519A8ED3D002F8A75 /* iosDemoTests */,

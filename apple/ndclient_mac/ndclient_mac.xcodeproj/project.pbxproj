@@ -153,6 +153,8 @@
 		07CBF85019C974A7002EE541 /* nd_connector.c in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84B19C974A7002EE541 /* nd_connector.c */; };
 		07CBF85119C974A7002EE541 /* nd_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84D19C974A7002EE541 /* nd_client.cpp */; };
 		07CBF85219C974A7002EE541 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07CBF84E19C974A7002EE541 /* Makefile */; };
+		07CFB0431B13095A0061C219 /* nd_iconv.c in Sources */ = {isa = PBXBuildFile; fileRef = 07CFB0421B13095A0061C219 /* nd_iconv.c */; };
+		07CFB07C1B130A110061C219 /* nd_iconv.h in Headers */ = {isa = PBXBuildFile; fileRef = 07CFB07B1B130A110061C219 /* nd_iconv.h */; };
 		07DF1C031A14519F00251E83 /* nd_exch_key.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07DF1C021A14519F00251E83 /* nd_exch_key.cpp */; };
 		07EA8FD01A5E5DD300EC0D2B /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EA8FCF1A5E5DD300EC0D2B /* nd_datatransfer.cpp */; };
 /* End PBXBuildFile section */
@@ -306,6 +308,8 @@
 		07CBF84B19C974A7002EE541 /* nd_connector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_connector.c; sourceTree = "<group>"; };
 		07CBF84D19C974A7002EE541 /* nd_client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_client.cpp; sourceTree = "<group>"; };
 		07CBF84E19C974A7002EE541 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		07CFB0421B13095A0061C219 /* nd_iconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_iconv.c; sourceTree = "<group>"; };
+		07CFB07B1B130A110061C219 /* nd_iconv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconv.h; sourceTree = "<group>"; };
 		07DF1C021A14519F00251E83 /* nd_exch_key.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_exch_key.cpp; sourceTree = "<group>"; };
 		07EA8FCF1A5E5DD300EC0D2B /* nd_datatransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nd_datatransfer.cpp; path = ../../src/ndapplib/nd_datatransfer.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -376,6 +380,7 @@
 		07A2663B19C7F4C700F51698 /* nd_common */ = {
 			isa = PBXGroup;
 			children = (
+				07CFB07B1B130A110061C219 /* nd_iconv.h */,
 				07A2663C19C7F4C700F51698 /* list.h */,
 				07A2663D19C7F4C700F51698 /* nd_alloc.h */,
 				07A2663E19C7F4C700F51698 /* nd_atomic.h */,
@@ -550,6 +555,7 @@
 		07A2671A19C7F4EE00F51698 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				07CFB0421B13095A0061C219 /* nd_iconv.c */,
 				07A2671B19C7F4EE00F51698 /* bintree.c */,
 				07A2671C19C7F4EE00F51698 /* callstack.c */,
 				07A2671D19C7F4EE00F51698 /* common.c */,
@@ -765,6 +771,7 @@
 				07A266CB19C7F4C700F51698 /* nd_tcp.h in Headers */,
 				07A266A919C7F4C700F51698 /* nd_static_alloc.h in Headers */,
 				07A266B219C7F4C700F51698 /* nd_cryptfile.h in Headers */,
+				07CFB07C1B130A110061C219 /* nd_iconv.h in Headers */,
 				07A266D419C7F4C700F51698 /* nd_threadmsgid.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -845,6 +852,7 @@
 				07A268C319C7F4F000F51698 /* nd_cryptfile.c in Sources */,
 				07A2688F19C7F4F000F51698 /* recbuf.c in Sources */,
 				07A268B819C7F4F000F51698 /* md2c.c in Sources */,
+				07CFB0431B13095A0061C219 /* nd_iconv.c in Sources */,
 				07A2688419C7F4F000F51698 /* nd_mempool.c in Sources */,
 				07A2695219C7F54F00F51698 /* nd_msgpack.cpp in Sources */,
 				07A2688D19C7F4F000F51698 /* nddir.c in Sources */,

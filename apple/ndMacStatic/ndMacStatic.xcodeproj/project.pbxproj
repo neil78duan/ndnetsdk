@@ -15,6 +15,7 @@
 		07647B501A3FDBBE00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B4F1A3FDBBE00A96620 /* nd_cmdline.c */; };
 		07BBB3F51AC6839F0099A4EC /* nd_epoll.c in Sources */ = {isa = PBXBuildFile; fileRef = 07BBB3F41AC6839F0099A4EC /* nd_epoll.c */; };
 		07BBB3F71AC683CB0099A4EC /* nd_epoll.h in Headers */ = {isa = PBXBuildFile; fileRef = 07BBB3F61AC683CB0099A4EC /* nd_epoll.h */; };
+		07CFB03F1B1308EE0061C219 /* nd_iconv.c in Sources */ = {isa = PBXBuildFile; fileRef = 07CFB03E1B1308EE0061C219 /* nd_iconv.c */; };
 		07D47C5119D9694A00D08BB6 /* nd_alarms.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D47C5019D9694A00D08BB6 /* nd_alarms.h */; };
 		07D47C5319D9695A00D08BB6 /* nd_alarms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07D47C5219D9695A00D08BB6 /* nd_alarms.cpp */; };
 		07EBCF3B19A8DFCD00802576 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCE9219A8DFCD00802576 /* Makefile */; };
@@ -200,6 +201,7 @@
 		07647B641A4419B300A96620 /* _nderr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
 		07BBB3F41AC6839F0099A4EC /* nd_epoll.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_epoll.c; sourceTree = "<group>"; };
 		07BBB3F61AC683CB0099A4EC /* nd_epoll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_epoll.h; sourceTree = "<group>"; };
+		07CFB03E1B1308EE0061C219 /* nd_iconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_iconv.c; sourceTree = "<group>"; };
 		07D47C5019D9694A00D08BB6 /* nd_alarms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_alarms.h; sourceTree = "<group>"; };
 		07D47C5219D9695A00D08BB6 /* nd_alarms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_alarms.cpp; sourceTree = "<group>"; };
 		07EBCE8719A8DEFC00802576 /* libndMacStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndMacStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -447,6 +449,7 @@
 		07EBCEB619A8DFCD00802576 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				07CFB03E1B1308EE0061C219 /* nd_iconv.c */,
 				07EBCEB719A8DFCD00802576 /* bintree.c */,
 				07EBCEB819A8DFCD00802576 /* callstack.c */,
 				07EBCEB919A8DFCD00802576 /* common.c */,
@@ -1020,6 +1023,7 @@
 				07EBCF7E19A8DFCD00802576 /* nd_pubkey.c in Sources */,
 				07EBCFA819A8DFCD00802576 /* nd_vmmain.c in Sources */,
 				07EBCF8D19A8DFCD00802576 /* udt_icmp.c in Sources */,
+				07CFB03F1B1308EE0061C219 /* nd_iconv.c in Sources */,
 				07EBCF7619A8DFCD00802576 /* r_dh.c in Sources */,
 				07EBCF7119A8DFCD00802576 /* digit.c in Sources */,
 				07EBCF7A19A8DFCD00802576 /* r_random.c in Sources */,

@@ -42,6 +42,8 @@ ifeq ($(OS_kernel),linux)
 endif
 ifeq ($(OS_kernel),darwin)
     CFLAGS += -D__MAC_OS__
+	LFLAGS += -liconv
+
 endif
 
 CFLAGS += -c -w -O  -DND_UNIX
