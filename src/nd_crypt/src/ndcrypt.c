@@ -47,19 +47,19 @@ char *crypt_stuff(char *src, int datalen, int stufflen )
 }
 
 
-/* ¼ÓÃÜ/½âÃÜº¯Êı
- * input : @data ±»¼ÓÃÜµÄÊı¾İ
- *			@len ±»¼ÓÃÜÊı¾İµÄ³¤¶È
- *			@key¼ÓÃÜÃÜÔ¿
- * output : @data ¼ÓÃÜºóµÄÊı¾İ
- * ¼ÓÃÜÊ±Èç¹ûÊı¾İ³¤¶È²»¹»¼ÓÃÜµÄÒªÇó,ÔòÔÚ±»¼ÓÃÜµÄÊı¾İºóÃæ²¹³ä¿Õ¸ñ,×îºóÒ»¸ö×Ö·û¼ÇÂ¼Ìî³äÊı¾İµÄ³¤¶È
- * Èç¹ûÊı¾İ¸ÕºÃ,Ôò²»ĞèÒªÌî³äÈÎºÎ¶«Î÷.
+/* åŠ å¯†/è§£å¯†å‡½æ•°
+ * input : @data è¢«åŠ å¯†çš„æ•°æ®
+ *			@len è¢«åŠ å¯†æ•°æ®çš„é•¿åº¦
+ *			@keyåŠ å¯†å¯†é’¥
+ * output : @data åŠ å¯†åçš„æ•°æ®
+ * åŠ å¯†æ—¶å¦‚æœæ•°æ®é•¿åº¦ä¸å¤ŸåŠ å¯†çš„è¦æ±‚,åˆ™åœ¨è¢«åŠ å¯†çš„æ•°æ®åé¢è¡¥å……ç©ºæ ¼,æœ€åä¸€ä¸ªå­—ç¬¦è®°å½•å¡«å……æ•°æ®çš„é•¿åº¦
+ * å¦‚æœæ•°æ®åˆšå¥½,åˆ™ä¸éœ€è¦å¡«å……ä»»ä½•ä¸œè¥¿.
  * return value :on error return 0, else return data length of encrypted
- * ×¢Òâ:½âÃÜºóÊı¾İ²»»á±È½âÃÜÇ°³¤
+ * æ³¨æ„:è§£å¯†åæ•°æ®ä¸ä¼šæ¯”è§£å¯†å‰é•¿
  */
 int nd_TEAencrypt(unsigned char *data, int data_len, tea_k *key) 
 {
-	int vlen = sizeof(tea_v) ;			/*¼ÓÃÜµ¥ÔªµÄ³¤¶È*/
+	int vlen = sizeof(tea_v) ;			/*åŠ å¯†å•å…ƒçš„é•¿åº¦*/
 	int stuff_len ,i,n,new_len;
 	
 	tea_v *v = (tea_v *)data;
@@ -84,7 +84,7 @@ int nd_TEAencrypt(unsigned char *data, int data_len, tea_k *key)
 
 int nd_TEAdecrypt(unsigned char *data, int data_len, tea_k *key) 
 {
-	int vlen = sizeof(tea_v) ;			/*¼ÓÃÜµ¥ÔªµÄ³¤¶È*/
+	int vlen = sizeof(tea_v) ;			/*åŠ å¯†å•å…ƒçš„é•¿åº¦*/
 	int i,n;
 	
 	tea_v *v = (tea_v *)data;
@@ -130,7 +130,7 @@ char* MD5ToString(unsigned char src[16], unsigned char desc[33])
 }
 
 
-/*¼ÓÃÜ¿É´òÓ¡µÄ×Ö·û(\0µÄ×Ö·û´®)*/
+/*åŠ å¯†å¯æ‰“å°çš„å­—ç¬¦(\0çš„å­—ç¬¦ä¸²)*/
 char *MD5CryptStr16(char *input, char output[16]) 
 {
 	MD5_CTX context;
@@ -143,7 +143,7 @@ char *MD5CryptStr16(char *input, char output[16])
 	return output ;
 }
 
-/* ÊäÈë×Ö·ûÊÇ¶ş½øÖÆ×Ö·û
+/* è¾“å…¥å­—ç¬¦æ˜¯äºŒè¿›åˆ¶å­—ç¬¦
  * @inlen input length
  * @input data address of input
  * @output buffer address char[16]
@@ -294,10 +294,10 @@ int base64_encode( const char * source, int len, char * destination_string )
 
 		if ( ( number_of_bytes_encoded % BASE64_NUMBER_OF_CHARACTERS_PER_LINE ) == 0 )
 		{
-			destination[ number_of_bytes_encoded ] = 13;		//»Ø³µreturn
+			destination[ number_of_bytes_encoded ] = 13;		//å›è½¦return
 			number_of_bytes_encoded++;
 
-			destination[ number_of_bytes_encoded ] = 10;		//»»ĞĞ
+			destination[ number_of_bytes_encoded ] = 10;		//æ¢è¡Œ
 			number_of_bytes_encoded++;
 		}
 	}

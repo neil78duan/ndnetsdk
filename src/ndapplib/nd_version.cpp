@@ -3,7 +3,7 @@
 //  ndMacStatic
 //
 //  Created by duanxiuyun on 15-1-15.
-//  Copyright (c) 2015年 duanxiuyun. All rights reserved.
+//  Copyright (c) 2015 duanxiuyun. All rights reserved.
 //
 
 #include <stdio.h>

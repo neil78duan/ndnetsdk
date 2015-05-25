@@ -23,7 +23,7 @@ struct listen_config
 	char listen_name[32] ;
 };
 
-//Á¬½ÓĞÅÏ¢
+//è¿æ¥ä¿¡æ¯
 struct connect_config
 {
 	int port ;
@@ -33,11 +33,11 @@ struct connect_config
 	struct nd_proxy_info proxy_info ;
 };
 
-//ÊµÀıÅäÖÃĞÅÏ¢
+//å®ä¾‹é…ç½®ä¿¡æ¯
 struct instance_config
 {
-	int open_dump ;				//ÊÇ·ñ´ò¿ªdump
-	int single_thread;			//ÊÇ·ñÊ¹ÓÃµ¥Ïß³ÌÂß¼­
+	int open_dump ;				//æ˜¯å¦æ‰“å¼€dump
+	int single_thread;			//æ˜¯å¦ä½¿ç”¨å•çº¿ç¨‹é€»è¾‘
 	NDUINT32 log_file_size ;
 	char inet_ip[ND_HOST_NAME_SIZE];
 	char callstack_file[256] ;
@@ -46,10 +46,10 @@ struct instance_config
 };
 
 #define MAX_RELIABLE_HOST 8
-//·şÎñÆ÷ÅäÖÃĞÅÏ¢
+//æœåŠ¡å™¨é…ç½®ä¿¡æ¯
 struct server_config
 {
-	NDUINT8 m_un_develop;	//ÊÇ·ñÊÇ¿ª·¢°æ±¾
+	NDUINT8 m_un_develop;	//æ˜¯å¦æ˜¯å¼€å‘ç‰ˆæœ¬
 	struct listen_config   l_cfg ;
 	struct instance_config i_cfg ;
 
@@ -63,15 +63,15 @@ struct server_config
 // 	char host[ND_HOST_NAME_SIZE] ;
 // };
 
-//¶ÁÈ¡¶Ë¿Ú»ùÊı
+//è¯»å–ç«¯å£åŸºæ•°
 int read_base_port(ndxml *xmlroot) ;
-//¶ÁÈ¡ÊµÀıĞÅÏ¢
+//è¯»å–å®ä¾‹ä¿¡æ¯
 int read_instance_info(ndxml *xmlroot, struct instance_config *icfg);
-//¶ÁÈ¡Á¬½ÓĞÅÏ¢
+//è¯»å–è¿æ¥ä¿¡æ¯
 int read_connect_cfg(ndxml *xmlroot, int base_port, struct connect_config *ccfg);
-//¶ÁÈ¡¼àÌıĞÅÏ¢
+//è¯»å–ç›‘å¬ä¿¡æ¯
 int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg);
 
-//´Óxml¶ÁÈ¡ÅäÖÃĞÅÏ¢
+//ä»xmlè¯»å–é…ç½®ä¿¡æ¯
 int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg) ;
 #endif

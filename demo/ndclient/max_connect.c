@@ -230,7 +230,7 @@ void *send_func(void *param)
 }
 
 
-//µÈ´ı·şÎñµÄ½áÊø
+//ç­‰å¾…æœåŠ¡çš„ç»“æŸ
 int wait_exit()
 {
 	int ch;

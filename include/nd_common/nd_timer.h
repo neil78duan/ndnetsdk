@@ -13,12 +13,12 @@ typedef int (*nd_timer_entry)( void *param) ;
 
 enum eTimeType
 {
-	ETT_LOOP = 0 ,			//Ñ­»·Ö´ĞĞµÄ¶¨Ê±Æ÷
-	ETT_ONCE ,				//Ö´ĞĞÒ»´ÎµÄ¶¨Ê±Æ÷
-	ETT_DESTROY				//¶¨Ê±Æ÷±»Ïú»ÙÊ±Ö´ĞĞ
+	ETT_LOOP = 0 ,			//å¾ªç¯æ‰§è¡Œçš„å®šæ—¶å™¨
+	ETT_ONCE ,				//æ‰§è¡Œä¸€æ¬¡çš„å®šæ—¶å™¨
+	ETT_DESTROY				//å®šæ—¶å™¨è¢«é”€æ¯æ—¶æ‰§è¡Œ
 };
 
-/* Ôö¼ÓÒ»¸ö¼ÆÊ±Ö´ĞĞº¯Êı*/
+/* å¢åŠ ä¸€ä¸ªè®¡æ—¶æ‰§è¡Œå‡½æ•°*/
 ND_COMMON_API ndtimer_t nd_timer_add(nd_handle handle,nd_timer_entry func,void *param,ndtime_t interval, int run_type );
 ND_COMMON_API int nd_timer_del(nd_handle handle, ndtimer_t id) ;
 

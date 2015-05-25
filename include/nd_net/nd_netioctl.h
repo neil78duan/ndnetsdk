@@ -12,8 +12,8 @@
 #define _ND_NETIOCTL_H_
 
 //command of 
-// Ö÷Òª¸ø int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size) Ê¹ÓÃ
-// Ã¿¸öÃüÁî²ÎÊý valºÍsizeÒâÒå²»Ò»Ñù, Ò»°ãÓÃ·¨ÈçÏÂ
+// ä¸»è¦ç»™ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size) ä½¿ç”¨
+// æ¯ä¸ªå‘½ä»¤å‚æ•° valå’Œsizeæ„ä¹‰ä¸ä¸€æ ·, ä¸€èˆ¬ç”¨æ³•å¦‚ä¸‹
 /*
 	NDUINT32 val = 1024*1024;
 	int size = sizeof(val) ;
@@ -21,19 +21,19 @@
  */
 enum ND_IOCTRL_CMD
 {
-	NDIOCTL_SET_BLOCK = 1 ,		//ÉèÖÃ·Ç×èÈû/×èÈû 
-	NDIOCTL_GET_BLOCK  ,		//µÃµ½·Ç×èÈû/×èÈû×´Ì¬
-	NDIOCTL_SET_SENDVBUF,		// ·¢ËÍ»º³å
+	NDIOCTL_SET_BLOCK = 1 ,		//è®¾ç½®éžé˜»å¡ž/é˜»å¡ž 
+	NDIOCTL_GET_BLOCK  ,		//å¾—åˆ°éžé˜»å¡ž/é˜»å¡žçŠ¶æ€
+	NDIOCTL_SET_SENDVBUF,		// å‘é€ç¼“å†²
 	NDIOCTL_GET_SENDBUF,		//
-	NDIOCTL_SET_RECVVBUF,		//½ÓÊÕ»º³å
+	NDIOCTL_SET_RECVVBUF,		//æŽ¥æ”¶ç¼“å†²
 	NDIOCTL_GET_RECVBUF,
-	NDIOCTL_SET_TCP_RECV_WNDSIZE,		//TCP»º³å
+	NDIOCTL_SET_TCP_RECV_WNDSIZE,		//TCPç¼“å†²
 	NDIOCTL_GET_TCP_RECV_WNDSIZE,
 	NDIOCTL_SET_TCP_SEND_WNDSIZE,
 	NDIOCTL_GET_TCP_SEND_WNDSIZE,
-	NDIOCTL_SET_TIMEOUT,				//ÉèÖÃ³¬Ê±(ms)
+	NDIOCTL_SET_TIMEOUT,				//è®¾ç½®è¶…æ—¶(ms)
 	NDIOCTL_GET_TIMEOUT,
-	NDIOCTL_GET_RECV_PACK_NUM,			//ÏûÏ¢¸öÊý
+	NDIOCTL_GET_RECV_PACK_NUM,			//æ¶ˆæ¯ä¸ªæ•°
 	NDIOCTL_SET_RECV_PACK_NUM,
 	NDIOCTL_GET_SEND_PACK_NUM,
 	NDIOCTL_SET_SEND_PACK_NUM,
@@ -64,7 +64,7 @@ enum ND_IOCTRL_CMD
 	NDIOCTL_GET_WRITABLE_CALLBACK_PARAM,
 	NDIOCTL_SET_WRITABLE_CALLBACK_PARAM,
 	
-	NDIOCTL_NUMBER						//ÃüÁî¸öÊý
+	NDIOCTL_NUMBER						//å‘½ä»¤ä¸ªæ•°
 };
 
 

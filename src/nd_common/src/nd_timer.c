@@ -33,7 +33,7 @@ struct timer_node
 };
 
 static void tryto_del_timer(struct nd_timer_root *root) ;
-/* Ôö¼ÓÒ»¸ö¼ÆÊ±Ö´ÐÐº¯Êý*/
+/* å¢žåŠ ä¸€ä¸ªè®¡æ—¶æ‰§è¡Œå‡½æ•°*/
 ndtimer_t nd_timer_add(nd_handle handle,nd_timer_entry func,void *param,ndtime_t interval, int run_type )
 {
 	struct nd_timer_root * root ;
@@ -65,10 +65,10 @@ ndtimer_t nd_timer_add(nd_handle handle,nd_timer_entry func,void *param,ndtime_t
 	return node->timer_id;
 }
 
-/* É¾³ý¶¨Ê±Æ÷,Íâ²¿Ê¹ÓÃº¯Êý
- * °Ñ¼ÆÊ±Æ÷·Åµ¹±»É¾³ý¶ÓÁÐÖÐ,ÔÚupdateÊ±É¾³ý
- * ÕâÑù×ö¿ÉÒÔÔÚ¶¨Ê±Æ÷º¯ÊýÖÐÔö¼ÓºÍÉ¾³ý¶¨Ê±Æ÷º¯Êý,
- * ÒòÎª±ÜÃâÁËÈ¦Ì×luck
+/* åˆ é™¤å®šæ—¶å™¨,å¤–éƒ¨ä½¿ç”¨å‡½æ•°
+ * æŠŠè®¡æ—¶å™¨æ”¾å€’è¢«åˆ é™¤é˜Ÿåˆ—ä¸­,åœ¨updateæ—¶åˆ é™¤
+ * è¿™æ ·åšå¯ä»¥åœ¨å®šæ—¶å™¨å‡½æ•°ä¸­å¢žåŠ å’Œåˆ é™¤å®šæ—¶å™¨å‡½æ•°,
+ * å› ä¸ºé¿å…äº†åœˆå¥—luck
  */
 int nd_timer_del(nd_handle handle, ndtimer_t id) 
 {
@@ -90,7 +90,7 @@ int nd_timer_del(nd_handle handle, ndtimer_t id)
 
 }
 
-/* Ïú»ÙÒ»¸ö¶¨Ê±Æ÷¶ÔÏó*/
+/* é”€æ¯ä¸€ä¸ªå®šæ—¶å™¨å¯¹è±¡*/
 int  nd_timer_destroy(nd_handle timer_handle, int force) 
 {
 	struct timer_node *node ;
@@ -140,10 +140,10 @@ nd_handle nd_timer_create(nd_handle pallocator)
 		return NULL ;
 	}
 
-	root->size = sizeof(*root) ;					/*¾ä±úµÄ´óÐ¡*/
-	root->type = NDHANDLE_TIMER ;					/*¾ä±úÀàÐÍ*/	
+	root->size = sizeof(*root) ;					/*å¥æŸ„çš„å¤§å°*/
+	root->type = NDHANDLE_TIMER ;					/*å¥æŸ„ç±»åž‹*/	
 	root->myerrno = 0 ;
-	root->close_entry =(nd_close_callback )nd_timer_destroy;			/*¾ä±úÊÍ·Åº¯Êý*/
+	root->close_entry =(nd_close_callback )nd_timer_destroy;			/*å¥æŸ„é‡Šæ”¾å‡½æ•°*/
 	root->pallocator = pallocator;					//memory allocator 
 	root->start_id = 0 ;
 	root->num = 0 ;
@@ -153,7 +153,7 @@ nd_handle nd_timer_create(nd_handle pallocator)
 	return (nd_handle) root ;
 }
 
-/* Ö´ÐÐ¶¨Ê±Æ÷º¯Êý*/
+/* æ‰§è¡Œå®šæ—¶å™¨å‡½æ•°*/
 int  nd_timer_update(nd_handle handle) 
 {
 	int ret = 0 ,run_ret =0 ;

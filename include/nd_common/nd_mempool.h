@@ -6,10 +6,10 @@
  */
 
 /*
- * ÕâÊÇÒ»¸öÌØÊâµÄmempool 
- * Ö»Ìá¹©ÁË¶ÔÌØ¶¨³¤¶ÈºÍ¸öÊıµÄÄÚ´æ»º³å³Ø.
- * ÔÚĞèÒªÊ¹ÓÃ¶à¸öÍ¬Ñù´óĞ¡µÄ½á¹¹»òÕßÄÚ´æ¿éµÄÊÇ,¿ÉÒÔÉêÇëÒ»¸öÄÚ´æ³Ø,
- * È»ºóÃ¿´ÎÊ¹ÓÃµÄÊ±ºò´ÓÕâ¸öÄÚ´æ³ØÖĞÉêÇëÒ»¸öÄÚ´æ¿é³öÀ´,²»ÓÃÁË¾Í¿ÉÒÔÊÍ·Å¸øÄÚ´æ³Ø.
+ * è¿™æ˜¯ä¸€ä¸ªç‰¹æ®Šçš„mempool 
+ * åªæä¾›äº†å¯¹ç‰¹å®šé•¿åº¦å’Œä¸ªæ•°çš„å†…å­˜ç¼“å†²æ± .
+ * åœ¨éœ€è¦ä½¿ç”¨å¤šä¸ªåŒæ ·å¤§å°çš„ç»“æ„æˆ–è€…å†…å­˜å—çš„æ˜¯,å¯ä»¥ç”³è¯·ä¸€ä¸ªå†…å­˜æ± ,
+ * ç„¶åæ¯æ¬¡ä½¿ç”¨çš„æ—¶å€™ä»è¿™ä¸ªå†…å­˜æ± ä¸­ç”³è¯·ä¸€ä¸ªå†…å­˜å—å‡ºæ¥,ä¸ç”¨äº†å°±å¯ä»¥é‡Šæ”¾ç»™å†…å­˜æ± .
  */
 #ifndef _ND_MEMPOOL_H_
 #define _ND_MEMPOOL_H_
@@ -18,34 +18,34 @@
 
 #define MIN_ALLOC_SIZE		ALIGN_SIZE
 
-//ÄÚ´æ³ØÀàĞÍ
+//å†…å­˜æ± ç±»å‹
 enum emem_pool_type{
-	EMEMPOOL_TINY =  64*1024,		//Î¢ĞÍÄÚ´æ³Ø
-	EMEMPOOL_NORMAL = 256*1024,		//ÆÕÍ¨´óĞ¡ÄÚ´æ³Ø
-	EMEMPOOL_HUGE	= 1024*1024,		//¾ŞĞÍÄÚ´æ³Ø
-	EMEMPOOL_UNLIMIT = -1			//ÎŞÏŞÖÆÄÚ´æ³Ø
+	EMEMPOOL_TINY =  64*1024,		//å¾®å‹å†…å­˜æ± 
+	EMEMPOOL_NORMAL = 256*1024,		//æ™®é€šå¤§å°å†…å­˜æ± 
+	EMEMPOOL_HUGE	= 1024*1024,		//å·¨å‹å†…å­˜æ± 
+	EMEMPOOL_UNLIMIT = -1			//æ— é™åˆ¶å†…å­˜æ± 
 };
 
 #ifdef ND_UNUSE_STDC_ALLOC
-//¶¨ÒåÄÚ´æÎö¹¹º¯Êı
+//å®šä¹‰å†…å­˜ææ„å‡½æ•°
 typedef void (*memdestruct_entry)(nd_handle pool, void *addr) ;
 
-//ÄÚ´æ³ØÄ£¿é³õÊ¼»¯/ÊÍ·Åº¯Êı
+//å†…å­˜æ± æ¨¡å—åˆå§‹åŒ–/é‡Šæ”¾å‡½æ•°
 ND_COMMON_API int nd_mempool_root_init() ;
 ND_COMMON_API void nd_mempool_root_release();
 
-//ÄÚ´æ³Ø²Ù×÷º¯Êı
-ND_COMMON_API nd_handle nd_pool_create(size_t size,const char *name ) ;	//´´½¨Ò»¸öÄÚ´æ³Ø,·µ»ØÄÚ´æ³ØµØÖ·
-ND_COMMON_API int nd_pool_destroy(nd_handle pool, int flag);		//Ïú»ÙÒ»¸öÄÚ´æ»º³å³Ø
-ND_COMMON_API void *nd_pool_alloc_real(nd_handle pool , size_t size);	//´Ó»º³å³ØÖĞÉêÇëÒ»¸öÄÚ´æ
-ND_COMMON_API void nd_pool_free_real(nd_handle pool ,void *addr) ;		//ÊÍ·ÅÒ»¸öÄÚ´æ
+//å†…å­˜æ± æ“ä½œå‡½æ•°
+ND_COMMON_API nd_handle nd_pool_create(size_t size,const char *name ) ;	//åˆ›å»ºä¸€ä¸ªå†…å­˜æ± ,è¿”å›å†…å­˜æ± åœ°å€
+ND_COMMON_API int nd_pool_destroy(nd_handle pool, int flag);		//é”€æ¯ä¸€ä¸ªå†…å­˜ç¼“å†²æ± 
+ND_COMMON_API void *nd_pool_alloc_real(nd_handle pool , size_t size);	//ä»ç¼“å†²æ± ä¸­ç”³è¯·ä¸€ä¸ªå†…å­˜
+ND_COMMON_API void nd_pool_free_real(nd_handle pool ,void *addr) ;		//é‡Šæ”¾ä¸€ä¸ªå†…å­˜
 ND_COMMON_API void nd_pool_reset(nd_handle pool) ;					//reset a memory pool
 ND_COMMON_API void nd_pool_set_trace(nd_handle pool, int flag) ;					//reset a memory pool
 
 ND_COMMON_API size_t nd_pool_freespace(nd_handle pool) ;	//get free space 
 ND_COMMON_API void nd_pool_destruct_entry(nd_handle pool , memdestruct_entry func) ;
 
-/*µÃµ½È«¾ÖÄ¬ÈÏµÄÄÚ´æ³Ø*/
+/*å¾—åˆ°å…¨å±€é»˜è®¤çš„å†…å­˜æ± */
 ND_COMMON_API nd_handle nd_global_mmpool() ;
 
 ND_COMMON_API void* nd_pool_realloc(nd_handle pool ,void *oldaddr, size_t newsize) ;
@@ -59,12 +59,12 @@ ND_COMMON_API void nd_mmpool_dump() ;
 
 #ifdef ND_MEM_CHECK
 
-//´øÓĞÈÕÖ¾¸ú×ÙµÄ·ÖÅäº¯Êı
+//å¸¦æœ‰æ—¥å¿—è·Ÿè¸ªçš„åˆ†é…å‡½æ•°
 //ND_COMMON_API void *nd_pool_alloc_trace(nd_handle pool , size_t size, char *file, int line);
 //ND_COMMON_API void nd_pool_free_trace(nd_handle pool , void *p);
 
-typedef void *(*nd_alloc_func)(nd_handle _pool,size_t __s) ;		//¶¨ÒåÄÚ´æÉêÇëº¯ÊıÖ¸Õë
-typedef void (*nd_free_func)(nd_handle _pool,void *__p) ;			//¶¨ÒåÄÚ´æÊÍ·Åº¯ÊıÖ¸Õë
+typedef void *(*nd_alloc_func)(nd_handle _pool,size_t __s) ;		//å®šä¹‰å†…å­˜ç”³è¯·å‡½æ•°æŒ‡é’ˆ
+typedef void (*nd_free_func)(nd_handle _pool,void *__p) ;			//å®šä¹‰å†…å­˜é‡Šæ”¾å‡½æ•°æŒ‡é’ˆ
 
 ND_COMMON_API void *nd_alloc_check(nd_handle _pool,size_t __n,const char *file, int line, nd_alloc_func allocfn) ;
 ND_COMMON_API void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn) ;
@@ -81,7 +81,7 @@ ND_COMMON_API void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 
 #ifdef ND_MEM_STATICS
 
-//ÄÚ²âÍ³¼Æ
+//å†…æµ‹ç»Ÿè®¡
 ND_COMMON_API int nd_mm_statics_start() ;
 ND_COMMON_API int nd_mm_statics_end() ;
 
@@ -95,10 +95,10 @@ static __INLINE__ int nd_mm_statics_end() {return 0;}
 #else //ND_UNUSE_STDC_ALLOC
 //////////////////////////////////////////////////////////////////////////
 
-//¶¨ÒåÄÚ´æÎö¹¹º¯Êı
+//å®šä¹‰å†…å­˜ææ„å‡½æ•°
 typedef void (*memdestruct_entry)(nd_handle pool, void *addr) ;
 
-//ÄÚ´æ³ØÄ£¿é³õÊ¼»¯/ÊÍ·Åº¯Êı
+//å†…å­˜æ± æ¨¡å—åˆå§‹åŒ–/é‡Šæ”¾å‡½æ•°
 static __INLINE__ int nd_mempool_root_init() {return 0;}
 static __INLINE__ void nd_mempool_root_release(){} 
 ND_COMMON_API nd_handle nd_pool_create(size_t size,const char *name );
@@ -126,7 +126,7 @@ static __INLINE__ size_t nd_pool_freespace(nd_handle pool)
 }
 ND_COMMON_API void nd_pool_destruct_entry(nd_handle pool , memdestruct_entry func) ;
 
-/*µÃµ½È«¾ÖÄ¬ÈÏµÄÄÚ´æ³Ø*/
+/*å¾—åˆ°å…¨å±€é»˜è®¤çš„å†…å­˜æ± */
 ND_COMMON_API nd_handle nd_global_mmpool() ;
 
 #define nd_pool_alloc nd_pool_alloc_real
@@ -139,8 +139,8 @@ static __INLINE__ int nd_mm_statics_end() {return 0;}
 #endif
 
 
-ND_COMMON_API int nd_addr_checkvalid(void *addr) ;			//¼ì²âÄÚ´æµØÖ·ÊÇ·ñºÏ·¨
-ND_COMMON_API int nd_alloc_checkvalid(void *addr) ;	//¼ì²âmalloc·ÖÅäµÄµØÖ·ÊÇ·ñºÏ·¨
+ND_COMMON_API int nd_addr_checkvalid(void *addr) ;			//æ£€æµ‹å†…å­˜åœ°å€æ˜¯å¦åˆæ³•
+ND_COMMON_API int nd_alloc_checkvalid(void *addr) ;	//æ£€æµ‹mallocåˆ†é…çš„åœ°å€æ˜¯å¦åˆæ³•
 #define ND_ALLOC_MM_VALID(a) nd_alloc_checkvalid(a) 
 #define ND_ADDR_VALID(a) nd_addr_checkvalid(a) 
 #endif

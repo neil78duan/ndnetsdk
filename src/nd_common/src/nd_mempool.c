@@ -6,7 +6,7 @@
  */
 
 
-#define ND_IMPLETE_MEMPOOL	1		//ÊµÏÖÄÚ´æ³ØµÄÎÄ¼ş
+#define ND_IMPLETE_MEMPOOL	1		//å®ç°å†…å­˜æ± çš„æ–‡ä»¶
 #define ND_IMPLEMENT_HANDLE 1
 
 #include "nd_common/nd_os.h"
@@ -16,7 +16,7 @@
 #include "nd_common/nd_comdef.h"
 
 
-#ifdef ND_UNUSE_STDC_ALLOC	//Ê¹ÓÃÄÚ´æ³Ø
+#ifdef ND_UNUSE_STDC_ALLOC	//ä½¿ç”¨å†…å­˜æ± 
 typedef struct nd_mm_pool *nd_handle ;
 #include "nd_common/nd_handle.h"
 #include "nd_common/nd_mempool.h"
@@ -41,20 +41,20 @@ typedef struct nd_mm_pool *nd_handle ;
 
 #define SIZE_ALINE(s)			max(_ND_ALINE(s,ALIGN_SIZE), MIN_SIZE)
 
-#define BIG_SIZE				0x400			//³¬¹ıÕâ¸öÉÏÏŞµÄÄÚ´æ½«±»±£´æÔÚ´óÄÚ´æ¶ÓÁĞÖĞ
-#define LITTLE_CHUNK_NUM		((BIG_SIZE/ALIGN_SIZE)- MIN_SIZE/ALIGN_SIZE +1)	//Ğ¡ÄÚ´æÊı×éµÄ¸öÊı (16~256) ¼ä¸ô16
-#define CHUNK_INDEX(size)		(((size)/ALIGN_SIZE) - MIN_SIZE/ALIGN_SIZE )	//µÃµ½Ë÷Òı
+#define BIG_SIZE				0x400			//è¶…è¿‡è¿™ä¸ªä¸Šé™çš„å†…å­˜å°†è¢«ä¿å­˜åœ¨å¤§å†…å­˜é˜Ÿåˆ—ä¸­
+#define LITTLE_CHUNK_NUM		((BIG_SIZE/ALIGN_SIZE)- MIN_SIZE/ALIGN_SIZE +1)	//å°å†…å­˜æ•°ç»„çš„ä¸ªæ•° (16~256) é—´éš”16
+#define CHUNK_INDEX(size)		(((size)/ALIGN_SIZE) - MIN_SIZE/ALIGN_SIZE )	//å¾—åˆ°ç´¢å¼•
 #define GET_LITTLE_SIZE(index)	(((index)+1) *ALIGN_SIZE + MIN_SIZE-ALIGN_SIZE)
 #define LITTLE_ROUND_LOWWER(size)	((size) & ~(ALIGN_SIZE-1))
 
-#define BIG_CHUNK_NUM			64	//´ó¿éÄÚ´æÊı×éµÄ¸öÊı (1k , 2k ..., 16k)
+#define BIG_CHUNK_NUM			64	//å¤§å—å†…å­˜æ•°ç»„çš„ä¸ªæ•° (1k , 2k ..., 16k)
 #define BIG_ALINE(size)			max(_ND_ALINE(size,BIG_SIZE), BIG_SIZE)
-#define BIG_INDEX(size)			(size /(BIG_SIZE) -1 )	//µÃµ½Ë÷Òı
+#define BIG_INDEX(size)			(size /(BIG_SIZE) -1 )	//å¾—åˆ°ç´¢å¼•
 #define GET_BIG_SIZE(index)		(((index)+1) *BIG_SIZE)
 #define BIG_ROUND_LOWWER(size)	((size) & ~(BIG_SIZE-1))
 
 #define ALLOCATOR_PAGE_BITMASK  0xFFF
-#define POOL_SIZE_BITS			16			//µÍ16Î»²»ÓÃ
+#define POOL_SIZE_BITS			16			//ä½16ä½ä¸ç”¨
 
 #define DEFAULT_PAGE_SIZE		getgranularity()  //(1024*32)
 #define MIN_PAGE_SIZE			getgranularity()
@@ -69,13 +69,13 @@ typedef size_t allocheader_t ;
 #pragma pack(push, ND_DEFAULT_ALINE_SIZE)
 
 
-//¶ÔÍâÉêÇëÊ±Ê¹ÓÃµÄ½á¹û
+//å¯¹å¤–ç”³è¯·æ—¶ä½¿ç”¨çš„ç»“æœ
 struct alloc_node {
 	allocheader_t size ;
 	char data[0];
 };
 
-//Ö±½Ó´ÓÏµÍ³ÖĞ·ÖÅäµÄ´ó¿éÄÚ´æ
+//ç›´æ¥ä»ç³»ç»Ÿä¸­åˆ†é…çš„å¤§å—å†…å­˜
 struct big_chunk_list
 {
 	void *pool ;
@@ -95,33 +95,33 @@ typedef struct mm_sub_allocator
 	allocheader_t size ;
 	NDUINT16 type ;
 	NDUINT16 myerrno;
-	allocheader_t allocated_size ;					//ÒÑ¾­·ÖÅäµÄÄÚ´æ´óĞ¡
+	allocheader_t allocated_size ;					//å·²ç»åˆ†é…çš„å†…å­˜å¤§å°
 	struct nd_mm_pool *parent ;					//
-	char *start, *end ;									//µ±Ç°¿ÉÒÔ·ÖÅäµÄÄÚ´æÆğÊ¼µØÖ·
-	struct list_head self_list;							//ÔÚÄÚ´æ³ØÖĞµÄÁĞ±í(¸¸¼¶ÄÚ´æ³ØÊ¹ÓÃ)
-	struct free_node *big_list[BIG_CHUNK_NUM];			// ´óÓÚBIG_SIZE
-	struct free_node *free_littles[LITTLE_CHUNK_NUM] ;	//Ğ¡ÄÚ´æÊı×é(×îµÍ2¸öÃ»ÓĞ±»Ê¹ÓÃ,ËùÒÔ°Ñfree_littles[0]×÷Îª±£´æ³¬¹ıBIG_SIZEµÄÁĞ±í)
+	char *start, *end ;									//å½“å‰å¯ä»¥åˆ†é…çš„å†…å­˜èµ·å§‹åœ°å€
+	struct list_head self_list;							//åœ¨å†…å­˜æ± ä¸­çš„åˆ—è¡¨(çˆ¶çº§å†…å­˜æ± ä½¿ç”¨)
+	struct free_node *big_list[BIG_CHUNK_NUM];			// å¤§äºBIG_SIZE
+	struct free_node *free_littles[LITTLE_CHUNK_NUM] ;	//å°å†…å­˜æ•°ç»„(æœ€ä½2ä¸ªæ²¡æœ‰è¢«ä½¿ç”¨,æ‰€ä»¥æŠŠfree_littles[0]ä½œä¸ºä¿å­˜è¶…è¿‡BIG_SIZEçš„åˆ—è¡¨)
 }nd_sub_allocator;
 
-//ÄÚ´æ³Ø½á¹¹
+//å†…å­˜æ± ç»“æ„
 typedef struct nd_mm_pool
 {
 	ND_OBJ_BASE ;
-	allocheader_t capacity ;							//ÄÚ´æ³ØÈİÁ¿(Ô­Ê¼Ò³Ãæ´óĞ¡)
-	allocheader_t allocated_size ;						//ÒÑ¾­·ÖÅäµÄÄÚ´æ´óĞ¡(¼ÇÂ¼Ô­Ê¼Ò³Ãæ´óĞ¡,ÏŞÖÆ¹ı¶ÉÊ¹ÓÃÄÚ´æ)
+	allocheader_t capacity ;							//å†…å­˜æ± å®¹é‡(åŸå§‹é¡µé¢å¤§å°)
+	allocheader_t allocated_size ;						//å·²ç»åˆ†é…çš„å†…å­˜å¤§å°(è®°å½•åŸå§‹é¡µé¢å¤§å°,é™åˆ¶è¿‡æ¸¡ä½¿ç”¨å†…å­˜)
 //#ifdef ND_MEM_CHECK
-	unsigned int alloc_granularity:16;					//Ã¿¸ö×Ó·ÖÅäÆ÷µÄ·ÖÅäÁ£¶È *64k
-	unsigned int free_allocator_num:8 ;					//¿ÕÏĞµÄ·ÖÅäÆ÷¸öÊı
-	//unsigned int trace_mem:1 ;							//¸ú×ÙÃ¿¸ö±»ÉêÇëµÄÄÚ´æ
-	unsigned int in_used:1 ;							//Ã»ÓĞÉêÇë¹ıÄÚ´æ
+	unsigned int alloc_granularity:16;					//æ¯ä¸ªå­åˆ†é…å™¨çš„åˆ†é…ç²’åº¦ *64k
+	unsigned int free_allocator_num:8 ;					//ç©ºé—²çš„åˆ†é…å™¨ä¸ªæ•°
+	//unsigned int trace_mem:1 ;							//è·Ÿè¸ªæ¯ä¸ªè¢«ç”³è¯·çš„å†…å­˜
+	unsigned int in_used:1 ;							//æ²¡æœ‰ç”³è¯·è¿‡å†…å­˜
 //#endif
-	memdestruct_entry destruct_func ;					//ÄÚ´æĞé¹¹º¯Êı
-	struct list_head self_list;							//ÔÚÄÚ´æ³ØÖĞµÄÁĞ±í(¸¸¼¶ÄÚ´æ³ØÊ¹ÓÃ)
+	memdestruct_entry destruct_func ;					//å†…å­˜è™šæ„å‡½æ•°
+	struct list_head self_list;							//åœ¨å†…å­˜æ± ä¸­çš„åˆ—è¡¨(çˆ¶çº§å†…å­˜æ± ä½¿ç”¨)
 	struct list_head allocator_list;					//using sub allocator
 	struct list_head free_allocator;					//sub allocator
 	struct list_head page_list;							//mem page size > 64k -sizeof(nd_sub_allocator)
-	nd_sub_allocator *cur_allocator;					//µ±Ç°Ê¹ÓÃµÄ
-	nd_mutex lock ;										//ÄÚ´æ³ØÀàĞÍ
+	nd_sub_allocator *cur_allocator;					//å½“å‰ä½¿ç”¨çš„
+	nd_mutex lock ;										//å†…å­˜æ± ç±»å‹
 
 	nd_sub_allocator _allocator[0] ;
 }nd_mmpool_t;
@@ -131,13 +131,13 @@ typedef struct nd_mm_pool
 
 struct pool_root_allocator{
 	int init ;
-	nd_mutex lock ;										//ÊÇ·ñ³õÊ¼»¯
+	nd_mutex lock ;										//æ˜¯å¦åˆå§‹åŒ–
 	size_t free_size ;
-	struct list_head inuser_list;						//Ê¹ÓÃÖĞµÄÄÚ´æ³Ø
+	struct list_head inuser_list;						//ä½¿ç”¨ä¸­çš„å†…å­˜æ± 
 } ;
-nd_mmpool_t *s_common_mmpool ;						//¹«¹²ÄÚ´æ³Ø
-static struct pool_root_allocator  __mem_root ;		//ÄÚ´æ·ÖÅäÆ÷,ÏµÍ³·ÖÅäÄÚ´æµÄº¯Êı
-//nd_mmpool_t *s_pool_for_static;						//Èç¹û³ÌĞò»¹Ã»ÓĞ½øÈëmain Ò²¾ÍÊÇÃ»ÓĞµ÷ÓÃnd_common_initÖ®Ç°Ê¹ÓÃµÄÄÚ´æ³Ø
+nd_mmpool_t *s_common_mmpool ;						//å…¬å…±å†…å­˜æ± 
+static struct pool_root_allocator  __mem_root ;		//å†…å­˜åˆ†é…å™¨,ç³»ç»Ÿåˆ†é…å†…å­˜çš„å‡½æ•°
+//nd_mmpool_t *s_pool_for_static;						//å¦‚æœç¨‹åºè¿˜æ²¡æœ‰è¿›å…¥main ä¹Ÿå°±æ˜¯æ²¡æœ‰è°ƒç”¨nd_common_initä¹‹å‰ä½¿ç”¨çš„å†…å­˜æ± 
 
 #ifdef ND_MEM_STATICS
 void _erase_mmstatics(void *addr) ;
@@ -163,11 +163,11 @@ nd_mmpool_t *nd_global_mmpool()
 typedef void (*walk_trunk_node) (nd_mmpool_t *pool, void *startaddr, size_t size) ;
 static void _walk_alloced_inpool(nd_mmpool_t *pool, walk_trunk_node func ) ;
 
-//µ÷ÓÃËùÓĞÄÚ´æ¿éµÄÎö¹¹º¯Êı
+//è°ƒç”¨æ‰€æœ‰å†…å­˜å—çš„ææ„å‡½æ•°
 //static void safe_destruct(nd_mmpool_t *pool) ;
 static void destruct_mm_entry(nd_mmpool_t *pool, void *startaddr, size_t size) ;
 #define safe_destruct(_pool) _walk_alloced_inpool(_pool,destruct_mm_entry)
-//Êä³öÄÚ´æĞ¹Â¶
+//è¾“å‡ºå†…å­˜æ³„éœ²
 static void _dump_trunk_leak(nd_mmpool_t *pool, void *startaddr, size_t size) ;
 #define dump_memleak(_pool) _walk_alloced_inpool(_pool,_dump_trunk_leak)
 
@@ -289,7 +289,7 @@ static void __sys_page_free(void *addr)
 }
 
 
-//ÄÚ´æ³Ø³õÊ¼»¯
+//å†…å­˜æ± åˆå§‹åŒ–
 int nd_mempool_root_init()
 {
 	if(	__mem_root.init )
@@ -314,7 +314,7 @@ int nd_mempool_root_init()
 	return 0 ;
 }
 
-//ÄÚ´æ³ØÏú»Ù
+//å†…å­˜æ± é”€æ¯
 void nd_mempool_root_release()
 {
 	struct list_head *pos, *next ;
@@ -413,7 +413,7 @@ static __INLINE__ size_t _get_max_free_chunk(nd_sub_allocator *sub)
 {
 	return sub->end - sub->start ;
 }
-/*´´½¨Ò»¸öÄÚ´æ³Ø,·µ»ØÄÚ´æ³ØµØÖ·*/
+/*åˆ›å»ºä¸€ä¸ªå†…å­˜æ± ,è¿”å›å†…å­˜æ± åœ°å€*/
 nd_handle nd_pool_create(size_t maxsize ,const char *name )
 {
 	unsigned int _gran = 1;
@@ -458,7 +458,7 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 	pool->alloc_granularity = _gran ;
 	pool->free_allocator_num = 0;
 //#ifdef ND_MEM_CHECK
-	//pool->trace_mem =1 ;										//¸ú×ÙÃ¿¸ö±»ÉêÇëµÄÄÚ´æ
+	//pool->trace_mem =1 ;										//è·Ÿè¸ªæ¯ä¸ªè¢«ç”³è¯·çš„å†…å­˜
 	pool->in_used = 0 ;
 //#endif
 	nd_object_set_instname(pool,name? name: "unknow_pool") ;
@@ -481,7 +481,7 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 	return pool ;
 }
 
-//Ïú»ÙÒ»¸öÄÚ´æ»º³å³Ø
+//é”€æ¯ä¸€ä¸ªå†…å­˜ç¼“å†²æ± 
 int nd_pool_destroy(nd_mmpool_t *pool, int flag)
 {
 	allocheader_t size ;
@@ -529,7 +529,7 @@ void* nd_pool_realloc(nd_mmpool_t *pool ,void *oldaddr, size_t newsize)
 	return NULL ;
 }
 
-//ÖØĞÂ³õÊ¼»¯Ò»¸öÄÚ´æ³Ø
+//é‡æ–°åˆå§‹åŒ–ä¸€ä¸ªå†…å­˜æ± 
 void nd_pool_reset(nd_mmpool_t *pool)
 {
 	struct list_head *pos, *list_next ;
@@ -591,7 +591,7 @@ void nd_pool_reset(nd_mmpool_t *pool)
 }
 
 
-//°ÑÒ»ÄÚ´æ¿éÌí¼Óµ½¿ÕÏĞ¶ÓÁĞ
+//æŠŠä¸€å†…å­˜å—æ·»åŠ åˆ°ç©ºé—²é˜Ÿåˆ—
 static void pool_add_free(nd_sub_allocator *pool , struct free_node *insert_node)
 {
 	size_t index ;
@@ -616,7 +616,7 @@ static void pool_add_free(nd_sub_allocator *pool , struct free_node *insert_node
 	}
 }
 
-//°Ñ¿ÕÏĞÄÚ´æ¿éÌí¼Óµ½¿ÕÏĞ¶ÓÁĞÖĞ
+//æŠŠç©ºé—²å†…å­˜å—æ·»åŠ åˆ°ç©ºé—²é˜Ÿåˆ—ä¸­
 static void add_freeto_list(nd_sub_allocator *pool)
 {
 	size_t free_size = pool->end - pool->start ;
@@ -638,7 +638,7 @@ static void add_freeto_list(nd_sub_allocator *pool)
 }
 
 
-//ÕÒÒ»¿é¿ÕÏĞÄÚ´æ
+//æ‰¾ä¸€å—ç©ºé—²å†…å­˜
 static struct free_node *_find_free_chunk(nd_sub_allocator *pool , size_t min_size)
 {
 	int i;
@@ -781,7 +781,7 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 	}
 
 	free_size = pool->end - pool->start ;
-	if(free_size < size){			//Ê£ÓàÎ´·ÖÅäÄÚ´æ¿é²»¹»´ó
+	if(free_size < size){			//å‰©ä½™æœªåˆ†é…å†…å­˜å—ä¸å¤Ÿå¤§
 
 		struct free_node *chunk = _find_free_chunk(pool,size) ;
 		if(chunk) {
@@ -805,7 +805,7 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 
 	free_size = pool->end - pool->start ;
 // 	if(free_size<MIN_SIZE) {
-// 		alloc_addr->size += free_size ; //Ö±½Ó¶ªÆú
+// 		alloc_addr->size += free_size ; //ç›´æ¥ä¸¢å¼ƒ
 // 		pool->start = pool->end;
 // 	}
 	nd_assert(alloc_addr->size >= size) ;
@@ -813,7 +813,7 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 	return alloc_addr ;
 }
 
-//ÊÍ·ÅÒ»¸öÄÚ´æ¿é
+//é‡Šæ”¾ä¸€ä¸ªå†…å­˜å—
 static void __allocator_free(nd_sub_allocator *pool , struct free_node *chunk)
 {
 	allocheader_t free_size ;
@@ -889,7 +889,7 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 	}
 
 	if ((size + sizeof(struct alloc_node) ) > DIRECT_ALLOC_SIZE ){
-		//´ó¿éÄÚ´æÖ±½Ó´ÓÏµÍ³·ÖÅä
+		//å¤§å—å†…å­˜ç›´æ¥ä»ç³»ç»Ÿåˆ†é…
 		size_t alloc_size ;
 		struct big_chunk_list *alloc_addr ;
 		struct alloc_node *new_chunk = __sys_page_alloc(size + sizeof(struct big_chunk_list ) ) ;
@@ -951,7 +951,7 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 	return addr ;
 }
 
-/*ÊÍ·ÅÒ»¸öÄÚ´æ*/
+/*é‡Šæ”¾ä¸€ä¸ªå†…å­˜*/
 void _pool_free_real(/*nd_mmpool_t *pool ,*/void *addr)
 {
 	nd_mmpool_t *pool = NULL;
@@ -1020,7 +1020,7 @@ void nd_pool_free_real(nd_mmpool_t *pool ,void *addr)
 }
 
 //////////////////////////////////////////////////////////////////////////
-//²âÊÔÄÚ´æÊÍ·ÅÔ½½ç
+//æµ‹è¯•å†…å­˜é‡Šæ”¾è¶Šç•Œ
 #ifdef ND_MEM_CHECK
 struct __alloc_header {
 	NDUINT32 __magic: 16;
@@ -1035,7 +1035,7 @@ enum { __pad=8, __magic=0xdeba, __deleted_magic = 0xdebd,
 };
 enum { __extra_before = 64, __extra_after = 8 };
 
-// nd_alloc_check nd_free_check  Ö÷ÒªÊÇ¼ì²éallocfnº¯Êı·ÖÅäµÄÄÚ´æÄÚ´æÓĞÃ»ÓĞÔ½½ç
+// nd_alloc_check nd_free_check  ä¸»è¦æ˜¯æ£€æŸ¥allocfnå‡½æ•°åˆ†é…çš„å†…å­˜å†…å­˜æœ‰æ²¡æœ‰è¶Šç•Œ
 void *nd_alloc_check(nd_handle _pool,size_t __n,const char *file, int line, nd_alloc_func allocfn)
 {
 	size_t filesize ;
@@ -1064,7 +1064,7 @@ void *nd_alloc_check(nd_handle _pool,size_t __n,const char *file, int line, nd_a
 	}
 }
 
-//debug °æ±¾µÄ _destroy_chunkpool
+//debug ç‰ˆæœ¬çš„ _destroy_chunkpool
 void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 {
 	unsigned char* __tmp;
@@ -1102,7 +1102,7 @@ void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 	freefn(_pool, __real_p);
 }
 /*
-//´øÓĞÈÕÖ¾¸ú×ÙµÄ·ÖÅäº¯Êı
+//å¸¦æœ‰æ—¥å¿—è·Ÿè¸ªçš„åˆ†é…å‡½æ•°
 void *nd_pool_alloc_trace(nd_mmpool_t *pool , size_t size, char *file, int line)
 {
 	char *paddr ;
@@ -1156,7 +1156,7 @@ void nd_pool_free_trace(nd_mmpool_t *pool , void *p)
 	nd_pool_free_real(pool,paddr) ;
 }
 */
-//µÃµ½·ÖÅä¸øÓÃ»§µÄÄÚ´æµØÖ·
+//å¾—åˆ°åˆ†é…ç»™ç”¨æˆ·çš„å†…å­˜åœ°å€
 void *_get_user_addr(nd_mmpool_t *pool, void *p)
 {
 	//NDUINT32 fill_size ;
@@ -1168,7 +1168,7 @@ void *_get_user_addr(nd_mmpool_t *pool, void *p)
 	return user_addr + __extra_before;
 }
 
-//Í¨¹ıÓÃ»§ÊäÈëµØÖ·»ñµÃÊµ¼ÊÉêÇëµØÖ·
+//é€šè¿‡ç”¨æˆ·è¾“å…¥åœ°å€è·å¾—å®é™…ç”³è¯·åœ°å€
 struct alloc_node *_user_addr_2sys( void *useraddr, size_t *user_len, size_t *alloc_len)
 {
 	struct alloc_node *ret = (struct alloc_node *)((char*)useraddr-__extra_before);
@@ -1279,13 +1279,13 @@ void nd_pool_set_trace(nd_handle pool, int flag)		//reset a memory pool
 // #endif
 }
 
-//ÄÚ´æÎö¹¹
+//å†…å­˜ææ„
 void destruct_mm_entry(nd_mmpool_t *pool, void *startaddr, size_t size)
 {
 	pool->destruct_func(pool,_get_user_addr(pool, startaddr)) ;
 }
 
-//µü´úÃ¿Ò»¿é·ÖÅä¹ıµÄÄÚ´æ
+//è¿­ä»£æ¯ä¸€å—åˆ†é…è¿‡çš„å†…å­˜
 void _walk_trunk(void *start, void *end,nd_sub_allocator *pool, walk_trunk_node cb_func)
 {
 	struct alloc_node *header = (struct alloc_node *)start ;
@@ -1306,7 +1306,7 @@ void _walk_trunk(void *start, void *end,nd_sub_allocator *pool, walk_trunk_node 
 	}
 }
 
-//·ÃÎÊÃ¿Ò»¿éÉêÇëµÄÄÚ´æ
+//è®¿é—®æ¯ä¸€å—ç”³è¯·çš„å†…å­˜
 void _walk_alloced_inpool(nd_mmpool_t *pool, walk_trunk_node func )
 {
 	struct list_head *pos, *list_next ;
@@ -1358,8 +1358,8 @@ void _walk_alloced_inpool(nd_mmpool_t *pool, walk_trunk_node func )
 
 #ifdef ND_MEM_STATICS
 #include "nd_common/nd_bintree.h"
-//ÄÚ²âÉêÇëÍ³¼Æ
-//ÄÚ²âÍ³¼Æ
+//å†…æµ‹ç”³è¯·ç»Ÿè®¡
+//å†…æµ‹ç»Ÿè®¡
 struct mmstatics_header
 {
 	//struct list_head list ;
@@ -1551,7 +1551,7 @@ void remove_statics(nd_mmpool_t *pool)
 #endif
 
 #if  defined(ND_SOURCE_TRACE) && defined(ND_UNUSE_STDC_ALLOC)
-//Êä³öËùÓĞÄÚ´æ³ØµÄÊ¹ÓÃ¼ÇÂ¼
+//è¾“å‡ºæ‰€æœ‰å†…å­˜æ± çš„ä½¿ç”¨è®°å½•
 void nd_mmpool_dump()
 {
 	struct list_head *pos ;
@@ -1565,7 +1565,7 @@ void nd_mmpool_dump()
 #endif
 
 
-#else //²»Ê¹ÓÃÄÚ´æ³Ø
+#else //ä¸ä½¿ç”¨å†…å­˜æ± 
 
 typedef struct nd_mm_pool *nd_handle ;
 #include "nd_common/nd_handle.h"
@@ -1573,7 +1573,7 @@ typedef struct nd_mm_pool *nd_handle ;
  struct nd_mm_pool
 {
 	ND_OBJ_BASE ;
-	memdestruct_entry destruct_func ;					//ÄÚ´æĞé¹¹º¯Êı
+	memdestruct_entry destruct_func ;					//å†…å­˜è™šæ„å‡½æ•°
 	struct list_head used_list;
 	nd_mutex lock ;
 };

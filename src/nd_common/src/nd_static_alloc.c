@@ -10,7 +10,7 @@
 #include "nd_common/nd_common.h"
 
 /*
- * client map ·ÖÅäÆ÷
+ * client map åˆ†é…å™¨
  */
 typedef struct nd_static_alloc_t
 {
@@ -57,9 +57,9 @@ nd_sa_handle nd_sa_create(int node_num, size_t node_size, nd_handle mempool)
 		return NULL;
 	}
 
-	allocator->size = (NDUINT32) raw_len;						/*¾ä±úµÄ´óÐ¡*/
-	allocator->type =NDHANDLE_STATICALLOCATOR;					/*¾ä±úÀàÐÍ*/
-	allocator->close_entry =(nd_close_callback) nd_sa_destroy ;			/*¾ä±úÊÍ·Åº¯Êý*/
+	allocator->size = (NDUINT32) raw_len;						/*å¥æŸ„çš„å¤§å°*/
+	allocator->type =NDHANDLE_STATICALLOCATOR;					/*å¥æŸ„ç±»åž‹*/
+	allocator->close_entry =(nd_close_callback) nd_sa_destroy ;			/*å¥æŸ„é‡Šæ”¾å‡½æ•°*/
 	allocator->myerrno = NDERR_SUCCESS ;
 	allocator->capacity =node_num;	
 	allocator->node_size = node_size ;
@@ -142,7 +142,7 @@ int nd_sa_destroy(nd_sa_handle sa_handle, int flag)
 
 	nd_mutex_destroy(&alloc->list_lock);
 	
-	nd_pool_free(alloc->mem_pool ,alloc) ;		//ÊÍ·ÅÒ»¸öÄÚ´æ
+	nd_pool_free(alloc->mem_pool ,alloc) ;		//é‡Šæ”¾ä¸€ä¸ªå†…å­˜
 	//free(allocator) ;
 	
 	return 0 ;

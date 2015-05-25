@@ -10,7 +10,7 @@
 
 int post_udt_datagram(nd_udt_node* socket_node, void *data, size_t len) ;
 int post_udt_datagramex(nd_udt_node* socket_node, struct ndudt_pocket *packet, size_t len) ;
-int flush_send_window(nd_udt_node* socket_node);			//·¢ËÍ ´°¿ÚÖĞµÄÊı¾İ
+int flush_send_window(nd_udt_node* socket_node);			//å‘é€ çª—å£ä¸­çš„æ•°æ®
 
 int udt_send_fin(nd_udt_node *socket_node) ;
 
@@ -100,7 +100,7 @@ REWAITDATA:
 	return -1;
 }
 
-//¹Ø±Õ·şÎñÆ÷¶ËµÄsocket
+//å…³é—­æœåŠ¡å™¨ç«¯çš„socket
 void _close_listend_socket(nd_udt_node* socket_node)
 {
 	nd_assert(socket_node->is_accept) ;
@@ -111,9 +111,9 @@ void _close_listend_socket(nd_udt_node* socket_node)
 }
 
 
-//·¢ËÍfin°ü,²¢ÇÒµÈ´ıÈ·ÈÏ
-//ÊµÏÖ¸Ä½ø3´ÎÎÕÊÖ
-//·¢ËÍfin²¢ÇÒµÈ´ıÈ·ÈÏ
+//å‘é€finåŒ…,å¹¶ä¸”ç­‰å¾…ç¡®è®¤
+//å®ç°æ”¹è¿›3æ¬¡æ¡æ‰‹
+//å‘é€finå¹¶ä¸”ç­‰å¾…ç¡®è®¤
 int udt_close(nd_udt_node* socket_node,int force)
 {
 	ENTER_FUNC()
@@ -158,7 +158,7 @@ void udt_reset(nd_udt_node* socket_node, int issend_reset)
 }
 
 
-//°Ñ·â°üÍ¨¹ısocket·¢ËÍ³öÈ¥, len ÊÇ°üµÄ×Ü³¤¶È
+//æŠŠå°åŒ…é€šè¿‡socketå‘é€å‡ºå», len æ˜¯åŒ…çš„æ€»é•¿åº¦
 int write_pocket_to_socket(nd_udt_node *socket_node,struct ndudt_pocket *pocket, size_t len)
 {
 	int ret ;
@@ -206,7 +206,7 @@ int udt_send(nd_udt_node* socket_node,void *data, int len )
 }
 
 
-//·¢ËÍudt ´°¿ÚÖĞµÄÊı¾İ
+//å‘é€udt çª—å£ä¸­çš„æ•°æ®
 int flush_send_window(nd_udt_node* socket_node)
 {
 	int ret =0,isack=0;
@@ -223,7 +223,7 @@ int flush_send_window(nd_udt_node* socket_node)
 		return 0;
 	}
 
-	//°Ñ±¨Í··Åµ½Êı¾İÇ°Ãæ,±ÜÃâcopyÊı¾İ
+	//æŠŠæŠ¥å¤´æ”¾åˆ°æ•°æ®å‰é¢,é¿å…copyæ•°æ®
 	if(get_socket_ack(socket_node)) {
 		isack =1 ;
 		packet_hdr =(struct ndudt_pocket *) (((struct ndudt_pocket*)send_addr )-1);
@@ -242,7 +242,7 @@ int flush_send_window(nd_udt_node* socket_node)
 		init_udt_pocket(packet_hdr) ;
 	}
 
-	/*·¢ËÍĞòÁĞºÅ,µ±Ç°·¢ËÍµ½»¬¶¯´°¿ÚµÄÎ»ÖÃ*/
+	/*å‘é€åºåˆ—å·,å½“å‰å‘é€åˆ°æ»‘åŠ¨çª—å£çš„ä½ç½®*/
 	packet_hdr->sequence = socket_node->send_sequence ;
 
 	ret = write_pocket_to_socket(socket_node, packet_hdr, len+header_len) ;
@@ -288,7 +288,7 @@ int retranslate_data(nd_udt_node* socket_node)
 
 	len = min(len, NDUDT_FRAGMENT_LEN) ;
 
-	//°Ñ±¨Í··Åµ½Êı¾İÇ°Ãæ,±ÜÃâcopyÊı¾İ
+	//æŠŠæŠ¥å¤´æ”¾åˆ°æ•°æ®å‰é¢,é¿å…copyæ•°æ®
 	if(get_socket_ack(socket_node)) {
 		packet_hdr =(struct ndudt_pocket *) (((struct ndudt_pocket*)send_addr )-1);
 		header_len = sizeof(struct ndudt_pocket) ;
@@ -303,7 +303,7 @@ int retranslate_data(nd_udt_node* socket_node)
 	}
 	init_udt_pocket(packet_hdr) ;
 
-	/*·¢ËÍĞòÁĞºÅ,µ±Ç°·¢ËÍµ½»¬¶¯´°¿ÚµÄÎ»ÖÃ*/
+	/*å‘é€åºåˆ—å·,å½“å‰å‘é€åˆ°æ»‘åŠ¨çª—å£çš„ä½ç½®*/
 	packet_hdr->sequence = sendseq ;
 
 	sendlen = write_pocket_to_socket(socket_node, packet_hdr, len+header_len) ;
@@ -328,7 +328,7 @@ int retranslate_data(nd_udt_node* socket_node)
 	return ret;
 }
 
-/* ¼ì²âÊÇ·ñ³¬Ê±,Èç¹û³¬Ê±ÖØ´«Êı¾İ°ü
+/* æ£€æµ‹æ˜¯å¦è¶…æ—¶,å¦‚æœè¶…æ—¶é‡ä¼ æ•°æ®åŒ…
  * on error return -1 the connect need to be close
  */
 int udt_retranslate(nd_udt_node* socket_node)
@@ -413,7 +413,7 @@ int update_socket(nd_udt_node* socket_node)
 	}
 	*/
 	/*
-	//¼ì²â³¬Ê±
+	//æ£€æµ‹è¶…æ—¶
 	if((now - socket_node->last_recv) > (ACTIVE_TIME *10)) {
 	//connect time out, need to be close 
 	nd_object_seterror((nd_handle)socket_node,NDERR_TIMEOUT) ;
@@ -425,7 +425,7 @@ int update_socket(nd_udt_node* socket_node)
 	return 1 ;
 }
 
-//µÃµ½·¢ËÍ´°¿ÚÆğÊ¼µØÖ·
+//å¾—åˆ°å‘é€çª—å£èµ·å§‹åœ°å€
 char *send_window_start(nd_udt_node* socket_node, size_t *sendlen)
 {
 	char *addr ;
@@ -476,7 +476,7 @@ int udt_connector_send(nd_udt_node* socket_addr, nd_packhdr_t *msg_buf, int flag
 		
 		return udt_sendto(socket_addr, msg_buf, nd_pack_len(msg_buf)) ;			
 	}
-	else {		//ÓÃudt·¢ËÍ¿É¿¿ÏûÏ¢
+	else {		//ç”¨udtå‘é€å¯é æ¶ˆæ¯
 		ret = udt_send(socket_addr, msg_buf, nd_pack_len(msg_buf)) ;
 		if(ret <= 0) {
 			return ret ;
@@ -502,7 +502,7 @@ int _wait_data(nd_udt_node *socket_node,udt_pocketbuf* buf,ndtime_t outval)
 
 	socket_node->update_tm = socket_node->last_recv ;
 	
-	//Êı¾İ¼ì²â
+	//æ•°æ®æ£€æµ‹
 	if(!socket_node->check_entry(socket_node,&buf->pocket,ret, &socket_node->last_read) ) {
 		socket_node->myerrno = NDERR_WUOLD_BLOCK ;
 		LEAVE_FUNC();
@@ -557,10 +557,10 @@ void _udt_connector_init(nd_udt_node *socket_node)
 	socket_node->status = NETSTAT_CLOSED;
 
 	socket_node->check_entry = check_income_udp_packet ;
-	socket_node->_rtt.average = RETRANSLATE_TIME ;				//¼ÇÂ¼Ñù±¾Íù·µÊ±¼ä
+	socket_node->_rtt.average = RETRANSLATE_TIME ;				//è®°å½•æ ·æœ¬å¾€è¿”æ—¶é—´
 	socket_node->_rtt.deviation = 0;
-	socket_node->retrans_timeout = RETRANSLATE_TIME*TIME_OUT_BETA ;			//³¬Ê±ÖØ´«Ê±¼äºÍµÈ´ı¹Ø±ÕÊ±¼ä(¼ÇÂ¼Ê±¼ä¼ä¸ô²»ÊÇ¾ø¶ÔÊ±¼ä)
-	init_crypt_key(&socket_node->crypt_key) ;		//¼ÓÃÜ½âÃÜÃÜÔ¿(¶Ô³ÆÃÜÔ¿)
+	socket_node->retrans_timeout = RETRANSLATE_TIME*TIME_OUT_BETA ;			//è¶…æ—¶é‡ä¼ æ—¶é—´å’Œç­‰å¾…å…³é—­æ—¶é—´(è®°å½•æ—¶é—´é—´éš”ä¸æ˜¯ç»å¯¹æ—¶é—´)
+	init_crypt_key(&socket_node->crypt_key) ;		//åŠ å¯†è§£å¯†å¯†é’¥(å¯¹ç§°å¯†é’¥)
 
 	INIT_LIST_HEAD(&socket_node->__release_cb_hdr) ;
 }

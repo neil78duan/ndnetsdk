@@ -27,11 +27,11 @@ it outputs a line like this:
 #define ndpre_msg(desc) message(__FILE__ "(" ndpre_str(__LINE__) "):" #desc)
 
 typedef enum _error_ID{
-	ND_MSG	= 0,			//Õı³£ĞÅÏ¢
-	ND_MSGDEBUG	,			//¼ÇÂ¼µ÷ÊÔĞÅÏ¢
-	ND_WARN	,				//¾¯¸æĞÅÏ¢
-	ND_ERROR ,				//´íÎóĞÅÏ¢
-	ND_FATAL_ERR 			//ÑÏÖØ´íÎó
+	ND_MSG	= 0,			//æ­£å¸¸ä¿¡æ¯
+	ND_MSGDEBUG	,			//è®°å½•è°ƒè¯•ä¿¡æ¯
+	ND_WARN	,				//è­¦å‘Šä¿¡æ¯
+	ND_ERROR ,				//é”™è¯¯ä¿¡æ¯
+	ND_FATAL_ERR 			//ä¸¥é‡é”™è¯¯
 }edg_ID ;
 
 typedef void (*logfunc)(const char* text) ;
@@ -49,9 +49,9 @@ ND_COMMON_API NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size); // set log file
 ND_COMMON_API int nd_logtext(const char *text);
 ND_COMMON_API int _logmsg_screen(const char *filePath, int line, const char *stm,...) ;
 ND_COMMON_API int _logmsg(const char *func, const char *file, int line, int level, const char *stm,...) ;
-ND_COMMON_API const char *nd_get_timestr(void);			//µÃµ½×Ö·û´®ĞÎÊ½µÄÊ±¼ä
-ND_COMMON_API const char *nd_get_datestr(void);			//µÃµ½×Ö·û´®ĞÎÊ½µÄÈÕÆÚ
-ND_COMMON_API const char *nd_get_datetimestr(void);		//µÃµ½×Ö·û´®ĞÎÊ½µÄÊ±¼äºÍÈÕÆÚ
+ND_COMMON_API const char *nd_get_timestr(void);			//å¾—åˆ°å­—ç¬¦ä¸²å½¢å¼çš„æ—¶é—´
+ND_COMMON_API const char *nd_get_datestr(void);			//å¾—åˆ°å­—ç¬¦ä¸²å½¢å¼çš„æ—¥æœŸ
+ND_COMMON_API const char *nd_get_datetimestr(void);		//å¾—åˆ°å­—ç¬¦ä¸²å½¢å¼çš„æ—¶é—´å’Œæ—¥æœŸ
 
 ND_COMMON_API const char *nd_get_datetimestr_ex(time_t in_tm, char *buf, int size);
 
@@ -146,14 +146,14 @@ ND_COMMON_API const char *nd_get_datetimestr_ex(time_t in_tm, char *buf, int siz
 
 
 
-//¼ÇÂ¼×ÊÔ´µÄÊ¹ÓÃÇé¿ö
-//ÔÚ³ÌĞòÍË³öÒÔºó¿ÉÒÔÈ·¶¨ÄÇĞ©×ÊÔ´Ã»ÓĞÊÍ·Å
+//è®°å½•èµ„æºçš„ä½¿ç”¨æƒ…å†µ
+//åœ¨ç¨‹åºé€€å‡ºä»¥åå¯ä»¥ç¡®å®šé‚£äº›èµ„æºæ²¡æœ‰é‡Šæ”¾
 // 
-// nd_source_log ¼ÇÂ¼×ÊÔ´source ±»º¯Êıoperateº¯Êı»ñµÃ ¸ø³öÊ¹ÓÃÇé¿ömsg
+// nd_source_log è®°å½•èµ„æºsource è¢«å‡½æ•°operateå‡½æ•°è·å¾— ç»™å‡ºä½¿ç”¨æƒ…å†µmsg
 // int nd_sourcelog(void *source, char *operate, char *msg) ;
-// ÊÍ·Å×ÊÔ´source
+// é‡Šæ”¾èµ„æºsource
 // it nd_source_release(void *source) ;
-// ³ÌĞòÍË³ö,dump ³öÎ´ÊÍ·ÅµÄ×ÊÔ´,²»ĞèÒªÊÖ¶¯ÊÍ·Å
+// ç¨‹åºé€€å‡º,dump å‡ºæœªé‡Šæ”¾çš„èµ„æº,ä¸éœ€è¦æ‰‹åŠ¨é‡Šæ”¾
 // void nd_sourcelog_dump() ; 
 
 

@@ -153,7 +153,7 @@ const  char* nd_getsysdir()
 }
 
 #else 
-//µÃµ½¹¤×÷Ä¿Â¼
+//å¾—åˆ°å·¥ä½œç›®å½•
 const char * nd_getcwd()
 {
 	if (_current_dir[0]) {
@@ -172,19 +172,19 @@ const char * nd_get_init_dir()
 	return _original_dir ;
 }
 
-//É¾³ıÎÄ¼ş
+//åˆ é™¤æ–‡ä»¶
 int nd_rmfile(const char *file)
 {
 	return DeleteFile((LPCTSTR)file);
 }
 
-//ÖØÃüÃûÎÄ¼ş
+//é‡å‘½åæ–‡ä»¶
 int nd_renfile(const char *oldfile,const  char *newfile)
 {
 	return MoveFile((LPTSTR)oldfile, (LPTSTR)newfile) ;
 }
 
-//¸Ä±ä¹¤×÷Ä¿Â¼
+//æ”¹å˜å·¥ä½œç›®å½•
 int nd_chdir(const char *dir)
 {
 	if(SetCurrentDirectory((LPCTSTR)dir) ) {			
@@ -194,26 +194,26 @@ int nd_chdir(const char *dir)
 	return -1;
 }
 
-//copy ÎÄ¼ş
+//copy æ–‡ä»¶
 int nd_cpfile(const char *oldfile, const char *newfile)
 {
 	return CopyFile( (LPCTSTR) oldfile, (LPCTSTR) newfile,TRUE) ;
 
 }
 
-//´´½¨Ò»¸öÄ¿Â¼
+//åˆ›å»ºä¸€ä¸ªç›®å½•
 int nd_mkdir(const char *dir)
 {
 	return CreateDirectory((LPCTSTR)dir,NULL);
 }
 
-//É¾³ıÒ»¸öÄ¿Â¼
+//åˆ é™¤ä¸€ä¸ªç›®å½•
 int nd_rmdir(const char *dir)
 {
 	return  RemoveDirectory((LPCTSTR)dir);
 }
 
-//µÃµ½ÏµÍ³Ä¿Â¼
+//å¾—åˆ°ç³»ç»Ÿç›®å½•
 const char* nd_getsysdir()
 {
 	static char _system_dir[ND_FILE_PATH_SIZE] ;
@@ -221,7 +221,7 @@ const char* nd_getsysdir()
 	return _system_dir ;
 }
 
-//²éÕÒÖ¸¶¨µÄÎÄ¼şÊÇ·ñ´æÔÚ
+//æŸ¥æ‰¾æŒ‡å®šçš„æ–‡ä»¶æ˜¯å¦å­˜åœ¨
 int nd_existfile(const char *pachfilename)
 {
 	WIN32_FIND_DATAA FindFileData;
@@ -238,8 +238,8 @@ int nd_existfile(const char *pachfilename)
 }
 
 
-//´´½¨Ò»¸öĞÂÎÄ¼ş
-//¿ÉÒÔ¶ÁĞ´,¶ÀÕ¼,Èç¹û´æÔÚÔòÊ§°Ü
+//åˆ›å»ºä¸€ä¸ªæ–°æ–‡ä»¶
+//å¯ä»¥è¯»å†™,ç‹¬å ,å¦‚æœå­˜åœ¨åˆ™å¤±è´¥
 int nd_mkfile(const char *file)
 {
 	HANDLE hfile= CreateFile(

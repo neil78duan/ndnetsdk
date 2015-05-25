@@ -3,7 +3,7 @@
 //  ndMacStatic
 //
 //  Created by duanxiuyun on 14-12-16.
-//  Copyright (c) 2014年 duanxiuyun. All rights reserved.
+//  Copyright (c) 2014 duanxiuyun. All rights reserved.
 //
 
 

@@ -10,7 +10,7 @@
 
 #define MAX_FILE_SIZE 4*4096
 #define XML_H_END   0x3e2f			// /> xml node end mark
-#define XML_T_END   0x2f3c			// </ xml end node mark,¸ß×Ö½ÚÔÚ¸ßµØÖ· /µØÖ·¸ßÓÚ >
+#define XML_T_END   0x2f3c			// </ xml end node mark,é«˜å­—èŠ‚åœ¨é«˜åœ°å€ /åœ°å€é«˜äº >
 
 ndxml *parse_xmlbuf(char *xmlbuf, int size,char **parse_end, char **error_addr) ;
 ndxml *alloc_xml();
@@ -291,7 +291,7 @@ int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, char **
 	return 0;
 
 }
-//ÏÔÊ¾xml´íÎó
+//æ˜¾ç¤ºxmlé”™è¯¯
 void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf, size_t size)
 {
 	int line = 0 ;
@@ -565,7 +565,7 @@ int ndxml_delxml(ndxml *node, ndxml *xmlParent)
 	}
 	return -1;
 }
-//ÒıÓÃÒ»¸ö×Ó½Úµã
+//å¼•ç”¨ä¸€ä¸ªå­èŠ‚ç‚¹
 ndxml *ndxml_refsub(ndxml *root, const char *name) 
 {
 	ndxml *sub_xml; 
@@ -580,7 +580,7 @@ ndxml *ndxml_refsub(ndxml *root, const char *name)
 	return NULL ;
 }
 
-//ÒıÓÃÒ»¸ö×Ó½Úµã
+//å¼•ç”¨ä¸€ä¸ªå­èŠ‚ç‚¹
 ndxml *ndxml_refsubi(ndxml *root, int index) 
 {
 	int i = 0 ;
@@ -599,7 +599,7 @@ ndxml *ndxml_refsubi(ndxml *root, int index)
 	return NULL ;
 }
 
-//µÃµ½xmlµÄÖµ
+//å¾—åˆ°xmlçš„å€¼
 char *ndxml_getval(ndxml *node)
 {
 	if(node->value && node->value[0])
@@ -631,7 +631,7 @@ float ndxml_getval_float(ndxml *node)
 	else
 		return 0 ;
 }
-//µÃµ½ÊôĞÔÖµ
+//å¾—åˆ°å±æ€§å€¼
 struct ndxml_attr *ndxml_getattrib(ndxml *node ,const  char *name)
 {
 	struct ndxml_attr *attr ;
@@ -665,7 +665,7 @@ struct ndxml_attr  *ndxml_getattribi(ndxml *node, int index)
 }
 
 //////////////////////////////////////////////////////////////////////////
-//¸øxmlÔö¼ÓÒ»¸öÊôĞÔ,
+//ç»™xmlå¢åŠ ä¸€ä¸ªå±æ€§,
 struct ndxml_attr  *ndxml_addattrib(ndxml *parent, const char *name, const char *value)
 {
 	struct ndxml_attr *attrib_node;
@@ -757,7 +757,7 @@ int ndxml_setattrvali(ndxml *parent, int index, const char *value)
 	}
 	return 0;
 }
-//¸øxmlÔö¼ÓÒ»¸ö×Ó½ÚµãĞèÒªÊäÈëĞÂ½ÚµãµÄÃû×ÖºÍÖµ,·µ»ØĞÂ½ÚµãµØÖ·
+//ç»™xmlå¢åŠ ä¸€ä¸ªå­èŠ‚ç‚¹éœ€è¦è¾“å…¥æ–°èŠ‚ç‚¹çš„åå­—å’Œå€¼,è¿”å›æ–°èŠ‚ç‚¹åœ°å€
 ndxml *ndxml_addsubnode(ndxml *parent, const char *name, const char *value)
 {
 	ndxml *xmlnode = _create_xmlnode(name, value) ;
@@ -768,7 +768,7 @@ ndxml *ndxml_addsubnode(ndxml *parent, const char *name, const char *value)
 	return xmlnode ;
 }
 
-//ÉèÖÃXMLµÄÖµ
+//è®¾ç½®XMLçš„å€¼
 int ndxml_setval(ndxml *node , const char *val)
 {
 	int len;
@@ -801,7 +801,7 @@ int ndxml_setval(ndxml *node , const char *val)
 	strcpy(node->value,val) ;
 	return 0 ;
 }
-//É¾³ıÒ»¸öÊôĞÔ½Úµã
+//åˆ é™¤ä¸€ä¸ªå±æ€§èŠ‚ç‚¹
 int ndxml_delattrib(ndxml *parent, const char *name)
 {
 	struct ndxml_attr *attr= ndxml_getattrib(parent , name);
@@ -823,7 +823,7 @@ int ndxml_delattribi(ndxml *parent, int index)
 	dealloc_attrib_node(attr);
 	return 0 ;
 }
-//É¾³ıÒ»¸ö×Ó½Úµã
+//åˆ é™¤ä¸€ä¸ªå­èŠ‚ç‚¹
 int ndxml_delsubnode(ndxml *parent, const char *name)
 {
 	ndxml *node = ndxml_refsub(parent,name) ;
@@ -846,7 +846,7 @@ int ndxml_delsubnodei(ndxml *parent, int index)
 	return 0 ;
 }
 //////////////////////////////////////////////////////////////////////////
-//È¥µô×¢ÊÍ
+//å»æ‰æ³¨é‡Š
 static char* parse_marked(char *xmlbuf, int size, char **error_addr) 
 {
 	char *pstart = xmlbuf ;
@@ -888,7 +888,7 @@ static char* parse_marked(char *xmlbuf, int size, char **error_addr)
 	}
 	return NULL ;
 }
-//´ÓÄÚ´æ¿éÖĞ½âÎö³öÒ»¸öXML½Úµã
+//ä»å†…å­˜å—ä¸­è§£æå‡ºä¸€ä¸ªXMLèŠ‚ç‚¹
 ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 {
 	ndxml *xmlnode =NULL ;
@@ -934,12 +934,12 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 		struct ndxml_attr *attrib_node ;
 		char attr_name[MAX_XMLNAME_SIZE] ;
 		if(*((short int*)paddr)==XML_H_END ) {
-			//Õâ¸öxml½Úµã½áÊøÁË,Ó¦¸Ã·µ»ØÁË
+			//è¿™ä¸ªxmlèŠ‚ç‚¹ç»“æŸäº†,åº”è¯¥è¿”å›äº†
 			*parse_end = paddr + 2 ;
 			return xmlnode ;
 		}
 		else if('>'==*paddr) {
-			//½ÚµãÍ·½áÊø,ÍË³öÊôĞÔ¶ÁÈ¡Ñ­»·
+			//èŠ‚ç‚¹å¤´ç»“æŸ,é€€å‡ºå±æ€§è¯»å–å¾ªç¯
 			paddr++ ;
 			break ;
 		}
@@ -971,7 +971,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 		goto READ_END ;
 	}
 	else if('<'==*paddr) {
-		//Ê¹ÓÃµİ¹éÈ¥½âÎö×Óxml node
+		//ä½¿ç”¨é€’å½’å»è§£æå­xml node
 		while (*paddr)	{
 			char *parsed ;
 			int  left_size = (int) (size -( paddr - xmlbuf) );
@@ -1008,7 +1008,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 		else {
 			++tmp ;
 		}
-		paddr = ndstr_str_end(tmp,buf, '<') ;		//¶ÁÈ¡xmlÖµ,Ò»Ö±µ½"<"½áÊø
+		paddr = ndstr_str_end(tmp,buf, '<') ;		//è¯»å–xmlå€¼,ä¸€ç›´åˆ°"<"ç»“æŸ
 		val_size = paddr - tmp ;
 		
 		//store value 
@@ -1032,7 +1032,7 @@ READ_END :
 		char end_name[MAX_XMLNAME_SIZE] ;
 		
 		if(XML_T_END != *((short*)paddr)) {
-			//½âÎö³ö´í,Ã»ÓĞÓöµ½½áÊø±êÖ¾
+			//è§£æå‡ºé”™,æ²¡æœ‰é‡åˆ°ç»“æŸæ ‡å¿—
 			if(xmlnode)
 				dealloc_xml(xmlnode) ;
 			*parse_end = NULL ;
@@ -1046,7 +1046,7 @@ READ_END :
 		
 		paddr = ndstr_parse_word(paddr,end_name) ;
 		if(ndstricmp(xmlnode->name, end_name)) {
-			//½âÎö³ö´í,Ã»ÓĞÓöµ½½áÊø±êÖ¾,»òÕßÊÇ½áÊø±êÖ¾Ğ´´íÁË
+			//è§£æå‡ºé”™,æ²¡æœ‰é‡åˆ°ç»“æŸæ ‡å¿—,æˆ–è€…æ˜¯ç»“æŸæ ‡å¿—å†™é”™äº†
 			dealloc_xml(xmlnode) ;
 			*parse_end = NULL ;
 			*error_addr = paddr ;
@@ -1059,7 +1059,7 @@ READ_END :
 	return xmlnode ;
 }
 
-//ÉêÇëÒ»¸ö½ÚµãÄÚ´æ
+//ç”³è¯·ä¸€ä¸ªèŠ‚ç‚¹å†…å­˜
 ndxml *alloc_xml()
 {
 	ndxml *node = malloc(sizeof(ndxml)) ;
@@ -1069,7 +1069,7 @@ ndxml *alloc_xml()
 	return node ;
 }
 
-//ÊÍ·ÅÒ»¸öXML½ÚµãµÄËùÒÔ×ÊÔ´
+//é‡Šæ”¾ä¸€ä¸ªXMLèŠ‚ç‚¹çš„æ‰€ä»¥èµ„æº
 void  dealloc_xml(ndxml *node )
 {
 	struct list_head *pos ;
@@ -1102,7 +1102,7 @@ void  dealloc_xml(ndxml *node )
 	free(node) ;
 }
 
-//ÉêÇëÒ»¸öÊôĞÔ½ÚµãµÄÄÚ´æ
+//ç”³è¯·ä¸€ä¸ªå±æ€§èŠ‚ç‚¹çš„å†…å­˜
 struct ndxml_attr *alloc_attrib_node(const char *name, const char *value)
 {
 	char *p ;
@@ -1143,7 +1143,7 @@ struct ndxml_attr *alloc_attrib_node(const char *name, const char *value)
 	return pnode ;
 }
 
-//ÊÍ·ÅÒ»¸öÊôĞÔ½ÚµãÄÚ´æ×ÊÔ´
+//é‡Šæ”¾ä¸€ä¸ªå±æ€§èŠ‚ç‚¹å†…å­˜èµ„æº
 void dealloc_attrib_node(struct ndxml_attr *pnode)
 {
 	list_del(&pnode->lst);
@@ -1191,8 +1191,8 @@ static __INLINE__ void indent(FILE *fp, int deep)
 		fprintf(fp,"\t"); 
 	}
 }
-//°ÑxmlĞ´µ½ÎÄ¼şÖĞ
-//@deep ½ÚµãµÄÉî¶È
+//æŠŠxmlå†™åˆ°æ–‡ä»¶ä¸­
+//@deep èŠ‚ç‚¹çš„æ·±åº¦
 int xml_write(ndxml *xmlnode, FILE *fp , int deep)
 {
 	struct list_head *pos ;

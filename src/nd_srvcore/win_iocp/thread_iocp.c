@@ -26,7 +26,7 @@ static int initialize_iocp();
 static DWORD WINAPI WorkerThread(LPVOID lpParam);
 static void DeInitialize();
 WSAOVERLAPPED g_overlapped ;
-//把节点acceptEx好之后放到完成端口句柄中
+//鎶婅妭鐐筧cceptEx濂戒箣鍚庢斁鍒板畬鎴愮鍙ｅ彞鏌勪腑
 static struct nd_client_map_iocp * _pre_accept(struct listen_contex *listen_info)
 {
 	struct nd_client_map_iocp *iocp_map;
@@ -80,7 +80,7 @@ int thread_iocp_entry(struct listen_contex *listen_info)
 
 	while (!nd_thsrv_isexit(context)){
 
-		if(-1==nd_thsrv_msghandler(context) ){		//处理线程消息
+		if(-1==nd_thsrv_msghandler(context) ){		//澶勭悊绾跨▼娑堟伅
 			break ;
 		}
 		

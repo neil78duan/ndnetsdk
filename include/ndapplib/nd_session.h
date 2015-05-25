@@ -68,7 +68,7 @@ public :
 protected:
 	//void *  operator new(size_t size) ;//throw (std::bad_alloc) ;
 	NDUINT32 m_id ;				//id
-	NDUINT32 m_type ;			//ÀàÐÍ
+	NDUINT32 m_type ;			//ç±»åž‹
 };
 
 #pragma  warning(pop)

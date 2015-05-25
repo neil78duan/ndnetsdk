@@ -11,28 +11,28 @@ enum END_ERROR_TYPE
 {
 #undef ErrorElement 
 #define ErrorElement(a) a
-	NDERR_SUCCESS  = 0 ,	//ÕýÈ·
+	NDERR_SUCCESS  = 0 ,	//æ­£ç¡®
 #include "_nderr.h"
 	/*
-	NDERR_INVALID_HANDLE,	//ÎÞÐ§¾ä±ú
-	NDERR_TIMEOUT   ,		//³¬Ê±
-	NDERR_NOSOURCE ,		//Ã»ÓÐ×ã¹»×ÊÔ´
-	NDERR_OPENFILE,			//²»ÄÜ´ò¿ªÎÄ¼þ
-	NDERR_BADTHREAD,		//²»ÄÜ´ò¿ªÏß³Ì
-	NDERR_LIMITED,			//×ÊÔ´³¬¹ýÉÏÏÞ
-	NDERR_USER,				//´¦ÀíÓÃ»§Êý¾Ý³ö´í(ÏûÏ¢»Øµ÷º¯Êý·µ»Ø-1
-	NDERR_INVALID_INPUT ,	//ÎÞÐ§µÄÊäÈë(DATA IS TO BIG OR ZERO
+	NDERR_INVALID_HANDLE,	//æ— æ•ˆå¥æŸ„
+	NDERR_TIMEOUT   ,		//è¶…æ—¶
+	NDERR_NOSOURCE ,		//æ²¡æœ‰è¶³å¤Ÿèµ„æº
+	NDERR_OPENFILE,			//ä¸èƒ½æ‰“å¼€æ–‡ä»¶
+	NDERR_BADTHREAD,		//ä¸èƒ½æ‰“å¼€çº¿ç¨‹
+	NDERR_LIMITED,			//èµ„æºè¶…è¿‡ä¸Šé™
+	NDERR_USER,				//å¤„ç†ç”¨æˆ·æ•°æ®å‡ºé”™(æ¶ˆæ¯å›žè°ƒå‡½æ•°è¿”å›ž-1
+	NDERR_INVALID_INPUT ,	//æ— æ•ˆçš„è¾“å…¥(DATA IS TO BIG OR ZERO
 	NDERR_IO		,		//IO bad SYSTEM IO BAD
-	NDERR_WUOLD_BLOCK ,		//ÐèÒª×èÈû	
+	NDERR_WUOLD_BLOCK ,		//éœ€è¦é˜»å¡ž	
 	NDERR_CLOSED,			//socket closed by peer
-	NDERR_BADPACKET  ,		//ÍøÂçÊäÈëÊý¾Ý´íÎó(too long or short)
-	NDERR_BADSOCKET ,		//ÎÞÐ§µÄsocket
+	NDERR_BADPACKET  ,		//ç½‘ç»œè¾“å…¥æ•°æ®é”™è¯¯(too long or short)
+	NDERR_BADSOCKET ,		//æ— æ•ˆçš„socket
 	NDERR_READ,				//read error
 	NDERR_WRITE,			//write error	
-	NDERR_NO_PRIVILAGE,		//Ã»ÓÐÈ¨ÏÞ
-	NDERR_RESET,			//±»ÖØÖÃ
-	NDERR_USER_BREAK,		//ÓÃ»§ÖÐ¶Ï(ÍË³öÑ­»·)
-	NDERR_VERSION,			//°æ±¾ºÅ´íÎó
+	NDERR_NO_PRIVILAGE,		//æ²¡æœ‰æƒé™
+	NDERR_RESET,			//è¢«é‡ç½®
+	NDERR_USER_BREAK,		//ç”¨æˆ·ä¸­æ–­(é€€å‡ºå¾ªçŽ¯)
+	NDERR_VERSION,			//ç‰ˆæœ¬å·é”™è¯¯
 	NDERR_UNKNOW			//unknowwing error
 	 */
 	
@@ -42,7 +42,7 @@ enum END_ERROR_TYPE
 
 #define NDERR_USERDEFINE 1024 
 
-//¶¨Òå¾ä±úÀàÐÍ
+//å®šä¹‰å¥æŸ„ç±»åž‹
 enum END_OBJECT_TYPE
 {
 	NDHANDLE_UNKNOW =0,

@@ -97,7 +97,7 @@ int vm_print( const char *stm,...)
 	
 }
 
-//½âÎöÖ¸Áî
+//è§£ææŒ‡ä»¤
 vm_ins get_ins(char * ins) 
 {
 	int i ;
@@ -118,7 +118,7 @@ char *get_ins_name(vm_ins ins)
 
 }
 
-//¶ÁÈ¡Ö¸Áî
+//è¯»å–æŒ‡ä»¤
 char *read_instruction(char *src,  vm_ins *instruction)
 {
 	char buf[128]; 
@@ -136,7 +136,7 @@ char *read_instruction(char *src,  vm_ins *instruction)
 	return ret_addr ;
 }
 
-//¶ÁÈ¡Ò»¸ö²Ù×÷ÊıºÍÊı¾İÃèÊö
+//è¯»å–ä¸€ä¸ªæ“ä½œæ•°å’Œæ•°æ®æè¿°
 int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **ret_addr)
 {
 	char *_start_addr ;
@@ -150,7 +150,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 		vm_adddress mm_addr ;
 
 		if((addr[1]=='s'|| addr[1]=='S') && (addr[2]=='p' || addr[2]=='P')) {
-			//¶ÁÈ¡¶ÑÕ»µØÖ·
+			//è¯»å–å †æ ˆåœ°å€
 			*data_desc = EDS_STACK ;
 			addr += 3 ;
 
@@ -163,7 +163,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 
 		}
 		else {
-			//¶ÁÈ¡ÄÚ´æµØÖ·
+			//è¯»å–å†…å­˜åœ°å€
 			*data_desc = EDS_ADDRESS ;
 			++addr ;
 		}
@@ -206,7 +206,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 	return 0 ;
 }
 /*
- * ½âÎöÒ»ĞĞÖ¸Áî
+ * è§£æä¸€è¡ŒæŒ‡ä»¤
  * return -1 error 
  *		0 nothing to be done 
 		else numbers of instruction 
@@ -322,7 +322,7 @@ size_t _filesize(FILE *stream)
 	return length;
 } 
 
-//·´»ã±à
+//åæ±‡ç¼–
 int vm_file_rcompile(/*struct vm_instruction_node *out_node,*/ FILE *infp, FILE *outfile)
 {
 	char *p, *buf ;
@@ -363,7 +363,7 @@ int vm_file_rcompile(/*struct vm_instruction_node *out_node,*/ FILE *infp, FILE 
 
 }
 
-//°ÑÖ¸ÁîÊä³öÎª»ã±à(·´»ã±à)
+//æŠŠæŒ‡ä»¤è¾“å‡ºä¸ºæ±‡ç¼–(åæ±‡ç¼–)
 int vm_output_asm(struct vm_instruction_node *node, void *outstream, int type)
 {
 	int num , len;
