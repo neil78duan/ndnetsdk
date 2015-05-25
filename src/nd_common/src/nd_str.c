@@ -17,6 +17,18 @@ int ndstr_set_code(int type)
 	__s_code_type = type;
 	return ret;
 }
+const char* nd_get_encode_name(int encode_type)
+{
+	switch (encode_type)
+	{
+	case  E_SRC_CODE_GBK:
+		return "gbk";
+	case  E_SRC_CODE_UTF_8:
+		return "utf8";
+	default:
+		return "ansi";
+	}	
+}
 
 int nd_get_encode_val(const char *encodeText)
 {

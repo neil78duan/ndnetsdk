@@ -333,6 +333,9 @@
     <ClInclude Include="..\..\..\include\ndstl\nd_vector.h">
       <Filter>include\ndstl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_common\nd_iconv.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
@@ -586,6 +589,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_srvcore\src\session.c">
       <Filter>src\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_iconv.c">
+      <Filter>src\common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

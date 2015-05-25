@@ -142,52 +142,47 @@ int ndxml_load_ex(const char *file, ndxml_root *xmlroot, const char*encodeType)
 	}
 	
 	pTextEncode = ndxml_getattr_val(xmlroot,"encoding");
-	if (!pTextEncode){
-		ret = -1;
-		_errlog("unknow xml-encode \n");
-		goto EXIT_ERROR;
-	}
-	if (encodeType && encodeType[0]) {
-		int nTextType = nd_get_encode_val(pTextEncode);
-		int nNeedType = nd_get_encode_val(encodeType);
-		char *pconvertbuf;
-		const char *encodeTextType = 0;
-		typedef char(*__convert_function)(const char *, char *, int)  ;
-		__convert_function func = NULL;
-		//CONVERT CODE 
-		if (nNeedType == E_SRC_CODE_UTF_8 && nTextType != E_SRC_CODE_UTF_8)	{			
-			func = nd_gbk_to_utf8;
-			encodeTextType = "utf8";
-		}
-		else if (nNeedType != E_SRC_CODE_UTF_8 && nTextType == E_SRC_CODE_UTF_8)	{			
-			func = nd_utf8_to_gbk;
-			encodeTextType = "utf8";
-		}
+	if (pTextEncode && *pTextEncode){
+		if (encodeType && encodeType[0]) {
+			int nTextType = nd_get_encode_val(pTextEncode);
+			int nNeedType = nd_get_encode_val(encodeType);
+			char *pconvertbuf;
+			//const char *encodeTextType = 0;
+			typedef char*(*__convert_function)(const char *, char *, int);
+			__convert_function func = NULL;
+			//CONVERT CODE 
+			if (nNeedType == E_SRC_CODE_UTF_8 && nTextType != E_SRC_CODE_UTF_8)	{
+				func = nd_gbk_to_utf8;
+			}
+			else if (nNeedType != E_SRC_CODE_UTF_8 && nTextType == E_SRC_CODE_UTF_8)	{
+				func = nd_utf8_to_gbk;	
+			}
 
-		if (func){
-			char *pconvertbuf = malloc(size * 2);
-			if (!pconvertbuf)	{
-				ret = -1;
-				goto EXIT_ERROR;
+			if (func){
+				char *pconvertbuf = malloc(size * 2);
+				if (!pconvertbuf)	{
+					ret = -1;
+					goto EXIT_ERROR;
+				}
+				if (func(pBuf, pconvertbuf, size * 2)) {
+					nd_unload_file(pBuf);
+					pBuf = pconvertbuf;
+					size = strlen(pconvertbuf);
+				}
+				else {
+					free(pconvertbuf);
+					ret = -1;
+					goto EXIT_ERROR;
+				}
+				ndxml_setattrval(xmlroot, "encoding", encodeType);
 			}
-			if (func(pBuf, pconvertbuf, size * 2)) {
-				nd_unload_file(pBuf);
-				pBuf = pconvertbuf;
-				size = strlen(pconvertbuf);
-			}
-			else {
-				free(pconvertbuf);
-				ret = -1;
-				goto EXIT_ERROR;
-			}
-			ndxml_setattrval(xmlroot, "encoding", encodeTextType);
+			codeType = ndstr_set_code(nNeedType);
 		}
-		codeType = ndstr_set_code(nNeedType);
+		else {
+			codeType = xml_set_code_type(xmlroot);
+		}
 	}
-	else {
-		codeType = xml_set_code_type(xmlroot);
-	}
-	
+		
 
 	if (-1 == xml_load_from_buf(pBuf, size, xmlroot, file)) {
 		ret = -1;

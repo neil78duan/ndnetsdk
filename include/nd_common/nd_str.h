@@ -75,4 +75,5 @@ ND_COMMON_API char *ndstr_reverse_chr(const char *src, char ch, const char *end)
 
 ND_COMMON_API int ndstr_set_code(int type);
 ND_COMMON_API int nd_get_encode_val(const char *encodeText);
+ND_COMMON_API const char* nd_get_encode_name(int encode_type);
 #endif 
