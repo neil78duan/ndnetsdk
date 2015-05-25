@@ -1,4 +1,4 @@
-/* file nd_xml.h
+﻿/* file nd_xml.h
  * define xml parser of nd engine 
  * version 1.0 
  * 2008-8-24 
@@ -81,14 +81,10 @@ static __INLINE__ void ndxml_initroot(ndxml_root *root)
 
 //设置xml解析出错时的log函数,返回默认函数
 ND_COMMON_API xml_errlog nd_setxml_log(xml_errlog logfunc) ;
-<<<<<<< HEAD
-//���ļ��м���һ��xml�б�
-ND_COMMON_API int ndxml_load(const char *file, ndxml_root *xmlroot);
-ND_COMMON_API int ndxml_load_ex(const char *file, ndxml_root *xmlroot,const char*encodeType);
-=======
+
 //从文件中加载一个xml列表
 ND_COMMON_API int ndxml_load(const char *file,ndxml_root *xmlroot) ;
->>>>>>> 1c126e2cec5cc3d03c46d021c2f595fb454a905c
+ND_COMMON_API int ndxml_load_ex(const char *file, ndxml_root *xmlroot,const char*encodeType);
 
 //查找到一个xml接点
 ND_COMMON_API ndxml *ndxml_getnode(ndxml_root *xmlroot, const char *name) ;
