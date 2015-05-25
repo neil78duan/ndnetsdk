@@ -43,6 +43,7 @@ static inline void  operator delete(void *, void *)
 #define __new_throw throw (std::bad_alloc)
 #endif 
 
+#ifdef ND_OVER_RIDE_NEW
 inline void *operator new(size_t size,nd_handle pool) __new_throw
 {
 	return _alloc_new( size, pool);
@@ -69,7 +70,7 @@ void *operator new[](size_t size)  __new_throw;
 
 void operator delete(void *p) throw();
 void operator delete[](void *p) throw();
-
+#endif 
 //#endif //ND_UNUSE_STDC_ALLOC
 
 #endif 

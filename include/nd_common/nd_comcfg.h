@@ -36,6 +36,8 @@ enum source_code_type
 //#define ND_USE_VLD		1		//使用VDL查找内存泄露
 #endif
 
+//#define ND_OVER_RIDE_NEW	1
+
 #if defined(ND_USE_GPERF )||defined(ND_USE_VLD)
 #else
 #define ND_UNUSE_STDC_ALLOC 1		//不使用标准C的alloc
