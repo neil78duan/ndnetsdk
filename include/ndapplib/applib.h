@@ -126,10 +126,6 @@ CPPAPI R_RSA_PRIVATE_KEY *nd_get_privatekey(void) ;
 		obj = 0 ;					\
 	}
 
-extern time_t app_inst_time(time_t* _t);
-extern void	  app_inst_set_hm(int _h, int _m);
-
-
 MSG_ENTRY_DECLARE(nd_transfer_to_msgproc) ;
 MSG_ENTRY_DECLARE(nd_transfer_to_client);
 

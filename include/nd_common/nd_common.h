@@ -55,6 +55,10 @@ ND_COMMON_API int nd_common_init();
 ND_COMMON_API void nd_common_release();
 ND_COMMON_API int nd_common_isinit() ;
 
+#include <time.h>
+ND_COMMON_API time_t app_inst_time(time_t* _t);
+ND_COMMON_API void	 app_inst_set_hm(int _h, int _m);
+
 ND_COMMON_API const char *nd_process_name() ;
 //ND_COMMON_API char *process_name();
 ND_COMMON_API int nd_arg(int argc, const char *argv[]);

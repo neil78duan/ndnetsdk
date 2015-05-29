@@ -100,6 +100,7 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_dbg.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_define.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_handle.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_iconv.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_mempool.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_node_mgr.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_os.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="..\..\..\src\nd_common\src\nddir.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_cmdline.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_handle.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_iconv.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_mempool.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_mutex.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_static_alloc.c" />

@@ -189,7 +189,7 @@ int ndNetFuncInstall(netObject netObj,ndNetFunc func, int maxID, int minID,const
 int ndSetDftMsgHandler(netObject netObj,ndNetFunc dftFunc)
 {
     if(netObj)
-        return nd_msgentry_def_handler((nd_netui_handle)netObj, (nd_usermsg_func)dftFunc) ;
+        return nd_msgentry_def_handler((nd_handle)netObj, (nd_usermsg_func)dftFunc) ;
     return -1;
 }
 
@@ -231,12 +231,12 @@ int _translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_han
 	nd_usermsg_func func ;
 	
 	nd_netmsg_ntoh(usermsg) ; 
-	func = nd_msgentry_get_func(connect_handle, usermsg->maxid,  usermsg->minid);
+	func = nd_msgentry_get_func((nd_handle)connect_handle, usermsg->maxid,  usermsg->minid);
 	
-	func = func? func : nd_msgentry_get_def_func(connect_handle) ;
+	func = func ? func : nd_msgentry_get_def_func((nd_handle)connect_handle);
 	
 	if (func){
-		ret = func((netObject) connect_handle, (char*)msg, (int)ND_USERMSG_LEN(msg) );
+		ret = func((nd_handle)connect_handle, (nd_usermsgbuf_t *) msg, (int)ND_USERMSG_LEN(msg));
 	}
 	else {
 		nd_logmsg("received message (%d,%d) UNHANDLED\n" AND usermsg->maxid AND usermsg->minid) ;		

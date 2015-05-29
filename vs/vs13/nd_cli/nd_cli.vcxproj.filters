@@ -186,6 +186,9 @@
     <ClInclude Include="..\..\..\include\ndapplib\nd_msgpacket.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_common\nd_iconv.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
@@ -355,6 +358,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_iconv.c">
+      <Filter>src\common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
