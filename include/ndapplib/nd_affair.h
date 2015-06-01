@@ -217,11 +217,11 @@ public:
 		m_affair_stat = 0 ;
 		m_num = 0;
 	}
-	virtual void Undo(TIndex &index, TValue &val,int optype )
+	virtual void Undo(TIndex &index, TValue &old_val,int optype )
 	{
 
 	}
-	virtual void AffairDo(TIndex &index, TValue &val,int optype) 
+	virtual void AffairDo(TIndex &index, TValue &old_val, int optype)
 	{
 
 	}
@@ -231,32 +231,32 @@ public:
 		m_affair_stat = 0;
 		m_nCount = 0 ;
 	}
-	void AffairAdd(TIndex &index, TValue &val) 
+	void AffairAdd(TIndex &index, TValue &old_val)
 	{
 		if (m_affair_stat)	{
 			nd_assert(m_num<=number);
 			m_buf[m_num].first = index ;
-			m_buf[m_num].second = val;
+			m_buf[m_num].second = old_val;
 			m_buf[m_num].optype = EAO_DEL ;
 			m_num++;
 		}
 	}
-	void AffairDel(TIndex &index, TValue &val ) 
+	void AffairDel(TIndex &index, TValue &old_val)
 	{
 		if (m_affair_stat)	{
 			nd_assert(m_num<=number);
 			m_buf[m_num].first = index ;
-			m_buf[m_num].second = val;
+			m_buf[m_num].second = old_val;
 			m_buf[m_num].optype = EAO_ADD ;
 			m_num++;
 		}
 	}
-	void AffairModify(TIndex &index, TValue &val ) 
+	void AffairModify(TIndex &index, TValue &old_val)
 	{
 		if (m_affair_stat)	{
 			nd_assert(m_num<=number);
 			m_buf[m_num].first = index ;
-			m_buf[m_num].second = val;
+			m_buf[m_num].second = old_val;
 			m_buf[m_num].optype = EAO_MODIFIED ;
 			m_num++;
 		}
