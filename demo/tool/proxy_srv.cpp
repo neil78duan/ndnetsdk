@@ -64,7 +64,7 @@ public:
 	{
 		((ProxySession*)pSession)->Shutdown() ;
 	}
-	//int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);	//Á¬½Ó½øÈë»Øµ÷º¯Êı
+	//int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);	//è¿æ¥è¿›å…¥å›è°ƒå‡½æ•°
 };
 
 class ProxyInst : public NDInstanceSrv 
@@ -190,10 +190,10 @@ void ProxySession::UpdateRemote()
 
 	}
 
-	//¶ÁÈ¡µØÖ·
+	//è¯»å–åœ°å€
 	struct sockaddr_in* read_addr = nd_udp_read_addr(m_remote_handle) ;
 	if (read_addr->sin_addr.s_addr==m_client_addr.sin_addr.s_addr && read_addr->sin_port==m_client_addr.sin_port ) {
-		//À´×Ôclient
+		//æ¥è‡ªclient
 		int sock_len;
 		struct sockaddr_in aim_addr ;
 		if(buf[0]!=0 || buf[1]!=0 || buf[2]!=0) {
@@ -229,7 +229,7 @@ void ProxySession::UpdateRemote()
 		nd_udp_sendto(m_remote_handle,buf,ret, &aim_addr) ; 
 	}
 	else {
-		//À´×ÔÔ¶³Ì
+		//æ¥è‡ªè¿œç¨‹
 		nd_proxy_sendto(nd_connector_fd(m_remote_handle),buf,ret, read_addr, &m_client_addr) ;
 	}
 
@@ -325,7 +325,7 @@ int listen_data_handle(nd_handle session, void *data, size_t size, nd_handle lis
 	}
 	return (int) size ;
 }
-//Ö±½Ó´¦ÀíÀ´×ÔsocketµÄÔ­Ê¼Êı¾İ
+//ç›´æ¥å¤„ç†æ¥è‡ªsocketçš„åŸå§‹æ•°æ®
 int _listen_data_handle(nd_handle session, void *data, size_t size, nd_handle listener)
 {
 

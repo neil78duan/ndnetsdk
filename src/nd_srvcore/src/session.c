@@ -28,7 +28,7 @@ int tcp_client_close(struct nd_client_map* cli_map, int force)
 	
 	if(root->connect_out_callback)	
 		root->connect_out_callback(cli_map,(nd_handle)root) ;
-	nd_tcpnode_close(&(cli_map->connect_node) , force) ;		//¹Ø±Õsocket
+	nd_tcpnode_close(&(cli_map->connect_node) , force) ;		//å…³é—­socket
 	
 	thpi = get_thread_poolinf((nd_listen_handle) root, 0) ;
 	if (thpi) {
@@ -121,7 +121,7 @@ int check_operate_timeout(nd_session_handle nethandle, ndtime_t tmout)
 		return 1 ;
 	}
 
-	//½ûÖ¹¿ÕÁ¬½Ó
+	//ç¦æ­¢ç©ºè¿žæŽ¥
 	lc =(struct listen_contex *) nethandle->srv_root ;
 	if (lc && lc->empty_conn_timeout && nethandle->level <= EPL_CONNECT){
 		interval = nd_time() - nethandle->start_time;
@@ -140,7 +140,7 @@ int tryto_close_tcpsession(nd_session_handle nethandle, ndtime_t connect_tmout )
 	ENTER_FUNC()
 	int ret = 0 ;
 	if(TCPNODE_STATUS(nethandle)==ETS_DEAD) {
-		tcp_release_death_node(nethandle,0) ;		//ÊÍ·ÅËÀÁ¬½Ó
+		tcp_release_death_node(nethandle,0) ;		//é‡Šæ”¾æ­»è¿žæŽ¥
 	}
 	else if(TCPNODE_CHECK_RESET(nethandle)) {
 		nd_session_close(nethandle,1) ;

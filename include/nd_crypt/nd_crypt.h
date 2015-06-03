@@ -9,29 +9,29 @@
 /*
  * This module include MD5, tea and rsa.
 
-  MD5ToString °Ñ¼ÓÃÜºÃµÄMD5×ª»»³É¿É´òÓ¡µÄ×Ö·û
+  MD5ToString æŠŠåŠ å¯†å¥½çš„MD5è½¬æ¢æˆå¯æ‰“å°çš„å­—ç¬¦
  * char* MD5ToString(unsigned char src[16], unsigned char desc[33]);
 
-  °Ñ×Ö·û´®¼ÓÃÜ³ÉMD5
+  æŠŠå­—ç¬¦ä¸²åŠ å¯†æˆMD5
  * char *MD5CryptStr16(char *input, char output[16]) ;
 
-  °Ñ2½øÖÆ¼ÓÃÜ³ÉMD5
+  æŠŠ2è¿›åˆ¶åŠ å¯†æˆMD5
  * char *MD5Crypt16(char *input, int inlen, char output[16]);
 
-  ²úÉúÒ»¸öteaµÄÃÜÔ¿
+  äº§ç”Ÿä¸€ä¸ªteaçš„å¯†é’¥
  * int tea_key(tea_k *k);
 
-  tea¼ÓÃÜ
+  teaåŠ å¯†
  * void tea_enc(tea_k *k, tea_v *v);
 
-  tea½âÃÜ
+  teaè§£å¯†
  * void  tea_dec(tea_k *k, tea_v *v);
 
-  rsa¼ÓÃÜ/½âÃÜ
-  ·µ»Ø0³É¹¦
-	int nd_RSAcreate(RSA_HANDLE); ²úÉúÒ»¶Ô¼ÓÃÜ½âÃÜÃÜÔ¿
- void nd_RSAdestroy(RSA_HANDLE *h_rsa);	//Ïú»Ù¼ÓÃÜ½âÃÜÃÜÔ¿
- //¼ÓÃÜ»òÕß½âÃÜº¯Êı,¹«¿ªÃÜÔ¿¼ÓÃÜµÄÖ»ÄÜÓÃË½ÈËÃÜÔ¿½âÃÜ,·´Ö®ÒàÈ»
+  rsaåŠ å¯†/è§£å¯†
+  è¿”å›0æˆåŠŸ
+	int nd_RSAcreate(RSA_HANDLE); äº§ç”Ÿä¸€å¯¹åŠ å¯†è§£å¯†å¯†é’¥
+ void nd_RSAdestroy(RSA_HANDLE *h_rsa);	//é”€æ¯åŠ å¯†è§£å¯†å¯†é’¥
+ //åŠ å¯†æˆ–è€…è§£å¯†å‡½æ•°,å…¬å¼€å¯†é’¥åŠ å¯†çš„åªèƒ½ç”¨ç§äººå¯†é’¥è§£å¯†,åä¹‹äº¦ç„¶
  int nd_RSAPublicEncrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa);
  int nd_RSAPrivateEncrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa);
  int nd_RSAPublicDecrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa);
@@ -51,7 +51,7 @@
 	#define CPPAPI 
 	#endif
 #endif 
-//#define RSA_COMPILE_AS_DLL	1		//	±àÒë³Édll
+//#define RSA_COMPILE_AS_DLL	1		//	ç¼–è¯‘æˆdll
 
 #if  defined(ND_COMPILE_AS_DLL) && (defined(_WINDOWS)  || defined(WIN32) || defined(WIN64))
 	#if  defined(ND_CRYPT_EXPORTS) 
@@ -72,7 +72,7 @@
 
 ND_CRYPT_API int nd_TEAencrypt(unsigned char *data, int data_len, tea_k *key) ;
 ND_CRYPT_API int nd_TEAdecrypt(unsigned char *data, int data_len, tea_k *key) ;
-ND_CRYPT_API int nd_TEAGenKey(tea_k *key, char *seed) ;		//Ê¹ÓÃÖÖ×ÓÉú³ÉÒ»¸öÃÜÔ¿,·µ»ØÃÜÂë³¤¶È
+ND_CRYPT_API int nd_TEAGenKey(tea_k *key, char *seed) ;		//ä½¿ç”¨ç§å­ç”Ÿæˆä¸€ä¸ªå¯†é’¥,è¿”å›å¯†ç é•¿åº¦
 
 /* mix-in data */
 ND_CRYPT_API char *crypt_stuff(char *src, int datalen, int stufflen ) ;	/*stuff data to align*/
@@ -83,16 +83,16 @@ ND_CRYPT_API char *crypt_stuff(char *src, int datalen, int stufflen ) ;	/*stuff 
  */
 ND_CRYPT_API char* MD5ToString(unsigned char src[16], unsigned char desc[33]);
 
-/*¼ÓÃÜ¿É´òÓ¡µÄ×Ö·û(\0µÄ×Ö·û´®)*/
+/*åŠ å¯†å¯æ‰“å°çš„å­—ç¬¦(\0çš„å­—ç¬¦ä¸²)*/
 ND_CRYPT_API char *MD5CryptStr16(char *input, char output[16]) ;
 
-/* ÊäÈë×Ö·ûÊÇ¶ş½øÖÆ×Ö·û
+/* è¾“å…¥å­—ç¬¦æ˜¯äºŒè¿›åˆ¶å­—ç¬¦
  * @inlen input length
  * @input data address of input
  * @output buffer address char[16]
  */
 ND_CRYPT_API char *MD5Crypt16(char *input, int inlen, char output[16]);
-/* ¼ÆËãmd5,Êä³ö¿É´òÓ¡µÄ×Ö·û*/
+/* è®¡ç®—md5,è¾“å‡ºå¯æ‰“å°çš„å­—ç¬¦*/
 ND_CRYPT_API char *MD5CryptToStr32(char *input, int inlen, char output[33]);
 ND_CRYPT_API int MD5cmp(char src[16], char desc[16]) ;
 
@@ -108,8 +108,8 @@ typedef struct  {
 }ND_RSA_CONTEX ;
 typedef ND_RSA_CONTEX *RSA_HANDLE ;
 
-#define RSA_KEY_BITS 2048					/* rsa ÃÜÔ¿³¤¶È*/
-#define RSA_CRYPT_BUF_SIZE 256				/* rsaÃ¿´Î¼ÓÃÜĞèÒªµÄ»º³å³¤¶È*/
+#define RSA_KEY_BITS 2048					/* rsa å¯†é’¥é•¿åº¦*/
+#define RSA_CRYPT_BUF_SIZE 256				/* rsaæ¯æ¬¡åŠ å¯†éœ€è¦çš„ç¼“å†²é•¿åº¦*/
 
 ND_CRYPT_API int RSAinit_random(R_RANDOM_STRUCT *rStruct);
 ND_CRYPT_API void RSAdestroy_random(R_RANDOM_STRUCT *rStruct);

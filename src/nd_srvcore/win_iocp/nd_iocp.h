@@ -10,9 +10,9 @@
 
 #if !defined(ND_UNIX) 
 
-//#define USER_THREAD_POLL		//ÊÇ·ñÊ¹ÓÃÏß³ÌÄ£Ê½
+//#define USER_THREAD_POLL		//æ˜¯å¦ä½¿ç”¨çº¿ç¨‹æ¨¡å¼
 
-#define IOCP_DELAY_CLOSE_TIME		(10*1000)	//ÑÓ³Ù10Ãë¹Ø±Õ
+#define IOCP_DELAY_CLOSE_TIME		(10*1000)	//å»¶è¿Ÿ10ç§’å…³é—­
 #include "nd_srvcore/client_map.h"
 #include "nd_srvcore/nd_listensrv.h"
 //#include "nd_srvcore/nd_srvlib.h"
@@ -79,22 +79,22 @@ static __INLINE__ nd_netbuf_t * iocp_recv_buf(struct nd_client_map_iocp *cli_map
 #define IOCP_MAP_FD(node) (node)->__client_map.connect_node.fd
 void CALLBACK iocp_callback(DWORD dwErrorCode, DWORD dwByteCount,LPOVERLAPPED lpOverlapped) ;
 
-//iocp_write /iocp_read ÔÚsocket¼¶±ğÉÏread write
+//iocp_write /iocp_read åœ¨socketçº§åˆ«ä¸Šread write
 ND_SRV_API int iocp_write(struct nd_client_map_iocp *iocp_map) ;
 ND_SRV_API int iocp_read(struct nd_client_map_iocp *iocp_map) ;
 ND_SRV_API int iocp_close_client(struct nd_client_map_iocp *iocp_map, int force) ;
 
-//ÔÚ nd_tcp_node ¼¶±ğÉÏµÄ·¢ËÍÖ÷ÒªÊÇÊ¹ÓÃWSASend À´´úÌæsend
+//åœ¨ nd_tcp_node çº§åˆ«ä¸Šçš„å‘é€ä¸»è¦æ˜¯ä½¿ç”¨WSASend æ¥ä»£æ›¿send
 ND_SRV_API int _iocp_write2sock(struct nd_tcp_node *node,void *data , size_t len);
-//·¢ËÍÒ»¸öÍêÕûµÄÏûÏ¢
+//å‘é€ä¸€ä¸ªå®Œæ•´çš„æ¶ˆæ¯
 ND_SRV_API int _iocp_write2sock_wait(struct nd_tcp_node *node,void *data , size_t len) ;
 
-//ÔÚclient_map½ÚµãÉÏ·¢ËÍ
+//åœ¨client_mapèŠ‚ç‚¹ä¸Šå‘é€
 ND_SRV_API int nd_iocp_sendmsg(struct nd_client_map_iocp *iocp_map,nd_packhdr_t *msg_buf, int flag) ;
 
 int iocp_socket_write(struct nd_client_map_iocp *iocp_map, void *data, size_t send_len) ;
 
-int check_repre_accept(struct listen_contex *) ;	//µÃµ½µ±Ç°ĞèÒªpreacceptµÄ¸öÊı
+int check_repre_accept(struct listen_contex *) ;	//å¾—åˆ°å½“å‰éœ€è¦preacceptçš„ä¸ªæ•°
 //the following function used is iocp model
 int pre_accept(struct nd_srv_node *srv_node) ;
 int iocp_accept(struct nd_client_map_iocp *node);

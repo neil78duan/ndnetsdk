@@ -10,9 +10,9 @@
 #include "nd_net/nd_sock.h"
 //#include "nd_common/nd_common.h"
 
-//#define TCP_SERVER_TYPE ('t'<<8 | 's' )		//¶¨Òåtcp¾ä±úÀàÐÍ
+//#define TCP_SERVER_TYPE ('t'<<8 | 's' )		//å®šä¹‰tcpå¥æŸ„ç±»åž‹
 
-//Á¬½Ó¹ÜÀíÆ÷
+//è¿žæŽ¥ç®¡ç†å™¨
 #define cm_init		node_init
 #define cm_alloc	node_alloc
 #define cm_dealloc	node_dealloc
@@ -20,10 +20,10 @@
 #define cmlist_iterator_t	node_iterator
 #define cm_manager			node_root
 
-//typedef int (*data_callback)(nd_handle session, void *data, size_t size, nd_handle listener) ;	//Ô­Ê¼ÍøÂçÊý¾Ý´¦Àíº¯Êý,·µ»Ø-1Á¬½Ó±»¹Ø±Õ
-typedef int (*accept_callback) (void* income_handle, SOCKADDR_IN *addr, nd_handle listener) ;	//µ±ÓÐÁ¬½Ó½ÓÈëÊÇÖ´ÐÐµÄ»Øµ÷º¯Êý
-typedef void (*deaccept_callback) (void* exit_handle, nd_handle listener) ;					//µ±ÓÐÁ¬½Ó±»ÊÍ·ÅÊ±Ö´ÐÐµÄ»Øµ÷º¯Êý
-typedef int (*pre_deaccept_callback) (void* handle, nd_handle listener) ;					//ÊÍ·ÅÁ¬½ÓÇ°Ö´ÐÐµÄ»Øµ÷º¯Êý
+//typedef int (*data_callback)(nd_handle session, void *data, size_t size, nd_handle listener) ;	//åŽŸå§‹ç½‘ç»œæ•°æ®å¤„ç†å‡½æ•°,è¿”å›ž-1è¿žæŽ¥è¢«å…³é—­
+typedef int (*accept_callback) (void* income_handle, SOCKADDR_IN *addr, nd_handle listener) ;	//å½“æœ‰è¿žæŽ¥æŽ¥å…¥æ˜¯æ‰§è¡Œçš„å›žè°ƒå‡½æ•°
+typedef void (*deaccept_callback) (void* exit_handle, nd_handle listener) ;					//å½“æœ‰è¿žæŽ¥è¢«é‡Šæ”¾æ—¶æ‰§è¡Œçš„å›žè°ƒå‡½æ•°
+typedef int (*pre_deaccept_callback) (void* handle, nd_handle listener) ;					//é‡Šæ”¾è¿žæŽ¥å‰æ‰§è¡Œçš„å›žè°ƒå‡½æ•°
 
 
 
@@ -32,16 +32,16 @@ struct nd_srv_node
 	ND_OBJ_BASE ;
 	ND_SOCKET_OBJ_BASE ;
 
-	void				*msg_handle ;		//ÏûÏ¢´¦Àí¾ä±ú
+	void				*msg_handle ;		//æ¶ˆæ¯å¤„ç†å¥æŸ„
 
-	data_in_entry		data_entry;					//Êý¾Ý´¦Àíº¯Êý
-	net_msg_entry		msg_entry ;					//ÏûÏ¢´¦Àí
-	accept_callback		connect_in_callback ;		//Á¬½Ó½øÈëÍ¨Öªº¯Êý
-//	pre_deaccept_callback	pre_out_callback ;		//Á¬½ÓÐèÒªÍË³ö,ÔÚÍË³öÖ®Ç°Ö´ÐÐµÄº¯Êý,Èç¹û·µ»Ø-1½«²»»áÊÍ·ÅÁ¬½Ó,ÏÂÒ»´Î¼ÌÐø
-	deaccept_callback	connect_out_callback ;		//Á¬½ÓÍË³öÍ¨Öªº¯Êý
+	data_in_entry		data_entry;					//æ•°æ®å¤„ç†å‡½æ•°
+	net_msg_entry		msg_entry ;					//æ¶ˆæ¯å¤„ç†
+	accept_callback		connect_in_callback ;		//è¿žæŽ¥è¿›å…¥é€šçŸ¥å‡½æ•°
+//	pre_deaccept_callback	pre_out_callback ;		//è¿žæŽ¥éœ€è¦é€€å‡º,åœ¨é€€å‡ºä¹‹å‰æ‰§è¡Œçš„å‡½æ•°,å¦‚æžœè¿”å›ž-1å°†ä¸ä¼šé‡Šæ”¾è¿žæŽ¥,ä¸‹ä¸€æ¬¡ç»§ç»­
+	deaccept_callback	connect_out_callback ;		//è¿žæŽ¥é€€å‡ºé€šçŸ¥å‡½æ•°
 
-	SOCKADDR_IN			self_addr ; 				//×Ô¼ºµÄµØÖ·
-	struct cm_manager	conn_manager ;				/* Á¬½Ó¹ÜÀíÆ÷*/
+	SOCKADDR_IN			self_addr ; 				//è‡ªå·±çš„åœ°å€
+	struct cm_manager	conn_manager ;				/* è¿žæŽ¥ç®¡ç†å™¨*/
 };
 
 static __INLINE__ nd_handle nd_srv_get_allocator(struct nd_srv_node *node)
@@ -74,11 +74,11 @@ ND_NET_API void nd_srv_close(struct nd_srv_node *node) ; /* close net server*/
 #define  nd_tcpsrv_close nd_srv_close
 
 
-//Éè¶¨×î´óÁ¬½ÓÊý
+//è®¾å®šæœ€å¤§è¿žæŽ¥æ•°
 ND_NET_API int cm_listen(struct cm_manager *root, int max_num, int client_size) ;
 ND_NET_API void cm_destroy(struct cm_manager *root) ;
 
-//µÃµ½×î´óÁ¬½ÓÊý
+//å¾—åˆ°æœ€å¤§è¿žæŽ¥æ•°
 ND_NET_API int nd_srv_capacity(struct nd_srv_node *srvnode) ;
 
 #endif

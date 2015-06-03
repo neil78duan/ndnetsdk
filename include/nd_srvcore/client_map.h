@@ -15,18 +15,18 @@
 #define ND_NAME_SIZE 40
 
 
-//Ê¹ÓÃ×Ô¶¨ÒåµÄ·¢ËÍº¯Êı
+//ä½¿ç”¨è‡ªå®šä¹‰çš„å‘é€å‡½æ•°
 //typedef int (*snedmsg_ext_entry)(void *owner, nd_packhdr_t *msg_buf, int flag) ;	//define extend send function
-//client ×´Ì¬
+//client çŠ¶æ€
 /*
 enum eClientStatus{
-	ECS_NONE = 0 ,			//¿ÕÏĞ
+	ECS_NONE = 0 ,			//ç©ºé—²
 	ECS_ACCEPTED ,			//accept
 	ECS_READY,				//login 
 	ESC_CLOSED				//connect closed
 } ;
 */
-//nd_client_map ½á¹ûĞèÒª¸ù¾İ¸÷ÖÖ²»Í¬µÄ·şÎñÆ÷ÏûÏ¢½á¹¹À´¶¨ÖÆ
+//nd_client_map ç»“æœéœ€è¦æ ¹æ®å„ç§ä¸åŒçš„æœåŠ¡å™¨æ¶ˆæ¯ç»“æ„æ¥å®šåˆ¶
 /*client connect map on server*/
 struct nd_client_map
 {
@@ -90,14 +90,14 @@ typedef struct player_header{
 }player_header_t ;
 
 
-//¶¨Òåclient map handle
+//å®šä¹‰client map handle
 //typedef void *nd_cli_handle;
-typedef struct netui_info *nd_climap_handle ;		//¶¨Òå¿Í»§¶ËÁ¬½Ó¾µÏñ(¿Í»§¶ËÁ¬½Óµ½·şÎñÆ÷Ê±ĞèÒª½¨Á¢ÕâÑùÒ»¸ö¾µÏñ)
+typedef struct netui_info *nd_climap_handle ;		//å®šä¹‰å®¢æˆ·ç«¯è¿æ¥é•œåƒ(å®¢æˆ·ç«¯è¿æ¥åˆ°æœåŠ¡å™¨æ—¶éœ€è¦å»ºç«‹è¿™æ ·ä¸€ä¸ªé•œåƒ)
 
-//´ÓclienthandleÖĞµÃµ½Ïà¹ØÊôĞÔ
+//ä»clienthandleä¸­å¾—åˆ°ç›¸å…³å±æ€§
 //ND_SRV_API struct nd_client_info* nd_get_client_info(nd_climap_handle cli_handle) ; 
 
-ND_SRV_API struct list_head *get_self_list(nd_climap_handle cli_handle);	//µÃµ½client×Ô¼ºµÄÁ´±í½Úµã
+ND_SRV_API struct list_head *get_self_list(nd_climap_handle cli_handle);	//å¾—åˆ°clientè‡ªå·±çš„é“¾è¡¨èŠ‚ç‚¹
 
 ND_SRV_API  void nd_tcpcm_init(struct nd_client_map *client_map,nd_handle h_listen) ;
 

@@ -3,15 +3,15 @@
  * version 1.0 all right reserved by neil
  * 2007-10
  */
-//#define TEST_MYMM 1		//¶¨ÒåÕâ¸öÊ±,ÓÃÏµÍ³µÄmalloc´úÌæÎÒmempool
+//#define TEST_MYMM 1		//å®šä¹‰è¿™ä¸ªæ—¶,ç”¨ç³»ç»Ÿçš„mallocä»£æ›¿æˆ‘mempool
 
 #ifdef ND_UNIX
-#define USER_P_V_LOCKMSG		1		//Ê¹ÓÃÌõ¼ş±äÁ¿À´»¥³âÏûÏ¢
+#define USER_P_V_LOCKMSG		1		//ä½¿ç”¨æ¡ä»¶å˜é‡æ¥äº’æ–¥æ¶ˆæ¯
 #endif 
 
 /*
- * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì·ï¿½ï¿½ï¿½,ï¿½ï¿½×°ï¿½ï¿½ï¿½ß³Ìºï¿½ï¿½ß³ï¿½Ö®ï¿½ï¿½ï¿½Í¨Ñ?
- * ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ß³Ì³ï¿½ÎªÒ»ï¿½ï¿½ï¿½ß³Ì·ï¿½ï¿½ï¿½ï¿½ï¿½
+ * é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿç«­ç¨‹å‡¤æ‹·é”Ÿæ–¤æ‹·,é”Ÿæ–¤æ‹·è£…é”Ÿæ–¤æ‹·é”Ÿç«­ç¨‹çŒ´æ‹·é”Ÿç«­ç­¹æ‹·ä¹‹é”Ÿæ–¤æ‹·é”Ÿé…µã„‘?
+ * é”Ÿæ–¤æ‹·æ¯é”Ÿæ–¤æ‹·é”Ÿç«­ç¨‹ç­¹æ‹·ä¸ºä¸€é”Ÿæ–¤æ‹·é”Ÿç«­ç¨‹å‡¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·
  */
 // #include "nd_common/nd_common.h"
 // #include "nd_srvcore/nd_srvlib.h"
@@ -39,9 +39,9 @@ typedef struct nd_threadsrv_context{
 	nd_thsrvmsg_func msg_entry ;				//handle received message from other thread!
 	nd_threadsrv_clean cleanup_entry;			//clean up when server is terminal
 	nd_mutex msg_lock ;
-	int send_message_retval ;			//µÈ´ı¶Ô·½´¦ÀíÏûÏ¢ºóµÄ·µ»ØÖµ
+	int send_message_retval ;			//ç­‰å¾…å¯¹æ–¹å¤„ç†æ¶ˆæ¯åçš„è¿”å›å€¼
 #ifdef USER_P_V_LOCKMSG
-	nd_cond	 msg_cond ;					//ÏûÏ¢µÈ´ıÌõ¼ş,Ö»ÓĞÏûÏ¢Ïß³ÌÄÜÓÃ
+	nd_cond	 msg_cond ;					//æ¶ˆæ¯ç­‰å¾…æ¡ä»¶,åªæœ‰æ¶ˆæ¯çº¿ç¨‹èƒ½ç”¨
 #endif
 	struct list_head list;				//self list
 	struct list_head msg_list ;
@@ -54,7 +54,7 @@ typedef struct nd_threadsrv_context{
 	char srv_name[ND_SRV_NAME] ;	//service name
 }nd_thsrv_context_t;
 
-//·şÎñ´´½¨²ÎÊı
+//æœåŠ¡åˆ›å»ºå‚æ•°
 struct thsrv_create_param
 {
 	nd_thsrv_context_t *pcontext ;
@@ -127,7 +127,7 @@ int nd_thsrv_isexit(nd_handle h_srvth )
 
 }
 
-//×¨ÒµÏûÏ¢´¦ÀíÏß³Ìº¯Êı
+//ä¸“ä¸šæ¶ˆæ¯å¤„ç†çº¿ç¨‹å‡½æ•°
 static int _msg_th_func(nd_thsrv_context_t *contex)
 {
 	ENTER_FUNC()
@@ -347,7 +347,7 @@ static void *_srv_entry(void *p)
 		ret = contex->srv_entry(contex->srv_param) ;
 	}
 	else if(SUBSRV_MESSAGE==contex->run_module) {		
-		//×¨ÒµµÄÏûÏ¢´¦ÀíÏß³Ì
+		//ä¸“ä¸šçš„æ¶ˆæ¯å¤„ç†çº¿ç¨‹
 		while(0==nd_atomic_read(&contex->__exit) && 0==nd_atomic_read(&__s_entry.__exit)) {	
 			int hr = _msg_th_func(contex) ;
 			if(contex->h_timer) {
@@ -372,7 +372,7 @@ EXIT_SRV:
 		contex->cleanup_entry = NULL ;		//clean up once
 	}
 
-	//ÍË³öÊ±ĞèÒªÖ´ĞĞ
+	//é€€å‡ºæ—¶éœ€è¦æ‰§è¡Œ
 	if(contex->h_timer) {
 		nd_timer_destroy(contex->h_timer, 0) ;
 		contex->h_timer = 0 ;
@@ -786,7 +786,7 @@ int nd_thsrv_sendex(nd_thsrvid_t srvid,NDUINT32 msgid,void *data, NDUINT32 data_
 		nd_mutex_unlock(&contex->msg_lock) ;
 		
 		if(nd_atomic_read(&contex->is_suspend)>0) {
-			nd_atomic_swap(&contex->is_suspend,0) ;		//Ç¿ÖÆ»½ĞÑ
+			nd_atomic_swap(&contex->is_suspend,0) ;		//å¼ºåˆ¶å”¤é†’
 			nd_sem_post(contex->sem_suspend) ;
 		}
 		else 

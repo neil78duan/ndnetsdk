@@ -14,51 +14,51 @@
 
 #define NDUDT_VERSION 			1
 #define NDUDT_FRAGMENT_LEN		1400  //reference rfc 1122
-#define NDUDT_BUFFER_SIZE		1024 //·â°ü»º³å
+#define NDUDT_BUFFER_SIZE		1024 //å°åŒ…ç¼“å†²
 
-//#define CHECK_LOST_PACKET		//¼ì²â¶ª°üÇé¿ö
-//¶¨ÒåUDT±¨ÎÄÀàĞÍ
+//#define CHECK_LOST_PACKET		//æ£€æµ‹ä¸¢åŒ…æƒ…å†µ
+//å®šä¹‰UDTæŠ¥æ–‡ç±»å‹
 enum eUdtMsgType{
 	NDUDT_DATA=0,
 	NDUDT_SYN,
 	NDUDT_ALIVE,
 	NDUDT_ACK,
-	NDUDT_LOST,				//Í¨Öª¶Ô·½¶ª°ü
+	NDUDT_LOST,				//é€šçŸ¥å¯¹æ–¹ä¸¢åŒ…
 	NDUDT_FIN,
 	NDUDT_RESET,
-	NDUDT_DGRAM				//²»¿É¿¿µÄ±¨ÎÄ,¶ÔUDP¼òµ¥µÄ·â×°
+	NDUDT_DGRAM				//ä¸å¯é çš„æŠ¥æ–‡,å¯¹UDPç®€å•çš„å°è£…
 };
 
-#define NOT_ACK_SPACE		//²»Ê¹ÓÃack_seq×÷Îª·¢ËÍÊı¾İµÄ»º³å
+#define NOT_ACK_SPACE		//ä¸ä½¿ç”¨ack_seqä½œä¸ºå‘é€æ•°æ®çš„ç¼“å†²
 
 #pragma pack(push)
 #pragma pack(1)
 
-//udtĞ­Òé±¨Í·
+//udtåè®®æŠ¥å¤´
 //32bits
 struct ndudt_header
 {	
 	
 #  if ND_BYTE_ORDER == ND_L_ENDIAN
 	//0~15 bit
-	u_8	version:4;			//°æ±¾ĞÅÏ¢(Ã»ÓĞÊ¹ÓÃ,Ö÷ÒªÊÇÎªÁË±£Áô¶ÔÆë¶øÒÔ)
-	u_8	protocol:4;			//Ğ­ÒéÀàĞÍ
+	u_8	version:4;			//ç‰ˆæœ¬ä¿¡æ¯(æ²¡æœ‰ä½¿ç”¨,ä¸»è¦æ˜¯ä¸ºäº†ä¿ç•™å¯¹é½è€Œä»¥)
+	u_8	protocol:4;			//åè®®ç±»å‹
 
-	u_8	udt_type:4;			//±¨ÎÄÀàĞÍ
-	u_8	stuff:1;			//·ñÎªÁË¼ÓÃÜ¶øÌî³ä(udtÖĞ²»Ê¹ÓÃ
-	u_8	crypt:1;			//ÊÇ·ñ¼ÓÃÜ(udtÖĞ²»Ê¹ÓÃ
-	u_8	ack:1;				//ÊÇ·ñ°üº¬»Ø¸´
-	u_8	resevered:1;		//±£Áô
+	u_8	udt_type:4;			//æŠ¥æ–‡ç±»å‹
+	u_8	stuff:1;			//å¦ä¸ºäº†åŠ å¯†è€Œå¡«å……(udtä¸­ä¸ä½¿ç”¨
+	u_8	crypt:1;			//æ˜¯å¦åŠ å¯†(udtä¸­ä¸ä½¿ç”¨
+	u_8	ack:1;				//æ˜¯å¦åŒ…å«å›å¤
+	u_8	resevered:1;		//ä¿ç•™
 #else 
 	//0~15 bit
-	u_8	protocol:4;			//Ğ­ÒéÀàĞÍ
-	u_8	version:4;			//°æ±¾ĞÅÏ¢(Ã»ÓĞÊ¹ÓÃ,Ö÷ÒªÊÇÎªÁË±£Áô¶ÔÆë¶øÒÔ)
+	u_8	protocol:4;			//åè®®ç±»å‹
+	u_8	version:4;			//ç‰ˆæœ¬ä¿¡æ¯(æ²¡æœ‰ä½¿ç”¨,ä¸»è¦æ˜¯ä¸ºäº†ä¿ç•™å¯¹é½è€Œä»¥)
 
-	u_8	resevered:1;		//±£Áô
-	u_8	ack:1;				//ÊÇ·ñ°üº¬»Ø¸´
-	u_8	crypt:1;			//ÊÇ·ñ¼ÓÃÜ(udtÖĞ²»Ê¹ÓÃ
-	u_8	stuff:1;			//·ñÎªÁË¼ÓÃÜ¶øÌî³ä(udtÖĞ²»Ê¹ÓÃ
-	u_8	udt_type:4;			//±¨ÎÄÀàĞÍ
+	u_8	resevered:1;		//ä¿ç•™
+	u_8	ack:1;				//æ˜¯å¦åŒ…å«å›å¤
+	u_8	crypt:1;			//æ˜¯å¦åŠ å¯†(udtä¸­ä¸ä½¿ç”¨
+	u_8	stuff:1;			//å¦ä¸ºäº†åŠ å¯†è€Œå¡«å……(udtä¸­ä¸ä½¿ç”¨
+	u_8	udt_type:4;			//æŠ¥æ–‡ç±»å‹
 
 #endif
 
@@ -68,29 +68,29 @@ struct ndudt_header
 
 #pragma warning (disable: 4200)
 //16 bytes
-//udt·â°üÍ·²¿
+//udtå°åŒ…å¤´éƒ¨
 struct ndudt_pocket
 {
 	struct ndudt_header header;
 	u_16	session_id ;			//(port of udt protocol, session id)
 	u_16	window_len;			//slide window lenght
-	u_32	sequence ;			//sender sequence ·¢ËÍÏµÁĞºÅ(µ±Ç°·â°üÏµÁĞ)
+	u_32	sequence ;			//sender sequence å‘é€ç³»åˆ—å·(å½“å‰å°åŒ…ç³»åˆ—)
 	
 	//32bits * 3
-	u_32	ack_seq;			//È·ÈÏ½ÓÊÕÏµÁĞ
+	u_32	ack_seq;			//ç¡®è®¤æ¥æ”¶ç³»åˆ—
 	u_8		data[0];
 };
 
-//²»°üÀ¨ackµÄÊı¾İ°üÍ·
+//ä¸åŒ…æ‹¬ackçš„æ•°æ®åŒ…å¤´
 struct _ndudt_unack_packet 
 {
 	struct ndudt_header header;
 	u_16	session_id ;			//(port of udt protocol, session id)
 	u_16	window_len;			//slide window lenght
-	u_32	sequence ;			//sender sequence ·¢ËÍÏµÁĞºÅ
+	u_32	sequence ;			//sender sequence å‘é€ç³»åˆ—å·
 
 };
-//udpÊı¾İ°ü
+//udpæ•°æ®åŒ…
 struct ndudp_packet
 {
 	struct ndudt_header header;		//32bits

@@ -21,14 +21,14 @@ ND_COMMON_API void* nd_load_file(const char *file, size_t *size);
 #ifdef _MSC_VER
 #include <io.h>
 
-//É¾³ıÎÄ¼ş
+//åˆ é™¤æ–‡ä»¶
 ND_COMMON_API int nd_rmfile(const char *file);
-//ÖØÃüÃûÎÄ¼ş
+//é‡å‘½åæ–‡ä»¶
 ND_COMMON_API int nd_renfile(const char *oldfile,const  char *newfile);
 
-//´´½¨Ò»¸öÄ¿Â¼
+//åˆ›å»ºä¸€ä¸ªç›®å½•
 ND_COMMON_API int nd_mkdir(const char *dir);
-//É¾³ıÒ»¸öÄ¿Â¼
+//åˆ é™¤ä¸€ä¸ªç›®å½•
 ND_COMMON_API int nd_rmdir(const char *dir);
 
 #else 
@@ -45,18 +45,18 @@ ND_COMMON_API int nd_rmdir(const char *dir);
 
 #endif
 
-//µÃµ½¹¤×÷Ä¿Â¼
+//å¾—åˆ°å·¥ä½œç›®å½•
 ND_COMMON_API const char * nd_getcwd();
 ND_COMMON_API int nd_chdir(const char *dir);
-//µÃµ½¹¤×÷Ä¿Â¼
+//å¾—åˆ°å·¥ä½œç›®å½•
 ND_COMMON_API const char * nd_get_init_dir();
-//copy ÎÄ¼ş
+//copy æ–‡ä»¶
 ND_COMMON_API int nd_cpfile(const char *oldfile,const  char *newfile);
-//µÃµ½ÏµÍ³Ä¿Â¼
+//å¾—åˆ°ç³»ç»Ÿç›®å½•
 ND_COMMON_API const  char* nd_getsysdir();
-//²éÕÒÖ¸¶¨µÄÎÄ¼şÊÇ·ñ´æÔÚ
+//æŸ¥æ‰¾æŒ‡å®šçš„æ–‡ä»¶æ˜¯å¦å­˜åœ¨
 ND_COMMON_API int nd_existfile(const char *pachfilename);
-//´´½¨Ò»¸öĞÂÎÄ¼ş
+//åˆ›å»ºä¸€ä¸ªæ–°æ–‡ä»¶
 ND_COMMON_API int nd_mkfile(const char *file);
 
 

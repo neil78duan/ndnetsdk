@@ -434,7 +434,7 @@ ndsocket_t nd_socket_udp_connect(const char *host_name, short port,SOCKADDR_IN *
 }
 #endif
 
-//´ÓipµØÖ·int µ½×Ö·û´®ÐÎÊ½
+//ä»Žipåœ°å€int åˆ°å­—ç¬¦ä¸²å½¢å¼
 char *nd_inet_ntoa (unsigned int in, char *buffer)
 {
 	struct in_addr inaddr ;
@@ -515,7 +515,7 @@ NDUINT64 nd_ntoh64(NDUINT64 h)
 }
 
 /*
- * µÈ´ýsocket¿ÉÐ´
+ * ç­‰å¾…socketå¯å†™
  * return value : 0 time out , -1 error ,else writablity
  */
 int nd_socket_wait_writablity(ndsocket_t fd,int timeval)
@@ -593,7 +593,7 @@ ndport_t nd_sock_getpeerport(ndsocket_t fd)
 	return saddr.sin_port ;
 }
 /*
- * µÈ´ýsocket¿É¶Á
+ * ç­‰å¾…socketå¯è¯»
  * return value : 0 time out , -1 error ,else readable
  */
 int nd_socket_wait_read(ndsocket_t fd,int timeval)
@@ -630,7 +630,7 @@ int nd_socket_nonblock(ndsocket_t fd, int cmd)
 	return ioctlsocket(fd,FIONBIO ,&val) ;
 }
 
-//Ð£ÑéºÍ¼ÆËã
+//æ ¡éªŒå’Œè®¡ç®—
 NDUINT16 nd_checksum(NDUINT16 *buf,size_t length)
 {
 	ENTER_FUNC()
@@ -641,8 +641,8 @@ NDUINT16 nd_checksum(NDUINT16 *buf,size_t length)
 		sum += *buf++;
 	}
 	if(length&1){
-		//sum+= (*buf&0xff00);		//ÕâÀï³ö´íÁË,Õâ¸ö³ÌÐòÊÇ´óÎ²ÊýµÄ,¹þ¹þÀË·ÑÁËÎÒºÜ¶àÊ±¼ä°¡
-		sum += *(NDUINT8*)buf ;		//Õâ¸öºÃÒ»µã,²»¹ý´óÐ¡Í¨³Ô
+		//sum+= (*buf&0xff00);		//è¿™é‡Œå‡ºé”™äº†,è¿™ä¸ªç¨‹åºæ˜¯å¤§å°¾æ•°çš„,å“ˆå“ˆæµªè´¹äº†æˆ‘å¾ˆå¤šæ—¶é—´å•Š
+		sum += *(NDUINT8*)buf ;		//è¿™ä¸ªå¥½ä¸€ç‚¹,ä¸è¿‡å¤§å°é€šåƒ
 	}
 	sum=(sum>>16)+(sum&0xffff);
 	sum+=(sum>>16);

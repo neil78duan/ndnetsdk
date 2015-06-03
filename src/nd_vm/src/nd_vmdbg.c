@@ -147,7 +147,7 @@ int try_run_dbgcmd(char *linebuf, struct vm_cpu *vm)
 	case DBG_EXP:
 		{
 			char buf[4096] ;
-			size_t bin_size = vm_parse_expression(addr, buf,sizeof(buf),replace_func) ;
+			size_t bin_size = vm_parse_expression(addr, buf,sizeof(buf),replace_func,NULL) ;
 			if(bin_size>0) {
 				//run code
 				if(-1==vm_run_cmd(vm,buf, bin_size)  ) {

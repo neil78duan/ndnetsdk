@@ -270,7 +270,7 @@ struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info, 
 
 }
 
-/*Í¨Öªclient·şÎñÆ÷Óµ¼·,²¢ÇÒ¹Ø±Õ*/
+/*é€šçŸ¥clientæœåŠ¡å™¨æ‹¥æŒ¤,å¹¶ä¸”å…³é—­*/
 void host_congest(ndsocket_t fd)
 {
 	nd_logerror("connect is limits\n") ;
@@ -294,7 +294,7 @@ int nd_do_netmsg(struct nd_client_map *cli_map,struct nd_srv_node *srv_node)
 	}
 
 	if (NDERR_USER_BREAK == cli_map->connect_node.myerrno){
-		//ÓÃ»§ĞèÒªÔİÍ£ÏûÏ¢´¦Àí
+		//ç”¨æˆ·éœ€è¦æš‚åœæ¶ˆæ¯å¤„ç†
 		LEAVE_FUNC();
 		return 0 ;
 	}
@@ -340,7 +340,7 @@ nd_handle nd_listensrv_get_cmallocator(struct listen_contex * handle)
 	return   nd_srv_get_allocator(&handle->tcp) ;
 }
 
-//µÃµ½Á¬½Ó¹ÜÀíÆ÷
+//å¾—åˆ°è¿æ¥ç®¡ç†å™¨
 struct cm_manager *nd_listensrv_get_cmmamager(struct listen_contex * handle) 
 {
 	return &(handle->tcp.conn_manager );
@@ -356,7 +356,7 @@ int nd_listensrv_freenum(struct listen_contex * handle)
 {
 	return handle->tcp.conn_manager.free_num(&handle->tcp.conn_manager) ;
 }
-//ÔÚ¼àÌıÆ÷ÉÏ½¨Á¢¶¨Ê±Æ÷
+//åœ¨ç›‘å¬å™¨ä¸Šå»ºç«‹å®šæ—¶å™¨
 ndtimer_t nd_listensrv_timer(nd_listen_handle h_listen,nd_timer_entry func,void *param,ndtime_t interval, int run_type ) 
 {
 	if(h_listen->listen_id) {
@@ -372,7 +372,7 @@ void nd_listensrv_del_timer(nd_listen_handle h_listen, ndtimer_t timer_id )
 	}	
 }
 
-//°ÑÒ»¸öÁ¬½ÓÆ÷Ìí¼ÓÖĞ¼àÌıÆ÷ÖĞ,ÈÃ¼àÌıÆ÷À´´¦ÀíÍøÂçÊÂ¼ş
+//æŠŠä¸€ä¸ªè¿æ¥å™¨æ·»åŠ ä¸­ç›‘å¬å™¨ä¸­,è®©ç›‘å¬å™¨æ¥å¤„ç†ç½‘ç»œäº‹ä»¶
 NDUINT16 nd_listensrv_attach(nd_listen_handle h_listen, nd_handle h_connector, nd_thsrvid_t thid)
 {
 	struct node_root **mgr_addr = NULL;

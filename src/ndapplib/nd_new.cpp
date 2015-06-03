@@ -7,13 +7,13 @@
  */
 
 #include "nd_common/nd_common.h"
-//#define ND_IMPLETE_MEMPOOL	1		//实现内存池的文件
+//#define ND_IMPLETE_MEMPOOL	1		//瀹炵幇鍐呭瓨姹犵殑鏂囦欢
 #include "ndstl/nd_new.h"
 #include "ndstl/nd_allocator.h"
 #include "ndapplib/nd_object.h"
 
 #ifdef _ND_MEMORY_H_
-//这里需要使用libc的malloc函数
+//杩欓噷闇�瑕佷娇鐢╨ibc鐨刴alloc鍑芥暟
 #error do not include nd_alloc.h
 #endif
 

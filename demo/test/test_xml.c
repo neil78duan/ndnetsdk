@@ -89,7 +89,7 @@ int test2()
 	if(!xmlnode)
 		T_ERROR("add xml node") ; ;
 	
-	if(!ndxml_addattrib(xmlnode, "name", "¸ù½Úµã1") ) {
+	if(!ndxml_addattrib(xmlnode, "name", "æ ¹èŠ‚ç‚¹1") ) {
 		T_ERROR("add xml attribute") ; ;
 	}
 	
@@ -107,7 +107,7 @@ int test2()
 		T_ERROR("add xml node") ; ;
 	}
 
-	ndxml_setval(sub,"ÄãºÃÎÒÊÇ¶Î¶Î!") ;
+	ndxml_setval(sub,"ä½ å¥½æˆ‘æ˜¯æ®µæ®µ!") ;
 
 	
 	sub = ndxml_addsubnode(xmlnode, "node2", NULL) ;

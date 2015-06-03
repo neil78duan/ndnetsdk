@@ -18,8 +18,8 @@ extern int destroy_udp_thpool(struct listen_contex *listen_info,int flag) ;
 
 extern int listen_thread_createex(struct thread_pool_info *ic);
 
-/* @thread_num Ïß³Ì¸öÊý
- * @th_sessions Ã¿¸öÏß³ÌµÄÁ¬½ÓÊý
+/* @thread_num çº¿ç¨‹ä¸ªæ•°
+ * @th_sessions æ¯ä¸ªçº¿ç¨‹çš„è¿žæŽ¥æ•°
  */
 int create_listen_thread_pool(struct listen_contex *handle, int pre_thnum, int session_num)
 {
@@ -134,7 +134,7 @@ int nd_close_listen_thread(nd_listen_handle h,nd_thsrvid_t sid)
 
 }
 
-//ÎªsessionÕÒÒ»¸öÏà¶Ô¿ÕÏÐµÄÏß³Ì
+//ä¸ºsessionæ‰¾ä¸€ä¸ªç›¸å¯¹ç©ºé—²çš„çº¿ç¨‹
 int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid)
 {
 	ndthread_t self_id = nd_thread_self() ;
@@ -174,7 +174,7 @@ int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid)
 }
 
 
-//´ò¿ªÒ»¸öÏß³Ì·þÎñÆ÷
+//æ‰“å¼€ä¸€ä¸ªçº¿ç¨‹æœåŠ¡å™¨
 nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h,int session_num) 
 {
 	struct listen_contex * lc =(struct listen_contex *) h ;
@@ -323,7 +323,7 @@ int thpool_main(struct thread_pool_info *thip)
 			listen_info->pre_update((nd_handle)listen_info, context) ;
 		}
 		msgret = nd_thsrv_msghandler(context) ;
-		if(-1== msgret) {		//´¦ÀíÏß³ÌÏûÏ¢
+		if(-1== msgret) {		//å¤„ç†çº¿ç¨‹æ¶ˆæ¯
 			if (listen_info->end_update){
 				listen_info->end_update((nd_handle)listen_info, context) ;
 			}
@@ -398,7 +398,7 @@ int thpool_sub(struct thread_pool_info *thip)
 			listen_info->pre_update((nd_handle)listen_info, context) ;
 		}
 		msgret = nd_thsrv_msghandler(context) ;
-		if(-1== msgret) {		//´¦ÀíÏß³ÌÏûÏ¢
+		if(-1== msgret) {		//å¤„ç†çº¿ç¨‹æ¶ˆæ¯
 			if (listen_info->end_update){
 				listen_info->end_update((nd_handle)listen_info, context) ;
 			}
@@ -427,7 +427,7 @@ int thpool_sub(struct thread_pool_info *thip)
 }
 
 
-//°ÑsessioÌí¼Óµ½Ïß³Ì³ØÖÐ
+//æŠŠsessioæ·»åŠ åˆ°çº¿ç¨‹æ± ä¸­
 int addto_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo) 
 {
 	if (pthinfo->session_num >= pthinfo->max_sessions){

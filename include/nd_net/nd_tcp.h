@@ -18,27 +18,27 @@
 
 #include "nd_net/nd_netobj.h"
 
-#define SENDBUF_PUSH	128		/*·¢ËÍ»º³åÉÏÏŞ,Èç¹ûÊı¾İ´ïµ½Õâ¸öÊı¼´¿É·¢ËÍ*/
-#define SENDBUF_TMVAL	50		/*Á½´Î»º³åÇå¿ÕÊ±¼ä¼ä¸ô,³¬¹ıÕâ¸ö¼ä¸ô½«Çå¿Õ*/
-#define ALONE_SEND_SIZE 64		/*·¢ËÍÊı¾İ³¤¶È´óÓÚÕâ¸öÊı×Ö½«²»»º³å*/
+#define SENDBUF_PUSH	128		/*å‘é€ç¼“å†²ä¸Šé™,å¦‚æœæ•°æ®è¾¾åˆ°è¿™ä¸ªæ•°å³å¯å‘é€*/
+#define SENDBUF_TMVAL	50		/*ä¸¤æ¬¡ç¼“å†²æ¸…ç©ºæ—¶é—´é—´éš”,è¶…è¿‡è¿™ä¸ªé—´éš”å°†æ¸…ç©º*/
+#define ALONE_SEND_SIZE 64		/*å‘é€æ•°æ®é•¿åº¦å¤§äºè¿™ä¸ªæ•°å­—å°†ä¸ç¼“å†²*/
 
 /* 
- * WAIT_WRITABLITY_TIME µÈ´ıÒ»¸öÁ¬½Ó±äÎª¿ÉĞ´µÄÊ±¼ä.
- * Èç¹ûÉèÖÃÌ«³¤¿ÉÄÜ»áÊ¹ÏµÍ³¹ÒÆğ,Ó°ÏìÕû¸ö·şÎñÆ÷µÄÍÌÍÂÂÊ.
- * ¿ÉÒÔÊ¹ÓÃnd_set_wait_writablity_time º¯ÊıÀ´ÖØĞÂÉèÖÃµÈ´ıÊ±¼ä
+ * WAIT_WRITABLITY_TIME ç­‰å¾…ä¸€ä¸ªè¿æ¥å˜ä¸ºå¯å†™çš„æ—¶é—´.
+ * å¦‚æœè®¾ç½®å¤ªé•¿å¯èƒ½ä¼šä½¿ç³»ç»ŸæŒ‚èµ·,å½±å“æ•´ä¸ªæœåŠ¡å™¨çš„ååç‡.
+ * å¯ä»¥ä½¿ç”¨nd_set_wait_writablity_time å‡½æ•°æ¥é‡æ–°è®¾ç½®ç­‰å¾…æ—¶é—´
  */
 #ifdef ND_DEBUG
-#define WAIT_WRITABLITY_TIME	-1		/*ÎŞÏŞµÈ´ı*/
+#define WAIT_WRITABLITY_TIME	-1		/*æ— é™ç­‰å¾…*/
 #else 
-#define WAIT_WRITABLITY_TIME    1000	/*µÈ´ısocke¿ÉĞ´µÄÊ±¼ä*/
+#define WAIT_WRITABLITY_TIME    1000	/*ç­‰å¾…sockeå¯å†™çš„æ—¶é—´*/
 #endif
 
-//TCPÁ¬½Ó×´Ì¬
+//TCPè¿æ¥çŠ¶æ€
 enum ETCP_CONNECT_STATUS{
-	ETS_DEAD = 0 ,			//ÎŞÁ¬½Ó(»òÕßµÈ´ı±»ÊÍ·Å)
-	ETS_ACCEPT,				//µÈ´ıÁ¬½Ó½øÈë(IOCP)
-	ETS_CONNECTED ,			//Á¬½Ó³É¹¦
-	ETS_TRYTO_CLOSE	,		//µÈ´ı¹Ø±ÕÁ¬½Óneed to send data can be receive data
+	ETS_DEAD = 0 ,			//æ— è¿æ¥(æˆ–è€…ç­‰å¾…è¢«é‡Šæ”¾)
+	ETS_ACCEPT,				//ç­‰å¾…è¿æ¥è¿›å…¥(IOCP)
+	ETS_CONNECTED ,			//è¿æ¥æˆåŠŸ
+	ETS_TRYTO_CLOSE	,		//ç­‰å¾…å…³é—­è¿æ¥need to send data can be receive data
 	ETS_RESET,				//need to be reset (force close). socket would be set reset status on error when write data
 	ETS_CLOSED				//closed
 };
@@ -53,22 +53,22 @@ struct nd_tcp_node{
 #define check_connect_valid(node) (((struct nd_tcp_node*)(node))->fd > 0 && ((struct nd_tcp_node*)(node))->status==ETS_CONNECTED)
 
 //connect to host
-ND_NET_API int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node *node,struct nd_proxy_info *proxy);	//Á¬½Óµ½Ö÷»ú
-ND_NET_API int nd_tcpnode_close(struct nd_tcp_node *node,int force);				//¹Ø±ÕÁ¬½Ó
-ND_NET_API int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf, int flag) ;	//·¢ËÍÍøÂçÏûÏ¢ flag ref send_flag
-ND_NET_API int nd_tcpnode_read(struct nd_tcp_node *node) ;		//¶ÁÈ¡Êı¾İ,0 timeout ,-1 error or closed ,else datalen
-ND_NET_API int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node, int force) ;	//·¢ËÍ»º³åÖĞµÄÊı¾İ
-ND_NET_API int nd_tcpnode_tryto_flush_sendbuf(struct nd_tcp_node *conn_node) ;	//·¢ËÍ»º³åÖĞµÄÊı¾İ
+ND_NET_API int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node *node,struct nd_proxy_info *proxy);	//è¿æ¥åˆ°ä¸»æœº
+ND_NET_API int nd_tcpnode_close(struct nd_tcp_node *node,int force);				//å…³é—­è¿æ¥
+ND_NET_API int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf, int flag) ;	//å‘é€ç½‘ç»œæ¶ˆæ¯ flag ref send_flag
+ND_NET_API int nd_tcpnode_read(struct nd_tcp_node *node) ;		//è¯»å–æ•°æ®,0 timeout ,-1 error or closed ,else datalen
+ND_NET_API int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node, int force) ;	//å‘é€ç¼“å†²ä¸­çš„æ•°æ®
+ND_NET_API int nd_tcpnode_tryto_flush_sendbuf(struct nd_tcp_node *conn_node) ;	//å‘é€ç¼“å†²ä¸­çš„æ•°æ®
 
 ND_NET_API int tcpnode_parse_recv_msgex(struct nd_tcp_node *node,NDNET_MSGENTRY msg_entry , void *param) ;
-ND_NET_API void nd_tcpnode_init(struct nd_tcp_node *conn_node) ;	//³õÊ¼»¯Á¬½Ó½Úµã
+ND_NET_API void nd_tcpnode_init(struct nd_tcp_node *conn_node) ;	//åˆå§‹åŒ–è¿æ¥èŠ‚ç‚¹
 
 ND_NET_API void nd_tcpnode_deinit(struct nd_tcp_node *conn_node)  ;
 ND_NET_API int nd_tcpnode_sendlock_init(struct nd_tcp_node *conn_node) ;
 ND_NET_API void nd_tcpnode_sendlock_deinit(struct nd_tcp_node *conn_node) ;
 
-/*ÖØÖÃTCPÁ¬½Ó:¹Ø±Õµ±Ç°Á¬½ÓºÍ,Çå¿Õ»º³åºÍ¸÷ÖÖ×´Ì¬;
- * µ«ÊÇ±£´æÓÃ»§µÄÏà¹ØÉèÖÃ,ÏûÏ¢´¦Àíº¯ÊıºÍ¼ÓÃÜÃÜÔ¿
+/*é‡ç½®TCPè¿æ¥:å…³é—­å½“å‰è¿æ¥å’Œ,æ¸…ç©ºç¼“å†²å’Œå„ç§çŠ¶æ€;
+ * ä½†æ˜¯ä¿å­˜ç”¨æˆ·çš„ç›¸å…³è®¾ç½®,æ¶ˆæ¯å¤„ç†å‡½æ•°å’ŒåŠ å¯†å¯†é’¥
  */
 ND_NET_API void nd_tcpnode_reset(struct nd_tcp_node *conn_node)  ;
 ND_NET_API int nd_socket_wait_writablity(ndsocket_t fd,int timeval) ;
@@ -80,8 +80,8 @@ void _set_ndtcp_conn_dft_option(ndsocket_t sock_fd);
 /* set ndnet connector default options */
 void _set_ndtcp_session_dft_option(ndsocket_t sock_fd);
 
-/*ÒÔÏÂº¯ÊıËø×¡·¢ËÍ
- * ÔÚÓÃ»§³ÌĞòÖĞ²»ĞèÒªÏÔÊ½µÄµ÷ÓÃ
+/*ä»¥ä¸‹å‡½æ•°é”ä½å‘é€
+ * åœ¨ç”¨æˆ·ç¨‹åºä¸­ä¸éœ€è¦æ˜¾å¼çš„è°ƒç”¨
  */
 
 
@@ -89,7 +89,7 @@ void _set_ndtcp_session_dft_option(ndsocket_t sock_fd);
 #define TCPNODE_READ_AGAIN(conn_node) (conn_node)->read_again
 #define CURRENT_IS_CRYPT(conn_node) (((struct nd_tcp_node*)(conn_node))->is_crypt_packet )
 
-//TCP×´Ì¬²Ù×÷ºê
+//TCPçŠ¶æ€æ“ä½œå®
 #define TCPNODE_STATUS(conn_node) (((struct nd_tcp_node*)(conn_node))->status )
 #define TCPNODE_SET_OK(conn_node) ((struct nd_tcp_node*)(conn_node))->status = ETS_CONNECTED
 #define TCPNODE_IS_OK(conn_node) (((struct nd_tcp_node*)(conn_node))->status == ETS_CONNECTED)
@@ -137,10 +137,10 @@ ND_NET_API int nd_set_wait_writablity_time(int newtimeval) ;
 ND_NET_API int nd_get_wait_writablity_time() ;
 
 
-/*µÈ´ıÒ»¸öÍøÂçÏûÏ¢ÏûÏ¢
- *Èç¹ûÓĞÍøÂçÏûÏ¢µ½ÁËÔò·µ»ØÏûÏ¢µÄ³¤¶È(ÕûÌõÏûÏ¢µÄ³¤¶È,µ½À´µÄÊı¾İ³¤¶È)
- *³¬Ê±,³ö´í·µ»Ø-1,´ËÊ±ÍøÂçĞèÒª±»¹Ø±Õ
- *·µ»Ø0±íÊ¾ÎŞÊı¾İµ½ÁË
+/*ç­‰å¾…ä¸€ä¸ªç½‘ç»œæ¶ˆæ¯æ¶ˆæ¯
+ *å¦‚æœæœ‰ç½‘ç»œæ¶ˆæ¯åˆ°äº†åˆ™è¿”å›æ¶ˆæ¯çš„é•¿åº¦(æ•´æ¡æ¶ˆæ¯çš„é•¿åº¦,åˆ°æ¥çš„æ•°æ®é•¿åº¦)
+ *è¶…æ—¶,å‡ºé”™è¿”å›-1,æ­¤æ—¶ç½‘ç»œéœ€è¦è¢«å…³é—­
+ *è¿”å›0è¡¨ç¤ºæ— æ•°æ®åˆ°äº†
  */
 ND_NET_API int tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout);
 

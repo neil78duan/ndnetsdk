@@ -11,9 +11,9 @@
 //#include "nd_net/nd_iphdr.h"
 
 /*
- * ÔÚwindows xp sp2ÉÏÒÑ¾­²»ÔÚÖ§³ÖIP_HDRINCL ·¢ËÍtcpºÍUDP°üÁË
- * Ò²¾Í²»ÄÜÓÃËûÀ´·¢ËÍsyn°ü,ÒÔ±ã¼ì²âÖ÷»ú¶Ë¿ÚÊÇ·ñ´ò¿ª.
- * Ö»ÄÜ·¢ËÍICMPºÍIGMPĞ­Òé°ü
+ * åœ¨windows xp sp2ä¸Šå·²ç»ä¸åœ¨æ”¯æŒIP_HDRINCL å‘é€tcpå’ŒUDPåŒ…äº†
+ * ä¹Ÿå°±ä¸èƒ½ç”¨ä»–æ¥å‘é€synåŒ…,ä»¥ä¾¿æ£€æµ‹ä¸»æœºç«¯å£æ˜¯å¦æ‰“å¼€.
+ * åªèƒ½å‘é€ICMPå’ŒIGMPåè®®åŒ…
  */
 #if  !defined(ND_UNIX) 
 
@@ -40,7 +40,7 @@
 int set_raw_sockopt(ndsocket_t fd, int is_hdrincl)
 {
 
-	/*ÉèÖÃ½ÓÊÕºÍ·¢ËÍµÄ³¬Ê±*/
+	/*è®¾ç½®æ¥æ”¶å’Œå‘é€çš„è¶…æ—¶*/
 #if !defined(ND_UNIX) 
 	int opt = 1000;
 	if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&opt, sizeof(opt))==-1){
@@ -161,7 +161,7 @@ int udp_packet_make(void *buf, char *data, int len, SOCKADDR_IN *src, SOCKADDR_I
 	return (int)packet_size;
 
 }
-//ÏòÖ¸¶¨µÄµØµã·¢ËÍIP°ü,²¢ÇÒ°ÑÔ´µØÖ·Éè¶¨Î»src
+//å‘æŒ‡å®šçš„åœ°ç‚¹å‘é€IPåŒ…,å¹¶ä¸”æŠŠæºåœ°å€è®¾å®šä½src
 int send_raw_udp(ndsocket_t fd, char *data, int len, SOCKADDR_IN *src, SOCKADDR_IN *dest)
 {
 	size_t packet_size ;
@@ -199,7 +199,7 @@ int send_icmp(ndsocket_t fd, char *data, int len, SOCKADDR_IN *dest,int seq_no, 
 	return sendto(fd,(char*)&u_packet, len,0,(SOCKADDR*)dest,sizeof(*dest)) ;
 }
 
-//·¢ËÍ±ê×¼µÄPING °ü
+//å‘é€æ ‡å‡†çš„PING åŒ…
 int send_ping(ndsocket_t fd,  SOCKADDR_IN *dest,int seq_no, char *data, int data_len)
 {
 	return send_icmp(fd, data,  data_len, dest, seq_no, ICMP_ECHO, 0) ;
@@ -297,7 +297,7 @@ int test_remote_tcp_port(char *host, short port)
 		return -1;
 	}
 	timeout=2000;
-	//ÉèÖÃ½ÓÊÜÑÓ³Ù
+	//è®¾ç½®æ¥å—å»¶è¿Ÿ
 	setsockopt(raw_fd,SOL_SOCKET,SO_RCVTIMEO,(char *)&timeout,sizeof(timeout));
 
 	get_sockaddr_in(host, port, &dest) ;
