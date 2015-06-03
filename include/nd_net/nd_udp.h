@@ -31,15 +31,15 @@ enum endudt_protocol{
 #pragma pack(push)
 #pragma pack(1)
 
-//UDP鍗忚鍖呭ご
+//UDP协议包头
 typedef struct ndudp_header
 {
 #  if ND_BYTE_ORDER == ND_L_ENDIAN
-	u_8		version:4;			//鐗堟湰淇℃伅(娌℃湁浣跨敤,涓昏鏄负浜嗕繚鐣欏榻愯�屼互)
-	u_8		protocol:4;			//鍗忚绫诲瀷
+	u_8		version:4;			//版本信息(没有使用,主要是为了保留对齐而以)
+	u_8		protocol:4;			//协议类型
 #else 
-	u_8		protocol:4;			//鍗忚绫诲瀷
-	u_8		version:4;			//鐗堟湰淇℃伅(娌℃湁浣跨敤,涓昏鏄负浜嗕繚鐣欏榻愯�屼互)
+	u_8		protocol:4;			//协议类型
+	u_8		version:4;			//版本信息(没有使用,主要是为了保留对齐而以)
 #endif 
 
 	u_8		reserved ;
@@ -58,7 +58,7 @@ typedef int (*udp_protocol_entry)( nd_handle h, ndudp_header *data, size_t read_
 
 struct udp_proxy_info
 {
-	ndsocket_t proxy_fd ;					//杩炴帴浠ｇ悊鐨刦d
+	ndsocket_t proxy_fd ;					//连接代理的fd
 	short remote_port ;	
 	SOCKADDR_IN proxy_addr;					//proxy address
 	char remote_name[256] ;
@@ -89,7 +89,7 @@ ND_NET_API int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size,
 
 ND_NET_API int nd_udp_parse(nd_handle net_handle, char *buf,size_t len );
 
-//寰楀埌涓婃璇诲彇鐨勬暟鎹簮鍦板潃
+//得到上次读取的数据源地址
 ND_NET_API struct sockaddr_in* nd_udp_read_addr(nd_handle net_handle) ;
 
 void udp_node_init(struct nd_udp_node* node)  ;

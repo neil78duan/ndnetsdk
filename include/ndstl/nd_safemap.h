@@ -659,7 +659,7 @@ protected:
 	void __unlock() { nd_mutex_unlock(&m_mutex);}
 	friend class rbtree_terator ;
 	friend class rbtree_reverse_iterator ;
-	ndatomic_t m_self_ref ; //è¢«å¼•ç”¨æ¬¡æ•°
+	ndatomic_t m_self_ref ; //±»ÒıÓÃ´ÎÊı
 	int m_count;
 	rb_root m_header;
 	//nd_handle m_mmpool;

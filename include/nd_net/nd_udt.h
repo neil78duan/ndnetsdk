@@ -15,52 +15,52 @@
 #include "nd_net/nd_netobj.h"
 #include "nd_net/nd_netioctl.h"
 
-#define MAX_ATTEMPT_SEND	5 	//æœ€å¤§é‡ä¼ æ¬¡æ•°
-//#define LISTEN_BUF_SIZE		16	//ä¸€æ¬¡æœ€å¤šå¯ä»¥æœ‰16ä¸ªè¿æ¥åœ¨ç­‰å¾…å»ºç«‹è¿æ¥
+#define MAX_ATTEMPT_SEND	5 	//×î´óÖØ´«´ÎÊı
+//#define LISTEN_BUF_SIZE		16	//Ò»´Î×î¶à¿ÉÒÔÓĞ16¸öÁ¬½ÓÔÚµÈ´ı½¨Á¢Á¬½Ó
 
-//#define UDT_MAX_PACKET		32	//æœ€å¤šå¯ä»¥å‘é€32ä¸ªæœªè¢«ç¡®è®¤çš„å°åŒ…
+//#define UDT_MAX_PACKET		32	//×î¶à¿ÉÒÔ·¢ËÍ32¸öÎ´±»È·ÈÏµÄ·â°ü
 
-#define RETRANSLATE_TIME		10000 //ä¼ é€å¾€è¿”æ—¶é—´ms
-#define WAIT_CONNECT_TIME		15000 //ç­‰å¾…å»ºç«‹è¿æ¥çš„æ—¶é—´
-#define TIME_OUT_BETA			2	//å¸¸æ•°åŠ æƒå› å­,å½“è¶…æ—¶å¤§äºæ­¤å€¼ * å¾€è¿”æ—¶é—´å°±è®¤ä¸ºæ˜¯è¶…æ—¶äº†
+#define RETRANSLATE_TIME		10000 //´«ËÍÍù·µÊ±¼äms
+#define WAIT_CONNECT_TIME		15000 //µÈ´ı½¨Á¢Á¬½ÓµÄÊ±¼ä
+#define TIME_OUT_BETA			2	//³£Êı¼ÓÈ¨Òò×Ó,µ±³¬Ê±´óÓÚ´ËÖµ * Íù·µÊ±¼ä¾ÍÈÏÎªÊÇ³¬Ê±ÁË
 #define DELAY_ACK_TIME			10 //ms
 #define ACTIVE_TIME				1000*30 //20 seconds 
 #define CONNECT_TIMEOUT			5000 //S
-#define UPDATE_TIMEVAL			100 //MS æ›´æ–°ç½‘ç»œçŠ¶æ€çš„æ—¶é—´é—´éš”
-//#define WAIT_RELEASE_TIME		150000	//å…³é—­æ—¶ç­‰å¾…è¶…æ—¶
+#define UPDATE_TIMEVAL			100 //MS ¸üĞÂÍøÂç×´Ì¬µÄÊ±¼ä¼ä¸ô
+//#define WAIT_RELEASE_TIME		150000	//¹Ø±ÕÊ±µÈ´ı³¬Ê±
 
 #define MAX_UDP_LEN				ND_UDP_PACKET_SIZE
-/*ç½‘ç»œè¿æ¥çŠ¶æ€*/
+/*ÍøÂçÁ¬½Ó×´Ì¬*/
 enum _enetstat {
 	NETSTAT_CLOSED = 0 ,
 	NETSTAT_LISTEN =1,
 	NETSTAT_SYNSEND =2,
 	NETSTAT_SYNRECV =4,
-	NETSTAT_ACCEPT =8,		//å·²ç»è¿æ¥æˆåŠŸç­‰å¾…ç”¨æˆ·accept
-	NETSTAT_ESTABLISHED =0x10,	//è¿æ¥æˆåŠŸ
-	NETSTAT_FINSEND =0x20,	//å‘é€(å‘é€ç«¯è¢«å…³é—­)
-	NETSTAT_SENDCLOSE = 0x40, //å†™æ•°æ®å…³é—­
-	NETSTAT_RECVCLOSE =0x80, //è¯»æ•°æ®å…³é—­
+	NETSTAT_ACCEPT =8,		//ÒÑ¾­Á¬½Ó³É¹¦µÈ´ıÓÃ»§accept
+	NETSTAT_ESTABLISHED =0x10,	//Á¬½Ó³É¹¦
+	NETSTAT_FINSEND =0x20,	//·¢ËÍ(·¢ËÍ¶Ë±»¹Ø±Õ)
+	NETSTAT_SENDCLOSE = 0x40, //Ğ´Êı¾İ¹Ø±Õ
+	NETSTAT_RECVCLOSE =0x80, //¶ÁÊı¾İ¹Ø±Õ
 	NETSTAT_RESET	  = 0x100
 };
 
-//è®°å½•è¶…æ—¶é‡ä¼ çš„æ ·æœ¬å¹³å‡æ—¶é—´ä½•åå·®
+//¼ÇÂ¼³¬Ê±ÖØ´«µÄÑù±¾Æ½¾ùÊ±¼äºÎÆ«²î
 struct nd_rtt
 {
-	int average  ;		//æ ·æœ¬åŠ æƒå¹³å‡å€¼
-	int deviation ;		//æ ·æœ¬æ–¹å·®
+	int average  ;		//Ñù±¾¼ÓÈ¨Æ½¾ùÖµ
+	int deviation ;		//Ñù±¾·½²î
 };
 
 
 typedef struct _s_udt_socket nd_udt_node ;
 
-//æ£€æµ‹UDTæ•°æ®åŒ…æ˜¯å¦åˆæ³•
+//¼ì²âUDTÊı¾İ°üÊÇ·ñºÏ·¨
 typedef int (*check_udt_packet)(nd_udt_node *node, struct ndudt_pocket *pocket, int len,SOCKADDR_IN *addr) ;
 
-/* å®šä¹‰ç½‘ç»œè¿æ¥èŠ‚ç‚¹
- * ç”¨æ¥è¿æ¥æœåŠ¡å™¨çš„èŠ‚ç‚¹
- * ä¸»è¦åŠŸèƒ½æ˜¯å¤„ç†å‘é€/æ¥å—/ç¼“å­˜/
- * ç¡®è®¤/è¶…æ—¶é‡ä¼ ç­‰
+/* ¶¨ÒåÍøÂçÁ¬½Ó½Úµã
+ * ÓÃÀ´Á¬½Ó·şÎñÆ÷µÄ½Úµã
+ * Ö÷Òª¹¦ÄÜÊÇ´¦Àí·¢ËÍ/½ÓÊÜ/»º´æ/
+ * È·ÈÏ/³¬Ê±ÖØ´«µÈ
  */
 
 struct _s_udt_socket
@@ -77,22 +77,22 @@ struct _s_udt_socket
 	u_16	is_accept:4;				//0 connect , 1 accept
 	u_16	is_reset:1;
 	u_16	nonblock:1;					//0 block 1 nonblock
-	u_16	need_ack:1 ;				////åœ¨ä¸‹ä¸€æ­¤å‘é€æ•°æ®çš„æ—¶å€™æ˜¯å¦éœ€è¦å¸¦ä¸Šç¡®è®¤
-	u_16	iodrive_mod:1 ;				//é©±åŠ¨æ¨¡å‹0é»˜è®¤,åœ¨sendå’Œrecvå‡½æ•°ä¸­è‡ªåŠ¨é©±åŠ¨,1éœ€è¦ç”¨æˆ·æ˜¾ç¤ºçš„ä½¿ç”¨update_socket)
-	u_16	is_retranslate:1;			//æ˜¯å¦åœ¨é‡ä¼ æ¨¡å¼
-	u_16	resend_times ;				//é‡å‘çš„æ¬¡æ•°
+	u_16	need_ack:1 ;				////ÔÚÏÂÒ»´Ë·¢ËÍÊı¾İµÄÊ±ºòÊÇ·ñĞèÒª´øÉÏÈ·ÈÏ
+	u_16	iodrive_mod:1 ;				//Çı¶¯Ä£ĞÍ0Ä¬ÈÏ,ÔÚsendºÍrecvº¯ÊıÖĞ×Ô¶¯Çı¶¯,1ĞèÒªÓÃ»§ÏÔÊ¾µÄÊ¹ÓÃupdate_socket)
+	u_16	is_retranslate:1;			//ÊÇ·ñÔÚÖØ´«Ä£Ê½
+	u_16	resend_times ;				//ÖØ·¢µÄ´ÎÊı
 	
-	ndtime_t retrans_timeout ;			//è¶…æ—¶é‡ä¼ æ—¶é—´å’Œç­‰å¾…å…³é—­æ—¶é—´(è®°å½•æ—¶é—´é—´éš”ä¸æ˜¯ç»å¯¹æ—¶é—´)
-	ndtime_t last_resend_tm;			//ä¸Šæ¬¡é‡ä¼ æ—¶é—´(åªé’ˆå¯¹æ•°æ®æŠ¥)
-	ndtime_t last_active ;				//ä¸Šä¸€æ¬¡å‘é€å°åŒ…æ—¶é—´(ç»å¯¹æ—¶é—´å¦‚æœå¤ªé•¿å°±è¶…æ—¶,æˆ–è€…å‘é€aliveåŒ…)
+	ndtime_t retrans_timeout ;			//³¬Ê±ÖØ´«Ê±¼äºÍµÈ´ı¹Ø±ÕÊ±¼ä(¼ÇÂ¼Ê±¼ä¼ä¸ô²»ÊÇ¾ø¶ÔÊ±¼ä)
+	ndtime_t last_resend_tm;			//ÉÏ´ÎÖØ´«Ê±¼ä(Ö»Õë¶ÔÊı¾İ±¨)
+	ndtime_t last_active ;				//ÉÏÒ»´Î·¢ËÍ·â°üÊ±¼ä(¾ø¶ÔÊ±¼äÈç¹ûÌ«³¤¾Í³¬Ê±,»òÕß·¢ËÍalive°ü)
 	ndtime_t update_tm ;				//time point of update 
 	
-	u_32 send_sequence ;				//å½“å‰å‘é€çš„çš„ç³»åˆ—å·
-	u_32 acknowledged_seq ;				//å·²ç»è¢«å¯¹æ–¹ç¡®è®¤çš„ç³»åˆ—å· (send_sequence - acknowledged_seq)å°±æ˜¯æ²¡æœ‰å‘é€çª—å£ä¸­æœªè¢«ç¡®è®¤çš„
-	u_32 received_sequence ;			//æ¥å—åˆ°çš„å¯¹æ–¹çš„ç³»åˆ—å·
-	u_32 retrans_seq;					//é‡ä¼ ç³»åˆ—å·(ä½äº[acknowledged_seq,send_sequence])
-	size_t window_len ;					//å¯¹æ–¹æ¥æ”¶çª—å£çš„é•¿åº¦
-	struct nd_rtt		_rtt ;				//è®°å½•æ ·æœ¬å¾€è¿”æ—¶é—´
+	u_32 send_sequence ;				//µ±Ç°·¢ËÍµÄµÄÏµÁĞºÅ
+	u_32 acknowledged_seq ;				//ÒÑ¾­±»¶Ô·½È·ÈÏµÄÏµÁĞºÅ (send_sequence - acknowledged_seq)¾ÍÊÇÃ»ÓĞ·¢ËÍ´°¿ÚÖĞÎ´±»È·ÈÏµÄ
+	u_32 received_sequence ;			//½ÓÊÜµ½µÄ¶Ô·½µÄÏµÁĞºÅ
+	u_32 retrans_seq;					//ÖØ´«ÏµÁĞºÅ(Î»ÓÚ[acknowledged_seq,send_sequence])
+	size_t window_len ;					//¶Ô·½½ÓÊÕ´°¿ÚµÄ³¤¶È
+	struct nd_rtt		_rtt ;				//¼ÇÂ¼Ñù±¾Íù·µÊ±¼ä
 	
 } ;
 
@@ -103,7 +103,7 @@ typedef struct nd_srv_node nd_udtsrv;
 #define UDTSO_IS_RESET(udt_socket)  (udt_socket)->is_reset
 
 /*
-//å¾—åˆ°è¶…æ—¶é‡ä¼ çš„æ—¶é—´,ç»å¯¹æ—¶é—´
+//µÃµ½³¬Ê±ÖØ´«µÄÊ±¼ä,¾ø¶ÔÊ±¼ä
 static __INLINE__ ndtime_t retrans_time(nd_udt_node *nct)
 {
 	return nd_time() + nct->retrans_timeout * TIME_OUT_BETA ;
@@ -140,7 +140,7 @@ int _wait_data(nd_udt_node *socket_node,udt_pocketbuf* buf,ndtime_t outval) ;
 int write_pocket_to_socket(nd_udt_node *socket_node,struct ndudt_pocket *pocket, size_t len) ;
 
 int _handle_syn(nd_udt_node *socket_node,struct ndudt_pocket *pocket);
-/*å¤„ç†udtåè®®åŒ…*/
+/*´¦ÀíudtĞ­Òé°ü*/
 int _udt_packet_handler(nd_udt_node *socket_node,struct ndudt_pocket *pocket,size_t len);
 
 int udt_send_ack(nd_udt_node *socket_node) ;
@@ -157,46 +157,46 @@ ND_NET_API void _udt_connector_init(nd_udt_node *socket_node) ;
 ND_NET_API void nd_udtnode_init(nd_udt_node *socket_node);
 
 ND_NET_API void _deinit_udt_socket(nd_udt_node *socket_node) ;
-/*é‡ç½®UDTè¿æ¥:å…³é—­å½“å‰è¿æ¥å’Œ,æ¸…ç©ºç¼“å†²å’Œå„ç§çŠ¶æ€;
- * ä½†æ˜¯ä¿å­˜ç”¨æˆ·çš„ç›¸å…³è®¾ç½®,æ¶ˆæ¯å¤„ç†å‡½æ•°å’ŒåŠ å¯†å¯†é’¥
+/*ÖØÖÃUDTÁ¬½Ó:¹Ø±Õµ±Ç°Á¬½ÓºÍ,Çå¿Õ»º³åºÍ¸÷ÖÖ×´Ì¬;
+ * µ«ÊÇ±£´æÓÃ»§µÄÏà¹ØÉèÖÃ,ÏûÏ¢´¦Àíº¯ÊıºÍ¼ÓÃÜÃÜÔ¿
  */
 ND_NET_API void nd_udtnode_reset(nd_udt_node *socket_node) ;
 
 
-/*é©±åŠ¨UDT,è¿›è¡Œå»¶è¿Ÿå‘é€,æ•°æ®ç¡®è®¤,è¶…æ—¶é‡ä¼ ,ä¿æŒè¿æ¥å­˜æ´»ç­‰
+/*Çı¶¯UDT,½øĞĞÑÓ³Ù·¢ËÍ,Êı¾İÈ·ÈÏ,³¬Ê±ÖØ´«,±£³ÖÁ¬½Ó´æ»îµÈ
  * return value : -1 error check error code
  * return 0 , received data over, closed by remote peer
  * else return > 0
  */
 ND_NET_API int update_socket(nd_udt_node* socket_node) ;
 
-//é‡ç½®ä¸€ä¸ªè¿æ¥
+//ÖØÖÃÒ»¸öÁ¬½Ó
 ND_NET_API void udt_reset(nd_udt_node* socket_node,int issend_reset) ;
 
-//å…³é—­ä¸€ä¸ªè¿æ¥
+//¹Ø±ÕÒ»¸öÁ¬½Ó
 ND_NET_API int udt_close(nd_udt_node* socket_node,int force);
 
-//è¿æ¥åˆ°æœåŠ¡å™¨
+//Á¬½Óµ½·şÎñÆ÷
 ND_NET_API nd_udt_node* udt_connect(nd_udt_node *socket_node,char *host, short port,struct nd_proxy_info *proxy) ;
 
-//å‘é€å¯é çš„æµå¼åè®®
+//·¢ËÍ¿É¿¿µÄÁ÷Ê½Ğ­Òé
 ND_NET_API int udt_send(nd_udt_node* socket_node,void *data, int len ) ;
 
-//å‘é€UDT nd_packhdr_t åŒ…
+//·¢ËÍUDT nd_packhdr_t °ü
 ND_NET_API int udt_connector_send(nd_udt_node* socket_addr, nd_packhdr_t *msg_buf, int flag) ;									
 
-//listen ç«¯ç›¸å…³
-//é‡Šæ”¾ä¸€ä¸ªå·²ç»å…³é—­çš„è¿æ¥
+//listen ¶ËÏà¹Ø
+//ÊÍ·ÅÒ»¸öÒÑ¾­¹Ø±ÕµÄÁ¬½Ó
 ND_NET_API void release_dead_node(nd_udt_node *socket_node,int needcallback) ;
 
-//å‘é€finå¹¶è¯·æ±‚å…³é—­è¿æ¥
+//·¢ËÍfin²¢ÇëÇó¹Ø±ÕÁ¬½Ó
 void _close_listend_socket(nd_udt_node* socket_node) ;
 
-//æ›´æ–°æ¯ä¸ªudt_socketçš„çŠ¶æ€
-//å®šæ—¶é©±åŠ¨æ¯ä¸ªè¿æ¥
+//¸üĞÂÃ¿¸öudt_socketµÄ×´Ì¬
+//¶¨Ê±Çı¶¯Ã¿¸öÁ¬½Ó
 ND_NET_API void update_all_socket(nd_udtsrv *root) ;
 
-//å¤„ç†udtæ•°æ®
+//´¦ÀíudtÊı¾İ
 ND_NET_API int udt_data_handler(SOCKADDR_IN *addr, struct ndudt_pocket*pocket, size_t read_len, nd_udtsrv *root)  ;
 
 ND_NET_API void udt_icmp_init(nd_udt_node *socket_node) ;

@@ -40,7 +40,7 @@ int nd_srvnode_create(struct node_root *root, int max_num, size_t node_size,NDUI
 void nd_srvnode_destroy(struct node_root *root);
 
 void init_netthread_msg( nd_handle  thhandle);
-//iocp çº¿ç¨‹æ± 
+//iocp Ïß³Ì³Ø
 //int thpoolex_create(struct listen_contex *handle, int pre_thnum, int session_num) ;
 int thpoolex_destroy(struct listen_contex *handle) ;
 
@@ -55,7 +55,7 @@ int close_session_in_thread(struct thread_pool_info *thpi) ;
 ND_SRV_API int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle,int encrypt) ;
 ND_SRV_API int nd_sendto_all_ex(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level,int encrypt);
 
-//é€šè¿‡SESSIONidæŠŠæ¶ˆæ¯å‘é€ç»™å®¢æˆ·ç«¯
+//Í¨¹ıSESSIONid°ÑÏûÏ¢·¢ËÍ¸ø¿Í»§¶Ë
 static __INLINE__ int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) 
 {
 	return nd_send_toclient_ex( sessionid,data, listen_handle, 0) ;
@@ -67,17 +67,17 @@ static __INLINE__ int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_hand
 }
 
 
-//æŠŠæ¶ˆæ¯äº¤ç»™sessionå¤„ç†
+//°ÑÏûÏ¢½»¸øsession´¦Àí
 ND_SRV_API int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) ;
 
 ND_SRV_API int nd_netmsg_2all_handle(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level) ;
 
-//æŠŠsession æ·»åŠ åˆ°å…¶ä»–çº¿ç¨‹
+//°Ñsession Ìí¼Óµ½ÆäËûÏß³Ì
 ND_SRV_API int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid);
 
-//ä¸ºsessionæ‰¾ä¸€ä¸ªç›¸å¯¹ç©ºé—²çš„çº¿ç¨‹
+//ÎªsessionÕÒÒ»¸öÏà¶Ô¿ÕÏĞµÄÏß³Ì
 ND_SRV_API int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid);
-//æ‰“å¼€
+//´ò¿ª
 //ND_SRV_API nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h) ;
 
 ND_SRV_API nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h,int session_number)  ;

@@ -11,9 +11,9 @@
 
 int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, size_t len);
 extern int retranslate_data(nd_udt_node* socket_node);
-extern int flush_send_window(nd_udt_node* socket_node);			//å‘é€ çª—å£ä¸­çš„æ•°æ®
-//å›å¤å¯¹æ–¹çš„è¿æ¥è¯·æ±‚
-// è¿”å›-1 å‡ºé”™,0 succes
+extern int flush_send_window(nd_udt_node* socket_node);			//·¢ËÍ ´°¿ÚÖĞµÄÊı¾İ
+//»Ø¸´¶Ô·½µÄÁ¬½ÓÇëÇó
+// ·µ»Ø-1 ³ö´í,0 succes
 int _handle_syn(nd_udt_node *socket_node,struct ndudt_pocket *pocket)
 {
 	if(socket_node->status==NETSTAT_LISTEN) {
@@ -22,7 +22,7 @@ int _handle_syn(nd_udt_node *socket_node,struct ndudt_pocket *pocket)
 		SET_SYN(&syn_ack) ;
 
 		socket_node->acknowledged_seq = socket_node->send_sequence ;
-		socket_node->received_sequence = pocket->sequence + 1;		//æ¥å—åˆ°å¯¹æ–¹çš„ç³»åˆ—å·+1ä»¥ä¾¿å›å¤å¯¹æ–¹
+		socket_node->received_sequence = pocket->sequence + 1;		//½ÓÊÜµ½¶Ô·½µÄÏµÁĞºÅ+1ÒÔ±ã»Ø¸´¶Ô·½
 		
 		set_pocket_ack(&syn_ack,socket_node->received_sequence) ;
 		syn_ack.sequence = socket_node->send_sequence ;
@@ -64,10 +64,10 @@ int _handle_syn(nd_udt_node *socket_node,struct ndudt_pocket *pocket)
 }
 
 /*
- * å¤„ç†udtæ•°æ®åŒ…
- * å‡ºé”™è¿”å›-1 ,éœ€è¦æ ¹æ®socket::myerroæ£€æµ‹ç›¸åº”çš„é”™è¯¯å·,å¹¶åšå‡ºç›¸å…³å¤„ç†
- * å¦åˆ™è¿”å›å¤„ç†æ•°æ®çš„é•¿åº¦(æœ‰æ•ˆæ•°æ®)
- * è¿”å›0 æ²¡æœ‰è¯»å–æ•°æ®
+ * ´¦ÀíudtÊı¾İ°ü
+ * ³ö´í·µ»Ø-1 ,ĞèÒª¸ù¾İsocket::myerro¼ì²âÏàÓ¦µÄ´íÎóºÅ,²¢×ö³öÏà¹Ø´¦Àí
+ * ·ñÔò·µ»Ø´¦ÀíÊı¾İµÄ³¤¶È(ÓĞĞ§Êı¾İ)
+ * ·µ»Ø0 Ã»ÓĞ¶ÁÈ¡Êı¾İ
  */
 int _udt_packet_handler(nd_udt_node *socket_node,struct ndudt_pocket *pocket,size_t len)
 {
@@ -85,7 +85,7 @@ int _udt_packet_handler(nd_udt_node *socket_node,struct ndudt_pocket *pocket,siz
 		}
 		ret = _handle_income_data(socket_node, pocket, len) ;
 		if(ret > 0) {
-			//æœ‰æ•°æ®åˆ°æ¥,æŠŠäº§ç”Ÿçš„æ•°æ®å‘é€å‡ºå»
+			//ÓĞÊı¾İµ½À´,°Ñ²úÉúµÄÊı¾İ·¢ËÍ³öÈ¥
 			while (flush_send_window(socket_node) > 0){} 
 		}
 		break ;
@@ -111,7 +111,7 @@ int _udt_packet_handler(nd_udt_node *socket_node,struct ndudt_pocket *pocket,siz
 			int offset_unget = socket_node->send_sequence - pocket->sequence ;
 			if(offset_lost <= 0 || offset_unget < 0)
 				return 0 ;
-			socket_node->send_sequence = pocket->sequence ;		//å¯¹æ–¹ä¸¢å¤±çš„ä¸ºæ­¢,ä»è¿™é‡Œå¼€å§‹é‡å‘
+			socket_node->send_sequence = pocket->sequence ;		//¶Ô·½¶ªÊ§µÄÎªÖ¹,´ÓÕâÀï¿ªÊ¼ÖØ·¢
 			retranslate_data(socket_node) ;
 			//++socket_node->resend_times  ;
 		}
@@ -147,7 +147,7 @@ int _udt_packet_handler(nd_udt_node *socket_node,struct ndudt_pocket *pocket,siz
 }
 
 
-//å¤„ç†æ¥å—åˆ°çš„æ•°æ®,å¹¶æ”¾å…¥ç¼“å†²
+//´¦Àí½ÓÊÜµ½µÄÊı¾İ,²¢·ÅÈë»º³å
 //return value : 0  there is no valid data incoming,
 //  on error return -1 check error code
 // else return length of valid data 
@@ -169,7 +169,7 @@ int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, s
 	//check sequence
 	seq_offset = pocket->sequence -socket_node->received_sequence ;
 	if(seq_offset > 0){
-		//ä¸¢åŒ…
+		//¶ª°ü
 		struct ndudt_pocket lost_ntf;
 		init_udt_pocket(&lost_ntf);
 		set_pocket_ack(&lost_ntf, socket_node->received_sequence) ;
@@ -181,7 +181,7 @@ int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, s
 		return 0;
 	}
 	else if(seq_offset < 0) {
-		//è¿™ä¸ªæ˜¯é‡ä¼ æŠ¥,ackä¸¢å¤±
+		//Õâ¸öÊÇÖØ´«±¨,ack¶ªÊ§
 		udt_send_ack(socket_node);
 		LEAVE_FUNC();
 		return 0;
@@ -285,13 +285,13 @@ int _handle_ack(nd_udt_node *socket_node, u_32 ack_seq)
 			nd_object_seterror((nd_handle)socket_node,NDERR_BADPACKET);
 			return 0;
 		}
-		//æ”¶åˆ°clientçš„syn-ack
+		//ÊÕµ½clientµÄsyn-ack
 		nd_assert(socket_node->send_sequence+1== ack_seq) ;
 		if(socket_node->send_sequence+1== ack_seq) {
 			nd_udtsrv *root ;
 			socket_node->status = NETSTAT_ACCEPT ;
 			socket_node->acknowledged_seq = ack_seq ;
-			++ (socket_node->send_sequence) ;		//å‡†å¤‡å¼€å§‹ä¸‹ä¸€ä¸ªä¿¡æ¯
+			++ (socket_node->send_sequence) ;		//×¼±¸¿ªÊ¼ÏÂÒ»¸öĞÅÏ¢
 
 			root =(nd_udtsrv *) socket_node->srv_root ;
 			nd_assert(root) ;
@@ -311,7 +311,7 @@ int _handle_ack(nd_udt_node *socket_node, u_32 ack_seq)
 	}
 
 	if((socket_node->status & NETSTAT_FINSEND) ){
-		//å‘é€è¢«å…³é—­
+		//·¢ËÍ±»¹Ø±Õ
 		if (socket_node->send_sequence==ack_seq){
 			socket_node->send_sequence = ack_seq ;
 			ndlbuf_reset(&socket_node->send_buffer);
@@ -375,7 +375,7 @@ int udt_send_fin(nd_udt_node *socket_node)
 
 }
 
-//æ ¹æ®å°åŒ…å¾€è¿”è®¡ç®—è¶…æ—¶å€¼
+//¸ù¾İ·â°üÍù·µ¼ÆËã³¬Ê±Öµ
 ndtime_t calc_timeouval(struct nd_rtt *rtt, int measuerment) 
 {
 	int ret ;

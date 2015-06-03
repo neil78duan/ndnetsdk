@@ -67,7 +67,7 @@ int sendTcp(unsigned short desPort, unsigned long desIP)
 	addr_in.sin_port = htons(desPort);
 	addr_in.sin_addr.S_un.S_addr = inet_addr(desIP);
 	
-	//å¡«å……IPæŠ¥å¤´
+	//Ìî³äIP±¨Í·
 	ipHeader.h_verlen = (4 << 4 sizeof(ipHeader) / sizeof(unsigned long));
 	// ipHeader.tos=0;
 	ipHeader.total_len = htons(sizeof(ipHeader) + sizeof(tcpHeader));
@@ -79,13 +79,13 @@ int sendTcp(unsigned short desPort, unsigned long desIP)
 	ipHeader.sourceIP = inet_addr("localhost");
 	ipHeader.destIP = desIP;
 	
-	//å¡«å……TCPæŠ¥å¤´
+	//Ìî³äTCP±¨Í·
 	tcpHeader.th_dport = htons(desPort);
-	tcpHeader.th_sport = htons(SOURCE_PORT); //æºç«¯å£å·
+	tcpHeader.th_sport = htons(SOURCE_PORT); //Ô´¶Ë¿ÚºÅ
 	tcpHeader.th_seq = htonl(0x12345678);
 	tcpHeader.th_ack = 0;
 	tcpHeader.th_lenres = (sizeof(tcpHeader) / 4 << 4 0);
-	tcpHeader.th_flag = 2; //æ ‡å¿—ä½æ¢æµ‹ï¼Œ2æ˜¯SYN
+	tcpHeader.th_flag = 2; //±êÖ¾Î»Ì½²â£¬2ÊÇSYN
 	tcpHeader.th_win = htons(512);
 	tcpHeader.th_urp = 0;
 	tcpHeader.th_sum = 0;
@@ -96,7 +96,7 @@ int sendTcp(unsigned short desPort, unsigned long desIP)
 	psdHeader.ptcl = IPPROTO_TCP;
 	psdHeader.tcpl = htons(sizeof(tcpHeader));
 	
-	//è®¡ç®—æ ¡éªŒå’Œ
+	//¼ÆËãĞ£ÑéºÍ
 	memcpy(szSendBuf, &psdHeader, sizeof(psdHeader));
 	memcpy(szSendBuf + sizeof(psdHeader), &tcpHeader, sizeof(tcpHeader));
 	tcpHeader.th_sum = checksum((unsigned short*)szSendBuf, sizeof(psdHeader) + sizeof
@@ -147,7 +147,7 @@ int ping(char *host)
 		exit(1) ;
 	}
 	timeout=2000;
-	//è®¾ç½®æ¥å—å»¶è¿Ÿ
+	//ÉèÖÃ½ÓÊÜÑÓ³Ù
 	setsockopt(raw_fd,SOL_SOCKET,SO_RCVTIMEO,(char *)&timeout,sizeof(timeout));
 	
 	get_sockaddr_in(host, 0, &dest) ;

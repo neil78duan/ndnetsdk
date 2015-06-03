@@ -227,7 +227,7 @@ int NDOStreamMsg::WriteStream(char *stream_buf, size_t dataLen)
 	
 }
 //
-////鍦ㄨ剼鏈腑浣跨敤
+////在脚本中使用
 //int NDOStreamMsg::WriteByte(int a) 
 //{
 //	return Write((NDUINT8)a) ;

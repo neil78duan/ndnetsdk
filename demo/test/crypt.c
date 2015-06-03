@@ -215,7 +215,7 @@ int TestRsa(R_RSA_PRIVATE_KEY *priv_key)
 	return 0 ;
 }
 
-//rsaåŠ å¯†/è§£å¯†
+//rsa¼ÓÃÜ/½âÃÜ
 void test_rsa()
 {
 

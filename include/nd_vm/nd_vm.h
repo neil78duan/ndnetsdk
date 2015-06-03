@@ -5,10 +5,10 @@
  */
 
 /*
- * è¿™æ˜¯ä¸€ä¸ªæ‰§è¡Œæ•°å€¼è¿ç®—çš„è™šæ‹ŸCPU
- * å¯ä»¥ç”¨æ¥æ‰§è¡Œä¸€äº›ç®€å•çš„å››åˆ™è¿ç®—,
- * å¹¶å¯¹å†…å­˜æ•°ç»„åšç›¸å…³çš„æ“ä½œ
- * è€Œä¸”å¯ä»¥è¿”å›ç»“æœ
+ * ÕâÊÇÒ»¸öÖ´ĞĞÊıÖµÔËËãµÄĞéÄâCPU
+ * ¿ÉÒÔÓÃÀ´Ö´ĞĞÒ»Ğ©¼òµ¥µÄËÄÔòÔËËã,
+ * ²¢¶ÔÄÚ´æÊı×é×öÏà¹ØµÄ²Ù×÷
+ * ¶øÇÒ¿ÉÒÔ·µ»Ø½á¹û
  */
 #ifndef _ND_VM_H_
 #define _ND_VM_H_
@@ -40,10 +40,10 @@
 #define ND_VM_API		CPPAPI
 #endif
 
-typedef float vm_value ;				//æ“ä½œæ•°
-typedef unsigned char vm_ins ;			//æŒ‡ä»¤
-typedef unsigned char vm_data_src ;		//æ•°æ®æ¥æº
-typedef signed int	   vm_adddress ;	//åœ°å€
+typedef float vm_value ;				//²Ù×÷Êı
+typedef unsigned char vm_ins ;			//Ö¸Áî
+typedef unsigned char vm_data_src ;		//Êı¾İÀ´Ô´
+typedef signed int	   vm_adddress ;	//µØÖ·
 #define BAD_INSTRUCTION (vm_data_type)-1 
 
 #define VM_STACK_SIZE 32 
@@ -53,7 +53,7 @@ typedef void (*vm_error_func)(const char *err_desc)   ;
 
 
 struct vm_cpu ;
-//é€šè¿‡ç«¯å£è®¿é—®å†…å­˜å‡½æ•°
+//Í¨¹ı¶Ë¿Ú·ÃÎÊÄÚ´æº¯Êı
 typedef vm_value* (*vm_mm_port) (vm_adddress addr, struct vm_cpu *vm) ;
 
 enum e_vm_op
@@ -76,36 +76,36 @@ enum e_vm_op
 	EOP_NUMBERS 
 };
 
-//æ“ä½œæ•°æ¥æº
+//²Ù×÷ÊıÀ´Ô´
 enum e_data_src
 {
-	EDS_NONE			//æ²¡æœ‰æ“ä½œæ•°
-	,EDS_IMMEDIATE		//ç«‹å³æ•°
-	,EDS_ADDRESS		//å†…å­˜åœ°å€
-	,EDS_STACK			//å †æ ˆå¯»å€
-	,EDS_REG1			//å¯„å­˜å™¨1
-	,EDS_REG2			//å¯„å­˜å™¨2
+	EDS_NONE			//Ã»ÓĞ²Ù×÷Êı
+	,EDS_IMMEDIATE		//Á¢¼´Êı
+	,EDS_ADDRESS		//ÄÚ´æµØÖ·
+	,EDS_STACK			//¶ÑÕ»Ñ°Ö·
+	,EDS_REG1			//¼Ä´æÆ÷1
+	,EDS_REG2			//¼Ä´æÆ÷2
 };
 
-//è¾“å‡ºåˆ°æ–‡ä»¶è¿˜æ˜¯ç¼“å†²æ ‡å¿—
+//Êä³öµ½ÎÄ¼ş»¹ÊÇ»º³å±êÖ¾
 enum e_medium{
 	MEDIUM_FILE = 0,
 	MEDIUM_BUF =1 
 };
 struct vm_cpu
 {
-	vm_value reg1 ;							//å¯„å­˜å™¨1 é€šç”¨å¯„å­˜å™¨
-	vm_value reg2 ;							//å¯„å­˜å™¨2 ä¸´æ—¶å¯„å­˜å™¨
-	void *ip ;								//æŒ‡ä»¤åœ°å€
+	vm_value reg1 ;							//¼Ä´æÆ÷1 Í¨ÓÃ¼Ä´æÆ÷
+	vm_value reg2 ;							//¼Ä´æÆ÷2 ÁÙÊ±¼Ä´æÆ÷
+	void *ip ;								//Ö¸ÁîµØÖ·
 	void *ip_end ;
 	vm_value *sp ;							//stack point
-	vm_mm_port	mm_func ;					//è®¿é—®å†…å­˜çš„å‡½æ•°å…¥å£(å¦‚æœmm_func==NULLå°†ä»memoryä¸­è®¿é—®å†…å­˜)
-	vm_value *memory ;						//æ“ä½œå†…å­˜
-	size_t	 mem_size ;						//å†…å­˜å¤§å° 
-	unsigned char	 echo_cmd:1 ;			//æ˜¾ç¤ºæŒ‡ä»¤
-	unsigned char	 echo_res:1 ;			//æ˜¾ç¤ºè¿è¡Œç»“æœ
-	unsigned char	 flag ;					//æ ‡å¿—ä½
-	void *extern_param;						//å¤–éƒ¨ä½¿ç”¨çš„å‚æ•°
+	vm_mm_port	mm_func ;					//·ÃÎÊÄÚ´æµÄº¯ÊıÈë¿Ú(Èç¹ûmm_func==NULL½«´ÓmemoryÖĞ·ÃÎÊÄÚ´æ)
+	vm_value *memory ;						//²Ù×÷ÄÚ´æ
+	size_t	 mem_size ;						//ÄÚ´æ´óĞ¡ 
+	unsigned char	 echo_cmd:1 ;			//ÏÔÊ¾Ö¸Áî
+	unsigned char	 echo_res:1 ;			//ÏÔÊ¾ÔËĞĞ½á¹û
+	unsigned char	 flag ;					//±êÖ¾Î»
+	void *extern_param;						//Íâ²¿Ê¹ÓÃµÄ²ÎÊı
 	vm_value stack[VM_STACK_SIZE] ;			//stack
 };
 
@@ -113,59 +113,59 @@ struct vm_instruction_node
 {
 	vm_ins  ins;
 	
-	vm_data_src ds1, ds2 ;		//æ•°æ®æ¥æº
+	vm_data_src ds1, ds2 ;		//Êı¾İÀ´Ô´
 	
-	vm_value val1, val2 ; //æ“ä½œæ•°
+	vm_value val1, val2 ; //²Ù×÷Êı
 } ;
 
-//è®¾ç½®è¾“å‡ºå‡½æ•°
+//ÉèÖÃÊä³öº¯Êı
 ND_VM_API vm_error_func vm_set_outfunc(vm_error_func func) ;
-//è®¾ç½®é”™è¯¯è¾“å‡ºå‡½æ•°
+//ÉèÖÃ´íÎóÊä³öº¯Êı
 ND_VM_API vm_error_func vm_set_errfunc(vm_error_func errfunc);
 
-//æ‰“å°ä¿¡æ¯
+//´òÓ¡ĞÅÏ¢
 ND_VM_API int vm_print( const char *stm,...) ;
 
-//å•æ­¥æ‰§è¡Œä¸€ä¸ªæŒ‡ä»¤
+//µ¥²½Ö´ĞĞÒ»¸öÖ¸Áî
 ND_VM_API int vm_step(struct vm_cpu *vm, void *ins_addr, void *ins_end) ;
 
-//æ‰§è¡ŒèŠ‚ç‚¹å¯¹åº”çš„æŒ‡ä»¤
+//Ö´ĞĞ½Úµã¶ÔÓ¦µÄÖ¸Áî
 ND_VM_API int vm_run_insnode(struct vm_instruction_node *node,struct vm_cpu *vm) ;
 
-//æŠŠå‘½ä»¤èŠ‚ç‚¹è½¬åŒ–æˆbinæµ
+//°ÑÃüÁî½Úµã×ª»¯³ÉbinÁ÷
 ND_VM_API size_t vm_instruct_2buf(struct vm_instruction_node *instruction_node, void *buf) ;
 
-//æŠŠæŒ‡ä»¤æµå˜æˆnodeç»“æ„
+//°ÑÖ¸ÁîÁ÷±ä³Énode½á¹¹
 ND_VM_API int vm_instruction_2node(struct vm_instruction_node *node , void **ins_start , void *ins_end);
 
-//åˆå§‹åŒ–è™šæ‹Ÿæœº
+//³õÊ¼»¯ĞéÄâ»ú
 ND_VM_API void vm_machine_init(struct vm_cpu *vm, vm_value *mm_addr,size_t mm_size) ;
 
-//è®¾ç½®å†…å­˜å­˜å–å‡½æ•°
+//ÉèÖÃÄÚ´æ´æÈ¡º¯Êı
 ND_VM_API void vm_set_mmfunc(struct vm_cpu *vm,vm_mm_port mm_func,size_t mm_size) ;
 
-//æ‰§è¡Œå‘½ä»¤æµ
+//Ö´ĞĞÃüÁîÁ÷
 ND_VM_API int vm_run_cmd(struct vm_cpu *vm, void *ins_addr, size_t ins_size) ;
 
-//è®¾ç½®å¤–éƒ¨å‚æ•°
+//ÉèÖÃÍâ²¿²ÎÊı
 static __INLINE__ void vm_set_param(struct vm_cpu *vm, void *param)
 {	
 	vm->extern_param = param ;
 }
 
-//å¾—åˆ°å¤–éƒ¨å‚æ•°
+//µÃµ½Íâ²¿²ÎÊı
 static __INLINE__ void* vm_get_param(struct vm_cpu *vm)
 {	
 	return vm->extern_param;
 }
 
-//å¾—åˆ°è¿”å›å€¼
+//µÃµ½·µ»ØÖµ
 static __INLINE__ vm_value vm_return_val(struct vm_cpu *vm)
 {
 	return vm->reg1 ;
 }
 
-//è®¾ç½®æ˜¯å¦æ˜¾ç¤ºæŒ‡ä»¤
+//ÉèÖÃÊÇ·ñÏÔÊ¾Ö¸Áî
 static __INLINE__ int vm_set_echo_ins(struct vm_cpu *vm, int flag)
 {
 	int ret = vm->echo_cmd ;
@@ -173,7 +173,7 @@ static __INLINE__ int vm_set_echo_ins(struct vm_cpu *vm, int flag)
 	return ret ;
 }
 
-//è®¾ç½®æ˜¯å¦æ˜¾ç¤ºè¿è¡Œç»“æ„
+//ÉèÖÃÊÇ·ñÏÔÊ¾ÔËĞĞ½á¹¹
 static __INLINE__ int vm_set_echo_result(struct vm_cpu *vm, int flag)
 {
 	int ret = vm->echo_res ;
@@ -181,75 +181,75 @@ static __INLINE__ int vm_set_echo_result(struct vm_cpu *vm, int flag)
 	return ret ;
 }
 
-//é”™è¯¯è¾“å‡ºå‡½æ•°
+//´íÎóÊä³öº¯Êı
 ND_VM_API int vm_error( const char *stm,...) ;
 
-//ç¼–è¯‘ä¸€ä¸ªASMè¡Œ
+//±àÒëÒ»¸öASMĞĞ
 ND_VM_API int vm_compiler_line(char *text , struct vm_instruction_node *out_node);
 
-//å¾—åˆ°æ“ä½œæ•°çš„å€¼
+//µÃµ½²Ù×÷ÊıµÄÖµ
 ND_VM_API vm_value vm_getvalue(vm_data_src ds,vm_value val, struct vm_cpu *vm);
-//å¾—åˆ°æ“ä½œæ•°çš„å¯¹åº”çš„åœ°å€
+//µÃµ½²Ù×÷ÊıµÄ¶ÔÓ¦µÄµØÖ·
 ND_VM_API vm_value* vm_ref_operand(vm_data_src ds,vm_value val, struct vm_cpu *vm);
-//æ‰§è¡Œä¸€ä¸ªèŠ‚ç‚¹æŒ‡ä»¤
+//Ö´ĞĞÒ»¸ö½ÚµãÖ¸Áî
 ND_VM_API int vm_run_insnode(struct vm_instruction_node *node,struct vm_cpu *vm);
 
-//å¾—åˆ°æŒ‡ä»¤å¯¹åº”çš„æ“ä½œæ•°
+//µÃµ½Ö¸Áî¶ÔÓ¦µÄ²Ù×÷Êı
 ND_VM_API int get_operand_num(vm_ins instruction);
 
-//æ£€æµ‹æ˜¯å¦éœ€è¦æ“ä½œæ•°
+//¼ì²âÊÇ·ñĞèÒª²Ù×÷Êı
 ND_VM_API int check_no_operand(vm_ins instruction) ;
 
-//æ£€æµ‹æŒ‡ä»¤æ˜¯å¦æœ‰æ•ˆ
+//¼ì²âÖ¸ÁîÊÇ·ñÓĞĞ§
 ND_VM_API int check_instruction_valid(vm_ins instruction) ;
 
-//å¾—åˆ°åœ°å€ä¸ºindexçš„å†…å­˜åœ°å€
+//µÃµ½µØÖ·ÎªindexµÄÄÚ´æµØÖ·
 ND_VM_API vm_value* _get_memory(struct vm_cpu *vm, vm_adddress index);
 
-//å¾—åˆ°æŒ‡ä»¤åå­—
+//µÃµ½Ö¸ÁîÃû×Ö
 ND_VM_API char *get_ins_name(vm_ins ins);
 
-//è¾“å‡ºåæ±‡æŠ¥ä¿¡æ¯
+//Êä³ö·´»ã±¨ĞÅÏ¢
 ND_VM_API int vm_output_asm(struct vm_instruction_node *node, void *outstream, int type) ;
 
-//æ£€æµ‹æŒ‡ä»¤æ˜¯å¦åˆæ³•ä½†ä¸ä¼šæ£€æµ‹å†…å­˜æ˜¯å¦è¶Šç•Œ
+//¼ì²âÖ¸ÁîÊÇ·ñºÏ·¨µ«²»»á¼ì²âÄÚ´æÊÇ·ñÔ½½ç
 ND_VM_API int vm_check_insnode(struct vm_instruction_node *node) ;
 
-//æŠŠasmæ–‡ä»¶ç¼–è¯‘ç¨‹binæ–‡ä»¶
+//°ÑasmÎÄ¼ş±àÒë³ÌbinÎÄ¼ş
 ND_VM_API int vm_file_compile(/*struct vm_instruction_node *out_node*/ FILE *infp, FILE *outfile);
 
-//åæ±‡ç¼–
+//·´»ã±à
 ND_VM_API int vm_file_rcompile(/*struct vm_instruction_node *out_node*/ FILE *infp, FILE *outfile);
 
-//æ˜¾ç¤ºè¿è¡ŒnodeæŒ‡ä»¤åçš„ç»“æœ
+//ÏÔÊ¾ÔËĞĞnodeÖ¸ÁîºóµÄ½á¹û
 ND_VM_API int vm_echo_res(struct vm_instruction_node *node,struct vm_cpu *vm) ;
 
-/* å˜é‡æ›¿æ¢å‡½æ•°
- * åœ¨è§£æè¡¨è¾¾å¼çš„æ—¶å€™,å¯èƒ½ä¼šç”¨çš„å˜é‡åå­—,æˆ–è€…å®å®šä¹‰,éœ€è¦æ›¿æ¢æˆç›¸åº”çš„å†…å­˜åœ°å€æˆ–è€…å¸¸æ•°
- * éœ€è¦å¤–éƒ¨ç¨‹åºæä¾›æ›¿æ¢è§„åˆ™
- * @input ä»è¡¨è¾¾å¼ä¸­è¯»å–çš„å˜é‡å
- * @bufæ›¿æ¢åè¾“å‡ºå˜é‡å
+/* ±äÁ¿Ìæ»»º¯Êı
+ * ÔÚ½âÎö±í´ïÊ½µÄÊ±ºò,¿ÉÄÜ»áÓÃµÄ±äÁ¿Ãû×Ö,»òÕßºê¶¨Òå,ĞèÒªÌæ»»³ÉÏàÓ¦µÄÄÚ´æµØÖ·»òÕß³£Êı
+ * ĞèÒªÍâ²¿³ÌĞòÌá¹©Ìæ»»¹æÔò
+ * @input ´Ó±í´ïÊ½ÖĞ¶ÁÈ¡µÄ±äÁ¿Ãû
+ * @bufÌæ»»ºóÊä³ö±äÁ¿Ãû
  * @size size of buf
  *
  * return value : return 0 success ,on error return -1
  */
 typedef int (*vm_param_replace_func)(char *input, char *buf, int size,void *user_data) ;
 
-/* æŠŠå››åˆ™è¿ç®—å…¬å¼æ˜¯è§£ææˆbin
- * å…¬å¼ èŒƒä¾‹ : [1] = 2*3+[4] * min([5],7*8) + rand(1,100)  + max([6],[7])  //æŠŠè¡¨è¾¾å¼çš„å€¼ä»˜ç»™å†…å­˜1
- *			[n]  åœ°å€ä¸ºnçš„å†…å­˜å•å…ƒ
-			min(m,n) åœ¨[m,n]å–æœ€å°å€¼
-			max(m,n) åœ¨[m,n]å–æœ€å¤§å€¼
-			rand(m,n) åœ¨[m,n]å–éšæœºå€¼
+/* °ÑËÄÔòÔËËã¹«Ê½ÊÇ½âÎö³Ébin
+ * ¹«Ê½ ·¶Àı : [1] = 2*3+[4] * min([5],7*8) + rand(1,100)  + max([6],[7])  //°Ñ±í´ïÊ½µÄÖµ¸¶¸øÄÚ´æ1
+ *			[n]  µØÖ·ÎªnµÄÄÚ´æµ¥Ôª
+			min(m,n) ÔÚ[m,n]È¡×îĞ¡Öµ
+			max(m,n) ÔÚ[m,n]È¡×î´óÖµ
+			rand(m,n) ÔÚ[m,n]È¡Ëæ»úÖµ
 
 			
  */
 ND_VM_API size_t vm_parse_expression(char *textbuf, char *code_buf,size_t buf_size, vm_param_replace_func func,void*user_data) ;
 
-//å¾—åˆ°æ–‡ä»¶é•¿åº¦
+//µÃµ½ÎÄ¼ş³¤¶È
 ND_VM_API size_t _filesize(FILE *stream);
 
-//è°ƒè¯•
+//µ÷ÊÔ
 ND_VM_API void vm_start_debug() ;
 ND_VM_API void vm_end_debug() ;
 

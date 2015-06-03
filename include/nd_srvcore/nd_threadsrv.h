@@ -10,11 +10,11 @@
 //#include "nd_common/nd_common.h"
 
 /*
- * å¯¹çº¿ç¨‹çš„å°è£…,ä½¿å®ƒçœ‹èµ·æ¥æ›´åƒä¸€ä¸ªæœåŠ¡å™¨
- * æœåŠ¡å™¨åŠŸèƒ½æ¨¡å—å…¥å£:
- * æœåŠ¡å™¨æ‰€æ‰§è¡Œçš„åŠŸèƒ½æ¨¡å—åœ¨è¿™é‡Œè¢«ç§°ä¸ºä¸€ä¸ªå­æœåŠ¡.ä»¥ä¸‹ç§°ä¸º"çº¿ç¨‹æœåŠ¡å™¨"
- * æ¯ä¸ªæœåŠ¡å¯åŠ¨ä¸€ä¸ªçº¿ç¨‹,æœ‰è‡ªå·±çš„çº¿ç¨‹ä¸Šä¸‹æ–‡,å’Œæ¶ˆæ¯é˜Ÿåˆ—,
- * å…¶ä»–æœåŠ¡æˆ–è€…çº¿ç¨‹å¯ä»¥é€šè¿‡æœåŠ¡åå­—æˆ–è€…æœåŠ¡IDæ‰¾åˆ°ä»–ä»¬,å¹¶ä¸”å‘é€æ¶ˆæ¯.
+ * ¶ÔÏß³ÌµÄ·â×°,Ê¹Ëü¿´ÆğÀ´¸üÏñÒ»¸ö·şÎñÆ÷
+ * ·şÎñÆ÷¹¦ÄÜÄ£¿éÈë¿Ú:
+ * ·şÎñÆ÷ËùÖ´ĞĞµÄ¹¦ÄÜÄ£¿éÔÚÕâÀï±»³ÆÎªÒ»¸ö×Ó·şÎñ.ÒÔÏÂ³ÆÎª"Ïß³Ì·şÎñÆ÷"
+ * Ã¿¸ö·şÎñÆô¶¯Ò»¸öÏß³Ì,ÓĞ×Ô¼ºµÄÏß³ÌÉÏÏÂÎÄ,ºÍÏûÏ¢¶ÓÁĞ,
+ * ÆäËû·şÎñ»òÕßÏß³Ì¿ÉÒÔÍ¨¹ı·şÎñÃû×Ö»òÕß·şÎñIDÕÒµ½ËûÃÇ,²¢ÇÒ·¢ËÍÏûÏ¢.
  */
 #define MAX_LISTENNUM	2	
 #define ND_SRV_NAME 32 
@@ -28,11 +28,11 @@ typedef void (*nd_threadsrv_clean)(void) ;				//service terminal clean up fucnto
 /* thread message data*/
 typedef struct nd_thread_msg{
 	NDUINT32			msg_id ;
-	NDUINT32			data_len ;			//data lengthå¤„ç†è¿‡
-	int					wait_handle;		//æ˜¯å¦ç­‰å¾…å¯¹æ–¹å¤„ç†å®Œ
+	NDUINT32			data_len ;			//data length´¦Àí¹ı
+	int					wait_handle;		//ÊÇ·ñµÈ´ı¶Ô·½´¦ÀíÍê
 	nd_thsrvid_t		from_id;	//,recv_id;	//message sender and receiver
-	nd_handle			recv_handle;		//æ¥æ”¶è€…handle
-	void				*th_userdata ;		//å¯¹åº” nd_thsrv_createinfo::data
+	nd_handle			recv_handle;		//½ÓÊÕÕßhandle
+	void				*th_userdata ;		//¶ÔÓ¦ nd_thsrv_createinfo::data
 	struct list_head	list ;
 	char				data[0] ;			//data address
 }nd_thsrv_msg;
@@ -40,9 +40,9 @@ typedef struct nd_thread_msg{
 
 typedef int (*nd_thsrvmsg_func)(nd_thsrv_msg *msg) ;	//message handle function
 
-/* æœåŠ¡å‡½æ•°ç±»å‹
- * å¦‚æœä½¿ç”¨SUBSRV_RUNMOD_STARTUPæ¨¡å¼éœ€è¦åœ¨è‡ªå·±çš„ç¨‹åºä¸­å¤„ç†æ¶ˆæ¯
- * ç”¨æ³•: 
+/* ·şÎñº¯ÊıÀàĞÍ
+ * Èç¹ûÊ¹ÓÃSUBSRV_RUNMOD_STARTUPÄ£Ê½ĞèÒªÔÚ×Ô¼ºµÄ³ÌĞòÖĞ´¦ÀíÏûÏ¢
+ * ÓÃ·¨: 
  *  
 		service_entry() {
 			//do some initilize
@@ -60,7 +60,7 @@ typedef int (*nd_thsrvmsg_func)(nd_thsrv_msg *msg) ;	//message handle function
 enum e_thsrv_runmod{
 	SUBSRV_RUNMOD_LOOP = 0,		//for(;;) srv_entry() ;
 	SUBSRV_RUNMOD_STARTUP,		//return srv_entry() ; 
-	SUBSRV_MESSAGE				//åˆ›å»ºä¸€ä¸ªå•ç‹¬çš„æ¶ˆæ¯å¤„ç†çº¿ç¨‹(ä¸»è¦æ˜¯å¯ä»¥å®ç°ä¸€ä¸ªçº¿ç¨‹æ± ,åªå¤„ç†æ¶ˆæ¯çš„çº¿ç¨‹)
+	SUBSRV_MESSAGE				//´´½¨Ò»¸öµ¥¶ÀµÄÏûÏ¢´¦ÀíÏß³Ì(Ö÷ÒªÊÇ¿ÉÒÔÊµÏÖÒ»¸öÏß³Ì³Ø,Ö»´¦ÀíÏûÏ¢µÄÏß³Ì)
 };
 
 struct nd_thsrv_createinfo
@@ -99,7 +99,7 @@ ND_SRV_API  int nd_thsrv_destroy(nd_thsrvid_t srvid,int force);
 /*release all services in current host*/
 ND_SRV_API void nd_thsrv_release_all() ;
 
-/* è®©æ‰€ä»¥çº¿ç¨‹çš„å®¿ä¸»é€€å‡º,æ‰€ä»¥çº¿ç¨‹ä¹Ÿé€€å‡º*/
+/* ÈÃËùÒÔÏß³ÌµÄËŞÖ÷ÍË³ö,ËùÒÔÏß³ÌÒ²ÍË³ö*/
 ND_SRV_API void nd_host_eixt() ;
 ND_SRV_API void nd_server_host_begin() ;
 ND_SRV_API int nd_host_check_exit() ;
@@ -117,8 +117,8 @@ ND_SRV_API int nd_thsrv_resumeall() ;		//suspend all service
 ND_SRV_API int nd_thsrv_wait(nd_thsrvid_t  srv_id) ;		//wait a service exit
 //ND_SRV_API struct nd_thread_msg *nd_thsrv_msgnode_create(int datalen) ;
 
-/* å‘é€æ¶ˆæ¯ æ¨èä½¿ç”¨nd_send_msg() 
- * å¦‚æœä½¿ç”¨nd_send_msgex() ç”¨æ³•:
+/* ·¢ËÍÏûÏ¢ ÍÆ¼öÊ¹ÓÃnd_send_msg() 
+ * Èç¹ûÊ¹ÓÃnd_send_msgex() ÓÃ·¨:
 	msg = create_thmsg_node(datalen) ;
 	//set message id, receiver id, data, and datalen to nd_thread_msg.
 	nd_thsrv_sendex(msg);
@@ -128,9 +128,9 @@ ND_SRV_API int nd_thsrv_sendex(nd_thsrvid_t srvid,NDUINT32 msgid,void *data, NDU
 
 //ND_SRV_API int nd_thsrv_sendex(struct nd_thread_msg *msg);
 
-/* å¤„ç†ç”¨æˆ·æ¶ˆæ¯
- * å¦‚æœæ˜¯ç”¨SUBSRV_RUNMOD_STARTUP æ¨¡å¼æ¥åˆ›å»ºæœåŠ¡,åˆ™éœ€è¦åœ¨æœåŠ¡ç¨‹åºä¸­è‡ªè¡Œå¤„ç†æ¶ˆæ¯
- * ä¸€èˆ¬ç”¨æ³•æ˜¯åœ¨æœåŠ¡å¾ªç¯ä¸­è°ƒç”¨nd_message_handler() ,å‚æ•°ä¸­æŒ‡å®šcontextæ˜¯ä¸ºäº†æé«˜æ•ˆç‡
+/* ´¦ÀíÓÃ»§ÏûÏ¢
+ * Èç¹ûÊÇÓÃSUBSRV_RUNMOD_STARTUP Ä£Ê½À´´´½¨·şÎñ,ÔòĞèÒªÔÚ·şÎñ³ÌĞòÖĞ×ÔĞĞ´¦ÀíÏûÏ¢
+ * Ò»°ãÓÃ·¨ÊÇÔÚ·şÎñÑ­»·ÖĞµ÷ÓÃnd_message_handler() ,²ÎÊıÖĞÖ¸¶¨contextÊÇÎªÁËÌá¸ßĞ§ÂÊ
  * return -1 service(thread) exit 
  * else return numbers of message had been handled
  */
@@ -157,10 +157,10 @@ ND_SRV_API void nd_thsrv_setdata(nd_handle handle, void *data) ;
 ND_SRV_API ndtimer_t nd_thsrv_timer(nd_thsrvid_t srv_id,nd_timer_entry func,void *param,ndtime_t interval, int run_type ) ;
 ND_SRV_API void nd_thsrv_del_timer(nd_thsrvid_t srv_id, ndtimer_t timer_id ) ;
 
-//æ‹¦æˆªçº¿ç¨‹æ¶ˆæ¯å¤„ç†å‡½æ•°
+//À¹½ØÏß³ÌÏûÏ¢´¦Àíº¯Êı
 ND_SRV_API nd_thsrvmsg_func nd_thsrv_hook(nd_handle handle,nd_thsrvmsg_func newfunc) ;
 ND_SRV_API nd_threadsrv_clean  nd_thsrv_set_clear(nd_handle handle,nd_threadsrv_clean clear_func);
-/*çº¿ç¨‹æŠŠè‡ªå·±æŒ‚èµ·*/
+/*Ïß³Ì°Ñ×Ô¼º¹ÒÆğ*/
 int nd_thsrv_suspend_self(nd_handle handle) ;
 
 #endif

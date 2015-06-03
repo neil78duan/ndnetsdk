@@ -93,7 +93,7 @@ int NDSession::CryptPackage(nd_usermsgbuf_t *msgBuf)
 	return nd_packet_encrypt(m_objhandle, (nd_packetbuf_t*)msgBuf) > 0 ? 0 : -1 ;
 	
 }
-//寰楀埌缃戠粶鍦板潃
+//得到网络地址
 const char* NDSession::GetInetAddr()
 {
 	static char buf[20] ;
@@ -110,7 +110,7 @@ NDUINT16 NDSession::GetSessionID()
 	}
 	return (NDUINT16)-1 ;
 }
-//澧炲姞浣跨敤璁℃暟
+//增加使用计数
 int NDSession::IncRefCount()
 {
 	struct nd_srv_node *root = (struct nd_srv_node *) (((nd_netui_handle)m_objhandle)->srv_root );
@@ -121,7 +121,7 @@ int NDSession::IncRefCount()
 
 }
 
-//鍑忓皯浣跨敤璁℃暟
+//减少使用计数
 void NDSession::DecRefCount()
 {
 	struct nd_srv_node *root = (struct nd_srv_node *) (((nd_netui_handle)m_objhandle)->srv_root );

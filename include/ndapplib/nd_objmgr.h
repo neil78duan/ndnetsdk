@@ -28,8 +28,8 @@ public:
 	void * Lock(OBJECTID_T oid);
 	void * TryLock(OBJECTID_T oid);
 
-	int GetCapacity();			//瀹归噺
-	int GetActiveNum();			//褰撳墠娲诲姩杩炴帴
+	int GetCapacity();			//容量
+	int GetActiveNum();			//当前活动连接
 
 	bool IsValid();
 

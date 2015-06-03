@@ -1,16 +1,16 @@
 /* file nd_formula.c
- * å…¬å¼ç¿»è¯‘
+ * ¹«Ê½·­Òë
  * 2008-8-29  all right reserved by duan 
  * version 1.0
  */
 
 /* 
- * ç®—æ³•æè¿°: é¦–å…ˆè¾“å…¥ä¸€ä¸ªå…¬å¼å­—ç¬¦ä¸²,ç„¶åå¯¹å­—ç¬¦ä¸²è¿›è¡Œåˆ†è§£
- * æŠŠå…¬å¼åˆ†è§£ä¸ºä¸€ä¸ªä¸ªçš„èŠ‚ç‚¹ä¿å­˜åœ¨åˆ—è¡¨ä¸­,æ¯ä¸ªèŠ‚ç‚¹åŒ…å«æ“ä½œæ•°,æ“ä½œç¬¦å’Œæ“ä½œç¬¦ä¼˜å…ˆçº§åˆ«.
- * åˆ†è§£å®Œä»¥åå¯¹æ¯ä¸¤ä¸ªèŠ‚ç‚¹è¿›è¡Œè¿ç®—.
- * è¿ç®—æ–¹æ³• å–å‡ºç¬¬ä¸€ä¸ªèŠ‚ç‚¹ä½œä¸ºå½“å‰è¿ç®—èŠ‚ç‚¹,å’Œä¸‹ä¸€ä¸ªèŠ‚ç‚¹è¿›è¡Œä¼˜å…ˆçº§æ¯”è¾ƒ,å¦‚æœä¸‹ä¸€ä¸ªèŠ‚ç‚¹ä¼˜å…ˆçº§é«˜,
- * æŠŠä¸‹ä¸€ä¸ªèŠ‚ç‚¹ä½œä¸ºå½“å‰èŠ‚ç‚¹è¿›è¡Œé‡å¤ä»¥ä¸Šæ“ä½œ.å¦‚æœä¼˜å…ˆçº§ä¸€æ ·,æˆ–è€…å·²ç»åˆ°äº†å°¾éƒ¨,åˆ™ç›´æ¥æŠŠè€…ä¸¤ä¸ªèŠ‚ç‚¹è¿›è¡Œè¿ç®—.
- * å¦‚æœè¿˜æœ‰ä¸‹ä¸€ä¸ªèŠ‚ç‚¹,åŒæ ·ä¾ç…§ä»¥ä¸Šæ–¹æ³•è¿ç®—.ç›´åˆ°ç®—å®Œä¸ºæ­¢.
+ * Ëã·¨ÃèÊö: Ê×ÏÈÊäÈëÒ»¸ö¹«Ê½×Ö·û´®,È»ºó¶Ô×Ö·û´®½øĞĞ·Ö½â
+ * °Ñ¹«Ê½·Ö½âÎªÒ»¸ö¸öµÄ½Úµã±£´æÔÚÁĞ±íÖĞ,Ã¿¸ö½Úµã°üº¬²Ù×÷Êı,²Ù×÷·ûºÍ²Ù×÷·ûÓÅÏÈ¼¶±ğ.
+ * ·Ö½âÍêÒÔºó¶ÔÃ¿Á½¸ö½Úµã½øĞĞÔËËã.
+ * ÔËËã·½·¨ È¡³öµÚÒ»¸ö½Úµã×÷Îªµ±Ç°ÔËËã½Úµã,ºÍÏÂÒ»¸ö½Úµã½øĞĞÓÅÏÈ¼¶±È½Ï,Èç¹ûÏÂÒ»¸ö½ÚµãÓÅÏÈ¼¶¸ß,
+ * °ÑÏÂÒ»¸ö½Úµã×÷Îªµ±Ç°½Úµã½øĞĞÖØ¸´ÒÔÉÏ²Ù×÷.Èç¹ûÓÅÏÈ¼¶Ò»Ñù,»òÕßÒÑ¾­µ½ÁËÎ²²¿,ÔòÖ±½Ó°ÑÕßÁ½¸ö½Úµã½øĞĞÔËËã.
+ * Èç¹û»¹ÓĞÏÂÒ»¸ö½Úµã,Í¬ÑùÒÀÕÕÒÔÉÏ·½·¨ÔËËã.Ö±µ½ËãÍêÎªÖ¹.
  *
  */
 
@@ -31,42 +31,42 @@ typedef vm_value OPDATA_T ;
 #define deta  0.00000001
 
 #define FUNCTION_SIZE 4096
-//å­å‡½æ•°çš„æŒ‡ä»¤
+//×Óº¯ÊıµÄÖ¸Áî
 struct function_cmd
 {
 	int size ;
 	char buf[FUNCTION_SIZE] ;
 };
 
-//æ“ä½œå‡½æ•°å…¥å£
+//²Ù×÷º¯ÊıÈë¿Ú
 struct sOpterateEntry
 {
-	int level ;				//ä¼˜å…ˆçº§
+	int level ;				//ÓÅÏÈ¼¶
 	char name ;				//
 };
 
 #define FUNC_PARAM_NUM 2 
-//å®šä¹‰æ“ä½œå•å…ƒ
+//¶¨Òå²Ù×÷µ¥Ôª
 struct sOperateUnit{
 	char op ;
 	char is_function ;
-	int level ;				//ä¼˜å…ˆçº§
+	int level ;				//ÓÅÏÈ¼¶
 	char operand[OPERAND_SIZE];
 	struct list_head lst ;
-	//struct function_cmd * func_cmd;		//å‡½æ•°æŒ‡ä»¤
-	struct list_head param_list[FUNC_PARAM_NUM]	;	//å‚æ•°åˆ—è¡¨
+	//struct function_cmd * func_cmd;		//º¯ÊıÖ¸Áî
+	struct list_head param_list[FUNC_PARAM_NUM]	;	//²ÎÊıÁĞ±í
 };
 
-//åˆ†è§£å‡½æ•°æ‰€åŒ…å«çš„ä»£ç 
+//·Ö½âº¯ÊıËù°üº¬µÄ´úÂë
 int parse_function(struct sOperateUnit *pUnit,  char *textbuf, char **next)  ;
 
-//æŠŠå‡½æ•°ç”ŸæˆæŒ‡ä»¤
+//°Ñº¯ÊıÉú³ÉÖ¸Áî
 int run_function(struct sOperateUnit *pOpUnit) ;
 
-//æ£€æµ‹æŒ‡ä»¤æ˜¯å¦æ˜¯å‡½æ•°
+//¼ì²âÖ¸ÁîÊÇ·ñÊÇº¯Êı
 int is_function(char *src) ;
 
-/*æŠŠå˜é‡æ›¿æ¢æˆæ“ä½œæ•°æˆ–è€…å†…å­˜åœ°å€*/
+/*°Ñ±äÁ¿Ìæ»»³É²Ù×÷Êı»òÕßÄÚ´æµØÖ·*/
 
 int repace_param(char *param, char *buf, int size) ;
 
@@ -86,7 +86,7 @@ static __INLINE__ void  initOperateUnit(struct sOperateUnit *pOpUnit)
 	//INIT_LIST_HEAD(&pOpUnit->children) ;
 }
 
-//ä¼˜å…ˆçº§æ•°å€¼
+//ÓÅÏÈ¼¶ÊıÖµ
 enum {
 	LEVEL_EVALUEATE = 0,
 	LEVEL_ADD ,
@@ -180,9 +180,9 @@ void free_operator(struct sOperateUnit *op)
 	list_add(&op->lst, &__free_operate) ;
 }
 
-//è¯»å–ä¸€ä¸ªæ“ä½œæ•°
-//return 1 è¯»å–æ•°å­—æˆåŠŸ,2è¯»å–äº†ä¸€ä¸ª'(' , è¿”å›0 æ²¡æœ‰è¯»å–,è¿”å›-1 å‡ºé”™äº† 
-//return 3 è¯»å–äº†ä¸€ä¸ªå‡½æ•°
+//¶ÁÈ¡Ò»¸ö²Ù×÷Êı
+//return 1 ¶ÁÈ¡Êı×Ö³É¹¦,2¶ÁÈ¡ÁËÒ»¸ö'(' , ·µ»Ø0 Ã»ÓĞ¶ÁÈ¡,·µ»Ø-1 ³ö´íÁË 
+//return 3 ¶ÁÈ¡ÁËÒ»¸öº¯Êı
 //int readData(char *textbuf, OPDATA_T *outData, char **next) 
 int read_operand(char *textbuf, char* operand_buf, char **next) 
 {
@@ -199,7 +199,7 @@ int read_operand(char *textbuf, char* operand_buf, char **next)
 		return 2 ;
 	}
 	else if('['==*textbuf) {
-		//è¯»å–[]ä¸­çš„æ‰€æœ‰æ•°æ®
+		//¶ÁÈ¡[]ÖĞµÄËùÓĞÊı¾İ
 		int len = 0;
 		operand_buf[0] = 0 ;
 		textbuf = ndstr_str_end(textbuf, operand_buf, ']') ;
@@ -223,7 +223,7 @@ int read_operand(char *textbuf, char* operand_buf, char **next)
 
 	}
 	/*else if(IS_LITTLE_LATIN(*textbuf) || IS_BIG_LATIN(*textbuf)) {
-		//å¯èƒ½æ˜¯å‡½æ•°
+		//¿ÉÄÜÊÇº¯Êı
 		textbuf = ndstr_parse_word(textbuf, operand_buf) ;
 		if(is_function(operand_buf) ) {
 			*next = textbuf ;
@@ -242,7 +242,7 @@ int read_operand(char *textbuf, char* operand_buf, char **next)
 		}
 	}
 	else {
-		//å¯èƒ½æ˜¯å‡½æ•°
+		//¿ÉÄÜÊÇº¯Êı
 		char optmp[OPERAND_SIZE] ;
 		textbuf = ndstr_parse_word(textbuf, operand_buf) ;
 		if(is_function(operand_buf) ) {
@@ -267,8 +267,8 @@ int read_operand(char *textbuf, char* operand_buf, char **next)
 	return 1 ;
 }
 
-//è¯»å–ä¸€ä¸ªæ“ä½œç¬¦å·,return 1 è¯»å–æˆåŠŸ, è¿”å›2 è¯»å–äº†ä¸€ä¸ª')' ,æ“ä½œç¬¦å·ä¿å­˜åœ¨chä¸­,
-//è¿”å›0 æ²¡æœ‰è¯»å–å†…å®¹,è¿”å›-1å‡ºé”™
+//¶ÁÈ¡Ò»¸ö²Ù×÷·ûºÅ,return 1 ¶ÁÈ¡³É¹¦, ·µ»Ø2 ¶ÁÈ¡ÁËÒ»¸ö')' ,²Ù×÷·ûºÅ±£´æÔÚchÖĞ,
+//·µ»Ø0 Ã»ÓĞ¶ÁÈ¡ÄÚÈİ,·µ»Ø-1³ö´í
 int readOperator(char *textbuf, char *ch, char**next) 
 {
 	textbuf = ndstr_first_valid(textbuf) ;
@@ -291,13 +291,13 @@ int readOperator(char *textbuf, char *ch, char**next)
 	return -1 ;
 }
 
-//æŠŠè¡¨è¾¾å¼åˆ†è§£æˆæ“ä½œèŠ‚ç‚¹
-//åŒ…æ“ä½œæ•°æ”¾åˆ°headeré˜Ÿåˆ—ä¸­
+//°Ñ±í´ïÊ½·Ö½â³É²Ù×÷½Úµã
+//°ü²Ù×÷Êı·Åµ½header¶ÓÁĞÖĞ
 int parse_express_2node(char *textBuf, struct list_head *header) 
 {
 	char chop =0;
 	int ret ;
-	int bReadData = 1 ;		//è¯»å–ç±»å‹,é¦–å…ˆè¯»å–æ•°å€¼
+	int bReadData = 1 ;		//¶ÁÈ¡ÀàĞÍ,Ê×ÏÈ¶ÁÈ¡ÊıÖµ
 	int current_level = 0 ;
 	char *nextaddr = textBuf ;
 	struct sOperateUnit *opUnit =0;
@@ -324,13 +324,13 @@ int parse_express_2node(char *textBuf, struct list_head *header)
 
 				strncpy(opUnit->operand, op_data,sizeof(opUnit->operand)) ;
 				list_add_tail(&opUnit->lst, header) ;
-				bReadData = 0 ;		//ä¸‹æ¬¡è¯»æ“ä½œç¬¦å·
+				bReadData = 0 ;		//ÏÂ´Î¶Á²Ù×÷·ûºÅ
 			}
 			else if(2==ret) {
 				current_level += LEVEL_BRACKET ;
 			} 
 			else if(3==ret) {
-				//è¯»å–äº†ä¸€ä¸ªå‡½æ•°, è§£æå‡½æ•°
+				//¶ÁÈ¡ÁËÒ»¸öº¯Êı, ½âÎöº¯Êı
 
 				opUnit = alloc_operator() ;
 				if(!opUnit) {
@@ -339,10 +339,10 @@ int parse_express_2node(char *textBuf, struct list_head *header)
 
 				strncpy(opUnit->operand, op_data,sizeof(opUnit->operand)) ;
 				list_add_tail(&opUnit->lst, header) ;
-				bReadData = 0 ;		//ä¸‹æ¬¡è¯»æ“ä½œç¬¦å·
+				bReadData = 0 ;		//ÏÂ´Î¶Á²Ù×÷·ûºÅ
 
 				opUnit->is_function = 1 ;
-				//åˆ†è§£å‡½æ•°æ‰€åŒ…å«çš„ä»£ç 
+				//·Ö½âº¯ÊıËù°üº¬µÄ´úÂë
 				if(0!=parse_function(opUnit, nextaddr, &nextaddr) ) {
 					return -1 ;
 				}
@@ -365,7 +365,7 @@ int parse_express_2node(char *textBuf, struct list_head *header)
 				opUnit->op = chop ;
 				opUnit->level = current_level + GetOpLevel(chop) ;
 				
-				bReadData = 1 ;	//ä¸‹æ¬¡è¯»æ•°æ®
+				bReadData = 1 ;	//ÏÂ´Î¶ÁÊı¾İ
 			}
 			else if(2==ret) {
 				current_level -= LEVEL_BRACKET ;
@@ -385,10 +385,10 @@ int parse_express_2node(char *textBuf, struct list_head *header)
 	return 0 ;
 }
 
-//æ‰§è¡Œä¸¤ä¸ªèŠ‚ç‚¹çš„è¿è¡Œ(opUnit)å½“å‰èŠ‚ç‚¹ä¸å®ƒçš„ä¸‹ä¸€ä¸ªèŠ‚ç‚¹è¿ç®—)
+//Ö´ĞĞÁ½¸ö½ÚµãµÄÔËĞĞ(opUnit)µ±Ç°½ÚµãÓëËüµÄÏÂÒ»¸ö½ÚµãÔËËã)
 OPDATA_T calcNodeResult(struct list_head *curr_pos, struct list_head *lst_end,int depth)
 {
-	int cur_level ;			//å½“å‰è¿ç®—ä¼˜å…ˆçº§
+	int cur_level ;			//µ±Ç°ÔËËãÓÅÏÈ¼¶
 	int is_recursion = 0 ;
 	struct list_head *next ;
 	struct sOperateUnit *pOpUnit, *pOpNext ;
@@ -401,7 +401,7 @@ OPDATA_T calcNodeResult(struct list_head *curr_pos, struct list_head *lst_end,in
 	cur_level = pOpUnit->level ;
 	
 	if(pOpUnit->is_function) {
-		//å¦‚æœåªæœ‰ä¸€ä¸ªèŠ‚ç‚¹,å°†åœ¨è¿™é‡Œæ‰§è¡Œ
+		//Èç¹ûÖ»ÓĞÒ»¸ö½Úµã,½«ÔÚÕâÀïÖ´ĞĞ
 		if(0!=run_function(pOpUnit)  ){
 			return -1 ;
 		}
@@ -427,7 +427,7 @@ OPDATA_T calcNodeResult(struct list_head *curr_pos, struct list_head *lst_end,in
 			pOpNext->is_function = 0 ;
 		}
 
-		if(pOpUnit->level == pOpNext->level || !pOpNext->op ) {		//çº§åˆ«ç›¸ç­‰å¯ä»¥è¿ç®—,è¿ç®—åç›´æ¥æŠŠè¿™ä¸ªèŠ‚ç‚¹ä¸¢å¼ƒæˆ–è€…åé¢æ²¡æœ‰æ“ä½œç¬¦äº†	
+		if(pOpUnit->level == pOpNext->level || !pOpNext->op ) {		//¼¶±ğÏàµÈ¿ÉÒÔÔËËã,ÔËËãºóÖ±½Ó°ÑÕâ¸ö½Úµã¶ªÆú»òÕßºóÃæÃ»ÓĞ²Ù×÷·ûÁË	
 
 
 			if(is_recursion) {
@@ -466,10 +466,10 @@ OPDATA_T calcNodeResult(struct list_head *curr_pos, struct list_head *lst_end,in
 			}
 		}
 		else {
-			//é‡åˆ°ä¼˜å…ˆçº§,			
+			//Óöµ½ÓÅÏÈ¼¶,			
 			asm_printf( "\t PUSH REG1 \n") ;
 			data = calcNodeResult(next, lst_end,depth+1) ;
-			//æŠŠç»“æœæ”¾åˆ°REG2ä¸­
+			//°Ñ½á¹û·Åµ½REG2ÖĞ
 			asm_printf( "\t MOV REG2 , REG1 \n") ;
 			asm_printf( "\t POP REG1 \n") ;
 			
@@ -487,7 +487,7 @@ OPDATA_T calcNodeResult(struct list_head *curr_pos, struct list_head *lst_end,in
 	return 0;//pOpUnit->data ;
 }
 
-//æ‰§è¡Œè¡¨è¾¾å¼,æŠŠèŠ‚ç‚¹è½¬æ¢æˆasm
+//Ö´ĞĞ±í´ïÊ½,°Ñ½Úµã×ª»»³Éasm
 int run_experssion(struct list_head * start_pos,struct list_head *header)
 {
 	struct sOperateUnit *pOpUnit, *pOpNext;
@@ -537,7 +537,7 @@ struct formula_out_info
 
 __ndthread struct formula_out_info  __asm_out ;
 
-//æŠŠlistè¾“å‡ºä¸ºäºŒè¿›åˆ¶æŒ‡ä»¤,ä¿å­˜åˆ°ç¼“å†²ä¸­
+//°ÑlistÊä³öÎª¶ş½øÖÆÖ¸Áî,±£´æµ½»º³åÖĞ
 size_t oplist_2buf(struct list_head *h, char *outbuf)
 {
 
@@ -559,7 +559,7 @@ int repace_param(char *param, char *buf, int size)
 	}
 	return -1 ;
 }
-//è®¡ç®—è¡¨è¾¾å¼ç»“æœ
+//¼ÆËã±í´ïÊ½½á¹û
 size_t vm_parse_expression(char *textbuf, char *code_buf,size_t buf_size,vm_param_replace_func func, void*user_data)
 {
 	int ret ;
@@ -635,7 +635,7 @@ int asm_printf(const char *stm, ...)
 }
 
 /* parse function 
- * è§£æè¡¨è¾¾æ˜¯å†…éƒ¨å‡½æ•°
+ * ½âÎö±í´ïÊÇÄÚ²¿º¯Êı
  */
 
 char *__inter_func[] = 
@@ -643,7 +643,7 @@ char *__inter_func[] =
 	"MAX","MIN", "RAND", "LTZERO" ,"PROB","SET","SQRT"
 } ;
 
-//æ£€æµ‹æ˜¯å¦æ˜¯å†…éƒ¨å‡½æ•°
+//¼ì²âÊÇ·ñÊÇÄÚ²¿º¯Êı
 int is_function(char *src)
 {
 	int i ;
@@ -656,7 +656,7 @@ int is_function(char *src)
 	return 0 ;
 }
 
-//å¾—åˆ°å‚æ•°çš„ä¸ªæ•°
+//µÃµ½²ÎÊıµÄ¸öÊı
 int get_fun_params(char *func_name)
 {
 	if(0==ndstricmp(func_name, "LTZERO") || 
@@ -669,7 +669,7 @@ int get_fun_params(char *func_name)
 		return 2 ;
 }
 
-//è¯»å–å‡½æ•°çš„å‚æ•°,çŸ¥é“é‡åˆ° ',' æˆ–è€… )
+//¶ÁÈ¡º¯ÊıµÄ²ÎÊı,ÖªµÀÓöµ½ ',' »òÕß )
 char *read_func_param(char *textbuf, char* param_buf, int *is_ok)
 {
 	*is_ok = 0 ;
@@ -697,7 +697,7 @@ char *read_func_param(char *textbuf, char* param_buf, int *is_ok)
 	return textbuf ;
 }
 
-//åˆ†è§£å‡½æ•°æ‰€åŒ…å«çš„ä»£ç 
+//·Ö½âº¯ÊıËù°üº¬µÄ´úÂë
 int parse_function(struct sOperateUnit *pUnit,  char *textbuf, char **next) 
 {
 	int num = 0 ;
@@ -744,7 +744,7 @@ int parse_function(struct sOperateUnit *pUnit,  char *textbuf, char **next)
 
 }
 
-//æ‰§è¡Œå†…éƒ¨å‡½æ•°
+//Ö´ĞĞÄÚ²¿º¯Êı
 int run_function(struct sOperateUnit *pOpUnit)
 {
 	int i ;

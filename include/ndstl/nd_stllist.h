@@ -66,7 +66,7 @@ public:
 	struct list_head *getlist() {	return _node ? &_node->hdr : _header ;	}
 	value_node *_getaddr() {return _node;}
 	value_node *_node ;
-	struct list_head *_next,*_prev ;//ä¿å­˜ä¸´æ—¶æŒ‡é’ˆ,è¿™æ ·å¯ä»¥åœ¨è¿­ä»£æ—¶åˆ é™¤ä¸‹ä¸€ä¸ª
+	struct list_head *_next,*_prev ;//±£´æÁÙÊ±Ö¸Õë,ÕâÑù¿ÉÒÔÔÚµü´úÊ±É¾³ıÏÂÒ»¸ö
 	struct list_head *_header;
 };
 

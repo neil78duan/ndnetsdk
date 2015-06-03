@@ -21,7 +21,7 @@ BindIoCPCallback g_BindIOCPEntry = NULL;
 extern HANDLE g_hIOCompletionPort ;
 
 int update_iocp_cm(struct listen_contex *ls_info);
-//ä½¿ç”¨è‡ªå®šä¹‰çº¿ç¨‹æ± 
+//Ê¹ÓÃ×Ô¶¨ÒåÏß³Ì³Ø
 int thread_iocp_entry(struct listen_contex *listen_info) ;
 int nd_start_iocp_listen(struct listen_contex *listen_info)
 {
@@ -57,7 +57,7 @@ int nd_start_iocp_listen(struct listen_contex *listen_info)
 	while (!nd_thsrv_isexit(context)){
 		int sleep = LISTEN_INTERVAL;
 		int msgret = nd_thsrv_msghandler(context) ;
-		if(-1== msgret)		//å¤„ç†çº¿ç¨‹æ¶ˆæ¯
+		if(-1== msgret)		//´¦ÀíÏß³ÌÏûÏ¢
 			break ;
 		else if(msgret)
 			sleep = 0 ;	
@@ -76,7 +76,7 @@ int nd_start_iocp_listen(struct listen_contex *listen_info)
 }
 
 #endif
-//æŠŠèŠ‚ç‚¹acceptExå¥½ä¹‹åŽæ”¾åˆ°å®Œæˆç«¯å£å¥æŸ„ä¸­
+//°Ñ½ÚµãacceptExºÃÖ®ºó·Åµ½Íê³É¶Ë¿Ú¾ä±úÖÐ
 int pre_accept(struct nd_srv_node *srv_node)
 {
 	int i ,ret = 0 ;
@@ -109,7 +109,7 @@ int check_repre_accept(struct listen_contex *listen_info)
 	return listen_info->tcp.conn_manager.free_num(&listen_info->tcp.conn_manager) ;
 }
 
-//åˆå§‹åŒ–IOCPçš„èŠ‚ç‚¹å‡½æ•°,å¤–éƒ¨å‡½æ•°ä½¿ç”¨çš„
+//³õÊ¼»¯IOCPµÄ½Úµãº¯Êý,Íâ²¿º¯ÊýÊ¹ÓÃµÄ
 int nd_iocp_node_init(struct nd_client_map_iocp *iocp_map,nd_handle h_listen)
 {
 	struct listen_contex *lc = (struct listen_contex*) h_listen ;
@@ -300,7 +300,7 @@ int data_income(struct nd_client_map_iocp *pclient, DWORD dwRecvBytes )
 		return 0;
 	}
 	
-	//å†æ¬¡æŠ•é€’ä¸€ä¸ªè¯·æ±‚
+	//ÔÙ´ÎÍ¶µÝÒ»¸öÇëÇó
 	read_len = iocp_read(pclient) ;
 	if (read_len==0){
 		iocp_close_client(pclient,0);
@@ -374,8 +374,8 @@ int iocp_write(struct nd_client_map_iocp *iocp_map)
 }
 
 /*iocp_read
- * è¿™é‡Œä½¿ç”¨çš„å¼‚æ­¥é‡å æŽ¥å—æ•°æ®,å®žé™…ä¸Šè¿™é‡Œåªæ˜¯è¿›è¡Œä¸€æ¬¡å¼‚æ­¥æŽ¥å—çš„æŠ•é€’
- * å³ä¾¿æ˜¯è¿”å›žäº†æŽ¥å—åˆ°çš„æ•°æ®,ä¾ç„¶ä¼šåœ¨callbackå‡½æ•°ä¸­è¢«é€šçŸ¥ 
+ * ÕâÀïÊ¹ÓÃµÄÒì²½ÖØµþ½ÓÊÜÊý¾Ý,Êµ¼ÊÉÏÕâÀïÖ»ÊÇ½øÐÐÒ»´ÎÒì²½½ÓÊÜµÄÍ¶µÝ
+ * ¼´±ãÊÇ·µ»ØÁË½ÓÊÜµ½µÄÊý¾Ý,ÒÀÈ»»áÔÚcallbackº¯ÊýÖÐ±»Í¨Öª 
  */
 int iocp_read(struct nd_client_map_iocp *iocp_map)
 {
@@ -433,7 +433,7 @@ int iocp_read(struct nd_client_map_iocp *iocp_map)
 
 }
 
-//åˆ©ç”¨close handleæ˜¯è°ƒç”¨çš„å‡½æ•°
+//ÀûÓÃclose handleÊÇµ÷ÓÃµÄº¯Êý
 int iocp_session_handle_close(nd_handle h, int force)
 {
 	if(force) {
@@ -567,7 +567,7 @@ int iocp_accept(struct nd_client_map_iocp *node)
 	return 0 ;
 }
 
-//å‘é€æ ¼å¼åŒ–æ•°æ®
+//·¢ËÍ¸ñÊ½»¯Êý¾Ý
 int nd_iocp_sendmsg(struct nd_client_map_iocp *iocp_map,nd_packhdr_t *msg_buf, int flag) 
 {
 	struct netui_info *socket_addr = (struct netui_info* )& iocp_map->__client_map.connect_node;
@@ -576,7 +576,7 @@ int nd_iocp_sendmsg(struct nd_client_map_iocp *iocp_map,nd_packhdr_t *msg_buf, i
 	return iocp_socket_write(iocp_map, msg_buf, s)  ;
 }
 
-//å‘é€æµå¼æ•°æ®
+//·¢ËÍÁ÷Ê½Êý¾Ý
 int iocp_socket_write(struct nd_client_map_iocp *iocp_map, void *data, size_t send_len) 
 {
 	int ret = 0 ;
@@ -644,7 +644,7 @@ int update_iocp_cm(struct listen_contex *ls_info)
 	
 	for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 	client = pmanger->lock_next (pmanger,&cm_iterator) ) {
 		if(TCPNODE_STATUS(client)==ETS_DEAD) {
-			tcp_release_death_node(client,0) ;		//é‡Šæ”¾æ­»è¿žæŽ¥
+			tcp_release_death_node(client,0) ;		//ÊÍ·ÅËÀÁ¬½Ó
 		}
 		else if(TCPNODE_CHECK_RESET(client)) {
 			iocp_close_client(client,1) ;

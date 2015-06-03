@@ -14,7 +14,7 @@
 #include "nd_net/byte_order.h"
 //#include "nd_common/nd_common.h"
 
-//ç‰ˆæœ¬2 æŠŠ typedef NDUINT16	ndmsgid_t  è¯¥æˆ typedef NDUINT8	ndmsgid_t 
+//°æ±¾2 °Ñ typedef NDUINT16	ndmsgid_t  ¸Ã³É typedef NDUINT8	ndmsgid_t 
 #define NDNETMSG_VERSION		2
 
 #define ND_PACKET_SIZE C_BUF_SIZE
@@ -22,60 +22,60 @@
 #pragma pack(push)
 #pragma pack(1)
 
-/*å®šä¹‰æ¶ˆæ¯åŒ…å¤´éƒ¨*/
+/*¶¨ÒåÏûÏ¢°üÍ·²¿*/
 typedef struct packet_hdr
 {
 	NDUINT16	length ;				/*length of packet*/
 	NDUINT8		version ;				/*version of net protocol*/
 #if ND_BYTE_ORDER == ND_L_ENDIAN
-	NDUINT8		ndsys_msg:1;			/* ndæ¨¡å—è‡ªå·±å¤„ç†çš„æ¶ˆæ¯*/
-	NDUINT8		encrypt:1;				/* æ˜¯å¦åŠ å¯†*/
-	NDUINT8		stuff:1;				/* æ˜¯å¦ä¸ºäº†åŠ å¯†è€Œå¡«å……*/
-	NDUINT8		stuff_len:5;			/* å¡«å……é•¿åº¦*/
+	NDUINT8		ndsys_msg:1;			/* ndÄ£¿é×Ô¼º´¦ÀíµÄÏûÏ¢*/
+	NDUINT8		encrypt:1;				/* ÊÇ·ñ¼ÓÃÜ*/
+	NDUINT8		stuff:1;				/* ÊÇ·ñÎªÁË¼ÓÃÜ¶øÌî³ä*/
+	NDUINT8		stuff_len:5;			/* Ìî³ä³¤¶È*/
 #else 
-	NDUINT8		stuff_len:5;			/* å¡«å……é•¿åº¦*/
-	NDUINT8		stuff:1;				/* æ˜¯å¦ä¸ºäº†åŠ å¯†è€Œå¡«å……*/
-	NDUINT8		encrypt:1;				/* æ˜¯å¦åŠ å¯†*/
-	NDUINT8		ndsys_msg:1;			/* ndæ¨¡å—è‡ªå·±å¤„ç†çš„æ¶ˆæ¯*/
+	NDUINT8		stuff_len:5;			/* Ìî³ä³¤¶È*/
+	NDUINT8		stuff:1;				/* ÊÇ·ñÎªÁË¼ÓÃÜ¶øÌî³ä*/
+	NDUINT8		encrypt:1;				/* ÊÇ·ñ¼ÓÃÜ*/
+	NDUINT8		ndsys_msg:1;			/* ndÄ£¿é×Ô¼º´¦ÀíµÄÏûÏ¢*/
 #endif
 	
 } nd_packhdr_t;
 
-//å°åŒ…å¤´é•¿åº¦
+//·â°üÍ·³¤¶È
 #define ND_PACKET_HDR_SIZE  sizeof(nd_packhdr_t)
 #define ND_PACKET_DATA_SIZE (ND_PACKET_SIZE - ND_PACKET_HDR_SIZE)
 
-//æ¶ˆæ¯åŒ…
+//ÏûÏ¢°ü
 typedef struct nd_net_packet_buf
 {
 	nd_packhdr_t	hdr ;
 	char			data[ND_PACKET_DATA_SIZE] ;
 }nd_packetbuf_t;
 
-//ndæ¨¡å—è‡ªå·±çš„ä¿ç•™æ¶ˆæ¯
+//ndÄ£¿é×Ô¼ºµÄ±£ÁôÏûÏ¢
 typedef struct nd_sysresv_pack
 {
 	nd_packhdr_t hdr ;
 	NDUINT16 msgid ;
 	NDUINT16 checksum;
 }nd_sysresv_pack_t;
-//é¢„ç•™æ¶ˆæ¯å·
+//Ô¤ÁôÏûÏ¢ºÅ
 enum {
 	ERSV_ALIVE_ID = 0xfb0e,
 	ERSV_VERSION_ERROR = 0xfb0f
 };
 #pragma pack(pop)
 
-/* å®šä¹‰æ¶ˆæ¯å‘é€ç±»å‹ */
+/* ¶¨ÒåÏûÏ¢·¢ËÍÀàĞÍ */
 enum send_flag {
-	ESF_NORMAL = 0 ,		//æ­£å¸¸å‘é€
-	ESF_WRITEBUF =1,		//å†™å…¥å‘é€ç¼“å†²
-	ESF_URGENCY = 2,		//ç´§æ€¥å‘é€
-	ESF_POST	= 4,		//ä¸å¯é çš„å‘é€(å¯èƒ½å›ä¸¢å¤±)
-	ESF_ENCRYPT = 8			//åŠ å¯†(å¯ä»¥å’Œå…¶ä»–ä½è¿ç”¨|)
+	ESF_NORMAL = 0 ,		//Õı³£·¢ËÍ
+	ESF_WRITEBUF =1,		//Ğ´Èë·¢ËÍ»º³å
+	ESF_URGENCY = 2,		//½ô¼±·¢ËÍ
+	ESF_POST	= 4,		//²»¿É¿¿µÄ·¢ËÍ(¿ÉÄÜ»Ø¶ªÊ§)
+	ESF_ENCRYPT = 8			//¼ÓÃÜ(¿ÉÒÔºÍÆäËûÎ»Á¬ÓÃ|)
 };
 
-/*åˆå§‹åŒ–å¤´éƒ¨*/
+/*³õÊ¼»¯Í·²¿*/
 static __INLINE__ void nd_hdr_init(nd_packhdr_t *hdr)
 {
 	*((NDUINT32*)hdr) = 0 ;
@@ -113,7 +113,7 @@ static __INLINE__ void nd_set_pack_len(nd_packhdr_t *hdr, NDUINT16 len)
 // hdrdest = hdrsrc
 #define ND_HDR_SET(hdrdest, hdrsrc) *((NDUINT32*)hdrdest) = *((NDUINT32*)hdrsrc)  
 
-typedef int (*NDNET_MSGENTRY)(void *connect, nd_packhdr_t *msg_hdr, void *param) ;	//æ¶ˆæ¯å¤„ç†å‡½æ•°
+typedef int (*NDNET_MSGENTRY)(void *connect, nd_packhdr_t *msg_hdr, void *param) ;	//ÏûÏ¢´¦Àíº¯Êı
 
 static __INLINE__ void nd_make_alive_pack(nd_sysresv_pack_t *pack)
 {

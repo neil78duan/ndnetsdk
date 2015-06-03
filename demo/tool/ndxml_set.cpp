@@ -3,7 +3,7 @@
 //  cliDemo
 //
 //  Created by duanxiuyun on 15-3-5.
-//  Copyright (c) 2015å¹´ duanxiuyun. All rights reserved.
+//  Copyright (c) 2015Äê duanxiuyun. All rights reserved.
 //
 
 

@@ -14,37 +14,37 @@
 #include "nd_net/nd_netui.h"
 
 enum  privalige_level{
-	EPL_NONE = 0 ,			//æ²¡æœ‰ä»»ä½•æƒé™
-	EPL_CONNECT,			//æ™®é€šæƒé™
-	EPL_LOGIN ,				//ç™»é™†æƒé™
+	EPL_NONE = 0 ,			//Ã»ÓĞÈÎºÎÈ¨ÏŞ
+	EPL_CONNECT,			//ÆÕÍ¨È¨ÏŞ
+	EPL_LOGIN ,				//µÇÂ½È¨ÏŞ
 	EPL_READY,				//start game
-	EPL_HIGHT				//ç‰¹åŒº
+	EPL_HIGHT				//ÌØÇø
 };
 
-#define SUB_MSG_NUM		64		//æ¯ä¸€ç±»æ¶ˆæ¯å¯ä»¥æœ‰å¤šå°‘ä¸ªå­æ¶ˆæ¯å·
-#define MAX_MAIN_NUM	256		//æœ€å¤šå¯ä»¥æ‹¥æœ‰çš„æ¶ˆæ¯ç±»å‹
-#define MAX_SCRIPT_NAME 256		//è„šæœ¬åå­—é•¿åº¦
-#define ND_DFT_MAXMSG_NUM 32	//é»˜è®¤ä¸»æ¶ˆæ¯ç±»å‹æ•°é‡
+#define SUB_MSG_NUM		64		//Ã¿Ò»ÀàÏûÏ¢¿ÉÒÔÓĞ¶àÉÙ¸ö×ÓÏûÏ¢ºÅ
+#define MAX_MAIN_NUM	256		//×î¶à¿ÉÒÔÓµÓĞµÄÏûÏ¢ÀàĞÍ
+#define MAX_SCRIPT_NAME 256		//½Å±¾Ãû×Ö³¤¶È
+#define ND_DFT_MAXMSG_NUM 32	//Ä¬ÈÏÖ÷ÏûÏ¢ÀàĞÍÊıÁ¿
 
-typedef NDUINT8	ndmsgid_t ;		//æ¶ˆæ¯ç¼–å·
+typedef NDUINT8	ndmsgid_t ;		//ÏûÏ¢±àºÅ
 
-#define ND_UNSUPPORT_SCRIPT_MSG		//ä¸æ”¯æŒè„šæœ¬æ–¹å¼çš„æ¶ˆæ¯å‡½æ•°
+#define ND_UNSUPPORT_SCRIPT_MSG		//²»Ö§³Ö½Å±¾·½Ê½µÄÏûÏ¢º¯Êı
 
 #pragma pack(push)
 #pragma pack(1)
-//ç”¨æˆ·æ¶ˆæ¯ç±»å‹ å¤´
+//ÓÃ»§ÏûÏ¢ÀàĞÍ Í·
 typedef struct nd_usermsghdr_t
 {
-	nd_packhdr_t	packet_hdr ;		//æ¶ˆæ¯åŒ…å¤´
-	ndmsgid_t		maxid ;		//ä¸»æ¶ˆæ¯å· 8bits
-	ndmsgid_t		minid ;		//æ¬¡æ¶ˆæ¯å· 8bits
-//	ndmsgparam_t	param;		//æ¶ˆæ¯å‚æ•°
+	nd_packhdr_t	packet_hdr ;		//ÏûÏ¢°üÍ·
+	ndmsgid_t		maxid ;		//Ö÷ÏûÏ¢ºÅ 8bits
+	ndmsgid_t		minid ;		//´ÎÏûÏ¢ºÅ 8bits
+//	ndmsgparam_t	param;		//ÏûÏ¢²ÎÊı
 }nd_usermsghdr_t ;
 
 #define ND_USERMSG_HDRLEN sizeof(nd_usermsghdr_t)
-//ç”¨æˆ·æ•°æ®é•¿åº¦
+//ÓÃ»§Êı¾İ³¤¶È
 #define ND_USERMSG_DATA_CAPACITY  (ND_PACKET_SIZE-sizeof(nd_usermsghdr_t) )		
-//å®šä¹‰ç”¨æˆ·ç¼“å†²
+//¶¨ÒåÓÃ»§»º³å
 typedef struct nd_usermsgbuf_t
 {
 	nd_usermsghdr_t msg_hdr ;
@@ -60,8 +60,8 @@ static __INLINE__ void nd_usermsghdr_init(nd_usermsghdr_t *hdr)
 	hdr->packet_hdr.version = NDNETMSG_VERSION ;
 }
 #define ND_USERMSG_INITILIZER {{ND_USERMSG_HDRLEN,NDNETMSG_VERSION,0,0,0},0,0,0} 
-#define nd_netmsg_hton(m)		//æŠŠç½‘ç»œæ¶ˆæ¯è½¬å˜æˆä¸»æœºæ ¼å¼
-#define nd_netmsg_ntoh(m)		//æŠŠä¸»æœºæ ¼å¼è½¬å˜æˆç½‘ç»œæ¶ˆæ¯
+#define nd_netmsg_hton(m)		//°ÑÍøÂçÏûÏ¢×ª±ä³ÉÖ÷»ú¸ñÊ½
+#define nd_netmsg_ntoh(m)		//°ÑÖ÷»ú¸ñÊ½×ª±ä³ÉÍøÂçÏûÏ¢
 
 #define ND_USERMSG_LEN(m)	((nd_packhdr_t*)m)->length
 #define ND_USERMSG_MAXID(m)	((nd_usermsghdr_t*)m)->maxid 
@@ -70,24 +70,24 @@ static __INLINE__ void nd_usermsghdr_init(nd_usermsghdr_t *hdr)
 #define ND_USERMSG_DATA(m)	(((nd_usermsgbuf_t*)m)->data)
 #define ND_USERMSG_DATALEN(m)	(((nd_packhdr_t*)m)->length - ND_USERMSG_HDRLEN)
 #define ND_USERMSG_SYS_RESERVED(m) ((nd_packhdr_t*)m)->ndsys_msg 
-/* ç”¨æˆ·è‡ªå®šä¹‰æ¶ˆæ¯å¤„ç†å‡½æ•°
- * åœ¨ç½‘ç»œæ•°æ®åˆ°è¾¾æ—¶ä¼šæ ¹æ®æ¶ˆæ¯å·æ‰§è¡Œç›¸åº”çš„å¤„ç†å‡½æ•°.
- * å‡½æ•°è¿”å›å€¼: å‡ºé”™æ—¶è¿”å›-1, ç³»ç»Ÿä¼šè‡ªåŠ¨å…³é—­å¯¹åº”çš„è¿æ¥.
- * éœ€è¦å…³é—­è¿æ¥æ—¶,åªéœ€è¦åœ¨å¤„ç†å‡½æ•°ä¸­è¿”å›-1å³å¯
+/* ÓÃ»§×Ô¶¨ÒåÏûÏ¢´¦Àíº¯Êı
+ * ÔÚÍøÂçÊı¾İµ½´ïÊ±»á¸ù¾İÏûÏ¢ºÅÖ´ĞĞÏàÓ¦µÄ´¦Àíº¯Êı.
+ * º¯Êı·µ»ØÖµ: ³ö´íÊ±·µ»Ø-1, ÏµÍ³»á×Ô¶¯¹Ø±Õ¶ÔÓ¦µÄÁ¬½Ó.
+ * ĞèÒª¹Ø±ÕÁ¬½ÓÊ±,Ö»ĞèÒªÔÚ´¦Àíº¯ÊıÖĞ·µ»Ø-1¼´¿É
  */
 typedef int (*nd_usermsg_func)(nd_handle  handle, nd_usermsgbuf_t *msg , nd_handle listener);
 
 typedef int(*nd_msg_script_entry)(void *script_engine,nd_handle  handle, nd_usermsgbuf_t *msg, const char *script);
 
-/*æ‹¦æˆªå°åŒ…çš„å‡½æ•°
- *å¦‚æœä½¿ç”¨äº†æ‹¦æˆªå‡½æ•°é‚£ä¹ˆç”¨æˆ·ä¸åœ¨éœ€è¦ nd_msgtable_create()å’Œ nd_msgentry_install()
- *è€Œæ˜¯è‡ªè¡Œå¤„ç†è¢«æ‹¦æˆªçš„å°åŒ…
+/*À¹½Ø·â°üµÄº¯Êı
+ *Èç¹ûÊ¹ÓÃÁËÀ¹½Øº¯ÊıÄÇÃ´ÓÃ»§²»ÔÚĞèÒª nd_msgtable_create()ºÍ nd_msgentry_install()
+ *¶øÊÇ×ÔĞĞ´¦Àí±»À¹½ØµÄ·â°ü
  */
 typedef int (*nd_packet_func)(nd_handle  handle, nd_packhdr_t *msg , nd_handle listener);
 
-/* ä¸ºè¿æ¥å¥æŸ„åˆ›å»ºæ¶ˆæ¯å…¥å£è¡¨
- * @mainmsg_num ä¸»æ¶ˆæ¯çš„ä¸ªæ•°(æœ‰å¤šæ•°ç±»æ¶ˆæ¯
- * @base_msgid ä¸»æ¶ˆæ¯å¼€å§‹å·
+/* ÎªÁ¬½Ó¾ä±ú´´½¨ÏûÏ¢Èë¿Ú±í
+ * @mainmsg_num Ö÷ÏûÏ¢µÄ¸öÊı(ÓĞ¶àÊıÀàÏûÏ¢
+ * @base_msgid Ö÷ÏûÏ¢¿ªÊ¼ºÅ
  * return value : 0 success on error return -1
  */
 ND_NET_API int nd_msgtable_create(nd_handle  handle, int mainmsg_num, int base_msgid) ;
@@ -97,7 +97,7 @@ ND_NET_API void nd_msgtable_destroy(nd_handle  handle, int flag) ;
 ND_NET_API int nd_message_set_system(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int issystem) ;
 ND_NET_API int nd_message_set_log(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int is_log) ;
 
-/*åœ¨handleå¥æŸ„ä¸Šå®‰è£…ç½‘ç»œæ¶ˆæ¯å¤„ç†å‡½æ•°*/
+/*ÔÚhandle¾ä±úÉÏ°²×°ÍøÂçÏûÏ¢´¦Àíº¯Êı*/
 ND_NET_API int nd_msgentry_install(nd_handle  handle, nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid,int level, const char *name) ;
 
 /* install message script-function */
@@ -106,7 +106,7 @@ ND_NET_API int nd_msgentry_script_install(nd_handle handle, const char*script, n
 ND_NET_API int nd_message_set_script_engine(nd_handle handle, void *script_engine, nd_msg_script_entry entry);
 
 
-/* è®¾ç½®é»˜è®¤æ¶ˆæ¯å¤„ç†å‡½æ•°*/
+/* ÉèÖÃÄ¬ÈÏÏûÏ¢´¦Àíº¯Êı*/
 ND_NET_API int nd_msgentry_def_handler(nd_handle handle, nd_usermsg_func func)  ;
 
 ND_NET_API nd_usermsg_func nd_msgentry_get_func(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid) ;
@@ -116,7 +116,7 @@ ND_NET_API NDUINT32 nd_msgentry_get_id(nd_handle handle, const char *msgname);
 
 ND_NET_API nd_handle nd_get_msg_hadle(nd_handle handle) ;
 
-/* æ­£å¸¸å‘é€æ¶ˆæ¯ */
+/* Õı³£·¢ËÍÏûÏ¢ */
 static __INLINE__ int nd_connectmsg_send(nd_handle  connector_handle, nd_usermsgbuf_t *msg ) 
 {
 	nd_assert(connector_handle) ;
@@ -125,7 +125,7 @@ static __INLINE__ int nd_connectmsg_send(nd_handle  connector_handle, nd_usermsg
 	return nd_connector_send(connector_handle, (nd_packhdr_t *)msg, ESF_NORMAL) ;
 }
 
-/*æŠ•é€’æ¶ˆæ¯,ä¸å¯é çš„å‘é€,æ¶ˆæ¯å¯èƒ½ä¼šä¸¢å¤±*/
+/*Í¶µİÏûÏ¢,²»¿É¿¿µÄ·¢ËÍ,ÏûÏ¢¿ÉÄÜ»á¶ªÊ§*/
 static __INLINE__ int nd_connectmsg_post(nd_handle  connector_handle, nd_usermsgbuf_t *msg ) 
 {
 	nd_assert(connector_handle) ;
@@ -134,7 +134,7 @@ static __INLINE__ int nd_connectmsg_post(nd_handle  connector_handle, nd_usermsg
 	return nd_connector_send(connector_handle, (nd_packhdr_t *)msg, ESF_POST) ;
 }
 
-/* å‘é€ç´§æ€¥æ•°æ® */
+/* ·¢ËÍ½ô¼±Êı¾İ */
 static __INLINE__ int nd_connectmsg_send_urgen(nd_handle  connector_handle, nd_usermsgbuf_t *msg ) 
 {
 	nd_assert(connector_handle) ;
@@ -143,7 +143,7 @@ static __INLINE__ int nd_connectmsg_send_urgen(nd_handle  connector_handle, nd_u
 	return nd_connector_send(connector_handle, (nd_packhdr_t *)msg,  ESF_URGENCY) ;
 }
 
-/* å‘é€æ‰©å±•å‡½æ•°*/
+/* ·¢ËÍÀ©Õ¹º¯Êı*/
 static __INLINE__ int nd_connectmsg_sendex(nd_handle  connector_handle, nd_usermsgbuf_t *msg , int flag) 
 {
 	nd_assert(connector_handle) ;
@@ -153,29 +153,29 @@ static __INLINE__ int nd_connectmsg_sendex(nd_handle  connector_handle, nd_userm
 }
 
 /*
- * æŠŠç½‘ç»œæ¥å£è¿‡æ¥çš„æ¶ˆæ¯ä¼ é€’ç»™ç”¨æˆ·å®šä¹‰çš„æ¶ˆæ¯,
- * ä¸€èˆ¬æ˜¯ç½‘ç»œè§£æå±‚è°ƒç”¨
- * @connect_handle è¿›å…¥çš„æ¶ˆæ¯å¥æŸ„
- * @msg æ¶ˆæ¯å†…å®¹
- * @callback_param ç”¨æˆ·è¾“å…¥å‚æ•°
+ * °ÑÍøÂç½Ó¿Ú¹ıÀ´µÄÏûÏ¢´«µİ¸øÓÃ»§¶¨ÒåµÄÏûÏ¢,
+ * Ò»°ãÊÇÍøÂç½âÎö²ãµ÷ÓÃ
+ * @connect_handle ½øÈëµÄÏûÏ¢¾ä±ú
+ * @msg ÏûÏ¢ÄÚÈİ
+ * @callback_param ÓÃ»§ÊäÈë²ÎÊı
  */
 ND_NET_API int nd_translate_message(nd_handle  connector_handle, nd_packhdr_t *msg,nd_handle listen_handle ) ;
 
 
 /* 
- * æœåŠ¡å™¨ç«¯æ¶ˆæ¯ä¼ é€’å‡½æ•°
- * æŠŠç½‘ç»œæ¥å£è¿‡æ¥çš„æ¶ˆæ¯ä¼ é€’ç»™ç”¨æˆ·å®šä¹‰çš„æ¶ˆæ¯,
- * ä¸€èˆ¬æ˜¯ç½‘ç»œè§£æå±‚è°ƒç”¨
+ * ·şÎñÆ÷¶ËÏûÏ¢´«µİº¯Êı
+ * °ÑÍøÂç½Ó¿Ú¹ıÀ´µÄÏûÏ¢´«µİ¸øÓÃ»§¶¨ÒåµÄÏûÏ¢,
+ * Ò»°ãÊÇÍøÂç½âÎö²ãµ÷ÓÃ
  */
 ND_NET_API int nd_srv_translate_message(nd_handle  connector_handle, nd_packhdr_t *msg,nd_handle listen_handle ) ;
 
-//ä½¿ç”¨sessionid æ¨¡å¼
+//Ê¹ÓÃsessionid Ä£Ê½
 //ND_NET_API int nd_srv_translate_message1(NDUINT16 session_id, nd_packhdr_t *msg , nd_handle listen_handle,int session_privilege) ;
 
-//æƒé™ç­‰çº§
+//È¨ÏŞµÈ¼¶
 ND_NET_API NDUINT32 nd_connect_level_get(nd_handle  connector_handle) ;
 
-//æƒé™ç­‰çº§
+//È¨ÏŞµÈ¼¶
 ND_NET_API void nd_connect_level_set(nd_handle  connector_handle,NDUINT32 level);
 
 #endif

@@ -14,7 +14,7 @@ int udt_send_fin(nd_udt_node *socket_node);
 nd_udt_node *alloc_listen_socket(nd_udtsrv *root);
 int pump_insrv_udt_data(nd_udtsrv *root,struct ndudt_pocket *pocket, int len,SOCKADDR_IN *addr);
 
-//æ›´æ–°æ¯ä¸€ä¸ªèŠ‚ç‚¹
+//¸üÐÂÃ¿Ò»¸ö½Úµã
 // return -1 ,closed , source already release
 static int update_udt_session(nd_udt_node *node)
 {	
@@ -81,7 +81,7 @@ void update_all_socket(nd_udtsrv *root)
 }
 
 
-//udtæ•°æ®å¤„ç†å‡½æ•°,listen ç«¯ç”¨çš„
+//udtÊý¾Ý´¦Àíº¯Êý,listen ¶ËÓÃµÄ
 int udt_data_handler(SOCKADDR_IN *addr, struct ndudt_pocket*pocket, size_t read_len, nd_udtsrv *root) 
 {
 	NDUINT16 calc_cs,checksum;
@@ -110,7 +110,7 @@ int udt_data_handler(SOCKADDR_IN *addr, struct ndudt_pocket*pocket, size_t read_
 }
 
 
-//å¤„ç†è¿›å…¥æœåŠ¡å™¨çš„æ¶ˆæ¯
+//´¦Àí½øÈë·þÎñÆ÷µÄÏûÏ¢
 int pump_insrv_udt_data(nd_udtsrv *root,struct ndudt_pocket *pocket, int len,SOCKADDR_IN *addr)
 {
 	ENTER_FUNC()
@@ -205,7 +205,7 @@ nd_udt_node *alloc_listen_socket(nd_udtsrv *root)
 }
 
 
-//é‡Šæ”¾acceptç«¯ä¸€ä¸ªå·²ç»å…³é—­çš„è¿žæŽ¥
+//ÊÍ·Åaccept¶ËÒ»¸öÒÑ¾­¹Ø±ÕµÄÁ¬½Ó
 void release_dead_node(nd_udt_node *socket_node,int needcallback)
 {
 	nd_udtsrv *root =(nd_udtsrv *) socket_node->srv_root ;

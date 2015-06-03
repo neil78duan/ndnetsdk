@@ -273,7 +273,7 @@ int _ndc_fflush(NDC_FILE *pf, int is_end)
 	if (!pf->iswrite){
 		return 0 ;
 	}
-	//ç¼“å†²ä¸­æœ‰æ•°æ®,è¡¥é½ç¼“å†²
+	//»º³åÖÐÓÐÊý¾Ý,²¹Æë»º³å
 	buf_datalen = pf->size_inbuf - pf->page_pos ; 
 	if (buf_datalen ==0){
 		pf->page_pos = 0 ;

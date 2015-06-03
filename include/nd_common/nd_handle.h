@@ -15,15 +15,15 @@
 #include "nd_bintree.h"
 
 /*
- * å¦‚æœéœ€è¦å®ç°è‡ªå·±çš„handleç±»å‹,è¯·åœ¨åŒ…å«å½“å‰æ–‡ä»¶å‰ å®šä¹‰ ND_IMPLEMENT_HANDLE
- * ä¸ºäº†é¿å…è‡ªå®šä¹‰ç±»å‹å’Œå½“å‰æ–‡ä»¶ä¸­çš„ç±»å‹å†²çª
+ * Èç¹ûĞèÒªÊµÏÖ×Ô¼ºµÄhandleÀàĞÍ,ÇëÔÚ°üº¬µ±Ç°ÎÄ¼şÇ° ¶¨Òå ND_IMPLEMENT_HANDLE
+ * ÎªÁË±ÜÃâ×Ô¶¨ÒåÀàĞÍºÍµ±Ç°ÎÄ¼şÖĞµÄÀàĞÍ³åÍ»
  */
 
-typedef int(*nd_close_callback)(void* handle, int flag) ;			//å¯¹è±¡å…³é—­å‡½æ•°
-typedef void (*nd_init_func)(void*)  ;								//å¯¹è±¡åˆå§‹åŒ–å‡½æ•°
+typedef int(*nd_close_callback)(void* handle, int flag) ;			//¶ÔÏó¹Ø±Õº¯Êı
+typedef void (*nd_init_func)(void*)  ;								//¶ÔÏó³õÊ¼»¯º¯Êı
 typedef const char* (*nd_error_convert)(int errcode)  ;
 
-//å¯¹è±¡å…³é—­æ–¹å¼
+//¶ÔÏó¹Ø±Õ·½Ê½
 enum eObjectClose{
 	COMMON_CLOSE,
 	FORCE_CLOSE
@@ -57,45 +57,45 @@ struct tag_nd_handle
 {
 	ND_OBJ_BASE ;
 	/*
-	unsigned int size ;						//å¥æŸ„çš„å¤§å°
-	unsigned int type  ;					//å¥æŸ„ç±»å‹	
+	unsigned int size ;						//¾ä±úµÄ´óĞ¡
+	unsigned int type  ;					//¾ä±úÀàĞÍ	
 	NDUINT32	myerrno;
-	nd_close_callback close_entry ;			//å¥æŸ„é‡Šæ”¾å‡½æ•°
+	nd_close_callback close_entry ;			//¾ä±úÊÍ·Åº¯Êı
 	*/
 } ;
 
 #ifndef ND_IMPLEMENT_HANDLE
-	/* å®šä¹‰ä¸€ä¸ªé€šç”¨çš„å¥æŸ„ç±»å‹*/
+	/* ¶¨ÒåÒ»¸öÍ¨ÓÃµÄ¾ä±úÀàĞÍ*/
 	typedef struct tag_nd_handle *nd_handle ;
 #else 
 #endif
 
-/* åˆ›å»ºä¸€ä¸ªå¯¹è±¡å®ä¾‹,åœ¨nd_create_object() å‡½æ•°ä¹‹å‰æ³¨å†Œä¸€ä¸ªåå­—å«nameçš„å¯¹è±¡ç±»å‹,å°±å¯ä»¥ç”¨createå‡½æ•°åˆ›å»º
- * è¿”å›å¯¹è±¡çš„å¥æŸ„
- * nd_object_create() ä½¿ç”¨mallocå‡½æ•°ç”³è¯·äº†ä¸€å—å†…å­˜,ä½†æ˜¯å¹¶æ²¡æœ‰åœ¨
+/* ´´½¨Ò»¸ö¶ÔÏóÊµÀı,ÔÚnd_create_object() º¯ÊıÖ®Ç°×¢²áÒ»¸öÃû×Ö½ĞnameµÄ¶ÔÏóÀàĞÍ,¾Í¿ÉÒÔÓÃcreateº¯Êı´´½¨
+ * ·µ»Ø¶ÔÏóµÄ¾ä±ú
+ * nd_object_create() Ê¹ÓÃmallocº¯ÊıÉêÇëÁËÒ»¿éÄÚ´æ,µ«ÊÇ²¢Ã»ÓĞÔÚ
  */
 ND_COMMON_API nd_handle _object_create(const char *name) ;
 
 /* 
- * é”€æ¯ä¸€ä¸ªå¥æŸ„, å¦‚æœæ˜¯ç”¨nd_object_create å‡½æ•°åˆ›å»ºçš„å¯¹è±¡,åˆ™ä¸éœ€è¦è‡ªå·±é‡Šæ”¾å†…å­˜
- * å¦åˆ™éœ€è¦æ‰‹åŠ¨é‡Šæ”¾å†…å­˜
- * force = 0 æ­£å¸¸é‡Šæ”¾,ç­‰ç­‰æ‰€å ç”¨çš„èµ„æºé‡Šæ”¾åè¿”å›
- * force = 1å¼ºåˆ¶é‡Šæ”¾,ä¸ç­‰å¾… ref eObjectClose
+ * Ïú»ÙÒ»¸ö¾ä±ú, Èç¹ûÊÇÓÃnd_object_create º¯Êı´´½¨µÄ¶ÔÏó,Ôò²»ĞèÒª×Ô¼ºÊÍ·ÅÄÚ´æ
+ * ·ñÔòĞèÒªÊÖ¶¯ÊÍ·ÅÄÚ´æ
+ * force = 0 Õı³£ÊÍ·Å,µÈµÈËùÕ¼ÓÃµÄ×ÊÔ´ÊÍ·Åºó·µ»Ø
+ * force = 1Ç¿ÖÆÊÍ·Å,²»µÈ´ı ref eObjectClose
  */
 ND_COMMON_API int _object_destroy(nd_handle handle, int force) ;
 
 #define OBJECT_NAME_SIZE		40
-/*å¥æŸ„æ³¨å†Œä¿¡æ¯*/
+/*¾ä±ú×¢²áĞÅÏ¢*/
 struct nd_handle_reginfo
 {
-	unsigned int object_size ;		//å¥æŸ„å¯¹è±¡çš„å¤§å°
-	nd_close_callback close_entry ;	//å…³é—­å‡½æ•°
-	nd_init_func	init_entry ;	//åˆå§‹åŒ–å‡½æ•°
-	char name[OBJECT_NAME_SIZE] ;	//å¯¹è±¡åå­—
+	unsigned int object_size ;		//¾ä±ú¶ÔÏóµÄ´óĞ¡
+	nd_close_callback close_entry ;	//¹Ø±Õº¯Êı
+	nd_init_func	init_entry ;	//³õÊ¼»¯º¯Êı
+	char name[OBJECT_NAME_SIZE] ;	//¶ÔÏóÃû×Ö
 };
 
-/* æ³¨å†Œä¸€ä¸ªå¯¹è±¡ç±»å‹,ç±»ä¼¼äºwindowsçª—å£ç±»å‹çš„æ³¨å†Œ
- * æ³¨å†Œå®Œæˆä¹‹åå°±å¯ä»¥ä½¿ç”¨åˆ›å»ºå‡½æ•°åˆ›å»ºä¸€ä¸ªå¯¹äºçš„å®ä¾‹
+/* ×¢²áÒ»¸ö¶ÔÏóÀàĞÍ,ÀàËÆÓÚwindows´°¿ÚÀàĞÍµÄ×¢²á
+ * ×¢²áÍê³ÉÖ®ºó¾Í¿ÉÒÔÊ¹ÓÃ´´½¨º¯Êı´´½¨Ò»¸ö¶ÔÓÚµÄÊµÀı
  */
 ND_COMMON_API int nd_object_register(struct nd_handle_reginfo *reginfo) ;
 
@@ -164,10 +164,10 @@ static __INLINE__ void nd_object_seterror(nd_handle h, NDUINT32 errcode)
 }
 
 ND_COMMON_API const char *nd_object_errordesc(nd_handle h) ;
-ND_COMMON_API int nd_object_check_error(nd_handle h) ;//æ£€æµ‹å¥æŸ„æ˜¯å¦å‡ºé”™æ— æ•ˆ
+ND_COMMON_API int nd_object_check_error(nd_handle h) ;//¼ì²â¾ä±úÊÇ·ñ³ö´íÎŞĞ§
 ND_COMMON_API int nd_tryto_clear_err(nd_handle h) ;
 
-//ç™»è®°ä¸€ä¸ªåˆ›å»ºå¥½çš„å¥æŸ„
+//µÇ¼ÇÒ»¸ö´´½¨ºÃµÄ¾ä±ú
 ND_COMMON_API int nd_reg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_unreg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_handle_checkvalid(nd_handle hobj, NDUINT16 objtype);

@@ -47,7 +47,7 @@ int _socket_send(struct nd_tcp_node *node,void *data , size_t len)
 	return ret ;
 };
 
-//å‘é€ä¸€ä¸ªå®Œæ•´çš„æ¶ˆæ¯
+//·¢ËÍÒ»¸öÍêÕûµÄÏûÏ¢
 int socket_send_one_msg(struct nd_tcp_node *node,void *data , size_t len)
 {
 	ENTER_FUNC()
@@ -171,7 +171,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int fl
 	nd_assert(node) ;
 	nd_assert(msg_buf) ;
 	nd_assert(datalen<ndlbuf_capacity(&node->send_buffer)) ;
-	//packet_hton(msg_buf) ;//æŠŠç½‘ç»œæ¶ˆæ¯çš„ä¸»æœºæ ¼å¼å˜æˆç½‘ç»œæ ¼å¼
+	//packet_hton(msg_buf) ;//°ÑÍøÂçÏûÏ¢µÄÖ÷»ú¸ñÊ½±ä³ÉÍøÂç¸ñÊ½
 	
 	if(ndlbuf_datalen(&(node->send_buffer))>0) {
 		size_t space_len = ndlbuf_free_capacity(&(node->send_buffer)) ;
@@ -183,7 +183,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int fl
 				LEAVE_FUNC();
 				return 0 ;
 			}
-			if(-1 == _tcpnode_push_sendbuf(node,1) ){ //æ¸…ç©ºç¼“å†²
+			if(-1 == _tcpnode_push_sendbuf(node,1) ){ //Çå¿Õ»º³å
 				LEAVE_FUNC();
 				if (NDERR_WUOLD_BLOCK==node->myerrno ){
 					return 0 ;
@@ -194,7 +194,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int fl
 		}
 	}
 	else if(datalen>ALONE_SEND_SIZE) {
-		//æ•°æ®éœ€è¦å•ç‹¬å‘é€,ä¸é€‚ç”¨ç¼“å†²too long
+		//Êı¾İĞèÒªµ¥¶À·¢ËÍ,²»ÊÊÓÃ»º³åtoo long
 		ret = node->sock_write((nd_handle)node,msg_buf,datalen) ;
 		if(-1==ret ) {
 			if(node->sys_error!=ESOCKETTIMEOUT){
@@ -202,7 +202,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int fl
 				return -1 ;
 			}
 			else {
-				//æ•°æ®ä¸èƒ½å‘é€,å°è¯•å†™å…¥ç¼“å†²
+				//Êı¾İ²»ÄÜ·¢ËÍ,³¢ÊÔĞ´Èë»º³å
 				if (flag & ESF_POST){
 					LEAVE_FUNC();
 					return 0 ;
@@ -248,7 +248,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int fl
 	LEAVE_FUNC();
 	return ret ;
 }
-//ä¿®æ”¹äº†å‘é€æ–¹å¼,å¦‚æœæ˜¯session å‘é€å¤±è´¥å°†å…³é—­è¿æ¥
+//ĞŞ¸ÄÁË·¢ËÍ·½Ê½,Èç¹ûÊÇsession ·¢ËÍÊ§°Ü½«¹Ø±ÕÁ¬½Ó
 int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 {
 	if (node->is_session){
@@ -284,9 +284,9 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 	nd_assert(msg_buf) ;
 	nd_assert(datalen<ndlbuf_capacity(&node->send_buffer)) ;
 
-	//packet_hton(msg_buf) ;//æŠŠç½‘ç»œæ¶ˆæ¯çš„ä¸»æœºæ ¼å¼å˜æˆç½‘ç»œæ ¼å¼
+	//packet_hton(msg_buf) ;//°ÑÍøÂçÏûÏ¢µÄÖ÷»ú¸ñÊ½±ä³ÉÍøÂç¸ñÊ½
 	
-	if((ESF_WRITEBUF+ESF_POST)&flag ) {	//å†™å…¥å‘é€ç¼“å†²
+	if((ESF_WRITEBUF+ESF_POST)&flag ) {	//Ğ´Èë·¢ËÍ»º³å
 		size_t space_len = ndlbuf_free_capacity(&(node->send_buffer)) ;
 		if(space_len<datalen) {
 			if(ESF_POST&flag) {
@@ -305,7 +305,7 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 		return ret ;
 		
 	}
-	else if(ESF_URGENCY&flag) { //ç´§æ€¥å‘é€
+	else if(ESF_URGENCY&flag) { //½ô¼±·¢ËÍ
 		if(-1 == nd_tcpnode_flush_sendbuf_force(node) ){
 			LEAVE_FUNC();
 			return -1 ;
@@ -314,19 +314,19 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 		LEAVE_FUNC();
 		return ret ;
 	}
-	else {			//æ­£å¸¸å‘é€
+	else {			//Õı³£·¢ËÍ
 		/*
-		 * è¿™é‡Œä¼šå¯¹å‘é€è¿›è¡Œä¼˜åŒ–,å¦‚æœæ•°æ®å°‘åˆ™æ”¾åˆ°ç¼“å†²ä¸­,å¦‚æœç¼“å†²ä¸­æ•°æ®å¤š,åˆ™ä¸€èµ·å‘é€å‡ºèµ·
-		 * éœ€è¦å¯¹ç¼“å†²ä¸Šé™è¿›è¡Œé™åˆ¶,è¾¾åˆ°ä¸€å®šç¨‹åº¦å¼ºåˆ¶å‘é€å‡ºå»!
-		 * å‘é€è¿‡ç¨‹:
-			1. å¦‚æœæœ‰æ•°æ®åœ¨ç¼“å†²,å¹¶ä¸”æ•°æ®èƒ½å¤Ÿæ”¾å…¥ç¼“åˆ™åªæ˜¯å†™å…¥ç¼“å†²,
-				å†™å…¥ç¼“å†²ä»¥åå°è¯•å‘é€(ä¸»è¦æ˜¯ä¸ºäº†å‡å°‘WRITEæ¬¡æ•°,å¹¶ä¸”ä¿è¯ç¼“å†²åŒºæ•°æ®åœ¨å‰
-			2. ç¼“å†²æ²¡æœ‰æ•°æ®,è‹¥è¾¾åˆ°å‘é€ä¸‹é™åˆ™ç›´æ¥å‘é€,å¦åˆ™å†™å…¥ç¼“å†²
-			3. ç¼“å†²æœ‰æ•°æ®,æ•°æ®å¿…é¡»æŒ‰å…ˆåé¡ºåºå‘é€
+		 * ÕâÀï»á¶Ô·¢ËÍ½øĞĞÓÅ»¯,Èç¹ûÊı¾İÉÙÔò·Åµ½»º³åÖĞ,Èç¹û»º³åÖĞÊı¾İ¶à,ÔòÒ»Æğ·¢ËÍ³öÆğ
+		 * ĞèÒª¶Ô»º³åÉÏÏŞ½øĞĞÏŞÖÆ,´ïµ½Ò»¶¨³Ì¶ÈÇ¿ÖÆ·¢ËÍ³öÈ¥!
+		 * ·¢ËÍ¹ı³Ì:
+			1. Èç¹ûÓĞÊı¾İÔÚ»º³å,²¢ÇÒÊı¾İÄÜ¹»·ÅÈë»ºÔòÖ»ÊÇĞ´Èë»º³å,
+				Ğ´Èë»º³åÒÔºó³¢ÊÔ·¢ËÍ(Ö÷ÒªÊÇÎªÁË¼õÉÙWRITE´ÎÊı,²¢ÇÒ±£Ö¤»º³åÇøÊı¾İÔÚÇ°
+			2. »º³åÃ»ÓĞÊı¾İ,Èô´ïµ½·¢ËÍÏÂÏŞÔòÖ±½Ó·¢ËÍ,·ñÔòĞ´Èë»º³å
+			3. »º³åÓĞÊı¾İ,Êı¾İ±ØĞë°´ÏÈºóË³Ğò·¢ËÍ
 		 */
 		
 		if(ndlbuf_datalen(&(node->send_buffer))>0) {
-			//å¤„ç†ç¼“å†²æ•°æ®
+			//´¦Àí»º³åÊı¾İ
 			size_t space_len = ndlbuf_free_capacity(&(node->send_buffer)) ;
 			if(space_len >= datalen) {
 				ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
@@ -336,7 +336,7 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 				return datalen ;
 			}
 			else {
-				if(-1 == nd_tcpnode_flush_sendbuf_force(node) ){ //æ¸…ç©ºç¼“å†²
+				if(-1 == nd_tcpnode_flush_sendbuf_force(node) ){ //Çå¿Õ»º³å
 					LEAVE_FUNC();
 					return -1 ;
 				}
@@ -344,7 +344,7 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 		}
 		//now send buffer is empty
 		if(datalen>ALONE_SEND_SIZE) {
-			//æ•°æ®éœ€è¦å•ç‹¬å‘é€,ä¸é€‚ç”¨ç¼“å†²too long
+			//Êı¾İĞèÒªµ¥¶À·¢ËÍ,²»ÊÊÓÃ»º³åtoo long
 			nd_assert(ndlbuf_datalen(&(node->send_buffer))==0) ;
 			ret = node->sock_write((nd_handle)node,msg_buf,datalen) ;
 			if(-1==ret ) {
@@ -353,7 +353,7 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 					return -1 ;
 				}
 				else {
-					//æ•°æ®ä¸èƒ½å‘é€,å°è¯•å†™å…¥ç¼“å†²
+					//Êı¾İ²»ÄÜ·¢ËÍ,³¢ÊÔĞ´Èë»º³å
 					ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
 
 					LEAVE_FUNC();
@@ -374,7 +374,7 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 			}
 		}
 		else {
-			//æ•°æ®å¤ªå°‘å†™å…¥ç¼“å†²
+			//Êı¾İÌ«ÉÙĞ´Èë»º³å
 			ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
 			LEAVE_FUNC();
 			return ret ;
@@ -433,9 +433,9 @@ int nd_tcpnode_read(struct nd_tcp_node *node)
 	}
 }
 
-/*ç­‰å¾…ä¸€ä¸ªç½‘ç»œæ¶ˆæ¯æ¶ˆæ¯
-*å¦‚æœæœ‰ç½‘ç»œæ¶ˆæ¯åˆ°äº†åˆ™è¿”å›æ¶ˆæ¯çš„é•¿åº¦
-*è¶…æ—¶,å‡ºé”™è¿”å›-1,need to be close,check error code
+/*µÈ´ıÒ»¸öÍøÂçÏûÏ¢ÏûÏ¢
+*Èç¹ûÓĞÍøÂçÏûÏ¢µ½ÁËÔò·µ»ØÏûÏ¢µÄ³¤¶È
+*³¬Ê±,³ö´í·µ»Ø-1,need to be close,check error code
 * RETURN 0 time out, NOT read data 
 */
 int tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout)
@@ -748,7 +748,7 @@ int _set_socket_addribute(ndsocket_t sock_fd)
 	int keeplive = 1 ;
 	int value ;
 	
-	/* è®¾ç½®æ¥æ”¶å’Œå‘é€çš„ç¼“å†²BUF*/
+	/* ÉèÖÃ½ÓÊÕºÍ·¢ËÍµÄ»º³åBUF*/
 	output_len= sizeof(sock_bufsize) ;
 	ret = getsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF,(void*)&sock_bufsize,(socklen_t*)&output_len) ;
 	
@@ -760,7 +760,7 @@ int _set_socket_addribute(ndsocket_t sock_fd)
 		setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (void*)&new_bufsize, sizeof(new_bufsize)) ;
 	
 //#ifdef __LINUX__	
-	/*è®¾ç½®æ¥æ”¶å’Œå‘é€çš„è¶…æ—¶*/
+	/*ÉèÖÃ½ÓÊÕºÍ·¢ËÍµÄ³¬Ê±*/
 	timeout.tv_sec = 1 ;			// one second 
 	timeout.tv_usec = 0 ;		
 	
@@ -768,13 +768,13 @@ int _set_socket_addribute(ndsocket_t sock_fd)
 	setsockopt(sock_fd, SOL_SOCKET, SO_SNDTIMEO, (void*)&timeout,sizeof(timeout)) ;
 
 	
-	/*è®¾ç½®ä¿æŒæ´»åŠ¨é€‰é¡¹*/
+	/*ÉèÖÃ±£³Ö»î¶¯Ñ¡Ïî*/
 	ret = setsockopt(sock_fd, SOL_SOCKET, SO_KEEPALIVE, (void*)&keeplive,sizeof(keeplive)) ;
 	//if(ret )
 	//	PERROR("setsockopt") ;		//only for test
 	
 //#endif 
-	/* è®¾ç½®æ¥æ”¶ä¸‹é™*/
+	/* ÉèÖÃ½ÓÊÕÏÂÏŞ*/
 	value = ND_PACKET_HDR_SIZE ;
 	setsockopt(sock_fd, SOL_SOCKET, SO_RCVLOWAT, (void*)&value,sizeof(value)) ;
 	

@@ -41,7 +41,7 @@ public:
 	
 	int CloseAllConnects() ;
 	void InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level=EPL_CONNECT, const char *msgname=NULL);
-	virtual int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);			//è¿æ¥è¿›å…¥å›è°ƒå‡½æ•°
+	virtual int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);			//Á¬½Ó½øÈë»Øµ÷º¯Êı
 	
 	NDSession *ConstructSession(void *addr);
 	void DestructSession(NDSession *psession);
@@ -65,21 +65,21 @@ public:
 	int GetClientsInThreads(ndthread_t *threadid_buf, int *count_buf, int size) ;
 
 	NDSession *htoSession(nd_handle h_session) ;
-	void SetEmptyConnTimeout(int seconds) ;		//è®¾ç½®ç©ºè¿æ¥è¶…æ—¶æ—¶é—´
+	void SetEmptyConnTimeout(int seconds) ;		//ÉèÖÃ¿ÕÁ¬½Ó³¬Ê±Ê±¼ä
 	NDListener(nd_fectory_base *sf=NULL ) ;	
 	//void SetFectory(nd_ifectory *sf) ;
 	virtual ~NDListener() ;
 	NDListener &operator = (nd_handle)  ;
 	void SetAccept(int bClose=0) ;
 	
-	size_t m_total_send ;		//æ€»å‘é€é•¿åº¦
-	size_t m_total_recv;		//æ€»æ¥æ”¶é•¿åº¦
-	ndtime_t m_total_online ;	//æ€»åœ¨çº¿æ—¶é—´
-	int m_max_onlines ;			//æœ€å¤§åœ¨çº¿äººæ•°
+	size_t m_total_send ;		//×Ü·¢ËÍ³¤¶È
+	size_t m_total_recv;		//×Ü½ÓÊÕ³¤¶È
+	ndtime_t m_total_online ;	//×ÜÔÚÏßÊ±¼ä
+	int m_max_onlines ;			//×î´óÔÚÏßÈËÊı
 	NDInstanceBase *m_inst ;
 protected :	
-	int m_msg_kinds ;			//ä¸»æ¶ˆæ¯æ•°é‡
-	int m_msg_base ;			//ä¸»æ¶ˆæ¯èµ·å§‹å·
+	int m_msg_kinds ;			//Ö÷ÏûÏ¢ÊıÁ¿
+	int m_msg_base ;			//Ö÷ÏûÏ¢ÆğÊ¼ºÅ
 	nd_fectory_base *session_fectory ;
 	NDObjectMgrBase m_session_mgr ;
 } ;
@@ -90,7 +90,7 @@ public:
 	NDSafeListener(nd_fectory_base *sf=NULL ) ;	
 	void Destroy(int flag) ;
 protected:
-	int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);			//è¿æ¥è¿›å…¥å›è°ƒå‡½æ•°
+	int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);			//Á¬½Ó½øÈë»Øµ÷º¯Êı
 };
 NDListener *NDGetListener(nd_handle h_listen) ;
 NDSession *NDGetSession(nd_handle session, NDListener * Listener= NULL) ;

@@ -3,7 +3,7 @@
 //  iosDemo
 //
 //  Created by duanxiuyun on 14-8-24.
-//  Copyright (c) 2014å¹´ duanxiuyun. All rights reserved.
+//  Copyright (c) 2014Äê duanxiuyun. All rights reserved.
 //
 
 #ifndef __iosDemo__netmsgHandler__

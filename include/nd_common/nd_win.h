@@ -87,7 +87,7 @@ ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
 // compatible for unix
 #define snprintf _snprintf
-#define bzero(pstr,size) 	memset((pstr),0,(size))		//å®šä¹‰bzero å…¼å®¹gcc bzero
+#define bzero(pstr,size) 	memset((pstr),0,(size))		//¶¨Òåbzero ¼æÈİgcc bzero
 
 //define assert
 //only for x86
@@ -118,7 +118,7 @@ __INLINE__ void ND_ASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
    ND_FAILED(sz);
 }
 // Put up a message box if an assertion fails in a debug build.
-//å®šä¹‰NDASSERT()ä»£æ›¿assert()
+//¶¨ÒåNDASSERT()´úÌæassert()
 
 #ifdef _DEBUG
 #define nd_assert(x) if (!(x)) ND_ASSERTFAIL(__FILE__, __LINE__, #x)
@@ -133,29 +133,29 @@ __INLINE__ void ND_ASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
 #define NDSEM_TIMEOUT		WAIT_TIMEOUT
 
 //single operate
-typedef HANDLE 				ndsem_t ;		//ä¿¡å·å˜é‡
+typedef HANDLE 				ndsem_t ;		//ĞÅºÅ±äÁ¿
 static __INLINE__ int _init_event(HANDLE *h)
 {
 	*h = CreateEvent(NULL,FALSE,FALSE,NULL) ;
 	return (*h) ? 0 : -1 ;
 }
-#define nd_sem_wait(s,t)	WaitForSingleObject(s,t)			//ç­‰å¾…ä¿¡å·
-#define nd_sem_post(s)		SetEvent(s)							//å‘é€ä¿¡å·
+#define nd_sem_wait(s,t)	WaitForSingleObject(s,t)			//µÈ´ıĞÅºÅ
+#define nd_sem_post(s)		SetEvent(s)							//·¢ËÍĞÅºÅ
 #define nd_sem_init(s)		_init_event(&(s))  //(s)=CreateEvent(NULL,FALSE,FALSE,NULL)	//initilize semahpore resource
 #define nd_sem_destroy(s)   CloseHandle(s) 						//destroy semahpore resource
 
-#define nd_sleep(ms)	Sleep(ms) 			//ç¡çœ 1/1000 second
+#define nd_sleep(ms)	Sleep(ms) 			//Ë¯Ãß1/1000 second
 
 //thread operate
-#define nd_thread_self()	GetCurrentThreadId()				//å¾—åˆ°ç°æˆè‡ªå·±çš„id
-#define nd_processid()		GetCurrentProcessId()				//å¾—åˆ°è¿›ç¨‹ID
+#define nd_thread_self()	GetCurrentThreadId()				//µÃµ½ÏÖ³É×Ô¼ºµÄid
+#define nd_processid()		GetCurrentProcessId()				//µÃµ½½ø³ÌID
 
 ND_COMMON_API  DWORD _ErrBox(char *file, int line) ;
 //last error 
 #define nd_last_errno() GetLastError() 
-ND_COMMON_API const char *nd_last_error() ;		//å¾—åˆ°ç³»ç»Ÿçš„æœ€åä¸€ä¸ªé”™è¯¯æè¿°(ä¸æ˜¯nd_commonæ¨¡å—çš„)
-ND_COMMON_API const char *nd_str_error(int errcode) ; //æŠŠç³»ç»Ÿé”™è¯¯å·è½¬å˜æˆæè¿°
-#define nd_showerror()	_ErrBox(__FILE__,__LINE__)		//å¼¹å‡ºé”™è¯¯æè¿°çš„å¯¹è¯æ¡†
+ND_COMMON_API const char *nd_last_error() ;		//µÃµ½ÏµÍ³µÄ×îºóÒ»¸ö´íÎóÃèÊö(²»ÊÇnd_commonÄ£¿éµÄ)
+ND_COMMON_API const char *nd_str_error(int errcode) ; //°ÑÏµÍ³´íÎóºÅ×ª±ä³ÉÃèÊö
+#define nd_showerror()	_ErrBox(__FILE__,__LINE__)		//µ¯³ö´íÎóÃèÊöµÄ¶Ô»°¿ò
 
 #ifndef __FUNC__
 #ifndef  __FUNCTION__ 
@@ -165,10 +165,10 @@ ND_COMMON_API const char *nd_str_error(int errcode) ; //æŠŠç³»ç»Ÿé”™è¯¯å·è½¬å˜
 #endif 
 #endif
 
-// å®šä¹‰messagebox
+// ¶¨Òåmessagebox
 #define nd_msgbox(msg,title) MessageBoxA(GetActiveWindow(), msg, title, MB_OK)
 
-//å®šä¹‰TRACK
+//¶¨ÒåTRACK
 #ifdef ND_OPEN_TRACE
 ND_COMMON_API int MyDbgReport(const char *file, int line, const char *stm, ...);
 #define NDTRACF(msg,...)  MyDbgReport(__FILE__, __LINE__,msg,__VA_ARGS__) 

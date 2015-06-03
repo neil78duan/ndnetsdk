@@ -98,9 +98,9 @@ void entryMutex(NDMutex *m)
 			nd_sem_wait(m->hSig , ND_INFINITE);
 			//WaitForSingleObject(m->hSig , INFINITE);
 			//yes I can get 
-			//å…¶å®žè¿™é‡Œè¿˜éœ€è¦é‡æ–°æµ‹è¯•æ¡ä»¶,
-			//ä¸è¿‡æ‰€æœ‰æ–°æ¥çš„ç«žäº‰è€…å¦‚æžœæ²¡æœ‰å¾—åˆ°èµ„æº,éƒ½éœ€è¦é€šè¿‡WaitForSingleObject
-			//æ‰€ä»¥,ä¸éœ€è¦é‡æ–°æµ‹è¯•æ¡ä»¶ä¹Ÿå¯ä»¥
+			//ÆäÊµÕâÀï»¹ÐèÒªÖØÐÂ²âÊÔÌõ¼þ,
+			//²»¹ýËùÓÐÐÂÀ´µÄ¾ºÕùÕßÈç¹ûÃ»ÓÐµÃµ½×ÊÔ´,¶¼ÐèÒªÍ¨¹ýWaitForSingleObject
+			//ËùÒÔ,²»ÐèÒªÖØÐÂ²âÊÔÌõ¼þÒ²¿ÉÒÔ
 			m->ownerID = selfID ;
 			m->used = 1 ;
 		}
@@ -149,8 +149,8 @@ int waitCondVar(NDCondVar *v , NDMutex *m)
 	//hr = WaitForSingleObject(v->hSig , INFINITE) ;	
 	hr = (0==hr)? 0:-1 ;
 	
-	//å½“broadcastçš„æ—¶å€™,è¿™é‡Œå¯èƒ½ä¼šå‡ºçŽ°å¤šä¸ªæ¶ˆè´¹è€…ç«žäº‰
-	//ä¸æ˜¯ä¸€ä¸ªå¾ˆå¥½çš„è§£å†³åŠžæ³•
+	//µ±broadcastµÄÊ±ºò,ÕâÀï¿ÉÄÜ»á³öÏÖ¶à¸öÏû·ÑÕß¾ºÕù
+	//²»ÊÇÒ»¸öºÜºÃµÄ½â¾ö°ì·¨
 	entryMutex(m) ;
 	return (int)hr ;
 }
@@ -201,8 +201,8 @@ int broadcastCondVar(NDCondVar *v)
 	return 0 ;
 	*/
 	/*NOTE!!!
-	 *è¿™ä¸ªå®žçŽ°å¹¶ä¸å¥½,å¯èƒ½ä¼šæœ‰é—®é¢˜
-	 *ä½†çŽ°åœ¨æˆ‘è¿˜æ²¡æœ‰åˆ«çš„å¥½åŠžæ³•
+	 *Õâ¸öÊµÏÖ²¢²»ºÃ,¿ÉÄÜ»áÓÐÎÊÌâ
+	 *µ«ÏÖÔÚÎÒ»¹Ã»ÓÐ±ðµÄºÃ°ì·¨
 	 */
 	register int oldval = nd_atomic_read(&v->lockCount) ;
 	//oldval =(int) InterlockedCompareExchange((LPVOID*)(&v->lockCount),(LPVOID)oldval,(LPVOID)oldval)  ;

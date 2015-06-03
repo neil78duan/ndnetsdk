@@ -35,8 +35,8 @@ int listen_netmsg_entry(nd_cli_handle nethandle,NETMSG_T msgid, NDUINT32 param,N
 	nd_msgui_buf msg_buf ;
 //	if(s1!=msg->msg_hdr.param)
 //		nd_assert(0);
-	//windowså¹³å°åªæœ‰åœ¨è¿™é‡ŒåŠ äº†æ‰“å°æ‰èƒ½æ­£ç¡®å‘é€æ•°æ®,éš¾é“æ˜¯å¤šçº¿ç¨‹åˆ‡æ¢éœ€è¦ä½¿ç”¨printf
-	//ä¹Ÿè¡Œéœ€è¦æä¾›listençº¿ç¨‹çš„ä¼˜å…ˆçº§
+	//windowsÆ½Ì¨Ö»ÓÐÔÚÕâÀï¼ÓÁË´òÓ¡²ÅÄÜÕýÈ··¢ËÍÊý¾Ý,ÄÑµÀÊÇ¶àÏß³ÌÇÐ»»ÐèÒªÊ¹ÓÃprintf
+	//Ò²ÐÐÐèÒªÌá¹©listenÏß³ÌµÄÓÅÏÈ¼¶
 	ndprintf(_NDT("%d [send %d]received len=%d\n"),s1,param, data_len);
 //	ndprintf(_NDT("%d received message %d total recv=%d\n"),s1,NDNET_MSGID(msg), cli_map->connect_node.recv_len);
 	

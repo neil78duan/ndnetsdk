@@ -5,7 +5,7 @@
  * all right reserved by neil duan 2007
  */
 
-/*åˆ›å»º net listen çš„æœåŠ¡(çº¿ç¨‹)
+/*´´½¨ net listen µÄ·şÎñ(Ïß³Ì)
  */
 #ifndef _ND_LISTENSRV_H_
 #define _ND_LISTENSRV_H_
@@ -17,16 +17,16 @@
 
 #define CONNECTION_TIMEOUT		60		//time out between twice read/write (second)
 #define LISTEN_INTERVAL			30		//update 30hz
-#define PRE_THREAD_CREATED		4		//å¦‚æœä½¿ç”¨TCPæ¨¡å¼,é¢„å…ˆåˆ›å»ºçš„çº¿ç¨‹æ•°
-#define SESSION_PER_THREAD		512		//æ± ä¸­æ¯ä¸ªçº¿ç¨‹é»˜è®¤è¿æ¥æ•°
+#define PRE_THREAD_CREATED		4		//Èç¹ûÊ¹ÓÃTCPÄ£Ê½,Ô¤ÏÈ´´½¨µÄÏß³ÌÊı
+#define SESSION_PER_THREAD		512		//³ØÖĞÃ¿¸öÏß³ÌÄ¬ÈÏÁ¬½ÓÊı
 #define CONNECTORS_IN_LISTEN	64
 
-//#define SURPORT_SINGLE_THREAD_MOD			//æ”¯æŒå•çº¿ç¨‹æ¨¡å¼
+//#define SURPORT_SINGLE_THREAD_MOD			//Ö§³Öµ¥Ïß³ÌÄ£Ê½
 
 enum ND_LISTEN_MOD{
 	ND_LISTEN_COMMON = 0 ,
 	ND_LISTEN_OS_EXT,
-	ND_LISTEN_UDT_STREAM			//ä½¿ç”¨UDTæœåŠ¡STREAM
+	ND_LISTEN_UDT_STREAM			//Ê¹ÓÃUDT·şÎñSTREAM
 };
 
 #define _IS_UDT_MOD(iomod) ((iomod)==ND_LISTEN_UDT_STREAM )
@@ -68,14 +68,14 @@ struct listen_contex
 	typedef nd_handle	nd_listen_handle ;
 #endif
 
-/*æ‰“å¼€ç½‘ç»œ,å¹¶ä¸”å¯åŠ¨ç›‘å¬çº¿ç¨‹*/
+/*´ò¿ªÍøÂç,²¢ÇÒÆô¶¯¼àÌıÏß³Ì*/
 ND_SRV_API int nd_listensrv_open(int port, nd_listen_handle handle,ndip_t bindip,int thread_num) ;
-/*å…³é—­ç½‘ç»œå…³é—­ç›‘å¬çº¿ç¨‹*/
+/*¹Ø±ÕÍøÂç¹Ø±Õ¼àÌıÏß³Ì*/
 ND_SRV_API int nd_listensrv_close(nd_listen_handle handle, int force) ;
 ND_SRV_API int nd_listensrv_checkvalid(nd_listen_handle handle) ;
-/*è®¾ç½®å¯¹åº”è¿æ¥çš„ç›¸å…³å±æ€§å¹¶åˆ†é…å†…å­˜*/
+/*ÉèÖÃ¶ÔÓ¦Á¬½ÓµÄÏà¹ØÊôĞÔ²¢·ÖÅäÄÚ´æ*/
 ND_SRV_API int nd_listensrv_session_info(nd_listen_handle handle, int max_client,size_t session_size) ;
-/*è®¾ç½®è¿æ¥è¿›å…¥å’Œé€€å‡ºçš„å›è°ƒå‡½æ•°*/
+/*ÉèÖÃÁ¬½Ó½øÈëºÍÍË³öµÄ»Øµ÷º¯Êı*/
 ND_SRV_API void nd_listensrv_set_entry(nd_listen_handle handle, accept_callback income,  deaccept_callback outcome) ;
 
 ND_SRV_API nd_handle nd_listensrv_get_cmallocator(nd_listen_handle handle) ;
@@ -83,10 +83,10 @@ ND_SRV_API nd_handle nd_listensrv_get_cmallocator(nd_listen_handle handle) ;
 //add another port to listen list 
 ND_SRV_API int nd_listensrv_add_port(nd_listen_handle handle , int port, ndip_t bindip ) ;
 
-//å¾—åˆ°è¿æ¥ç®¡ç†å™¨
+//µÃµ½Á¬½Ó¹ÜÀíÆ÷
 ND_SRV_API struct cm_manager *nd_listensrv_get_cmmamager(nd_listen_handle handle) ;
 
-//å¾—åˆ°ç›‘å¬å™¨å®¹é‡
+//µÃµ½¼àÌıÆ÷ÈİÁ¿
 static __INLINE__ int nd_listensrv_capacity(nd_listen_handle handle) 
 {
 	return  nd_srv_capacity((struct nd_srv_node *)handle) ; 
@@ -101,16 +101,16 @@ static __INLINE__ void nd_listensrv_set_accept(nd_listen_handle handle, int bClo
 
 ND_SRV_API int nd_listensrv_freenum(nd_listen_handle handle) ;
 
-//åœ¨ç›‘å¬å™¨ä¸Šå»ºç«‹å®šæ—¶å™¨
-//åªæœ‰åœ¨å•çº¿ç¨‹æ¨¡å¼çš„æ—¶å€™æ‰æœ‰å¿…è¦åœ¨ç›‘å¬å™¨ä¸Šåˆ›å»ºå®šæ—¶
-//è¿™æ ·å¯ä»¥ä¿è¯å®šæ—¶å™¨å’Œæ¶ˆæ¯å¤„ç†éƒ½åœ¨ä¸€ä¸ªçº¿ç¨‹ä¸Šæ‰§è¡Œ
-//å¦‚æœæ˜¯å¤šçº¿ç¨‹æ¨¡å¼å¯ä»¥å»ºç«‹å•ç‹¬çš„çº¿ç¨‹æ¥æ‰§è¡Œå®šæ—¶å™¨å‡½æ•°è¿™æ ·æ—¶é—´ä¼šæ›´ç²¾ç¡®ä¸€äº›
+//ÔÚ¼àÌıÆ÷ÉÏ½¨Á¢¶¨Ê±Æ÷
+//Ö»ÓĞÔÚµ¥Ïß³ÌÄ£Ê½µÄÊ±ºò²ÅÓĞ±ØÒªÔÚ¼àÌıÆ÷ÉÏ´´½¨¶¨Ê±
+//ÕâÑù¿ÉÒÔ±£Ö¤¶¨Ê±Æ÷ºÍÏûÏ¢´¦Àí¶¼ÔÚÒ»¸öÏß³ÌÉÏÖ´ĞĞ
+//Èç¹ûÊÇ¶àÏß³ÌÄ£Ê½¿ÉÒÔ½¨Á¢µ¥¶ÀµÄÏß³ÌÀ´Ö´ĞĞ¶¨Ê±Æ÷º¯ÊıÕâÑùÊ±¼ä»á¸ü¾«È·Ò»Ğ©
 ND_SRV_API ndtimer_t nd_listensrv_timer(nd_listen_handle h_listen,nd_timer_entry func,void *param,ndtime_t interval, int run_type ) ;
 ND_SRV_API void nd_listensrv_del_timer(nd_listen_handle h_listen, ndtimer_t timer_id ) ;
 
-/* é‡Šæ”¾å·²ç»è¢«å…³é—­,ä½†æ˜¯è¿˜åœ¨ä½¿ç”¨çš„ç»˜è¯*/
+/* ÊÍ·ÅÒÑ¾­±»¹Ø±Õ,µ«ÊÇ»¹ÔÚÊ¹ÓÃµÄ»æ»°*/
 //void release_dead_cm(struct listen_contex * lc) ;
-//å¾—åˆ°listen file description
+//µÃµ½listen file description
 static __INLINE__ ndsocket_t get_listen_fd(struct listen_contex * handle)
 {
 	return handle->tcp.fd;
@@ -140,23 +140,23 @@ static __INLINE__ void nd_listensrv_set_empty_conntimeout(nd_listen_handle h, in
 }
 
 
-//ä¸ºlistenå¥æŸ„handle åˆ›å»ºä¸€ä¸ªç®¡ç†è¿æ¥sessionçš„çº¿ç¨‹
+//Îªlisten¾ä±úhandle ´´½¨Ò»¸ö¹ÜÀíÁ¬½ÓsessionµÄÏß³Ì
 ND_SRV_API nd_thsrvid_t nd_listensrv_thread_alloc(nd_listen_handle h);
 ND_SRV_API int nd_listensrv_thread_free(nd_listen_handle h,nd_thsrvid_t thid);
-//è®¾ç½®æ¯ä¸ªçº¿ç¨‹æœ€å¤šç®¡ç†çš„è¿æ¥æ•°,é»˜è®¤ä¸º1024ä¸ª,åœ¨nd_listensrv_openä¹‹å‰ä½¿ç”¨
+//ÉèÖÃÃ¿¸öÏß³Ì×î¶à¹ÜÀíµÄÁ¬½ÓÊı,Ä¬ÈÏÎª1024¸ö,ÔÚnd_listensrv_openÖ®Ç°Ê¹ÓÃ
 ND_SRV_API int nd_thpool_set_sessions(nd_listen_handle h,int num_per_session);
 ND_SRV_API int nd_thpool_get_sessions(nd_listen_handle h);
 
-//æŠŠä¸€ä¸ªè¿æ¥å™¨æ·»åŠ ä¸­ç›‘å¬å™¨ä¸­,è®©ç›‘å¬å™¨æ¥å¤„ç†ç½‘ç»œäº‹ä»¶
+//°ÑÒ»¸öÁ¬½ÓÆ÷Ìí¼ÓÖĞ¼àÌıÆ÷ÖĞ,ÈÃ¼àÌıÆ÷À´´¦ÀíÍøÂçÊÂ¼ş
 ND_SRV_API NDUINT16 nd_listensrv_attach(nd_listen_handle h_listen, nd_handle h_connector, nd_thsrvid_t thid) ;
 ND_SRV_API int nd_listensrv_deattach(nd_listen_handle h_listen, nd_handle h_connector,nd_thsrvid_t thid) ;
 ND_SRV_API nd_thsrvid_t nd_listensrv_getowner(nd_listen_handle h_listen, nd_handle session) ;
-typedef int (*connector_close_entry)(nd_handle net_handle,int flag) ;		//connector attachåˆ°listenerä¸Šæ—¶connectorå…³é—­åçš„å›è°ƒå‡½æ•°
+typedef int (*connector_close_entry)(nd_handle net_handle,int flag) ;		//connector attachµ½listenerÉÏÊ±connector¹Ø±ÕºóµÄ»Øµ÷º¯Êı
 ND_SRV_API int nd_listensrv_set_connector_close(nd_listen_handle h_listen,connector_close_entry ce) ;
 ND_SRV_API int nd_close_all_session(nd_listen_handle listen_info) ;
 
 ND_SRV_API int nd_listensrv_set_update(nd_listen_handle h_listen,listen_thread_update pre_entry, listen_thread_update end_entry) ;
-//æ›´æ–°attachåˆ°listen_handleä¸Šçš„è¿æ¥
+//¸üĞÂattachµ½listen_handleÉÏµÄÁ¬½Ó
 int update_connector_hub(nd_listen_handle listen_info) ;
 int update_connectors(struct node_root *pmanger) ;
 

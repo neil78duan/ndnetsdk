@@ -507,7 +507,7 @@ protected:
 		} while (alloc_num < max_size());
 
 		if (_start_ptr == 0 ){
-			//åˆå§‹åŒ–
+			//³õÊ¼»¯
 			_start_ptr = _Construct(alloc_num) ;
 			for(size_type i =0; i<_Count; i++) {
 				_Allocator.construct(_start_ptr+i,_Val) ;
@@ -517,7 +517,7 @@ protected:
 			return ;
 		}
 		else if (!need_realloc){
-			//å‰©ä½™ç©ºé—´å¤Ÿç”¨
+			//Ê£Óà¿Õ¼ä¹»ÓÃ
 			size_type distance = end() - _Where;
 			size_type insert_pos = _Where - begin() ;
 			for(size_type i=0; i<distance; ++i) {
@@ -577,7 +577,7 @@ protected:
 		} while (alloc_num < max_size());
 
 		if (_start_ptr == 0 ){
-			//åˆå§‹åŒ–
+			//³õÊ¼»¯
 			_start_ptr = _Construct(alloc_num) ;
 			for(int i =0; i<_Count; i++) {
 				_Allocator.construct(&_start_ptr[_cur_num++], *(_First + (int)i) );
@@ -586,7 +586,7 @@ protected:
 			return ;
 		}
 		else if (!need_realloc){
-			//å‰©ä½™ç©ºé—´å¤Ÿç”¨
+			//Ê£Óà¿Õ¼ä¹»ÓÃ
 			size_type distance = end() - _Where;
 			size_type insert_pos = _Where - begin() ;
 			//iterator pos = _Where + distance;

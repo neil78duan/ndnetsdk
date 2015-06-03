@@ -33,20 +33,20 @@ struct nd_netsocket
 
 typedef void *nd_userdata_t ;
 
-//å‘é€æ•°æ®å‡½æ•°
+//·¢ËÍÊı¾İº¯Êı
 typedef int (*socket_write_entry)(nd_handle node,void *data , size_t len) ; 
 
 typedef int (*socket_read_entry)(nd_handle node,void *data , size_t size, ndtime_t tmout) ; 
 
-//å°åŒ…å‘é€å‡½æ•°
+//·â°ü·¢ËÍº¯Êı
 typedef int (*packet_write_entry)(nd_handle net_handle, nd_packhdr_t *msg_buf, int flag) ;	//define extend send function
 
-/*ç½‘ç»œåŸå§‹æ•°æ®æ¥æ”¶å¤„ç†
- * @nodeè¿æ¥èŠ‚ç‚¹
- * @data éœ€è¦å¤„ç†çš„æ•°æ®
- * @len æ•°æ®é•¿åº¦
- * @listen_h nodeæ‰€å±çš„ç›‘å¬å™¨
- * return value : è¿”å›å®é™…è¢«å¤„ç†çš„æ•°æ®é•¿åº¦,è¢«å¤„ç†çš„æ•°æ®å°†è¢«åˆ é™¤, -1å‡ºé”™,è¿æ¥è¢«å…³é—­
+/*ÍøÂçÔ­Ê¼Êı¾İ½ÓÊÕ´¦Àí
+ * @nodeÁ¬½Ó½Úµã
+ * @data ĞèÒª´¦ÀíµÄÊı¾İ
+ * @len Êı¾İ³¤¶È
+ * @listen_h nodeËùÊôµÄ¼àÌıÆ÷
+ * return value : ·µ»ØÊµ¼Ê±»´¦ÀíµÄÊı¾İ³¤¶È,±»´¦ÀíµÄÊı¾İ½«±»É¾³ı, -1³ö´í,Á¬½Ó±»¹Ø±Õ
  */
 typedef int (*data_in_entry)(nd_handle node,void *data , size_t len,nd_handle listen_h) ;
 
@@ -92,10 +92,10 @@ typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 	nd_netbuf_t 		recv_buffer, send_buffer
 
 #define ND_NETBUF_SIZE	0x10000
-#define ND_ALIVE_TIMEOUT 30000		//å‘é€aliveåŒ…æ—¶é—´é—´éš”
-#define ND_DFT_DISSCONN_TIMEOUT	(30*60*1000)	//é»˜è®¤è§„å®šæ—¶é—´å†…ä¹ˆæœ‰æ”¶åˆ°å¯¹æ–¹çš„åŒ…å°±æ–­å¼€è¿æ¥
+#define ND_ALIVE_TIMEOUT 30000		//·¢ËÍalive°üÊ±¼ä¼ä¸ô
+#define ND_DFT_DISSCONN_TIMEOUT	(30*60*1000)	//Ä¬ÈÏ¹æ¶¨Ê±¼äÄÚÃ´ÓĞÊÕµ½¶Ô·½µÄ°ü¾Í¶Ï¿ªÁ¬½Ó
 
-//å®šä¹‰ç½‘ç»œç¼“å†²
+//¶¨ÒåÍøÂç»º³å
 /*typedef struct nd_netbuf 
 {	
 	unsigned int buf_capacity ;
@@ -106,7 +106,7 @@ typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 typedef struct nd_linebuf nd_netbuf_t ;
 
 
-/*ç½‘ç»œè¿æ¥æˆ–ç»˜è¯å¥æŸ„,æˆå‘˜å†…å®¹åªè¯»*/
+/*ÍøÂçÁ¬½Ó»ò»æ»°¾ä±ú,³ÉÔ±ÄÚÈİÖ»¶Á*/
 typedef struct netui_info
 {
 	ND_OBJ_BASE ;
@@ -142,44 +142,44 @@ int net_init_sendlock(nd_netui_handle socket_node);
 void net_release_sendlock(nd_netui_handle  socket_node);
 size_t nd_net_getpack_size(nd_handle  handle, void *data) ;
 
-//è®¾ç½®æ¯ä¸ªç½‘ç»œå°åŒ…é•¿åº¦æœ€å°å€¼,å¦‚æœå°äºè¿™ä¸ªå€¼,è®¤ä¸ºæ¥æ”¶ç½‘ç»œæ•°æ®é”™è¯¯
+//ÉèÖÃÃ¿¸öÍøÂç·â°ü³¤¶È×îĞ¡Öµ,Èç¹ûĞ¡ÓÚÕâ¸öÖµ,ÈÏÎª½ÓÊÕÍøÂçÊı¾İ´íÎó
 ND_NET_API int nd_net_set_packet_minsize(int minsize) ;
 
 /*
- * è®¾ç½®ç½‘ç»œæ¥å£ç›¸å…³å‚æ•°
- * @cmd å‘½ä»¤å‚è€ƒND_IOCTRL_CMD 
- * @val å˜é‡å€¼ è¾“å…¥/è¾“å‡º
- * @val å˜é‡é•¿åº¦ è¾“å…¥/è¾“å‡º
+ * ÉèÖÃÍøÂç½Ó¿ÚÏà¹Ø²ÎÊı
+ * @cmd ÃüÁî²Î¿¼ND_IOCTRL_CMD 
+ * @val ±äÁ¿Öµ ÊäÈë/Êä³ö
+ * @val ±äÁ¿³¤¶È ÊäÈë/Êä³ö
 */
 ND_NET_API int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size) ;
 
-/*  å¦‚æœæˆåŠŸç­‰å¾…ä¸€ä¸ªç½‘ç»œæ¶ˆæ¯,
-* é‚£ä¹ˆç°åœ¨å¯ä»¥ä½¿ç”¨nd_net_get_msgå‡½æ•°ä»æ¶ˆæ¯ç¼“å†²ä¸­æå–ä¸€ä¸ªæ¶ˆæ¯
+/*  Èç¹û³É¹¦µÈ´ıÒ»¸öÍøÂçÏûÏ¢,
+* ÄÇÃ´ÏÖÔÚ¿ÉÒÔÊ¹ÓÃnd_net_get_msgº¯Êı´ÓÏûÏ¢»º³åÖĞÌáÈ¡Ò»¸öÏûÏ¢
 */
 ND_NET_API nd_packhdr_t* nd_net_get_msg(nd_netui_handle node) ;
 
-/*åˆ é™¤å·²ç»å¤„ç†è¿‡çš„æ¶ˆæ¯*/
+/*É¾³ıÒÑ¾­´¦Àí¹ıµÄÏûÏ¢*/
 ND_NET_API void nd_net_del_msg(nd_netui_handle node, nd_packhdr_t *msgaddr) ;
 
 
-/*ä»udt-streamçš„ç¼“å†²ä¸­æå–ä¸€ä¸ªå®Œæ•´çš„udtæ¶ˆæ¯
- *æ­¤å‡½æ•°ç”¨åœ¨ç­‰å¾…æ¶ˆæ¯çš„æ¨¡å—ä¸­
- *åœ¨ç­‰å¾…æ¶ˆæ¯ä¹‹å‰æå–ä¸€æ¬¡,é˜²æ­¢ä¸Šæ¬¡çš„é—æ¼,
- *ç­‰å¾…ç½‘ç»œæ•°æ®åˆ°äº†ä»¥ååœ¨æå–ä¸€æ¬¡
+/*´Óudt-streamµÄ»º³åÖĞÌáÈ¡Ò»¸öÍêÕûµÄudtÏûÏ¢
+ *´Ëº¯ÊıÓÃÔÚµÈ´ıÏûÏ¢µÄÄ£¿éÖĞ
+ *ÔÚµÈ´ıÏûÏ¢Ö®Ç°ÌáÈ¡Ò»´Î,·ÀÖ¹ÉÏ´ÎµÄÒÅÂ©,
+ *µÈ´ıÍøÂçÊı¾İµ½ÁËÒÔºóÔÚÌáÈ¡Ò»´Î
  */
 ND_NET_API int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf) ;
 
-/*ä»udt-streamçš„ç¼“å†²ä¸­æå–ä¸€ä¸ªå®Œæ•´çš„udtæ¶ˆæ¯
-*æ­¤å‡½æ•°ç”¨åœ¨ç­‰å¾…æ¶ˆæ¯çš„æ¨¡å—ä¸­
-*åœ¨ç­‰å¾…æ¶ˆæ¯ä¹‹å‰æå–ä¸€æ¬¡,é˜²æ­¢ä¸Šæ¬¡çš„é—æ¼,
-*ç­‰å¾…ç½‘ç»œæ•°æ®åˆ°äº†ä»¥ååœ¨æå–ä¸€æ¬¡
+/*´Óudt-streamµÄ»º³åÖĞÌáÈ¡Ò»¸öÍêÕûµÄudtÏûÏ¢
+*´Ëº¯ÊıÓÃÔÚµÈ´ıÏûÏ¢µÄÄ£¿éÖĞ
+*ÔÚµÈ´ıÏûÏ¢Ö®Ç°ÌáÈ¡Ò»´Î,·ÀÖ¹ÉÏ´ÎµÄÒÅÂ©,
+*µÈ´ıÍøÂçÊı¾İµ½ÁËÒÔºóÔÚÌáÈ¡Ò»´Î
 */
 ND_NET_API int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf) ;
 
 ND_NET_API int nd_net_bind(int port, int listen_nums,nd_handle net_handle) ;
 
 ND_NET_API int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN *to) ;
-//ç»‘å®šåˆ°æŒ‡å®šçš„IP
+//°ó¶¨µ½Ö¸¶¨µÄIP
 ND_NET_API int nd_net_ipbind(nd_handle net_handle, ndip_t ip) ;
 ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
 
