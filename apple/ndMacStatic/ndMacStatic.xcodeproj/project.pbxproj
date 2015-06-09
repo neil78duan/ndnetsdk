@@ -10,6 +10,8 @@
 		071156BF1AD415BB003B3B46 /* session.c in Sources */ = {isa = PBXBuildFile; fileRef = 071156BE1AD415BB003B3B46 /* session.c */; };
 		072888A91B0083DF001A5760 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 072888A81B0083DF001A5760 /* libiconv.dylib */; };
 		0739F41E1A676B1C00520AE2 /* nd_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0739F41D1A676B1C00520AE2 /* nd_version.cpp */; };
+		0760D30D1B26CAE5005F076C /* httpParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0760D30C1B26CAE5005F076C /* httpParser.cpp */; };
+		0760D30F1B26CAF5005F076C /* httpParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 0760D30E1B26CAF5005F076C /* httpParser.h */; };
 		07631C7F1A539BEB00C82B5A /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */; };
 		07631C821A539E7500C82B5A /* nd_datatransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = 07631C811A539E7500C82B5A /* nd_datatransfer.h */; };
 		07647B501A3FDBBE00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B4F1A3FDBBE00A96620 /* nd_cmdline.c */; };
@@ -194,6 +196,8 @@
 		071156BE1AD415BB003B3B46 /* session.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = session.c; sourceTree = "<group>"; };
 		072888A81B0083DF001A5760 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		0739F41D1A676B1C00520AE2 /* nd_version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_version.cpp; sourceTree = "<group>"; };
+		0760D30C1B26CAE5005F076C /* httpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = httpParser.cpp; sourceTree = "<group>"; };
+		0760D30E1B26CAF5005F076C /* httpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = httpParser.h; sourceTree = "<group>"; };
 		07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_datatransfer.cpp; sourceTree = "<group>"; };
 		07631C811A539E7500C82B5A /* nd_datatransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_datatransfer.h; sourceTree = "<group>"; };
 		07647B4E1A3FD77C00A96620 /* nd_cmdline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_cmdline.h; sourceTree = "<group>"; };
@@ -609,6 +613,7 @@
 		07EBCF1019A8DFCD00802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				0760D30C1B26CAE5005F076C /* httpParser.cpp */,
 				07D47C5219D9695A00D08BB6 /* nd_alarms.cpp */,
 				07EBCF1119A8DFCD00802576 /* Makefile */,
 				07EBCF1219A8DFCD00802576 /* misc.cpp */,
@@ -746,6 +751,7 @@
 		07EBD01119A8E01500802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				0760D30E1B26CAF5005F076C /* httpParser.h */,
 				07631C811A539E7500C82B5A /* nd_datatransfer.h */,
 				07D47C5019D9694A00D08BB6 /* nd_alarms.h */,
 				07EBD01219A8E01500802576 /* applib.h */,
@@ -850,6 +856,7 @@
 				07EBD05819A8E01500802576 /* nd_netpack.h in Headers */,
 				07EBD06A19A8E01500802576 /* nd_cmmgr.h in Headers */,
 				07EBD03A19A8E01500802576 /* nd_static_alloc.h in Headers */,
+				0760D30F1B26CAF5005F076C /* httpParser.h in Headers */,
 				07EBD07819A8E01500802576 /* nd_rbtree.h in Headers */,
 				07EBD02D19A8E01500802576 /* nd_alloc.h in Headers */,
 				07EBD04D19A8E01500802576 /* rsa.h in Headers */,
@@ -1032,6 +1039,7 @@
 				07EBCF8E19A8DFCD00802576 /* udt_net.c in Sources */,
 				07EBCF9719A8DFCD00802576 /* srv_listen.c in Sources */,
 				07EBCF8719A8DFCD00802576 /* nd_netui.c in Sources */,
+				0760D30D1B26CAE5005F076C /* httpParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
