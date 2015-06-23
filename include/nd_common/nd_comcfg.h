@@ -47,7 +47,7 @@ enum source_code_type
 //#define ND_FILE_TRACE		1		//记录每个打开的文件
 #endif
 
-#define ND_OPEN_TRACE 		1		//打开VC调试窗口输出功能
+//#define ND_OPEN_TRACE 		1		//打开VC调试窗口输出功能
 #define ND_OPEN_LOG_COMMON 	1		//打开正常log输出
 #define ND_OPEN_LOG_DEBUG	1		//打开debug log输出
 #define ND_OPEN_LOG_WARN	1		//打开警告 log

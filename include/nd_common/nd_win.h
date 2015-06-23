@@ -24,6 +24,7 @@
 // #endif
 // #endif
 
+#ifndef _UNNEED_INCLUDE_WINDOWS_SYSTEM
 
 #if defined(_WINSOCK2API_) || defined(_WINSOCKAPI_)
 #else 
@@ -33,7 +34,7 @@
 #ifndef _WINDOWS_
 #include <windows.h>
 #endif
-
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -176,8 +177,8 @@ ND_COMMON_API int MyDbgReport(const char *file, int line, const char *stm, ...);
 
 #else 
 #define MyDbgReport 
-#define NDTRACF(msg) (void) 0
-#define NDTRAC(msg) (void) 0
+#define NDTRACF(msg,...) (void) 0
+#define NDTRAC(msg,...) (void) 0
 
 #endif	//_DEBUG
 

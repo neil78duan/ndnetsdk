@@ -27,7 +27,7 @@
 #define LITTLE_2_BIG(a)		(a)-0x20 
 
 /* 去掉字符串开头部分无用的字符（不可打印的字符）*/
-ND_COMMON_API char *ndstr_first_valid(const char *src) ;
+ND_COMMON_API const char *ndstr_first_valid(const char *src) ;
 
 /* 检测字符是否是有效的数字*/
 ND_COMMON_API int ndstr_is_numerals(const char *src);
@@ -35,11 +35,11 @@ ND_COMMON_API int ndstr_is_numerals(const char *src);
 //检测字符串是否自然数
 ND_COMMON_API int ndstr_is_naturalnumber(const char *src);
 
-ND_COMMON_API char *ndstr_read_numerals(const char *src, char *desc, int *isok) ;
+ND_COMMON_API const char *ndstr_read_numerals(const char *src, char *desc, int *isok) ;
 
 //分解一个单词,单词只能是数字,字母和下划线
-ND_COMMON_API char *ndstr_parse_word(const char *src, char *outstr);
-ND_COMMON_API char *ndstr_parse_word_n(const char *src, char *outstr, int n);
+ND_COMMON_API const char *ndstr_parse_word(const char *src, char *outstr);
+ND_COMMON_API const char *ndstr_parse_word_n(const char *src, char *outstr, int n);
 
 //Parse string to command line , return number of commands-lines
 ND_COMMON_API int ndstr_parse_command(const char *input_text, char *argv[], int bufize, int number);
@@ -47,25 +47,25 @@ ND_COMMON_API int ndstr_parse_command(const char *input_text, char *argv[], int 
 ND_COMMON_API int ndstr_get_ip(const char *src, ndip_t *ip);
 
 //分解可显示的字符床
-ND_COMMON_API char *ndstr_parse_string(const char *src, char *outstr);
+ND_COMMON_API const  char *ndstr_parse_string(const char *src, char *outstr);
 
 /*读取一个字符串，知道遇到一个制定的结束字符为止*/
-ND_COMMON_API char *ndstr_str_end(const char *src, char *outstr, const char end);
-ND_COMMON_API char *ndstr_nstr_end(const char *src, char *outstr, const char end, int n);
+ND_COMMON_API const char *ndstr_str_end(const char *src, char *outstr, const char end);
+ND_COMMON_API const char *ndstr_nstr_end(const char *src, char *outstr, const char end, int n);
 
 /* read text from src to outstr, until to end, only input ansi text*/
-ND_COMMON_API char *ndstr_str_ansi(const char *src, char *outstr, const char end);
-ND_COMMON_API char *ndstr_nstr_ansi(const char *src, char *outstr, const char end, int n);
+ND_COMMON_API const char *ndstr_str_ansi(const char *src, char *outstr, const char end);
+ND_COMMON_API const char *ndstr_nstr_ansi(const char *src, char *outstr, const char end, int n);
 
 /*不区分大小写,比较字符串*/
 ND_COMMON_API int ndstricmp(const char *src, const char *desc);
 
 //在src中查找desc 不区分大小写
-ND_COMMON_API char *ndstristr(const char *src, const char *desc);
+ND_COMMON_API const char *ndstristr(const char *src, const char *desc);
 
 //从src所指的方向向前查找字符ch,
 //如果找到end位置还没有找到则返回null
-ND_COMMON_API char *ndstr_reverse_chr(const char *src, char ch, const char *end);
+ND_COMMON_API const char *ndstr_reverse_chr(const char *src, char ch, const char *end);
 
 #ifdef _MSC_VER
 #define nd_atoi64 _atoi64

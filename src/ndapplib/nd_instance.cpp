@@ -717,7 +717,7 @@ MSG_ENTRY_INSTANCE(nd_get_message_name_handler)
 	if (-1==inmsg.Read(minID)) {
 		return 0 ;
 	}
-	const char *p = nd_msgentry_get_name(h_listen, maxID, minID) ;
+	const char *p = nd_msgentry_get_name(h_listen, (ndmsgid_t)maxID, (ndmsgid_t)minID);
 	
 	omsg.Write(maxID) ;
 	
@@ -798,7 +798,7 @@ MSG_ENTRY_INSTANCE(nd_set_netmsg_log)
     if (-1==inmsg.Read(isOpen)) {
         return 0 ;
     }
-    int ret = nd_message_set_log(h_listen, maxID, minID,(int) isOpen) ;
+	int ret = nd_message_set_log(h_listen, (ndmsgid_t)maxID, (ndmsgid_t)minID, (int)isOpen);
     if (-1==ret) {
         isOpen = 0xff ;
     }

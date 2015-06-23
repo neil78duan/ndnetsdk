@@ -146,7 +146,7 @@ int ndxml_load_ex(const char *file, ndxml_root *xmlroot, const char*encodeType)
 		if (encodeType && encodeType[0]) {
 			int nTextType = nd_get_encode_val(pTextEncode);
 			int nNeedType = nd_get_encode_val(encodeType);
-			char *pconvertbuf;
+			//char *pconvertbuf;
 			//const char *encodeTextType = 0;
 			typedef char*(*__convert_function)(const char *, char *, int);
 			__convert_function func = NULL;
@@ -224,8 +224,8 @@ int xml_set_code_type(ndxml_root *xmlroot)
 }
 int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, char **erraddr)
 {
-	char *p = start;
-	char *pEnd;
+	const char *p = start;
+	const char *pEnd;
 	
 	*endaddr = start;
 
@@ -248,8 +248,8 @@ int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, char **
 
 	pEnd = strstr(p, "?>");
 	if (!pEnd){
-		*endaddr = p;
-		*erraddr = p;
+		*endaddr =(char*) p;
+		*erraddr = (char*)p;
 		return -1;
 	}
 
@@ -260,7 +260,7 @@ int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, char **
 		char valbuf[1024];
 
 		p = ndstr_first_valid(p);
-		*endaddr = p;
+		*endaddr = (char*)p;
 		*erraddr = start;
 		
 		attr_name[0] = 0;
@@ -295,7 +295,7 @@ int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, char **
 void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf, size_t size)
 {
 	int line = 0 ;
-	char *pline, *pnext ;
+	const char *pline, *pnext ;
 	char errbuf[1024] ;
 
 	errbuf[0] = 0 ;
@@ -892,7 +892,7 @@ static char* parse_marked(char *xmlbuf, int size, char **error_addr)
 ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 {
 	ndxml *xmlnode =NULL ;
-	char *paddr ;//, *error_addr =NULL;
+	const char *paddr ;//, *error_addr =NULL;
 	char buf[1024] ;
 	
 	paddr = parse_marked(xmlbuf, size, error_addr)  ;

@@ -7,9 +7,10 @@
 #ifndef _NDMSGPACK_H_
 #define _NDMSGPACK_H_
 
+#ifndef BUILD_AS_THIRD_PARTY
 #include "nd_net/nd_netlib.h"
 #include "nd_common/nd_common.h"
-//#include "ndapplib/nd_object.h"
+#endif 
 
 class NDSendMsg 
 {

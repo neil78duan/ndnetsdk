@@ -9,17 +9,18 @@
 #ifndef _ND_ICONN_H_
 #define _ND_ICONN_H_
 
+
+#ifndef BUILD_AS_THIRD_PARTY
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
 
 #include "nd_common/nd_common.h"
 #include "nd_net/nd_netlib.h"
 #include "nd_crypt/nd_crypt.h"
 #include "ndapplib/nd_msgpacket.h"
-#include "ndcli/nd_api_c.h"
-
+//#include "ndcli/nd_api_c.h"
+#endif 
 
 class NDIConn ;
 typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
@@ -72,10 +73,10 @@ protected:
 	virtual~NDIConn() {}
 };
 
-ND_CONNCLI_API int InitNet() ;
-ND_CONNCLI_API void DeinitNet() ;
-ND_CONNCLI_API NDIConn* CreateConnectorObj(const char *protocol_name) ;
-ND_CONNCLI_API void DestroyConnectorObj(NDIConn *pconn) ;
-ND_CONNCLI_API NDIConn * htoConnector(nd_handle h);
+ND_COMMON_API int InitNet();
+ND_COMMON_API void DeinitNet();
+ND_COMMON_API NDIConn* CreateConnectorObj(const char *protocol_name);
+ND_COMMON_API void DestroyConnectorObj(NDIConn *pconn);
+ND_COMMON_API NDIConn * htoConnector(nd_handle h);
 
 #endif

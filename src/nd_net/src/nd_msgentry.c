@@ -174,7 +174,7 @@ nd_handle nd_get_msg_hadle(nd_netui_handle handle)
 
 int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func) 
 {
-	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
+	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
 
 	if(root_entry) {
 		root_entry->def_entry = func ;
@@ -185,7 +185,7 @@ int nd_msgentry_def_handler(nd_netui_handle handle, nd_usermsg_func func)
 
 static struct msg_entry_node *_nd_msgentry_get_node(nd_netui_handle handle, ndmsgid_t maxid, ndmsgid_t minid) 
 {
-	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
+	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
 
 	if(root_entry) {
 		ndmsgid_t main_index =(ndmsgid_t) (maxid - root_entry->msgid_base );

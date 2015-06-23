@@ -12,6 +12,6 @@
 #include <stdio.h>
 
 #include "nd_common/nd_common.h"
-CPPAPI char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf);
-CPPAPI char * nd_utf8_to_gbk(const char *input_text, char *output_buf, int size_buf);
+ND_COMMON_API char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf);
+ND_COMMON_API char * nd_utf8_to_gbk(const char *input_text, char *output_buf, int size_buf);
 #endif /* defined(__gameHall__nd_iconv__) */
