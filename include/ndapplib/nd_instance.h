@@ -62,7 +62,9 @@ public :
 	void SetExitCode(int exitcode = 0) {m_bNormalExit = exitcode ;}
 	void trytoDaemon() ;
 protected :
-    
+	
+	int connectServer(const char *name,NDConnector *inconnect);
+	connect_config *getConnectorInfo(const char *name) ;
 	int ReadConfig(const char *configname) ;		//read config from file
 	virtual NDListener*ConstructListener() ;
 	virtual void DestructListener() ;

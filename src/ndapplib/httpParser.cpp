@@ -337,7 +337,7 @@ int NDHttpRequest::_parseInit()
 	}
 	char *p = p_start ;
 	
-	p = ndstristr(p,(char*)"HTTP") ;
+	p = (char*) ndstristr(p,(char*)"HTTP") ;
 	
 	if (p) {
 		len = parser_fetch_data(p, buf, datasize -(int)( p - p_start)) ;
@@ -383,7 +383,7 @@ int NDHttpRequest::_parseHeader()
 		return  0 ;
 	}
 	
-	p = ndstr_nstr_end(p,buf,':', datasize -(int) (p-p_start) ) ;
+	p = (char*) ndstr_nstr_end(p,buf,':', datasize -(int) (p-p_start) ) ;
 	if(*p != ':') {
 		return  0 ;
 	}

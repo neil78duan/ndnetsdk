@@ -472,6 +472,40 @@ int NDInstanceBase::ReadConfig(const char *configname)
 
 }
 
+int NDInstanceBase::connectServer(const char *name,NDConnector *inconnect)
+{
+	connect_config *pcof = getConnectorInfo(name) ;
+	if (!pcof) {
+		return NULL;
+	}
+	
+	
+	if(0 !=inconnect->Open(pcof->host, pcof->port, pcof->protocol_name) ) {
+		return -1 ;
+	}
+	
+	
+	if (pcof->tmout> 0) {
+		inconnect->SetConnectTimeOut(pcof->tmout) ;
+	}
+	
+	return 0;
+	
+}
+
+connect_config *NDInstanceBase::getConnectorInfo(const char *name)
+{
+	for (int i=0; i<ND_CONNECT_OTHER_HOSTR_NUM; ++i) {
+		if (m_config.i_cfg.connectors[i].port == 0) {
+			continue ;
+		}
+		if (0==ndstricmp(m_config.i_cfg.connectors[i].connector_name, name)) {
+			return &m_config.i_cfg.connectors[i] ;
+		}
+	}
+	return NULL ;
+}
+
 NDInstanceBase *getbase_inst() 
 {
 	return g_base_inst ;

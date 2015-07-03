@@ -76,9 +76,10 @@ CPPAPI void nd_instance_exit(int flag);
 CPPAPI void nd_sys_exit(int exitcode) ;
 
 
-#if defined(_MSC_VER)
-#define error_exit(msg) _error_exit(__FILE__, __LINE__, ##msg)
+CPPAPI int send_error_ack(nd_handle hconnect, int errcode);
 
+#if defined(_MSC_VER)
+#define error_exit(msg,...) _error_exit(__FILE__, __LINE__ ,msg,__VA_ARGS__)
 #else 
 #define error_exit(fmt,arg...) _error_exit(__FILE__ , __LINE__ , fmt,##arg)
 #endif

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		072FCC721B2FB68B00F3B3A0 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 072FCC711B2FB68B00F3B3A0 /* libiconv.dylib */; };
 		07647B541A400D9B00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B531A400D9B00A96620 /* nd_cmdline.c */; };
 		0764C01E1A664CA3005C469D /* nd_datatransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0764C01D1A664CA3005C469D /* nd_datatransfer.h */; };
 		07A2669B19C7F4C700F51698 /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A2663C19C7F4C700F51698 /* list.h */; };
@@ -160,6 +161,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		072FCC6F1B2FB67C00F3B3A0 /* libndMacStatic.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libndMacStatic.a; path = "../../../../../../xCodeBuild/DerivedData/apollo-bcpuzaenpuzxysecfnbtuaxtrmov/Build/Products/Debug/libndMacStatic.a"; sourceTree = "<group>"; };
+		072FCC711B2FB68B00F3B3A0 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		07647B531A400D9B00A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nd_cmdline.c; path = src/nd_cmdline.c; sourceTree = "<group>"; };
 		0764C01D1A664CA3005C469D /* nd_datatransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_datatransfer.h; sourceTree = "<group>"; };
 		07A2663119C7F3E700F51698 /* libndclient_mac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndclient_mac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -319,6 +322,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				072FCC721B2FB68B00F3B3A0 /* libiconv.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +332,8 @@
 		07A2662819C7F3E700F51698 = {
 			isa = PBXGroup;
 			children = (
+				072FCC711B2FB68B00F3B3A0 /* libiconv.dylib */,
+				072FCC6F1B2FB67C00F3B3A0 /* libndMacStatic.a */,
 				07A2663919C7F48800F51698 /* netapi */,
 				07A2663819C7F47C00F51698 /* ndsdk */,
 				07A2663219C7F3E700F51698 /* Products */,
@@ -985,6 +991,10 @@
 					ND_DEBUG,
 					"$(inherited)",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/duan/xCodeBuild/DerivedData/apollo-bcpuzaenpuzxysecfnbtuaxtrmov/Build/Products/Debug",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = ../../include;
 			};
@@ -999,6 +1009,10 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__MAC_OS__,
 					ND_UNIX,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/duan/xCodeBuild/DerivedData/apollo-bcpuzaenpuzxysecfnbtuaxtrmov/Build/Products/Debug",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = ../../include;

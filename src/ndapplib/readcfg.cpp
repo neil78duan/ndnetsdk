@@ -100,6 +100,7 @@ int read_instance_info(ndxml *xmlroot, struct instance_config *icfg)
 	XML_READ_SUB_INT(xmlroot,"outputdump", icfg->open_dump) ;
 	XML_READ_SUB_INT(xmlroot,"single_thread", icfg->single_thread) ;
 	XML_READ_SUB_BUF(xmlroot,"data_dir", icfg->data_dir) ;
+	XML_READ_SUB_BUF(xmlroot,"domain_name", icfg->domain_name) ;
 
 	XML_READ_SUB_INT(xmlroot,"logfilesize", icfg->log_file_size) ;
 
@@ -196,5 +197,25 @@ int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg)
 		}
 		//get netmask
 	}
+	//read connectors
+	
+	xml_listen = ndxml_refsub(xml_sub,"connectors") ;
+	if (xml_listen){
+		for (int i=0; i< ND_CONNECT_OTHER_HOSTR_NUM && i<ndxml_num(xml_listen); i++) {
+			ndxml *pnode = ndxml_getnodei(xml_listen, i) ;
+			
+			if(0== read_connect_cfg(pnode,  base_port, &scfg->i_cfg.connectors[i]) ) {
+				const char *pname = ndxml_getattr_val(pnode, name) ;
+				if (pname && pname[0]) {
+					strncpy(scfg->i_cfg.connectors[i].connector_name, pname,sizeof(scfg->i_cfg.connectors[i].connector_name)) ;
+				}
+				else {
+					pname = ndxml_getname(pnode) ;
+					strncpy(scfg->i_cfg.connectors[i].connector_name, pname,sizeof(scfg->i_cfg.connectors[i].connector_name)) ;
+				}
+			}
+		}
+	}
+	
 	return 0 ;
 }

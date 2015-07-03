@@ -83,7 +83,7 @@ int run_cmd(char *linebuf, char **run_addr)
 {
 	int cmd ;
 	char buf[128] ;
-	char *addr = ndstr_first_valid(linebuf) ;
+	const char *addr = ndstr_first_valid(linebuf) ;
 	
 	if(!addr) {
 		return -1 ;
@@ -168,7 +168,7 @@ int run_cmd(char *linebuf, char **run_addr)
 		break ;
 	}
 	if (run_addr)
-		*run_addr = addr ;
+		*run_addr = (char*) addr ;
 	return 0 ;
 }
 
@@ -185,7 +185,7 @@ void run_monitor()
 		memset(buf, 0, sizeof(buf)) ;
 
 		if(fgets( buf, sizeof(buf), stdin ) ) {
-			p = ndstr_first_valid(buf) ;
+			p = (char*)ndstr_first_valid(buf) ;
 			if(!p) 
 				continue ;
 			ret = run_cmd(buf, NULL) ;

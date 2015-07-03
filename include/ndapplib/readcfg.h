@@ -10,6 +10,9 @@
 
 #define ND_HOST_NAME_SIZE 256 
 #define ND_FILE_PATH_SIZE 256
+#define ND_IP_TEXT_SIZE 20
+#define ND_CONNECT_OTHER_HOSTR_NUM 8
+#define ND_DOMAIN_SIZE 64
 struct listen_config
 {
 	int port ;
@@ -31,6 +34,7 @@ struct connect_config
 	char protocol_name[32] ;
 	char host[ND_HOST_NAME_SIZE];
 	struct nd_proxy_info proxy_info ;
+	char connector_name[32] ;
 };
 
 //实例配置信息
@@ -39,10 +43,13 @@ struct instance_config
 	int open_dump ;				//是否打开dump
 	int single_thread;			//是否使用单线程逻辑
 	NDUINT32 log_file_size ;
-	char inet_ip[ND_HOST_NAME_SIZE];
+	char inet_ip[ND_IP_TEXT_SIZE];
 	char callstack_file[256] ;
 	char log_file[256] ;
 	char data_dir[256] ;
+	char domain_name[ND_DOMAIN_SIZE];
+	
+	struct connect_config connectors[ND_CONNECT_OTHER_HOSTR_NUM] ;
 };
 
 #define MAX_RELIABLE_HOST 8

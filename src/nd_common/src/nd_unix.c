@@ -79,6 +79,7 @@ int mythread_cond_timewait(pthread_cond_t *cond,
 #endif
 void nd_init_daemon(void)
 {
+#if !defined(ND_ANDROID) && !defined(ND_IOS)
 	pid_t pid;
 	//int i;
 	pid = fork();
@@ -102,6 +103,7 @@ void nd_init_daemon(void)
 		nd_log_close_screen(1) ;
 		return ;
 	}
+#endif
 }
 
 #ifdef __MAC_OS__
@@ -436,6 +438,7 @@ int enable_core_dump(void)
 char* get_rlimit_info(char *buf, int buf_size) 
 {
 	char *p = buf ;
+#if defined(__LINUX__) || defined(__MAC_OS__)
 	GET_RLIMIT_INFO(RLIMIT_CORE, p, buf_size) ;
 	GET_RLIMIT_INFO(RLIMIT_CPU,  p, buf_size) ;
 	GET_RLIMIT_INFO(RLIMIT_DATA, p, buf_size) ;
@@ -445,6 +448,8 @@ char* get_rlimit_info(char *buf, int buf_size)
 	GET_RLIMIT_INFO(RLIMIT_NPROC,  p, buf_size) ;
 	GET_RLIMIT_INFO(RLIMIT_RSS,    p, buf_size) ;
 	GET_RLIMIT_INFO(RLIMIT_STACK,  p, buf_size) ;
+	
+#endif
 	
 	return buf;
 }
