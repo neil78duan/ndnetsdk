@@ -402,6 +402,7 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 			nd_object_seterror(connect_handle, NDERR_UNHANDLED_MSG) ; 
 			ret = srv_node->unreg_msg_close ? -1 : data_len ;
 		}
+		nd_logwarn("receive UNHANDLED message(%d , %d) \n", usermsg->maxid,  usermsg->minid) ;
 	}
 	else {		
 		if( nd_connect_level_get(connect_handle) < node->level ||  (node->sys_msg && !msg->ndsys_msg) ){			
@@ -409,6 +410,8 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 				nd_object_seterror(connect_handle, NDERR_NO_PRIVILAGE) ;
 				ret = srv_node->error_privilage_close ? -1 : data_len ;
 			}
+			
+			nd_logwarn("receive un-privilege message(%d , %d) \n", usermsg->maxid,  usermsg->minid) ;
 		}		
 		else {
 			ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, connect_handle, listen_handle);

@@ -205,7 +205,7 @@ int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg)
 			ndxml *pnode = ndxml_getnodei(xml_listen, i) ;
 			
 			if(0== read_connect_cfg(pnode,  base_port, &scfg->i_cfg.connectors[i]) ) {
-				const char *pname = ndxml_getattr_val(pnode, name) ;
+				const char *pname = ndxml_getattr_val(pnode, "name") ;
 				if (pname && pname[0]) {
 					strncpy(scfg->i_cfg.connectors[i].connector_name, pname,sizeof(scfg->i_cfg.connectors[i].connector_name)) ;
 				}
