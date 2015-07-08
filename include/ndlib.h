@@ -83,6 +83,4 @@ typedef struct nd_usermsgbuf_t
 #endif
 
 
-#include "netui_atl.h"
-
 #endif
