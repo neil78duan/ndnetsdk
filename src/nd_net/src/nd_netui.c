@@ -510,7 +510,7 @@ int nd_reconnectex(nd_netui_handle net_handle, const char *host, int port, struc
 		nd_object_seterror(net_handle,NDERR_SUCCESS);
 	}
 	LEAVE_FUNC();
-	return 0 ;
+	return ret ;
 
 // 	nd_assert(net_handle ) ;
 // 	nd_connector_reset(net_handle) ;
