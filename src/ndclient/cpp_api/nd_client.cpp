@@ -71,6 +71,7 @@ public :
 	int LastError() ;
 	void SetLastError(NDUINT32 errcode);
 	const char *ErrorDesc() ;
+	const char *ConvertErrorDesc(NDUINT32 errcode) ;
 
     void *GetUserData() { return __userData ;}
     void SetUserData(void *pData){ __userData = pData ;}
@@ -141,6 +142,11 @@ const char *NDConnector::ErrorDesc()
 	if(m_objhandle)
 		return nd_object_errordesc(m_objhandle) ;
 	return NULL;
+}
+
+const char *NDConnector::ConvertErrorDesc(NDUINT32 errcode)
+{
+	return nd_error_desc(errcode) ;
 }
 
 //…Ë÷√œ˚œ¢”≥…‰±Ì¥Û–°,±ÿ–Î‘⁄OPEN∫Ø ˝«∞µ˜”√
