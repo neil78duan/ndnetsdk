@@ -10,7 +10,9 @@
 #define _ND_MSG_ID_H_
 
 
+#ifndef BUILD_AS_THIRD_PARTY
 #include "nd_net/nd_netlib.h"
+#endif
 
 #define ND_MAIN_MSG_CAPACITY 16
 #define ND_MSG_BASE_ID 0
