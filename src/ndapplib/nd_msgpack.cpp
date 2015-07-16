@@ -74,7 +74,9 @@ size_t NDOStreamMsg::GetFreeLen()
 int NDOStreamMsg::Write(NDUINT32 a) 
 {
 	if(_op_addr + sizeof(a) <= _end) {
-		*((NDUINT32*)_op_addr) = htonl(a) ;
+		//*((NDUINT32*)_op_addr) = htonl(a) ;
+		nd_long_to_netstream(_op_addr, a) ;
+		
 		MsgLength() += sizeof(a) ;
 		_op_addr+= sizeof(a) ;
 		return 0 ;
@@ -84,7 +86,8 @@ int NDOStreamMsg::Write(NDUINT32 a)
 int NDOStreamMsg::Write(NDUINT16 a) 
 {
 	if(_op_addr + sizeof(a) <= _end) {
-		*((NDUINT16*)_op_addr) = htons(a) ;
+		//*((NDUINT16*)_op_addr) = htons(a) ;
+		nd_short_to_netstream(_op_addr, a) ;
 		MsgLength() += sizeof(a) ;
 		_op_addr+= sizeof(a) ;
 		return 0 ;
@@ -95,7 +98,8 @@ int NDOStreamMsg::Write(NDUINT16 a)
 int NDOStreamMsg::Write(NDUINT64 a) 
 {
 	if(_op_addr + sizeof(a) <= _end) {
-		*((NDUINT64*)_op_addr) = nd_hton64(a) ; //why  htonll is undefine?
+		//*((NDUINT64*)_op_addr) = nd_hton64(a) ; //why  htonll is undefine?
+		nd_longlong_to_netstream(_op_addr, a) ;
 		MsgLength() += sizeof(a) ;
 		_op_addr+= sizeof(a) ;
 		return 0 ;
@@ -308,8 +312,9 @@ int NDIStreamMsg::Read (NDUINT32 &a)
 {
 	if(_end >= _op_addr + sizeof(a) ) {
 
-		a =*((NDUINT32*) _op_addr) ;
-        a = ntohl(a) ;
+		a = nd_netstream_to_long(_op_addr);
+		//a =*((NDUINT32*) _op_addr) ;
+        //a = ntohl(a) ;
 		_op_addr += sizeof(a) ;
 		return 0 ;
 
@@ -322,8 +327,9 @@ int NDIStreamMsg::Read (NDUINT16 &a)
 {
 	if(_end >= _op_addr + sizeof(a) ) {
 
-		a =*((NDUINT16*) _op_addr) ;
-        a = ntohs(a) ;
+		a = nd_netstream_to_short(_op_addr);
+		//a =*((NDUINT16*) _op_addr) ;
+        //a = ntohs(a) ;
 		_op_addr += sizeof(a) ;
 		return 0 ;
 
@@ -346,8 +352,10 @@ int NDIStreamMsg::Read (NDUINT64 &a)
 {
 	if(_end >= _op_addr + sizeof(a) ) {
 
-		a =*((NDUINT64*) _op_addr) ;
-        a = nd_ntoh64(a) ;
+		
+		a = nd_netstream_to_longlong(_op_addr);
+		//a =*((NDUINT64*) _op_addr) ;
+        //a = nd_ntoh64(a) ;
 		_op_addr += sizeof(a) ;
 		return 0 ;
 

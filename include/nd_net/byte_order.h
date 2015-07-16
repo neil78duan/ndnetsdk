@@ -35,9 +35,22 @@ bit0是最右端的，bit7是最左端的
 #define ND_L_ENDIAN  1
 #define ND_B_ENDIAN  0
 
-#define ND_BYTE_ORDER 1 
 
-#ifndef u_8 
+#ifdef ND_ANDROID
+
+	#if defined(__mips__) || defined(__mips64__)
+		#define ND_BYTE_ORDER 0
+	#else
+		#define ND_BYTE_ORDER 1
+	#endif
+
+#else
+	#define ND_BYTE_ORDER 1
+#endif //end android
+
+
+
+#ifndef u_8
 typedef unsigned char u_8;
 #endif 
 
@@ -58,26 +71,23 @@ static __inline int nd_byte_order()
 }
 
 //大尾数转换小尾数
-#define nd_btols(x)    ((short)( \
-        (((short)(x) & (short)0x00ff) << 8) | \
-        (((short)(x) & (short)0xff00) >> 8) ))
-        
-#define nd_btoll(x) 	((int)( \
-        (((int)(x) & (int)0x000000ff) << 24) | \
-        (((int)(x) & (int)0x0000ff00) << 8) | \
-        (((int)(x) & (int)0x00ff0000) >> 8) | \
-        (((int)(x) & (int)0xff000000) >> 24) ))
+#define nd_btols(_a)    ((unsigned short)( \
+	(((unsigned short)(_a) & (unsigned short)0x00ff) << 8) | \
+	(((unsigned short)(_a) & (unsigned short)0xff00) >> 8) ))
+
+
+
+#define nd_btoll(_a) 	((unsigned int)( \
+	(((unsigned int)(_a) & (unsigned int)0x000000ff) << 24) | \
+	(((unsigned int)(_a) & (unsigned int)0x0000ff00) << 8) | \
+	(((unsigned int)(_a) & (unsigned int)0x00ff0000) >> 8) | \
+	(((unsigned int)(_a) & (unsigned int)0xff000000) >> 24) ))
 
 //小尾数 转换大尾数
-#define nd_ltobs(x) 	((short)( \
-        (((short)(x) & (short)0x00ff) << 8) | \
-        (((short)(x) & (short)0xff00) >> 8) ))
+#define nd_ltobs(x) 	nd_btols(x)
         
-#define nd_ltobl(x) 	((int)( \
-        (((int)(x) & (int)0x000000ff) << 24) | \
-        (((int)(x) & (int)0x0000ff00) << 8) | \
-        (((int)(x) & (int)0x00ff0000) >> 8) | \
-        (((int)(x) & (int)0xff000000) >> 24) ))
+#define nd_ltobl(x) 	nd_btoll(x) 
+
 
 
 #endif 

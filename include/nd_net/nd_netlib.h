@@ -36,6 +36,7 @@
 #include "nd_common/nd_alloc.h"
 
 #include "nd_crypt/nd_pubkey.h"
+#include "nd_net/nd_netbyte.h"
 
 ND_NET_API int nd_net_init(void);
 

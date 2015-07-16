@@ -163,6 +163,13 @@ void NDListener::DestructSession(NDSession *psession)
 	return session_fectory->destruct(psession);
 }
 
+
+NDSession *NDListener::GetSession(NDUINT16 sessionId)
+{
+	NDSessionMgr tmpmgr(this) ;
+	return tmpmgr.TryLock(sessionId) ;
+}
+
 NDSession *NDListener::htoSession(nd_handle h_session) 
 {
 	return static_cast<NDSession*>(nd_session_getdata((nd_netui_handle )h_session))  ;

@@ -45,6 +45,8 @@ public:
 	
 	NDSession *ConstructSession(void *addr);
 	void DestructSession(NDSession *psession);
+	NDSession *GetSession(NDUINT16 sessionId) ;
+	
 
 	int Attach(NDConnector &conn, nd_thsrvid_t thid = 0);
 	int Deattach(NDConnector &conn,nd_thsrvid_t thid = 0);
