@@ -77,6 +77,11 @@ typedef struct nd_usermsgbuf_t
 #include "nd_msgpacket.h"
 #include "nd_iconn.h"
 
+typedef const char* (*nd_error_convert)(int errcode)  ;
+
+ND_COMMON_API const char *nd_error_desc(int errcode);
+ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
+
 #else 
 
 #include "ndcli/nd_iconn.h"

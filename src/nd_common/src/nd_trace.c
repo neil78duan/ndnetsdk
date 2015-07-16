@@ -105,6 +105,8 @@ void nd_default_filelog(const char* text)
 			++i ;
 		}while(nd_existfile(aimFile)) ;
 		nd_renfile(logfile_name,aimFile) ;
+		
+		nd_atomic_set(&__log_write_len, 0) ;
 	}
 
 	

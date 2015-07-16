@@ -142,11 +142,14 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 		char  md5[16] ;
 	} mykey;
 
-	tea_key(&mykey.k) ;
-	MD5Crypt16((char*)&mykey.k,	sizeof(tea_k) , mykey.md5);
-	int len = nd_TEAencrypt((unsigned char*)mykey.md5, 16, &mykey.k) ;
+	tea_k newKey ;
+	tea_key(&newKey) ;
+	
+	MD5Crypt16((char*)&newKey,	sizeof(tea_k) , mykey.md5);
+	int len = nd_TEAencrypt((unsigned char*)mykey.md5, 16, &newKey) ;
 	nd_assert(len == 16) ;
 
+	nd_teaKeyToNetorder(&mykey.k, &newKey) ;
 
 	NDUINT8  key_crypt[1024];
 	int crypt_size = sizeof(key_crypt) ;
@@ -158,9 +161,14 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 		return -1;
 	}
 	omsg.WriteBin(key_crypt, crypt_size) ;
+	
+//	nd_log_screen("orgkey={%x,%x,%x,%x} convertKey={%x,%x,%x,%x}\n",
+//				  newKey.k[0],newKey.k[1],newKey.k[2],newKey.k[3],
+//				  mykey.k.k[0],mykey.k.k[1],mykey.k.k[2],mykey.k.k[3]);
 
+	//nd_log_screen("key-md5 = %s \n",  MD5ToString(mykey.md5, key_crypt)) ;
 	//ready to receive crypt data
-	nd_connector_set_crypt(nethandle,(void*)&mykey.k, sizeof(mykey.k)) ;
+	nd_connector_set_crypt(nethandle,(void*)&newKey, sizeof(newKey)) ;
 
 	SEND_AND_WAIT(nethandle, omsg, &rmsg, ND_MSG_SYS_SYM_KEY_ACK)
 	else {

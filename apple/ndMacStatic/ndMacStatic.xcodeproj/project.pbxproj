@@ -195,6 +195,7 @@
 /* Begin PBXFileReference section */
 		071156BE1AD415BB003B3B46 /* session.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = session.c; sourceTree = "<group>"; };
 		072888A81B0083DF001A5760 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
+		073129B01B57613B00D3F203 /* nd_netbyte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_netbyte.h; sourceTree = "<group>"; };
 		0739F41D1A676B1C00520AE2 /* nd_version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_version.cpp; sourceTree = "<group>"; };
 		0760D30C1B26CAE5005F076C /* httpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = httpParser.cpp; sourceTree = "<group>"; };
 		0760D30E1B26CAF5005F076C /* httpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = httpParser.h; sourceTree = "<group>"; };
@@ -718,6 +719,7 @@
 				07EBD00419A8E01500802576 /* nd_udp.h */,
 				07EBD00519A8E01500802576 /* nd_udt.h */,
 				07EBD00619A8E01500802576 /* nd_udthdr.h */,
+				073129B01B57613B00D3F203 /* nd_netbyte.h */,
 			);
 			name = nd_net;
 			path = ../../include/nd_net;
