@@ -24,6 +24,7 @@
 #include "nd_net/nd_udthdr.h"
 #include "nd_net/nd_udt.h"
 #include "nd_net/nd_netobj.h"
+#include "nd_crypt/nd_crypt.h"
 //#include "nd_common/nd_common.h"
 
 /*enum ND_NET_PROTOCOL
@@ -146,6 +147,9 @@ ND_NET_API int nd_packet_decrypt(nd_handle net_handle, nd_packetbuf_t *msgbuf);
 
 ND_NET_API int nd_packet_encrypt_key(nd_cryptkey *pcrypt_key, nd_packetbuf_t *msgbuf);
 ND_NET_API int nd_packet_decrypt_key(nd_cryptkey *pcrypt_key,nd_packetbuf_t *msgbuf);
+
+ND_NET_API void nd_teaKeyToNetorder(tea_k *outkey, tea_k *fromHostkey) ;
+ND_NET_API void nd_teaKeyToHostorder(tea_k *outkey, tea_k *fromNetKey) ;
 
 //设置数据处理完毕
 //@size 被处理的数据长度

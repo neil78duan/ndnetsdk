@@ -74,7 +74,6 @@ ND_CRYPT_API int nd_TEAencrypt(unsigned char *data, int data_len, tea_k *key) ;
 ND_CRYPT_API int nd_TEAdecrypt(unsigned char *data, int data_len, tea_k *key) ;
 ND_CRYPT_API int nd_TEAGenKey(tea_k *key, char *seed) ;		//使用种子生成一个密钥,返回密码长度
 
-ND_CRYPT_API void nd_teaKeyToNetorder(tea_k *outkey, tea_k *key) ;
 
 /* mix-in data */
 ND_CRYPT_API char *crypt_stuff(char *src, int datalen, int stufflen ) ;	/*stuff data to align*/

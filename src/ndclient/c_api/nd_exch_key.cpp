@@ -142,14 +142,14 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 		char  md5[16] ;
 	} mykey;
 
-	tea_k &newKey = mykey.k ;
-	tea_key(&mykey.k) ;
+	tea_k newKey = {0};
+	tea_key(&newKey) ;
 	
 	MD5Crypt16((char*)&newKey,	sizeof(tea_k) , mykey.md5);
 	int len = nd_TEAencrypt((unsigned char*)mykey.md5, 16, &newKey) ;
 	nd_assert(len == 16) ;
 
-	//nd_teaKeyToNetorder(&mykey.k, &newKey) ;
+	nd_teaKeyToNetorder(&mykey.k, &newKey) ;
 
 	NDUINT8  key_crypt[1024];
 	int crypt_size = sizeof(key_crypt) ;

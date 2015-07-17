@@ -1130,6 +1130,24 @@ int nd_packet_decrypt_key(nd_cryptkey *pcrypt_key,nd_packetbuf_t *msgbuf)
 	return nd_pack_len(&msgbuf->hdr) ;
 }
 
+void nd_teaKeyToHostorder(tea_k *outkey, tea_k *key)
+{
+	
+	outkey->k[0] = ntohl(key->k[0]) ;
+	outkey->k[1] = ntohl(key->k[1]) ;
+	outkey->k[2] = ntohl(key->k[2]) ;
+	outkey->k[3] = ntohl(key->k[3]) ;
+}
+
+void nd_teaKeyToNetorder(tea_k *outkey, tea_k *key)
+{
+	outkey->k[0] = htonl(key->k[0]) ;
+	outkey->k[1] = htonl(key->k[1]) ;
+	outkey->k[2] = htonl(key->k[2]) ;
+	outkey->k[3] = htonl(key->k[3]) ;
+	
+}
+
 size_t nd_net_getpack_size(nd_handle  handle, void *data) 
 {
     NDUINT16 len = ntohs (nd_pack_len((nd_packhdr_t*)data) ) ;

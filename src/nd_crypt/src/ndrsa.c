@@ -184,24 +184,6 @@ struct rsa_key_header
 (((unsigned int)(_a) & (unsigned int)0xff000000) >> 24) ))
 
 
-void nd_teaKeyToNetorder(tea_k *outkey, tea_k *key)
-{
-	if(_byte_order()) {
-		outkey->k[0] = _order_exch_l(key->k[0]) ;
-		outkey->k[1] = _order_exch_l(key->k[1]) ;
-		outkey->k[2] = _order_exch_l(key->k[2]) ;
-		outkey->k[3] = _order_exch_l(key->k[3]) ;
-	}
-	else {
-		if (outkey != key) {
-			//*outkey = *key ;
-			memcpy(outkey, key, sizeof(*key)) ;
-		}
-		
-	}
-
-}
-
 int _key_output(R_RSA_PRIVATE_KEY *key, const char *bin_file, int is_private)
 {
 	int ret = 0;
