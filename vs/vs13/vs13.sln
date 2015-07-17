@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nd_srv_static", "nd_srv_sta
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ndclient_s", "ndclient_s\ndclient_s.vcxproj", "{A3A77A64-318E-4F5F-BCC9-D4F690522851}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ndxmlset", "ndxmlset\ndxmlset.vcxproj", "{00A19862-A352-4450-9E63-6D196280B8DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -27,6 +29,10 @@ Global
 		{A3A77A64-318E-4F5F-BCC9-D4F690522851}.Debug|Win32.Build.0 = Debug|Win32
 		{A3A77A64-318E-4F5F-BCC9-D4F690522851}.Release|Win32.ActiveCfg = Release|Win32
 		{A3A77A64-318E-4F5F-BCC9-D4F690522851}.Release|Win32.Build.0 = Release|Win32
+		{00A19862-A352-4450-9E63-6D196280B8DE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00A19862-A352-4450-9E63-6D196280B8DE}.Debug|Win32.Build.0 = Debug|Win32
+		{00A19862-A352-4450-9E63-6D196280B8DE}.Release|Win32.ActiveCfg = Release|Win32
+		{00A19862-A352-4450-9E63-6D196280B8DE}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

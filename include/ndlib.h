@@ -33,6 +33,7 @@ struct nd_proxy_info
 };
 
 #include "nd_define.h"
+#include "nd_comdef.h"
 
 typedef unsigned int ndip_t;
 typedef NDUINT8 ndmsgid_t;
