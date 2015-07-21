@@ -33,7 +33,9 @@ const char* nd_get_encode_name(int encode_type)
 
 int nd_get_encode_val(const char *encodeText)
 {
-	if (0 == ndstricmp(encodeText, "gbk") || 0 == ndstricmp(encodeText, "gbk2312")){
+	if (0 == ndstricmp(encodeText, "gbk") ||
+		0 == ndstricmp(encodeText, "gb2312")||
+		0 == ndstricmp(encodeText, "gb-2312")){
 		return E_SRC_CODE_GBK;
 	}
 	else if (0 == ndstricmp(encodeText, "utf8") || 0 == ndstricmp(encodeText, "utf-8")){
