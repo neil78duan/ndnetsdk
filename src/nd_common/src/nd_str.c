@@ -9,7 +9,8 @@
 #include "nd_common/nd_str.h"
 #include "nd_common/nd_comcfg.h"
 
-static __ndthread int __s_code_type = E_SRC_CODE_ANSI;
+
+static __ndthread int __s_code_type = ND_ENCODE_TYPE;
 
 int ndstr_set_code(int type)
 {
