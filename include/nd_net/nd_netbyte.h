@@ -169,7 +169,7 @@ static __inline void nd_float_to_netstream(char *buf, float fval)
 	
 }
 
-static __inline void nd_double_to_netstream(char *buf, float dval)
+static __inline void nd_double_to_netstream(char *buf, double dval)
 {
 	
 	union {
@@ -204,7 +204,7 @@ static __inline float nd_netstream_to_float(char *buf)
 	
 }
 
-static __inline float nd_netstream_to_double(char *buf)
+static __inline double nd_netstream_to_double(char *buf)
 {
 	union {
 		char buf[8] ;
