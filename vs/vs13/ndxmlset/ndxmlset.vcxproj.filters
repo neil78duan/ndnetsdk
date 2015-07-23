@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ndsdk">
+      <UniqueIdentifier>{54e3fe92-1742-4d87-991f-7ec005587377}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\demo\tool\ndxml_set.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\callstack.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\common.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_cmdline.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_handle.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_iconv.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_mempool.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_mutex.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_static_alloc.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_str.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_timer.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_trace.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_unix.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_win.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_xml.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nddir.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\node_mgr.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\recbuf.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\source_log.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
