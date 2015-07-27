@@ -87,7 +87,8 @@ ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
 
 // compatible for unix
-#define snprintf _snprintf
+//#define snprintf _snprintf
+#define snprintf(_buf,_s, _format, ...)  _snprintf_s(_buf, _s, _s, _format,__VA_ARGS__)
 #define bzero(pstr,size) 	memset((pstr),0,(size))		//∂®“Âbzero ºÊ»›gcc bzero
 
 //define assert

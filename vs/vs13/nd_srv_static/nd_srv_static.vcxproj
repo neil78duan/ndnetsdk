@@ -235,6 +235,7 @@
     <ClInclude Include="..\..\..\include\nd_net\byte_order.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_iphdr.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_msgentry.h" />
+    <ClInclude Include="..\..\..\include\nd_net\nd_netbyte.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_netcrypt.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_netioctl.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_netlib.h" />
