@@ -167,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ndapplib\applib.h" />
+    <ClInclude Include="..\..\..\include\ndapplib\ndsingleton.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_affair.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_alarms.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_cmmgr.h" />

@@ -339,6 +339,9 @@
     <ClInclude Include="..\..\..\include\nd_net\nd_netbyte.h">
       <Filter>include\net</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\ndsingleton.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">

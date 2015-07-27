@@ -35,6 +35,8 @@
 #include "ndapplib/nd_affair.h"
 #include "ndapplib/nd_alarms.h"
 
+
+#include "ndapplib/ndsingleton.h"
 //#include "pg_config.h"
 
 typedef int (*exit_app_func)(int flag) ;
