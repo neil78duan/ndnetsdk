@@ -12,7 +12,7 @@
 template <typename  T>
 class NDSingleton {
 public:
-	NDSingleton() : _addr(0)
+	NDSingleton() 
 	{
 
 	}
