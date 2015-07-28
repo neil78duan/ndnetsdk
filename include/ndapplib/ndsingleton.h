@@ -21,6 +21,12 @@ public:
 		if (!_addr)
 		{
 			_addr = new T;
+			if (0 != _addr->Init()) {
+				_addr->Destroy();
+				delete _addr;
+				_addr = 0;
+				return NULL;
+			}
 		}
 		return _addr;
 	}
@@ -28,6 +34,7 @@ public:
 	{
 		if (_addr)
 		{
+			_addr->Destroy();
 			delete _addr;
 			_addr = NULL;
 		}

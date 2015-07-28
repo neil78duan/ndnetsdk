@@ -263,31 +263,37 @@ int nd_logtext(const char *buf)
 }
 int _logmsg(const char *func, const char *filePath, int line, int level, const char *stm,...) 
 {
+	size_t size;
 	char buf[1024*4] ;
 	char *p = buf;
 	va_list arg;
 	int done;
 	const char *file = _getfilename(filePath) ;
 	
+	size = sizeof(buf);
 #ifdef	ND_LOG_WITH_TIME
 	if (__without_file_time==0) {
-		p += snprintf(p, 4096, "%s ", nd_get_datetimestr());
+		p += snprintf(p, size, "%s ", nd_get_datetimestr());
+		size = sizeof(buf) - (p - buf);
 	}
 #endif
 
 #ifdef	ND_LOG_WITH_SOURCE
 	if (__without_file_info==0){
-		p += snprintf(p, 4096, " %s() [%d:%s] ", func, line, file);
+		p += snprintf(p, size, " %s() [%d:%s] ", func, line, file);
+		size = sizeof(buf) - (p - buf);
 	}
 #endif
-	p += snprintf(p, 4096,"%s:", log_level_str(level)) ;
+	p += snprintf(p, size,"%s:", log_level_str(level)) ;
+	size = sizeof(buf) - (p - buf);
 
 	va_start (arg, stm);
-	done = vsnprintf (p, sizeof(buf),stm, arg);
+	done = vsnprintf (p, size,stm, arg);
+	size -= done;
 	va_end (arg);
 
 	nd_logtext(buf);
-	return done ;
+	return sizeof(buf) - size ;
 }
 
 #ifdef ND_FILE_TRACE
