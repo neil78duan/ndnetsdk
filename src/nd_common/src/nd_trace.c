@@ -261,6 +261,7 @@ int nd_logtext(const char *buf)
 	}
 	return ret;
 }
+
 int _logmsg(const char *func, const char *filePath, int line, int level, const char *stm,...) 
 {
 	size_t size;
