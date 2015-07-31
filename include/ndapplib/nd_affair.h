@@ -78,9 +78,9 @@ template<class TAfair>
 class NotifyFlagHelper
 {
 public:
-	NotifyFlagHelper(TAfair *pa, int flag) 
+	NotifyFlagHelper(TAfair *pa, bool flag) 
 	{
-		m_oldflag = pa->SetNotify(flag?true:false) ;
+		m_oldflag = pa->SetNotify(flag) ;
 		m_pa = pa ;
 	}
 	~NotifyFlagHelper() 
@@ -94,6 +94,27 @@ private:
 	bool m_oldflag ;
 };
 
+template<class TAfair>
+class NDSetCommitNtfHelper
+{
+public:
+	NDSetCommitNtfHelper(TAfair *pa, bool flag)
+	{
+		m_oldflag = pa->SetCommitNtf(flag);
+		m_pa = pa;
+	}
+	~NDSetCommitNtfHelper()
+	{
+		if (m_pa){
+			m_pa->SetCommitNtf(m_oldflag);
+		}
+	}
+private:
+	TAfair *m_pa;
+	bool m_oldflag;
+};
+
+
 //#include "nd_common/nd_common.h"
 template<class TIndex ,  class TValue , int number>
 class NDAffair
@@ -106,6 +127,8 @@ public:
 	
 	typedef NotifyFlagHelper<_MyType> FlagNtfClientHelper ;
 	typedef NDAffairHelper<_MyType> NDAffairBeginHelper ;
+
+	typedef NDSetCommitNtfHelper<_MyType> FlagCommitNtfHelper;
 	
 	
 	enum eAffairOp{
@@ -125,6 +148,7 @@ public:
         , m_notify(1)
         , m_enable(1)
         , m_syncdb(1)
+		, m_commitNtf(1)
 	{
 
 	}
@@ -316,6 +340,18 @@ public:
 	}
 
 
+	bool SetCommitNtf(bool bflag)
+	{
+		bool ret = m_commitNtf ? true : false;
+		if (m_affair_stat){
+			return ret;
+		}
+
+		m_commitNtf = bflag ? 1 : 0;
+		return ret;
+	}
+
+
 	bool CheckInAffair() 
 	{
 		return m_enable && m_affair_stat ;
@@ -331,6 +367,7 @@ protected:
 	NDUINT32 m_enable:1 ;		//是否打开事务
 	NDUINT32 m_notify:1 ;
 	NDUINT32 m_syncdb:1 ;
+	NDUINT32 m_commitNtf : 1;  //callback when commit 
 	back_op m_buf[number] ;
 };
 

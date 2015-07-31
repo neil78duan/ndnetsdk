@@ -32,8 +32,8 @@ struct nd_proxy_info
 	char password[64];
 };
 
-#include "nd_define.h"
-#include "nd_comdef.h"
+#include "nd_common/nd_define.h"
+#include "nd_common/nd_comdef.h"
 
 typedef unsigned int ndip_t;
 typedef NDUINT8 ndmsgid_t;
@@ -74,8 +74,7 @@ typedef struct nd_usermsgbuf_t
 #define ND_CONNCLI_API 				CPPAPI 
 
 
-#include "nd_msgpacket.h"
-#include "nd_iconn.h"
+#include "ndapplib/nd_msgpacket.h"
 
 typedef const char* (*nd_error_convert)(int errcode)  ;
 
@@ -84,9 +83,9 @@ ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
 
 #else 
 
-#include "ndcli/nd_iconn.h"
 
 #endif
 
+#include "ndcli/nd_iconn.h"
 
 #endif
