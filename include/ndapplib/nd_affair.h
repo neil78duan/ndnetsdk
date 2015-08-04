@@ -11,6 +11,8 @@
 #define _ND_AFFAIR_H_
 
 #include "ndapplib/applib.h"
+#include <vector>
+
 //事务打开,保存,同步开关
 template<class TAfair>
 class EnableAffairHelper
@@ -116,10 +118,10 @@ private:
 
 
 //#include "nd_common/nd_common.h"
-template<class TIndex ,  class TValue , int number>
+template<class TIndex ,  class TValue >
 class NDAffair
 {
-	typedef NDAffair<TIndex ,  TValue , number> _MyType ;
+	typedef NDAffair<TIndex ,  TValue > _MyType ;
 public:
 	typedef SyndbFlagHelper<_MyType> FlagSaveHelper ;
 	typedef EnableAffairHelper<_MyType> FlagEnableHelper ;
@@ -142,8 +144,8 @@ public:
 		TValue second;
 	};
 	NDAffair() 
-        : m_num(0)
-        , m_nCount(0)
+        //: //m_num(0)
+		: m_nCount(0)
         , m_affair_stat(0)
         , m_notify(1)
         , m_enable(1)
@@ -166,7 +168,8 @@ public:
 		}
 		if (m_nCount++ == 0 )	{
 			nd_assert(m_affair_stat==0) ;
-			m_num = 0;
+			//m_num = 0;
+			m_buf.clear() ;
 			m_affair_stat = 1 ;
 		}
 		return m_nCount ;
@@ -207,7 +210,7 @@ public:
 		if (m_affair_stat )	{
 
 			m_enable = 0 ;
-			for(int i=0; i<(int)m_num; i++) {
+			for(int i=0; i<(int)m_buf.size(); i++) {
 				int op = m_buf[i].optype;
 				if (EAO_ADD==op)
 					op = EAO_DEL;
@@ -218,7 +221,8 @@ public:
 			m_enable = 1 ;
 		}
 		m_affair_stat = 0 ;
-		m_num = 0;
+		//m_num = 0;
+		m_buf.clear() ;
 	}
 	virtual void Rollback() 
 	{
@@ -233,13 +237,18 @@ public:
 
 		if (m_affair_stat )	{
 			m_enable = 0 ;
-			for(int i=m_num-1; i>=0; i--) {
-				Undo(m_buf[i].first,m_buf[i].second,m_buf[i].optype) ;
+			
+			if (m_buf.size() > 0) {
+				for(int i=m_buf.size()-1; i>=0; i--) {
+					Undo(m_buf[i].first,m_buf[i].second,m_buf[i].optype) ;
+				}
 			}
+			
 			m_enable = 1 ;
 		}
 		m_affair_stat = 0 ;
-		m_num = 0;
+		//m_num = 0;
+		m_buf.clear() ;
 	}
 	virtual void Undo(TIndex &index, TValue &old_val,int optype )
 	{
@@ -251,48 +260,61 @@ public:
 	}
 	void Reset() 
 	{
-		m_num = 0;
+		m_buf.clear() ;
+		//m_num = 0;
 		m_affair_stat = 0;
 		m_nCount = 0 ;
 	}
 	void AffairAdd(TIndex &index, TValue &old_val)
 	{
 		if (m_affair_stat)	{
-			nd_assert(m_num<=number);
-			m_buf[m_num].first = index ;
-			m_buf[m_num].second = old_val;
-			m_buf[m_num].optype = EAO_DEL ;
-			m_num++;
+			
+			AffairSet(index, old_val ,EAO_DEL) ;
+			//nd_assert(m_num<=number);
+//			m_buf[m_num].first = index ;
+//			m_buf[m_num].second = old_val;
+//			m_buf[m_num].optype = EAO_DEL ;
+//			m_num++;
 		}
 	}
 	void AffairDel(TIndex &index, TValue &old_val)
 	{
 		if (m_affair_stat)	{
-			nd_assert(m_num<=number);
-			m_buf[m_num].first = index ;
-			m_buf[m_num].second = old_val;
-			m_buf[m_num].optype = EAO_ADD ;
-			m_num++;
+			
+			AffairSet(index, old_val ,EAO_ADD) ;
+//			nd_assert(m_num<=number);
+//			m_buf[m_num].first = index ;
+//			m_buf[m_num].second = old_val;
+//			m_buf[m_num].optype = EAO_ADD ;
+//			m_num++;
 		}
 	}
 	void AffairModify(TIndex &index, TValue &old_val)
 	{
 		if (m_affair_stat)	{
-			nd_assert(m_num<=number);
-			m_buf[m_num].first = index ;
-			m_buf[m_num].second = old_val;
-			m_buf[m_num].optype = EAO_MODIFIED ;
-			m_num++;
+			AffairSet(index, old_val ,EAO_MODIFIED) ;
+			
+//			nd_assert(m_num<=number);
+//			m_buf[m_num].first = index ;
+//			m_buf[m_num].second = old_val;
+//			m_buf[m_num].optype = EAO_MODIFIED ;
+//			m_num++;
 		}
 	}
 	void AffairSet(TIndex &index, TValue &val ,int affair_op) 
 	{
 		if (m_affair_stat)	{
-			nd_assert(m_num<=number);
-			m_buf[m_num].first = index ;
-			m_buf[m_num].second = val;
-			m_buf[m_num].optype = affair_op ;
-			m_num++;
+			back_op op ;
+			op.first = index ;
+			op.second = val ;
+			op.optype = affair_op ;
+			m_buf.push_back(op) ;
+
+			//nd_assert(m_num<=number);
+//			m_buf[m_num].first = index ;
+//			m_buf[m_num].second = val;
+//			m_buf[m_num].optype = affair_op ;
+//			m_num++;
 		}
 	}
 	int GetAffairStat() {return m_affair_stat;}
@@ -362,13 +384,15 @@ public:
 protected:
 
 	int m_nCount;           // 提交计数, 解决多次begin, 多次commit的问题.(这是暂行方案)
-	NDUINT32 m_num:16 ;
+	//NDUINT32 m_num:16 ;
 	NDUINT32 m_affair_stat:1 ;   //0 not set 1 begin 
 	NDUINT32 m_enable:1 ;		//是否打开事务
 	NDUINT32 m_notify:1 ;
 	NDUINT32 m_syncdb:1 ;
 	NDUINT32 m_commitNtf : 1;  //callback when commit 
-	back_op m_buf[number] ;
+	//back_op m_buf[number] ;
+	typedef std::vector<back_op> affair_vct ;
+	affair_vct m_buf ;
 };
 
 
