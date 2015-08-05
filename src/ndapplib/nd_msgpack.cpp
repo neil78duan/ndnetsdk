@@ -62,11 +62,12 @@ NDOStreamMsg::~NDOStreamMsg()
 {
 }
 
-size_t NDOStreamMsg::GetDataLen() 
-{
-	return _op_addr - (char*)(&_packet) ;
-}
-size_t NDOStreamMsg::GetFreeLen() 
+//size_t NDOStreamMsg::GetDataLen() 
+//{
+//	//return _op_addr - (char*)(_packet.data) ;
+//	return ND_USERMSG_DATALEN(&_packet) ;
+//}
+size_t NDOStreamMsg::GetFreeLen()
 {
 	return _end - _op_addr ;
 }

@@ -43,13 +43,13 @@ static __inline void nd_longlong_to_netstream(char *buf, NDUINT64 val)
 }
 //////////
 
-static __inline NDUINT16 nd_netstream_to_short(char *buf)
+static __inline NDUINT16 nd_netstream_to_short(const char *buf)
 {
 	NDUINT16 val = buf[0] ;
 	return (NDUINT16) ( val<< 8 | (buf[1]&0xff) ) ;
 }
 
-static __inline NDUINT32 nd_netstream_to_long(char *buf)
+static __inline NDUINT32 nd_netstream_to_long(const char *buf)
 {
 	union {
 		NDUINT32 val ;
@@ -63,7 +63,7 @@ static __inline NDUINT32 nd_netstream_to_long(char *buf)
 	return v1.val ;
 }
 
-static __inline NDUINT64 nd_netstream_to_longlong(char *buf)
+static __inline NDUINT64 nd_netstream_to_longlong(const char *buf)
 {
 	union {
 		NDUINT64 val ;
@@ -114,12 +114,12 @@ static __inline void nd_longlong_to_netstream(char *buf, NDUINT64 val)
 	buf[0] = val & 0xff ;
 }
 
-static __inline NDUINT16 nd_netstream_to_short(char *buf)
+static __inline NDUINT16 nd_netstream_to_short(const char *buf)
 {
 	return (NDUINT16) (buf[0]  | buf[1] << 8 ) ;
 }
 
-static __inline NDUINT32 nd_netstream_to_long(char *buf)
+static __inline NDUINT32 nd_netstream_to_long(const char *buf)
 {
 	union {
 		NDUINT32 val ;
@@ -133,7 +133,7 @@ static __inline NDUINT32 nd_netstream_to_long(char *buf)
 	return v1.val ;
 }
 
-static __inline NDUINT64 nd_netstream_to_longlong(char *buf)
+static __inline NDUINT64 nd_netstream_to_longlong(const char *buf)
 {
 	union {
 		NDUINT64 val ;
@@ -190,7 +190,7 @@ static __inline void nd_double_to_netstream(char *buf, double dval)
 
 ////
 
-static __inline float nd_netstream_to_float(char *buf)
+static __inline float nd_netstream_to_float(const char *buf)
 {
 	union {
 		char buf[4] ;
@@ -204,7 +204,7 @@ static __inline float nd_netstream_to_float(char *buf)
 	
 }
 
-static __inline double nd_netstream_to_double(char *buf)
+static __inline double nd_netstream_to_double(const char *buf)
 {
 	union {
 		char buf[8] ;

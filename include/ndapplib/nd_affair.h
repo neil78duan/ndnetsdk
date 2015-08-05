@@ -147,10 +147,10 @@ public:
         //: //m_num(0)
 		: m_nCount(0)
         , m_affair_stat(0)
-        , m_notify(1)
-        , m_enable(1)
-        , m_syncdb(1)
-		, m_commitNtf(1)
+        , m_notify(0)
+        , m_enable(0)
+        , m_syncdb(0)
+		, m_commitNtf(0)
 	{
 
 	}
@@ -373,6 +373,23 @@ public:
 		return ret;
 	}
 
+	void EnableAll()
+	{
+		m_affair_stat = 1;
+		m_enable =1 ;
+		m_notify =1 ;
+		m_syncdb =1 ;
+		m_commitNtf = 1;
+	}
+	void DisableAll()
+	{
+		m_affair_stat = 0;
+		m_enable =0 ;
+		m_notify =0 ;
+		m_syncdb =0 ;
+		m_commitNtf = 0;
+		
+	}
 
 	bool CheckInAffair() 
 	{

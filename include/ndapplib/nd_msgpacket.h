@@ -29,6 +29,7 @@ public:
 	inline nd_usermsgbuf_t *GetMsgAddr() {return &_packet ;}
 	size_t GetSerialBin(void *buf, size_t bufsize) ;	//∞—œ˚œ¢ ‰≥ˆ≥…∂˛Ω¯÷∆
 	
+	size_t GetDataLen()	{return ND_USERMSG_DATALEN(&_packet) ;	}
 protected:
 	nd_usermsgbuf_t  _packet ;
 };
@@ -63,7 +64,7 @@ public :
 	void SetID(int maxid, int minid) ;
 	friend class NDIStreamMsg ;
 	void *GetWriteAddr() {return (void*)_op_addr;}
-	size_t GetDataLen() ;
+	//size_t GetDataLen() ;
 	size_t GetFreeLen() ;
 private:
 	char *_op_addr ;
@@ -81,7 +82,8 @@ public:
 	inline NDUINT16 &MsgLength() {return recv_packet->msg_hdr.packet_hdr.length;}
 	inline char *MsgData() {return recv_packet->data ;}
 	inline nd_usermsgbuf_t *GetMsgAddr() {return recv_packet ;}
-
+	
+	size_t GetDataLen()	{return ND_USERMSG_DATALEN(recv_packet) ;	}
 	size_t GetSerialBin(void *buf, size_t bufsize) ;	//∞—œ˚œ¢ ‰≥ˆ≥…∂˛Ω¯÷∆
 protected:
 	nd_usermsgbuf_t  *recv_packet ;
