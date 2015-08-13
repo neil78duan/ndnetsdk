@@ -22,7 +22,6 @@ char *sig_desc[] = {
 /*#define	SIGILL		4	*/   " Illegal instruction (ANSI).  ",
 /*#define	SIGTRAP		5	*/   " Trace trap (POSIX).  ",
 /*#define	SIGABRT		6	*/   " Abort (ANSI).  ",
-/*#define	SIGIOT		6	*/   " IOT trap (4.2 BSD).  ",
 /*#define	SIGBUS		7	*/   " BUS error (4.2 BSD).  ",
 /*#define	SIGFPE		8	*/   " Floating-point exception (ANSI).  ",
 /*#define	SIGKILL		9	*/   " Kill, unblockable (POSIX).  ",
@@ -149,6 +148,12 @@ int nd_wait_terminate_signals()
         nd_logerror("sigwait() : %s", nd_last_error()) ;
         LEAVE_FUNC();
         nd_sys_exit(1) ;
+	}
+	if (intmask==SIGINT || intmask==SIGTERM){
+		nd_host_set_error(NDERR_HOST_SHUTDOWN) ;
+	}
+	else {
+		nd_host_set_error(NDERR_HOST_CRASH) ;
 	}
 	nd_logmsg("sigwait() received %d signed %s program would exit\n"  AND  intmask AND get_signal_desc(intmask));
 

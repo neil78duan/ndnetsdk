@@ -31,4 +31,6 @@ ErrorElement(NDERR_RESET),			//被重置
 ErrorElement(NDERR_USER_BREAK),		//用户中断
 ErrorElement(NDERR_VERSION),			//版本错误
 ErrorElement(NDERR_UNHANDLED_MSG),			//unknow message
+ErrorElement(NDERR_HOST_CRASH),			//PROGRAM crash
+ErrorElement(NDERR_HOST_SHUTDOWN),			//Shutdown by manual
 ErrorElement(NDERR_UNKNOW)			//unknowwing error

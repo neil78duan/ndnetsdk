@@ -209,14 +209,13 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 
 void NDInstanceBase::Destroy(int flag)
 {
-	OnDestroy();
-    
     nd_host_eixt() ;
     if(NDInstanceBase::Close(flag)==-1) {
         return  ;
     }
     DestructListener() ;
 
+	OnDestroy();
 }
 
 int NDInstanceBase::Open(int session_size )
@@ -274,7 +273,13 @@ int NDInstanceBase::WaitServer()
 {
 	ND_TRACE_FUNC() ;	
 	int ret = wait_services() ;
-    SetExitCode(0) ;
+	int host_error = nd_host_get_error();
+	if (host_error == NDERR_HOST_SHUTDOWN || host_error == NDERR_SUCCESS) {
+		SetExitCode(0);
+	}
+	else{
+		SetExitCode(1);
+	}
     return  ret ;
 }
 
@@ -543,7 +548,7 @@ int nd_unhandler_except(struct _EXCEPTION_POINTERS *lpExceptionInfo)
 		ExInfo.ThreadId = ::GetCurrentThreadId();
 		ExInfo.ExceptionPointers = lpExceptionInfo;
 		ExInfo.ClientPointers = false;
-
+		nd_host_set_error(NDERR_HOST_CRASH);
 		// write the dump
 		BOOL bOK = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal, &ExInfo, NULL, NULL );
 		/*

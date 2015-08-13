@@ -484,7 +484,7 @@ int nd_close_all_session(nd_listen_handle listen_info)
 	struct nd_srv_node *srv_root = &(listen_info->tcp) ;
 	struct cm_manager *pmanger = &srv_root->conn_manager ;
 
-	if ( listen_info->io_mod == ND_LISTEN_COMMON && !nd_host_check_exit())	{
+	if ( /*listen_info->io_mod == ND_LISTEN_COMMON && */!nd_host_check_exit())	{
 		int i ;
 		struct node_info *pnode = pmanger->connmgr_addr ;
 		for( i=0; i<pmanger->capacity(pmanger); i++, pnode++) {

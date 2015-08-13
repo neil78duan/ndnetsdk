@@ -151,6 +151,7 @@ public:
         , m_enable(0)
         , m_syncdb(0)
 		, m_commitNtf(0)
+		, m_dataChanged(0)
 	{
 
 	}
@@ -217,6 +218,7 @@ public:
 				else if (op==EAO_DEL)
 					op = EAO_ADD;
 				AffairDo(m_buf[i].first, m_buf[i].second, op);
+				m_dataChanged = 1;
 			}
 			m_enable = 1 ;
 		}
@@ -395,6 +397,13 @@ public:
 	{
 		return m_enable && m_affair_stat ;
 	}
+	bool CheckChanged()
+	{
+		return m_dataChanged ? true : false;
+	}
+	void ClearDataChange() {
+		m_dataChanged = 0;
+	}
 	bool CheckSyncDB() {return m_syncdb?true :false; }
 	bool CheckNotify() {return m_notify?true :false; }
 
@@ -407,6 +416,7 @@ protected:
 	NDUINT32 m_notify:1 ;
 	NDUINT32 m_syncdb:1 ;
 	NDUINT32 m_commitNtf : 1;  //callback when commit 
+	NDUINT32 m_dataChanged : 1;  //data change 
 	//back_op m_buf[number] ;
 	typedef std::vector<back_op> affair_vct ;
 	affair_vct m_buf ;

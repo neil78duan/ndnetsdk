@@ -68,6 +68,7 @@ static struct nd_srv_entry
 	int					status ;
 	ndatomic_t			__exit ;		//1 exit 
 	ndatomic_t			__suspend;
+	ndatomic_t			__err_code;		//host errorcode 
 	struct list_head	th_context_list ;
 }__s_entry;
 
@@ -88,8 +89,10 @@ static	void _init_entry_context()
 		return ;
 	INIT_LIST_HEAD(&(__s_entry.th_context_list)) ;
 	nd_atomic_set(&__s_entry.__exit, 0) ;
-	nd_atomic_set(&__s_entry.__suspend, 0) ;
-	
+	nd_atomic_set(&__s_entry.__suspend, 0); 
+
+	nd_atomic_set(&__s_entry.__err_code, 0);
+
 	__s_entry.status = 1 ;
 }
 
@@ -106,6 +109,19 @@ int nd_host_check_exit()
 {
 	return nd_atomic_read(&(__s_entry.__exit ));
 }
+int nd_host_set_error(int err)
+{
+	int ret = nd_atomic_read(&(__s_entry.__err_code));
+	nd_atomic_swap(&(__s_entry.__err_code), err);
+	return ret;
+}
+
+int nd_host_get_error()
+{
+	int ret = nd_atomic_read(&(__s_entry.__err_code));
+	return ret;
+}
+
 
 int nd_thsrv_check_exit(nd_thsrvid_t srv_id)
 {

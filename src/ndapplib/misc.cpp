@@ -65,20 +65,23 @@ int wait_key_esc()
 
 int wait_services()
 {
+	int ret = 0;
 #ifdef _MSC_VER
-    return wait_key_esc() ;
+	wait_key_esc();
+	nd_host_set_error(NDERR_HOST_SHUTDOWN) ;
 #else
     //wait_key_esc();
     
     while(!nd_host_check_exit() ){
         if(-1==nd_wait_terminate_signals() ) {
             printf_dbg("exit from wait signal!\n") ;
+			ret = (nd_host_check_exit()==NDERR_HOST_CRASH ) ;
             break ;
         }
     }
     
 #endif
-    return 0;
+    return ret;
 }
 
 int system_signals_init()

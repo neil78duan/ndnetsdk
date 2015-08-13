@@ -103,6 +103,8 @@ ND_SRV_API void nd_thsrv_release_all() ;
 ND_SRV_API void nd_host_eixt() ;
 ND_SRV_API void nd_server_host_begin() ;
 ND_SRV_API int nd_host_check_exit() ;
+ND_SRV_API int nd_host_set_error(int err);
+ND_SRV_API int nd_host_get_error();
 
 ND_SRV_API int nd_thsrv_check_exit(nd_thsrvid_t srv_id) ;
 ND_SRV_API int nd_thsrv_isexit(nd_handle) ;
