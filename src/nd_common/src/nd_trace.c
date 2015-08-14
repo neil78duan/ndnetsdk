@@ -248,7 +248,7 @@ time_t  nd_time_from_str(const char *pInput, time_t* tim)
 		if (*p)	{								\
 			int a = strtol(p, &p, 0);			\
 			if(errno==ERANGE || a < 0) {return -1 ;}	\
-			mytm.##_tm_type = a ;				\
+			mytm._tm_type = a ;				\
 				}	\
 		}
 	GET_TIME_TYPE(tm_mon);
