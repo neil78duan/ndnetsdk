@@ -148,6 +148,9 @@ static  __INLINE__ int nd_key_esc()
 #include <time.h>
 ND_COMMON_API int nd_time_day_interval(time_t end_tm, time_t start_tm)  ;	//计算两个时间的天数间隔
 
+ND_COMMON_API int nd_time_zone();
+ND_COMMON_API time_t  nd_time_from_str(const char *pInput, time_t* tim);
+
 #define NDMIN(a,b) ((a) < (b) ? (a) : (b))
 #define NDMAX(a,b) ((a) > (b) ? (a) : (b))
 

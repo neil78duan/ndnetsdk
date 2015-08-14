@@ -10,6 +10,7 @@
 #include "nd_common/nd_os.h"
 #include "nd_common/nd_dbg.h"
 #include "nd_common/nddir.h"
+#include "nd_common/nd_str.h"
 
 
 #include <time.h>
@@ -40,9 +41,11 @@ int nd_log_no_time(int without_time)
 
 }
 
-void nd_setlog_func(logfunc f) 
+logfunc nd_setlog_func(logfunc f)
 {
+	logfunc ret = __log_func;
 	__log_func = f ;
+	return ret;
 }
 void nd_log_close_screen(int flag)
 {
@@ -136,10 +139,10 @@ const char *nd_get_timestr(void)
 {
 	static __ndthread  char timebuf[64] ;
 	time_t nowtm ;
-	struct tm *gtm ;
+	struct tm *gtm, tm1 ;
 
 	time(&nowtm) ;
-	gtm = localtime( &nowtm );
+	gtm = localtime_r( &nowtm , &tm1);
 
 	snprintf(timebuf, 64, "%d:%d:%d", gtm->tm_hour,
 		gtm->tm_min,gtm->tm_sec) ;
@@ -149,11 +152,11 @@ const char *nd_get_timestr(void)
 const char *nd_get_datestr(void)
 {
 	static __ndthread  char datebuf[64] ;
-	time_t nowtm ;
-	struct tm *gtm ;
+	time_t nowtm;
+	struct tm *gtm, tm1;
 
-	time(&nowtm) ;
-	gtm = localtime( &nowtm );
+	time(&nowtm);
+	gtm = localtime_r(&nowtm, &tm1);
 
 	snprintf(datebuf, 64, "%d-%d-%d", gtm->tm_year+1900,gtm->tm_mon+1,
 		gtm->tm_mday) ;
@@ -181,8 +184,8 @@ const char *nd_get_datetimestr(void)
 
 const char *nd_get_datetimestr_ex(time_t in_tm, char *timebuf, int size)
 {
-	struct tm *gtm;
-	gtm = localtime(&in_tm);
+	struct tm *gtm, tm1;
+	gtm = localtime_r(&in_tm,&tm1);
 
 	snprintf(timebuf, size, "%d-%d-%d %d:%d:%d",
 		gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
@@ -206,11 +209,61 @@ const char * _getfilename(const char *filenamePath)
 
 int nd_time_day_interval(time_t end_tm, time_t start_tm) 
 {
-	int start = (int)(start_tm / (3600 * 24)) ;
-	int end = (int)(end_tm / (3600 * 24)) ;
-	return end - start ;
+	NDINT64 timezone = nd_time_zone();
+	NDINT64 start64 = (NDINT64)start_tm;
+	NDINT64 end64 = (NDINT64)end_tm;
+
+	start64 += timezone * 3600;
+	end64 += timezone * 3600;
+
+	NDINT64 start = (int)(start64 / (3600 * 24));
+	NDINT64 end = (int)(end64 / (3600 * 24));
+	return (int)(end - start );
 }
 
+int nd_time_zone()
+{
+	time_t stamp = 12 * 3600;
+	struct  tm loca_tm = { 0 };
+	struct  tm gm_tm = { 0 };
+	localtime_r(&stamp, &loca_tm);
+	gmtime_r(&stamp, &gm_tm);
+	return loca_tm.tm_hour - gm_tm.tm_hour;	
+}
+
+time_t  nd_time_from_str(const char *pInput, time_t* tim)
+{
+	time_t ret = 0;
+	struct tm mytm = { 0 };
+	char *p = (char*)pInput;
+	mytm.tm_year = strtol(p, &p, 0);
+	mytm.tm_year -= 1900;
+	if (!mytm.tm_year <0)	{
+		return -1;
+	}
+
+#define GET_TIME_TYPE(_tm_type) \
+	if (p && *p){				\
+			while (*p && !IS_NUMERALS(*p))	{++p;}	\
+		if (*p)	{								\
+			int a = strtol(p, &p, 0);			\
+			if(errno==ERANGE || a < 0) {return -1 ;}	\
+			mytm.##_tm_type = a ;				\
+				}	\
+		}
+	GET_TIME_TYPE(tm_mon);
+	--mytm.tm_mon;
+	GET_TIME_TYPE(tm_mday);
+	GET_TIME_TYPE(tm_hour);
+	GET_TIME_TYPE(tm_min);
+	GET_TIME_TYPE(tm_sec);
+
+	ret = mktime(&mytm); //localtime time ;
+	if (tim){
+		*tim = ret;
+	}	
+	return ret;
+}
 int _logmsg_screen(const char *filePath, int line, const char *stm,...) 
 {
 	char buf[1024*4] ;

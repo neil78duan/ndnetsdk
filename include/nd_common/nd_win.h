@@ -226,5 +226,19 @@ typedef struct nd_filemap_t
 	size_t size ;
 }nd_filemap_t;
 
-
+#include <time.h>
+static __INLINE__ struct tm* localtime_r(const time_t* _time, struct tm* _res_tm)
+{
+	if (EINVAL == localtime_s(_res_tm, _time)) {
+		return NULL;
+	}
+	return _res_tm;
+}
+static __INLINE__ struct tm* gmtime_r(const time_t* _time, struct tm* _res_tm)
+{
+	if (EINVAL == gmtime_s(_res_tm, _time)) {
+		return NULL;
+	}
+	return _res_tm;
+}
 #endif 

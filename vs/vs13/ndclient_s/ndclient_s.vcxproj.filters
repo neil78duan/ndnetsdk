@@ -37,6 +37,9 @@
     <Filter Include="src\nd_net">
       <UniqueIdentifier>{2a2d9989-ab03-4afa-b2dd-2a16432373b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\nd_vm">
+      <UniqueIdentifier>{e0377736-b664-459f-b60a-b05b031d0dc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -358,6 +361,21 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c">
       <Filter>src\nd_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_asm.c">
+      <Filter>src\nd_vm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_formula.c">
+      <Filter>src\nd_vm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vm.c">
+      <Filter>src\nd_vm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vmdbg.c">
+      <Filter>src\nd_vm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vmmain.c">
+      <Filter>src\nd_vm</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

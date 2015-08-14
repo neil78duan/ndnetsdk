@@ -68,6 +68,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>../../../lib/Win32</OutDir>
+    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>../../../lib/Win64</OutDir>
@@ -253,6 +254,11 @@
     <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_asm.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_formula.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vm.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vmdbg.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vmmain.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

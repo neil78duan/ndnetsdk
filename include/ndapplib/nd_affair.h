@@ -208,7 +208,7 @@ public:
             return ;
         }
 
-		if (m_affair_stat )	{
+		if (m_affair_stat && m_commitNtf)	{
 
 			m_enable = 0 ;
 			for(int i=0; i<(int)m_buf.size(); i++) {
