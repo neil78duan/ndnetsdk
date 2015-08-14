@@ -29,7 +29,7 @@ public:
 	inline nd_usermsgbuf_t *GetMsgAddr() {return &_packet ;}
 	size_t GetSerialBin(void *buf, size_t bufsize) ;	//∞—œ˚œ¢ ‰≥ˆ≥…∂˛Ω¯÷∆
 	
-	size_t GetDataLen()	{return ND_USERMSG_DATALEN(&_packet) ;	}
+	size_t GetDataLen();
 protected:
 	nd_usermsgbuf_t  _packet ;
 };
@@ -83,7 +83,7 @@ public:
 	inline char *MsgData() {return recv_packet->data ;}
 	inline nd_usermsgbuf_t *GetMsgAddr() {return recv_packet ;}
 	
-	size_t GetDataLen()	{return ND_USERMSG_DATALEN(recv_packet) ;	}
+	size_t GetDataLen();
 	size_t GetSerialBin(void *buf, size_t bufsize) ;	//∞—œ˚œ¢ ‰≥ˆ≥…∂˛Ω¯÷∆
 protected:
 	nd_usermsgbuf_t  *recv_packet ;

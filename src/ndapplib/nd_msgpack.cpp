@@ -38,6 +38,7 @@ size_t NDSendMsg::GetSerialBin(void *buf, size_t bufsize)
 	return len ;
 }
 
+size_t NDSendMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(&_packet); }
 
 //////////////////////////////////////////////////////////////////////////
 // class NDOStreamMsg
@@ -282,6 +283,8 @@ size_t NDRecvMsg::GetSerialBin(void *buf, size_t bufsize)
 	memcpy(buf,recv_packet,len) ;
 	return len ;
 }
+
+size_t NDRecvMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(recv_packet); }
 
 //////////////////////////////////////////////////////////////////////////
 //class NDIStreamMsg
