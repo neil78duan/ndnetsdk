@@ -75,10 +75,10 @@ static __inline NDUINT64 nd_netstream_to_longlong(const char *buf)
 	v1._data[5] = buf[2] ;
 	v1._data[4] = buf[3] ;
 	
-	v1._data[3] = buf[0] ;
-	v1._data[2] = buf[1] ;
-	v1._data[1] = buf[2] ;
-	v1._data[0] = buf[3] ;
+	v1._data[3] = buf[4] ;
+	v1._data[2] = buf[5] ;
+	v1._data[1] = buf[6] ;
+	v1._data[0] = buf[7] ;
 	
 	return v1.val ;
 }
@@ -145,10 +145,10 @@ static __inline NDUINT64 nd_netstream_to_longlong(const char *buf)
 	v1._data[2] = buf[2] ;
 	v1._data[3] = buf[3] ;
 	
-	v1._data[4] = buf[0] ;
-	v1._data[5] = buf[1] ;
-	v1._data[6] = buf[2] ;
-	v1._data[7] = buf[3] ;
+	v1._data[4] = buf[4] ;
+	v1._data[5] = buf[5] ;
+	v1._data[6] = buf[6] ;
+	v1._data[7] = buf[7] ;
 	
 	return v1.val ;
 }
