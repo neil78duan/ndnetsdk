@@ -377,7 +377,6 @@ public:
 
 	void EnableAll()
 	{
-		m_affair_stat = 1;
 		m_enable =1 ;
 		m_notify =1 ;
 		m_syncdb =1 ;
@@ -385,7 +384,6 @@ public:
 	}
 	void DisableAll()
 	{
-		m_affair_stat = 0;
 		m_enable =0 ;
 		m_notify =0 ;
 		m_syncdb =0 ;
@@ -416,7 +414,7 @@ protected:
 	NDUINT32 m_notify:1 ;
 	NDUINT32 m_syncdb:1 ;
 	NDUINT32 m_commitNtf : 1;  //callback when commit 
-	NDUINT32 m_dataChanged : 1;  //data change 
+	NDUINT32 m_dataChanged;  //data change 
 	//back_op m_buf[number] ;
 	typedef std::vector<back_op> affair_vct ;
 	affair_vct m_buf ;
