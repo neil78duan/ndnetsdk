@@ -414,7 +414,7 @@ protected:
 	NDUINT32 m_notify:1 ;
 	NDUINT32 m_syncdb:1 ;
 	NDUINT32 m_commitNtf : 1;  //callback when commit 
-	NDUINT32 m_dataChanged;  //data change 
+	NDUINT32 m_dataChanged : 1;  //data change 
 	//back_op m_buf[number] ;
 	typedef std::vector<back_op> affair_vct ;
 	affair_vct m_buf ;
