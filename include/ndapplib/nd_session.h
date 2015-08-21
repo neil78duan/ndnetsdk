@@ -10,19 +10,18 @@
 #include "ndapplib/nd_msgpacket.h"
 #include "ndapplib/nd_object.h"
 #include "nd_net/nd_netlib.h"
-
+#include "ndapplib/nd_alarms.h"
 
 #pragma  warning(push)
 #pragma  warning (disable : 4290 )
 //net session 
-class NDSession : public NDObject
+class NDSession : public NDAlarm
 {
 public :
 	const char* GetInetAddr();
 
 	virtual void Initilize(nd_handle hsession, nd_handle listen= NULL) ;
-	virtual int Update() {return 0;}
-
+	
 	NDUINT16 GetSessionID() ;
 
 	int SendMsg(NDSendMsg &smsg, int flag=ESF_NORMAL);//{return ::nd_connector_send(GetHandle() , (nd_packhdr_t *)(smsg.GetMsgAddr()), flag) ;	}	
@@ -57,6 +56,8 @@ public :
 	int SetDelayClose() ;
 	int LoadBalance() ;
 	
+	void baseUpdate() ;
+	
 	int CryptPackage(nd_usermsgbuf_t *msgBuf) ;
 #if 0
 	void *  operator new(size_t size,void *addr) throw (std::bad_alloc) ;
@@ -69,6 +70,8 @@ protected:
 	//void *  operator new(size_t size) ;//throw (std::bad_alloc) ;
 	NDUINT32 m_id ;				//id
 	NDUINT32 m_type ;			//¿‡–Õ
+private:
+	net_update_entry m_handle_update ;
 };
 
 #pragma  warning(pop)

@@ -11,14 +11,29 @@
 #include "ndapplib/nd_listener.h"
 #include "ndapplib/nd_datatransfer.h"
 
+static  int _session_update(nd_handle h)
+{
+	NDSession *pSe = NDGetSession(h) ;
+	if (pSe) {
+		pSe->baseUpdate() ;
+	}
+	return  0;
+}
 //////////////////////////////////////////////////////////////////////////
 //class NDSession
 NDSession::NDSession () 
 {
+	m_handle_update = 0 ;
 }
 
 NDSession::~NDSession() 
 {
+	
+	if (m_objhandle &&m_handle_update) {
+		((nd_session_handle)m_objhandle)->update_entry = m_handle_update;
+		m_handle_update = 0 ;
+	}
+	NDAlarm::Destroy() ;
 }
 
 #if 0
@@ -37,43 +52,31 @@ void *  NDSession::operator new(size_t size) throw (std::bad_alloc)
 #endif 
 
 
+void NDSession::baseUpdate()
+{
+	if (m_handle_update) {
+		m_handle_update(m_objhandle) ;
+	}
+	NDAlarm::Update() ;
+}
+
 //send message in script
 int NDSession::Send(NDOStreamMsg &omsg) 
 {
-	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(omsg.GetMsgAddr()), ESF_NORMAL) ;	
-// 	int ret = ::nd_sessionmsg_sendex(GetHandle() , (nd_packhdr_t *)(omsg.GetMsgAddr()), ESF_URGENCY) ;	
-// 	if (ret==-1){
-// 		nd_logmsg("nd_sessionmsg_sendex() send error ret = -1\n") ;
-// 	}
-// 	return ret ;
+	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(omsg.GetMsgAddr()), ESF_NORMAL) ;
 }
 
 int NDSession::SendMsg(NDSendMsg &smsg, int flag)
 {
-	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(smsg.GetMsgAddr()), flag) ;	
-// 	int ret = ::nd_sessionmsg_sendex(GetHandle() , (nd_packhdr_t *)(smsg.GetMsgAddr()), flag) ;	
-// 	if (ret==-1){
-// 		nd_logmsg("nd_sessionmsg_sendex() send error ret = -1\n") ;
-// 	}
-// 	return ret ;
+	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(smsg.GetMsgAddr()), flag) ;
 }
 int NDSession::SendMsg(nd_usermsghdr_t *msghdr, int flag)
 {
-	return ::nd_sessionmsg_sendex(GetHandle() , msghdr, flag) ;	
-// 	int ret = ::nd_sessionmsg_sendex(GetHandle() , &msghdr->packet_hdr, flag) ;	
-// 	if (ret==-1){
-// 		nd_logmsg("nd_sessionmsg_sendex() send error ret = -1\n") ;
-// 	}
-// 	return ret ;
+	return ::nd_sessionmsg_sendex(GetHandle() , msghdr, flag) ;
 }
 int NDSession::ResendMsg(NDIStreamMsg &resendmsg, int flag)
 {
-	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(resendmsg.GetMsgAddr()), flag) ;	
-// 	int ret = ::nd_sessionmsg_sendex(GetHandle() , (nd_packhdr_t *)(resendmsg.GetMsgAddr()), flag) ;	
-// 	if (ret==-1){
-// 		nd_logmsg("nd_sessionmsg_sendex() send error ret = -1\n") ;
-// 	}
-// 	return ret ;
+	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(resendmsg.GetMsgAddr()), flag) ;
 }
 
 int NDSession::BigDataSend(int maxID, int minID, void *data, size_t datalen) 
@@ -145,11 +148,18 @@ void NDSession::Initilize(nd_handle hsession,nd_handle listen)
 {
 	ND_TRACE_FUNC();
 	m_objhandle = hsession ;
+	m_handle_update = ((nd_session_handle)hsession)->update_entry ;
+	((nd_session_handle)hsession)->update_entry = _session_update ;
+	
 	OnInitilize() ;
 }
 
 int NDSession::Close(int flag ) 
-{	
+{
+	if (m_handle_update) {
+		((nd_session_handle)m_objhandle)->update_entry = m_handle_update;
+		m_handle_update = 0 ;
+	}
 	return nd_session_close(m_objhandle, flag) ;
 }
 NDObject* NDSession::GetParent() 

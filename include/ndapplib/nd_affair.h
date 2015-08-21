@@ -252,7 +252,7 @@ public:
 		//m_num = 0;
 		m_buf.clear() ;
 	}
-	virtual void Undo(TIndex &index, TValue &old_val,int optype )
+	virtual void Undo(TIndex &index,  TValue &old_val,int optype )
 	{
 
 	}
@@ -267,7 +267,7 @@ public:
 		m_affair_stat = 0;
 		m_nCount = 0 ;
 	}
-	void AffairAdd(TIndex &index, TValue &old_val)
+	void AffairAdd(const TIndex &index,const TValue &old_val)
 	{
 		if (m_affair_stat)	{
 			
@@ -279,7 +279,7 @@ public:
 //			m_num++;
 		}
 	}
-	void AffairDel(TIndex &index, TValue &old_val)
+	void AffairDel(const TIndex &index,const TValue &old_val)
 	{
 		if (m_affair_stat)	{
 			
@@ -291,7 +291,7 @@ public:
 //			m_num++;
 		}
 	}
-	void AffairModify(TIndex &index, TValue &old_val)
+	void AffairModify(const TIndex &index,const  TValue &old_val)
 	{
 		if (m_affair_stat)	{
 			AffairSet(index, old_val ,EAO_MODIFIED) ;
@@ -303,7 +303,7 @@ public:
 //			m_num++;
 		}
 	}
-	void AffairSet(TIndex &index, TValue &val ,int affair_op) 
+	void AffairSet(const TIndex &index,const  TValue &val ,int affair_op) 
 	{
 		if (m_affair_stat)	{
 			back_op op ;

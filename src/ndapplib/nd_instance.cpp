@@ -209,6 +209,8 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 
 void NDInstanceBase::Destroy(int flag)
 {
+	NDAlarm::Destroy();
+	
     nd_host_eixt() ;
     if(NDInstanceBase::Close(flag)==-1) {
         return  ;
