@@ -50,6 +50,7 @@ public :
 	int Write(NDUINT64 ) ;
 	int Write(NDUINT8 ) ;
 	int Write(const NDUINT8 *text ) ;
+	int Write(const char *text);
 	int Write(float) ;
 	int Write(double ) ;
 	int WriteBin(void *data, size_t size) ;

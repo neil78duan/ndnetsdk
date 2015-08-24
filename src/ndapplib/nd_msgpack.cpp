@@ -167,6 +167,10 @@ int NDOStreamMsg::Write(NDUINT8 a)
 	return -1 ;
 }
 
+int NDOStreamMsg::Write(const char *text)
+{
+	return Write((const NDUINT8 *)text);
+}
 int NDOStreamMsg::Write(const NDUINT8 *text)
 {
 	size_t n ;
