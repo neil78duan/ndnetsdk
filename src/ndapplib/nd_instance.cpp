@@ -365,7 +365,18 @@ void NDInstanceBase::EndStaticsMem2()
 #endif
 }
 
-#if !defined(ND_UNIX) && defined(ND_DEBUG)
+#if defined(ND_DEBUG)
+#if defined(ND_USE_VLD)
+void NDInstanceBase::StartStaticsMem() 
+{
+	VLDMarkAllLeaksAsReported();
+}
+
+void NDInstanceBase::EndStaticsMem() 
+{
+	VLDReportLeaks();
+}
+#elif !defined(ND_UNIX) 
 void NDInstanceBase::StartStaticsMem() 
 {
 	_CrtMemDumpAllObjectsSince( NULL );
@@ -390,7 +401,9 @@ void NDInstanceBase::EndStaticsMem()
 		_CrtSetReportHook( NULL ) ;
 	}
 }
-#else 
+#endif 
+
+#else  //debug
 void NDInstanceBase::StartStaticsMem() 
 {
 
@@ -855,3 +868,17 @@ MSG_ENTRY_INSTANCE(nd_set_netmsg_log)
     return 0;
 }
 
+
+MSG_ENTRY_INSTANCE(nd_mm_statics_begin)
+{
+	ND_TRACE_FUNC();
+	getbase_inst()->StartStaticsMem();
+	return 0;
+}
+
+MSG_ENTRY_INSTANCE(nd_mm_statics_end)
+{
+	ND_TRACE_FUNC();
+	getbase_inst()->EndStaticsMem();
+	return 0;
+}

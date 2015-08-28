@@ -140,5 +140,7 @@ MSG_ENTRY_DECLARE(nd_set_netmsg_log);
 
 MSG_ENTRY_DECLARE(nd_get_sys_time);
 MSG_ENTRY_DECLARE(nd_get_game_time);
+MSG_ENTRY_DECLARE(nd_mm_statics_begin);
+MSG_ENTRY_DECLARE(nd_mm_statics_end);
 
 #endif
