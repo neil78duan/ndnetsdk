@@ -14,6 +14,7 @@
 
 ndxml *parse_xmlbuf(char *xmlbuf, int size,char **parse_end, char **error_addr) ;
 ndxml *alloc_xml();
+void _release_xml(ndxml *node);
 void  dealloc_xml(ndxml *node );
 struct ndxml_attr *alloc_attrib_node(const char *name, const char *value);
 void dealloc_attrib_node(struct ndxml_attr *pnode);
@@ -51,74 +52,7 @@ int xml_load_from_buf(char *buf, size_t size, ndxml_root *xmlroot,const char *fi
 
 int ndxml_load(const char *file,ndxml_root *xmlroot)
 {
-	return ndxml_load_ex(file, xmlroot, NULL);
-	/*
-	int codeType = -1;
-	int data_len,buf_size ;
-	FILE *fp;
-	char *text_buf = NULL, *parse_addr;
-	char *error_addr = 0;
-
-	fp = fopen(file, "r+b") ;
-	if(!fp) {
-		return -1;
-	}
-	fseek(fp, 0, SEEK_END);
-	buf_size = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
-
-	if(buf_size==0) {
-		fclose(fp) ;
-		return -1 ;
-	}
-	buf_size += 1 ;
-	text_buf =(char*) malloc(buf_size) ;
-	
-	if(!text_buf){
-		fclose(fp) ;
-		return -1 ;
-	}
-	data_len = (int) fread(text_buf,1, buf_size, fp) ;
-	if(data_len==0 || data_len>= buf_size) {
-		fclose(fp) ;
-		free(text_buf) ;
-		return -1 ;
-
-	}
-	text_buf[data_len] = 0 ;
-	fclose(fp) ;
-	
-	//ndxml_root *xmlroot;
-	ndxml_initroot(xmlroot) ;
-	if (-1 == xml_parse_fileinfo(xmlroot, text_buf, &parse_addr, &error_addr)) {
-		fclose(fp);
-		free(text_buf);
-		ndxml_destroy(xmlroot);
-		show_xmlerror(file, error_addr, text_buf, (size_t)data_len);
-		return -1;
-	}
-	codeType = xml_set_code_type(xmlroot);
-	//parse_addr = text_buf ;
-	do {
-		ndxml *xmlnode = parse_xmlbuf(parse_addr, data_len, &parse_addr, &error_addr);
-		if(xmlnode) {
-			list_add_tail(&xmlnode->lst_self, &xmlroot->lst_sub);
-			xmlroot->sub_num++ ;
-		}
-		else if(error_addr) {
-			ndxml_destroy(xmlroot) ;
-			show_xmlerror(file, error_addr, text_buf, (size_t) data_len) ;
-			return -1;
-		}
-	} while(parse_addr && *parse_addr);
-
-	free(text_buf) ;
-
-	if (codeType!= -1) {
-		ndstr_set_code(codeType);
-	}
-	return 0 ;
-	*/
+	return ndxml_load_ex(file, xmlroot, NULL);	
 }
 
 int ndxml_load_ex(const char *file, ndxml_root *xmlroot, const char*encodeType)
@@ -200,14 +134,27 @@ EXIT_ERROR :
 
 void ndxml_destroy(ndxml_root *xmlroot)
 {
-	ndxml *sub_xml; 
-	struct list_head *pos = xmlroot->lst_sub.next;
-	while (pos != &xmlroot->lst_sub) {
-		sub_xml = list_entry(pos,struct tagxml, lst_self) ;
-		pos = pos->next ;
-		dealloc_xml(sub_xml) ;
-		
-	}
+// 	ndxml *sub_xml; 
+// 	struct list_head *pos = xmlroot->lst_sub.next;
+// 	while (pos != &xmlroot->lst_sub) {
+// 		sub_xml = list_entry(pos,struct tagxml, lst_self) ;
+// 		pos = pos->next ;
+// 		dealloc_xml(sub_xml) ;
+// 		
+// 	}
+// 
+// 
+// 	//dealloc attribute
+// 	pos = xmlroot->lst_attr.next;
+// 	while (pos != &xmlroot->lst_attr) {
+// 		struct ndxml_attr *attrnode;
+// 		attrnode = list_entry(pos, struct ndxml_attr, lst);
+// 		pos = pos->next;
+// 		dealloc_attrib_node(attrnode);
+// 	}
+
+
+	_release_xml(xmlroot);
 	ndxml_initroot(xmlroot) ;
 }
 
@@ -286,7 +233,7 @@ int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, char **
 	}
 
 
-	*endaddr = pEnd + 2;
+	*endaddr = (char*)pEnd + 2;
 	*erraddr = 0;
 	return 0;
 
@@ -901,7 +848,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 		return NULL ;
 	}
 	if(XML_T_END==*((short int*)paddr)) {
-		*parse_end = paddr ;
+		*parse_end = (char*)paddr ;
 		*error_addr = NULL ;
 		return NULL ;
 		//goto READ_END ;
@@ -916,7 +863,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 	//check valid 
 	if(*paddr=='>' || *paddr=='<' || *paddr=='\"' || *paddr=='/') {
 		*parse_end = NULL ;
-		*error_addr = paddr ;
+		*error_addr = (char*)paddr ;
 		return NULL ;
 	}
 
@@ -935,7 +882,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 		char attr_name[MAX_XMLNAME_SIZE] ;
 		if(*((short int*)paddr)==XML_H_END ) {
 			//这个xml节点结束了,应该返回了
-			*parse_end = paddr + 2 ;
+			*parse_end = (char*)paddr + 2 ;
 			return xmlnode ;
 		}
 		else if('>'==*paddr) {
@@ -1069,11 +1016,9 @@ ndxml *alloc_xml()
 	return node ;
 }
 
-//释放一个XML节点的所以资源
-void  dealloc_xml(ndxml *node )
+void _release_xml(ndxml *node)
 {
-	struct list_head *pos ;
-	
+	struct list_head *pos ;	
 	//dealloc value 
 	if(node->value) {
 		free(node->value) ;
@@ -1099,8 +1044,15 @@ void  dealloc_xml(ndxml *node )
 		dealloc_xml(_xml) ;
 	}
 
-	free(node) ;
 }
+
+//释放一个XML节点的所以资源
+void  dealloc_xml(ndxml *node)
+{
+	_release_xml(node);
+	free(node);
+}
+
 
 //申请一个属性节点的内存
 struct ndxml_attr *alloc_attrib_node(const char *name, const char *value)

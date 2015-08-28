@@ -150,7 +150,7 @@ void NDSession::Initilize(nd_handle hsession,nd_handle listen)
 	m_objhandle = hsession ;
 	m_handle_update = ((nd_session_handle)hsession)->update_entry ;
 	((nd_session_handle)hsession)->update_entry = _session_update ;
-	
+	NDAlarm::Create();
 	OnInitilize() ;
 }
 
@@ -160,6 +160,7 @@ int NDSession::Close(int flag )
 		((nd_session_handle)m_objhandle)->update_entry = m_handle_update;
 		m_handle_update = 0 ;
 	}
+	NDAlarm::Destroy(flag);
 	return nd_session_close(m_objhandle, flag) ;
 }
 NDObject* NDSession::GetParent() 

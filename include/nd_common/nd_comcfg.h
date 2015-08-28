@@ -30,7 +30,7 @@
 #ifdef ND_DEBUG
 
 #ifdef _MSC_VER
-//#define ND_USE_VLD		1		//使用VDL查找内存泄露
+#define ND_USE_VLD		1		//使用VDL查找内存泄露
 #endif
 
 //#define ND_OVER_RIDE_NEW	1
