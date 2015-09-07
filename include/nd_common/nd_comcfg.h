@@ -33,13 +33,13 @@
 #define ND_USE_VLD		1		//使用VDL查找内存泄露
 #endif
 
-//#define ND_OVER_RIDE_NEW	1
+#define ND_OVER_RIDE_NEW	1
 
 #if defined(ND_USE_GPERF )||defined(ND_USE_VLD)
 #else
 #define ND_UNUSE_STDC_ALLOC 1		//不使用标准C的alloc
 #define ND_MEM_CHECK		1		//内存访问越界检查
-//#define ND_MEM_STATICS		1		//内测申请统计
+#define ND_MEM_STATICS		1		//内测申请统计
 //#define ND_SOURCE_TRACE		1		//记录每个申请的资源(打开的文件和申请的内存,还有系统资源)
 //#define ND_FILE_TRACE		1		//记录每个打开的文件
 #endif

@@ -350,7 +350,7 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 	return sizeof(buf) - size ;
 }
 
-#ifdef ND_FILE_TRACE
+#if defined(ND_FILE_TRACE) && defined(ND_SOURCE_TRACE)
 
 #ifdef _ND_COMMON_H_
 #error not include nd_common.h

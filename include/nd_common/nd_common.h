@@ -63,7 +63,8 @@ ND_COMMON_API const char *nd_process_name() ;
 //ND_COMMON_API char *process_name();
 ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
-#ifdef ND_FILE_TRACE
+
+#if defined(ND_FILE_TRACE) && defined(ND_SOURCE_TRACE)
 	#undef  fopen
 	#undef  fclose
 	#define fopen(filename, mod) nd_fopen_dbg(filename, mod,__FILE__,__LINE__)
