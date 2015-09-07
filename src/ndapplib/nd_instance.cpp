@@ -401,6 +401,15 @@ void NDInstanceBase::EndStaticsMem()
 		_CrtSetReportHook( NULL ) ;
 	}
 }
+#else //unix-like
+void NDInstanceBase::StartStaticsMem()
+{
+	
+}
+void NDInstanceBase::EndStaticsMem()
+{
+	
+}
 #endif 
 
 #else  //debug
