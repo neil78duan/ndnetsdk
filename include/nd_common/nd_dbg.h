@@ -157,7 +157,7 @@ ND_COMMON_API const char *nd_get_datetimestr_ex(time_t in_tm, char *buf, int siz
 // void nd_sourcelog_dump() ; 
 
 
-#ifdef ND_FILE_TRACE
+#if defined(ND_FILE_TRACE) && defined(ND_SOURCE_TRACE)
 	ND_COMMON_API FILE *nd_fopen_dbg( const char *filename, const char *mode ,const char *file, int line);
 	ND_COMMON_API void nd_fclose_dbg(FILE *fp);	
 #else 

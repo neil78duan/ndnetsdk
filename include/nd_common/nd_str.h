@@ -9,8 +9,9 @@
 #ifndef _ND_STR_H_
 #define _ND_STR_H_
 
-#include "nd_common/nd_common.h"
- 
+//#include "nd_common/nd_common.h"
+#include "nd_common/nd_os.h"
+
 #define _DOT  '.'
 #define _MINUS '-' 
 #define _ND_SPACE			0x20

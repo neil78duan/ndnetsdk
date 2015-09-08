@@ -404,10 +404,17 @@ void NDInstanceBase::EndStaticsMem()
 #else //unix-like
 void NDInstanceBase::StartStaticsMem()
 {
-	
+	if (!CheckIsDeveVer()) {
+		return ;
+	}
+	nd_mm_statics_start() ;
 }
 void NDInstanceBase::EndStaticsMem()
 {
+	if (!CheckIsDeveVer()) {
+		return ;
+	}
+	nd_mm_statics_end() ;
 	
 }
 #endif 
@@ -415,10 +422,18 @@ void NDInstanceBase::EndStaticsMem()
 #else  //debug
 void NDInstanceBase::StartStaticsMem() 
 {
-
+	
+	if (!CheckIsDeveVer()) {
+		return ;
+	}
+	nd_mm_statics_start() ;
 }
 void NDInstanceBase::EndStaticsMem() 
 {
+	if (!CheckIsDeveVer()) {
+		return ;
+	}
+	nd_mm_statics_end() ;
 
 }
 #endif 
@@ -878,14 +893,14 @@ MSG_ENTRY_INSTANCE(nd_set_netmsg_log)
 }
 
 
-MSG_ENTRY_INSTANCE(nd_mm_statics_begin)
+MSG_ENTRY_INSTANCE(app_statics_begin)
 {
 	ND_TRACE_FUNC();
 	getbase_inst()->StartStaticsMem();
 	return 0;
 }
 
-MSG_ENTRY_INSTANCE(nd_mm_statics_end)
+MSG_ENTRY_INSTANCE(app_statics_end)
 {
 	ND_TRACE_FUNC();
 	getbase_inst()->EndStaticsMem();
