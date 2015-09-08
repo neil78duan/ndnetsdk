@@ -284,7 +284,7 @@ int nd_msgentry_install(nd_netui_handle handle, nd_usermsg_func func, ndmsgid_t 
 		if (name && name[0]) {
 			int len = strlen(name) + 1;
 			node->name = malloc(len);
-			if (name) {
+			if (node->name) {
 				strncpy(node->name, name, len);
 			}
 		}
