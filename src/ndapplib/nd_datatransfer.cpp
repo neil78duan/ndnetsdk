@@ -133,7 +133,7 @@ int NDBigDataTransfer::asyncSend(int maxID, int minID, void*data, size_t datalen
 	}
 	else {
 		list_hdr = (struct list_head*) pWritableParam ;
-		isEmpty = list_empty(list_hdr) ;
+		isEmpty = list_empty(list_hdr)?true:false ;
 	}
 	
 	list_add_tail(list_hdr, &m_node.list) ;

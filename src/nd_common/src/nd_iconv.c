@@ -12,7 +12,7 @@
 #ifdef _MSC_VER
 
 
-char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf,int *out_len)
+char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf)
 {
 	int input_len = strlen(input_text);
 	int insize = ( input_len+1) * sizeof(wchar_t);
@@ -113,3 +113,24 @@ char * nd_utf8_to_gbk(const char *input_text, char *output_buf, int size_buf)
 
 
 #endif
+
+
+char * nd_utf8_to_ndcode(const char *input_text, char *outbuf, int size)
+{
+#if (ND_ENCODE_TYPE==E_SRC_CODE_GBK)
+	return nd_utf8_to_gbk(input_text, outbuf, size) ;
+#else 
+	return strncpy(outbuf,input_text,size) ;
+#endif
+
+}
+char * nd_ndcode_to_utf8(const char *input_text, char *outbuf, int size)
+{
+#if (ND_ENCODE_TYPE==E_SRC_CODE_GBK)
+	return nd_gbk_to_utf8(input_text, outbuf, size);
+#else 
+	return strncpy(outbuf, input_text, size);
+#endif
+
+
+}

@@ -184,10 +184,10 @@ void free_operator(struct sOperateUnit *op)
 //return 1 读取数字成功,2读取了一个'(' , 返回0 没有读取,返回-1 出错了 
 //return 3 读取了一个函数
 //int readData(char *textbuf, OPDATA_T *outData, char **next) 
-int read_operand(char *textbuf, char* operand_buf, char **next) 
+int read_operand(const char *textbuf,char* operand_buf, char **next) 
 {
 	int readOk ;
-	char *error_addr = textbuf;
+	const char *error_addr = textbuf;
 		
 	textbuf = ndstr_first_valid(textbuf) ;
 	if(!textbuf){
@@ -195,7 +195,7 @@ int read_operand(char *textbuf, char* operand_buf, char **next)
 		return 0 ;
 	}
 	if('('==*textbuf) {
-		*next = ++textbuf ;
+		*next =(char*)( ++textbuf );
 		return 2 ;
 	}
 	else if('['==*textbuf) {
@@ -560,7 +560,7 @@ int repace_param(char *param, char *buf, int size)
 	return -1 ;
 }
 //计算表达式结果
-size_t vm_parse_expression(char *textbuf, char *code_buf,size_t buf_size,vm_param_replace_func func, void*user_data)
+size_t vm_parse_expression(const char *textbuf,const char *code_buf,size_t buf_size,vm_param_replace_func func, void*user_data)
 {
 	int ret ;
 

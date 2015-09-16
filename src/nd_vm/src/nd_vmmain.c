@@ -143,7 +143,7 @@ int run_file(char *file)
 		char line[256] ;
 
 		while ( fgets( line, 256, fp ) ) {
-			p = ndstr_first_valid(line) ;
+			p = (char*) ndstr_first_valid(line) ;
 			if(!p) 
 				continue ;
 			

@@ -18,7 +18,7 @@
 void run_debuger(struct vm_cpu *vm) ;
 
 
-int replace_func(char *input, char *buf, int size) 
+int replace_func(const char *input, char *buf, int size,void *userData) 
 {
 	if(ndstricmp(input, "HP")==0) {
 		strncpy(buf, "[1]", size) ;
@@ -60,15 +60,15 @@ void show_help()
 	}
 }
 
-void run_print(char *src, struct vm_cpu *vm)
+void run_print(const char *src, struct vm_cpu *vm)
 {
 	char buf[128] ;
-	char *addr = ndstr_first_valid(src) ; 
+	const char *addr = ndstr_first_valid(src) ; 
 	if (!addr || !addr[0]){
 		return ;
 	}
 
-	addr = ndstr_parse_word_n(addr, buf, 128) ;
+	addr = ndstr_parse_word_n(addr, buf, 128);
 	if(!addr) 
 		return ;
 	if(0==ndstricmp(buf, "reg")) {
@@ -119,7 +119,7 @@ int try_run_dbgcmd(char *linebuf, struct vm_cpu *vm)
 {
 	int cmd ;
 	char buf[128] ;
-	char *addr = ndstr_first_valid(linebuf) ;
+	const char *addr = ndstr_first_valid(linebuf) ;
 		
 	buf[0] = 0 ;
 	addr = ndstr_parse_word_n(addr, buf, 128) ;
@@ -147,7 +147,7 @@ int try_run_dbgcmd(char *linebuf, struct vm_cpu *vm)
 	case DBG_EXP:
 		{
 			char buf[4096] ;
-			size_t bin_size = vm_parse_expression(addr, buf,sizeof(buf),replace_func,NULL) ;
+			size_t bin_size = vm_parse_expression(addr, buf, sizeof(buf), (vm_param_replace_func)replace_func, NULL);
 			if(bin_size>0) {
 				//run code
 				if(-1==vm_run_cmd(vm,buf, bin_size)  ) {
@@ -189,7 +189,7 @@ void vm_start_debug()
 
 void run_debuger(struct vm_cpu *vm)
 {
-	char *p ;
+	const char *p ;
 	int ret ;
 	struct vm_instruction_node node ;
 	char buf[128] ;

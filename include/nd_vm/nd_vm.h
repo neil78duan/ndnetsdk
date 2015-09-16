@@ -233,7 +233,7 @@ ND_VM_API int vm_echo_res(struct vm_instruction_node *node,struct vm_cpu *vm) ;
  *
  * return value : return 0 success ,on error return -1
  */
-typedef int (*vm_param_replace_func)(char *input, char *buf, int size,void *user_data) ;
+typedef int (*vm_param_replace_func)(const char *input,char *buf, int size,void *user_data) ;
 
 /* 把四则运算公式是解析成bin
  * 公式 范例 : [1] = 2*3+[4] * min([5],7*8) + rand(1,100)  + max([6],[7])  //把表达式的值付给内存1
@@ -244,7 +244,7 @@ typedef int (*vm_param_replace_func)(char *input, char *buf, int size,void *user
 
 			
  */
-ND_VM_API size_t vm_parse_expression(char *textbuf, char *code_buf,size_t buf_size, vm_param_replace_func func,void*user_data) ;
+ND_VM_API size_t vm_parse_expression(const char *textbuf, const char *code_buf,size_t buf_size, vm_param_replace_func func,void*user_data) ;
 
 //得到文件长度
 ND_VM_API size_t _filesize(FILE *stream);
