@@ -405,6 +405,12 @@ public:
 	bool CheckSyncDB() {return m_syncdb?true :false; }
 	bool CheckNotify() {return m_notify?true :false; }
 
+	typedef std::vector<back_op> affair_vct;
+	
+	void FetchAffairs(affair_vct &affairVects)
+	{
+		affairVects = m_buf;
+	}
 protected:
 
 	int m_nCount;           // 提交计数, 解决多次begin, 多次commit的问题.(这是暂行方案)
@@ -416,7 +422,6 @@ protected:
 	NDUINT32 m_commitNtf : 1;  //callback when commit 
 	NDUINT32 m_dataChanged : 1;  //data change 
 	//back_op m_buf[number] ;
-	typedef std::vector<back_op> affair_vct ;
 	affair_vct m_buf ;
 };
 
