@@ -305,7 +305,7 @@ RE_MESSAGE:
 }
 
 //fetch recvd message in nd_packhdr_t format
-int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
+static int __net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
 {
 	ENTER_FUNC() 
 	int data_len =0, valid_len=0;
@@ -395,6 +395,15 @@ RE_FETCH:
 	return valid_len ;
 }
 
+int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
+{
+	int readlen = __net_fetch_msg( socket_addr, msgbuf);
+	if (readlen>0 && socket_addr->is_log_recv){
+		nd_logmsg("received message (%d,%d) data-lenght=%d\n", ND_USERMSG_MAXID(msgbuf), ND_USERMSG_MINID(msgbuf), ND_USERMSG_LEN(msgbuf));
+	}
+	return readlen;
+}
+
 //·¢ËÍtcp·â°ü
 static int _tcp_connector_send(struct nd_tcp_node* socket_addr, nd_packhdr_t *msg_buf, int flag) 
 {
@@ -455,6 +464,9 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
         packet_ntoh(msg_buf) ;
 	}
     
+	if (ret > 0 && net_handle->is_log_send && msg_buf->ndsys_msg==0){
+		nd_logmsg("send message (%d,%d) data-lenght=%d\n", ND_USERMSG_MAXID(msg_buf), ND_USERMSG_MINID(msg_buf), ND_USERMSG_LEN(msg_buf));
+	}
 	
 	LEAVE_FUNC();
 	return ret ;

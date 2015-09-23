@@ -267,6 +267,28 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		ret = 0;
         break;
 
+	case NDIOCTL_LOG_SEND_MSG:
+		if (*(int*)val){
+			socket_node->is_log_send = 1;
+		}
+		else {
+			socket_node->is_log_send = 0;
+		}
+		ret = 0;
+		break;
+
+	case NDIOCTL_LOG_RECV_MSG:
+		if (*(int*)val){
+			socket_node->is_log_recv = 1;
+		}
+		else {
+			socket_node->is_log_recv = 0;
+		}
+		ret = 0;
+		ret = 0;
+		break;
+
+
 	case NDIOCTL_GET_SESSIONID:
 		*(int*)val = socket_node->session_id ;
 		ret = 0;

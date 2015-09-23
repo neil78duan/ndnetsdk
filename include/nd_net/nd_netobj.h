@@ -63,9 +63,11 @@ typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 
 #define  ND_CONNECTOR_BASE \
 	NDUINT8		level ;			\
-	NDUINT8		read_again:4;	\
-	NDUINT8		is_crypt_packet:3;\
+	NDUINT8		read_again:1;	\
+	NDUINT8		is_crypt_packet:1;\
 	NDUINT8		is_session:1;	\
+	NDUINT8		is_log_send:1;	\
+	NDUINT8		is_log_recv:1;	\
 	NDUINT16	session_id;		\
 	ndtime_t	start_time ;	\
 	ndtime_t	last_recv ;		\
