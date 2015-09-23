@@ -285,9 +285,20 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 			socket_node->is_log_recv = 0;
 		}
 		ret = 0;
-		ret = 0;
 		break;
 
+	case NDIOCTL_SYS_SET_LOG_FUNC:
+		nd_setlog_func((logfunc)val);
+		break;
+
+	case NDIOCTL_SYS_GET_LOG_FUNC:
+	{
+		logfunc oldval = nd_setlog_func((logfunc)0);
+		logfunc *retval = (logfunc *) val;
+		*retval = oldval;
+		nd_setlog_func(oldval);
+	}
+		break;
 
 	case NDIOCTL_GET_SESSIONID:
 		*(int*)val = socket_node->session_id ;

@@ -75,6 +75,7 @@ typedef struct nd_usermsgbuf_t
 
 
 #include "ndapplib/nd_msgpacket.h"
+#include "nd_net/nd_netioctl.h"
 
 typedef const char* (*nd_error_convert)(int errcode)  ;
 

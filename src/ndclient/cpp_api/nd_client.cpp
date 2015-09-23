@@ -429,6 +429,16 @@ void DeinitNet()
 }
 
 
+void* ndSetLogoutFunc(void *func)
+{
+	return (void*)nd_setlog_func((logfunc)func);
+}
+void ndSetLogFile(const char *pathfile)
+{
+	set_log_file(pathfile);
+}
+
+
 int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
 {
 	ENTER_FUNC()	

@@ -80,4 +80,8 @@ ND_COMMON_API NDIConn* CreateConnectorObj(const char *protocol_name);
 ND_COMMON_API void DestroyConnectorObj(NDIConn *pconn);
 ND_COMMON_API NDIConn * htoConnector(nd_handle h);
 
+ND_COMMON_API void* ndSetLogoutFunc(void *func);
+ND_COMMON_API void ndSetLogFile(const char *pathfile);
+
+
 #endif
