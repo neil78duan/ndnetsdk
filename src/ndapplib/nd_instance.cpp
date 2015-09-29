@@ -91,6 +91,7 @@ NDInstanceBase::NDInstanceBase()
 	g_base_inst = this ;
     m_alarm_id = -1 ;
 	m_bDaemon = 0 ;
+	m_bCreated = 0;
 	//char *configname ;
 }
 
@@ -103,6 +104,9 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 {
 	int i ;
 	const char *logfileName = NULL ;
+	if (m_bCreated)	{
+		return 0;
+	}
 
     system_signals_init() ;
     
@@ -203,12 +207,17 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 
 	OnCreate();
 
+	m_bCreated = 1;
 	return 0 ;
 
 }
 
 void NDInstanceBase::Destroy(int flag)
 {
+	if (m_bCreated==0){
+		return;
+	}
+	m_bCreated = 0;
 	NDAlarm::Destroy();
 	
     nd_host_eixt() ;

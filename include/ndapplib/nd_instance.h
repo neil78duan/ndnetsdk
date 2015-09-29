@@ -73,14 +73,15 @@ protected :
 	NDListener *pListen ;
 	
 	//nd_handle m_objhandle ;
-	int tminterval ;
+	int tminterval;
+	int m_alarm_id;
 	server_config m_config ;
 	const char *m_config_name ;
 	const char *config_file ;
-	int m_un_develop ;
-	int m_bNormalExit ;
-    int m_alarm_id ;
-	int m_bDaemon ;
+	int m_un_develop:1 ;
+	int m_bNormalExit:1 ;
+	int m_bDaemon:1 ;
+	int m_bCreated : 1;
 public:
 	void StartStaticsMem() ;
 	void EndStaticsMem() ;
@@ -113,9 +114,7 @@ public:
 	}
     
  	int End(int flag)
- 	{
- 		NDInstanceBase::Destroy(flag) ;
-        
+ 	{        
         nd_instance_exit(flag) ;
  
  		return 0;
