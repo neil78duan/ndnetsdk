@@ -18,7 +18,7 @@
 #endif 
 #endif
 
-#ifdef _MSC_VER
+#if  defined(_MSC_VER ) && defined(ND_COMPILE_AS_DLL)
 
 #ifdef CONN_CLI_EXPORTS
 #define ND_CONNCLI_API 				CPPAPI  __declspec(dllexport)

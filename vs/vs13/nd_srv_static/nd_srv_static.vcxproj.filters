@@ -342,6 +342,9 @@
     <ClInclude Include="..\..\..\include\ndapplib\ndsingleton.h">
       <Filter>include\ndapplib</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_common\nd_export_def.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
