@@ -381,12 +381,12 @@ int raw_set_recvall(ndsocket_t raw_fd)
 #if !defined(ND_UNIX) 
 	
 #define SIO_RCVALL _WSAIOW(IOC_VENDOR,1)
-	NDUINT32 lpvBuffer = 1;
-	NDUINT32 lpcbBytesReturned = 0 ;
-
-	if(-1==WSAIoctl(raw_fd, SIO_RCVALL, &lpvBuffer, sizeof(lpvBuffer), NULL, 0, &lpcbBytesReturned, NULL, NULL) ) {
-		return -1;
-	}
+// 	NDUINT32 lpvBuffer = 1;
+// 	NDUINT32 lpcbBytesReturned = 0 ;
+// 
+// 	if(-1==WSAIoctl(raw_fd, SIO_RCVALL, &lpvBuffer, sizeof(lpvBuffer), NULL, 0, &lpcbBytesReturned, NULL, NULL) ) {
+// 		return -1;
+// 	}
 
 #else
 	/*struct ifreq ifr;

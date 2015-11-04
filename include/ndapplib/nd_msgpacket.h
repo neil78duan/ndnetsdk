@@ -10,9 +10,10 @@
 #ifndef BUILD_AS_THIRD_PARTY
 #include "nd_net/nd_netlib.h"
 #include "nd_common/nd_common.h"
+#include "ndcli/nd_api_c.h"
 #endif 
 
-class NDSendMsg 
+class ND_CONNCLI_CLASS NDSendMsg
 {
 public:
 	NDSendMsg() ;
@@ -36,7 +37,7 @@ protected:
 
 class NDIStreamMsg;
 // ‰≥ˆ¡˜ Ω–≠“È∞¸
-class NDOStreamMsg :public NDSendMsg
+class ND_CONNCLI_CLASS NDOStreamMsg :public NDSendMsg
 {
 public :
 	void Reset();
@@ -72,7 +73,7 @@ private:
 	char *_end ;
 };
 
-class NDRecvMsg 
+class ND_CONNCLI_CLASS NDRecvMsg
 {
 public:
 	NDRecvMsg(nd_usermsgbuf_t *pmsg) :recv_packet(pmsg){}
@@ -90,7 +91,7 @@ protected:
 	nd_usermsgbuf_t  *recv_packet ;
 };
 // ‰»Î¡˜ Ω–≠“È∞¸
-class NDIStreamMsg : public NDRecvMsg
+class ND_CONNCLI_CLASS NDIStreamMsg : public NDRecvMsg
 {
 public :
 	int Read(NDUINT32 &a) ;

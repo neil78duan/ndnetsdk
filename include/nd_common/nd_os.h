@@ -100,7 +100,7 @@ ND_COMMON_API void destoryMutex(NDMutex *m);
 /*define condition value*/
 ND_COMMON_API int initNDCondVar(NDCondVar *v) ;
 ND_COMMON_API int waitCondVar(NDCondVar *v, NDMutex *m);
-ND_COMMON_API int timewaitCondVar(NDCondVar *v, NDMutex *m, DWORD mseconds);
+ND_COMMON_API int timewaitCondVar(NDCondVar *v, NDMutex *m, int mseconds);
 ND_COMMON_API int signalCondVar(NDCondVar *v);
 ND_COMMON_API int destoryCondVar(NDCondVar *v);
 ND_COMMON_API int broadcastCondVar(NDCondVar *v) ;

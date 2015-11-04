@@ -12,31 +12,8 @@
 #ifndef _NET_CONN_H_
 #define _NET_CONN_H_
 
+
 #include <stdlib.h>
-
-#ifndef CPPAPI
-#ifdef __cplusplus
-#define CPPAPI extern "C" 
-#else 
-#define CPPAPI 
-#endif 
-#endif
-
-//#ifdef _MSC_VER
-// 
-// #ifdef CONN_CLI_EXPORTS
-// #define ND_CONNCLI_API 				CPPAPI  __declspec(dllexport)
-// #define ND_CONNCLI_CLASS 			__declspec(dllexport)
-// #else 
-// #define ND_CONNCLI_API 				CPPAPI __declspec(dllimport)
-// #define ND_CONNCLI_CLASS 			__declspec(dllimport)
-// #endif
-// 
-// #else
-
-#define ND_CONNCLI_API 				CPPAPI
-#define ND_CONNCLI_CLASS 			
-//#endif
 
 
 typedef void* netObject ;

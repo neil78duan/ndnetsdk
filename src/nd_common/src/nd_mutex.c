@@ -155,7 +155,7 @@ int waitCondVar(NDCondVar *v , NDMutex *m)
 	return (int)hr ;
 }
 
-int timewaitCondVar(NDCondVar *v, NDMutex *m, DWORD mseconds)
+int timewaitCondVar(NDCondVar *v, NDMutex *m, int mseconds)
 {
 	long hr ;
 	ndthread_t self= nd_thread_self() ;

@@ -9,36 +9,8 @@
 #ifndef _ND_WIN_H_
 #define _ND_WIN_H_
 
-/*
-#ifndef _WIN32_WINNT
-#define  _WIN32_WINNT 0x0500		//default winnt 5
-#endif
-*/
-// 
-// #if defined(ND_DEBUG)
-// #ifndef _CRTDBG_MAP_ALLOC
-// #define _CRTDBG_MAP_ALLOC
-// #endif
-// #ifndef CRTDBG_MAP_ALLOC
-// #define CRTDBG_MAP_ALLOC
-// #endif
-// #endif
-
-// 
-// #ifndef _UNNEED_INCLUDE_WINDOWS_SYSTEM
-// 
-// #if defined(_WINSOCK2API_) || defined(_WINSOCKAPI_)
-// #else 
-// #include <winsock2.h>
-// #endif
-// 
-// #ifndef _WINDOWS_
-// #include <windows.h>
-// #endif
-// #endif
-
+#ifndef _UNNEED_INCLUDE_WINDOWS_SYSTEM
 #ifndef _WINSOCK2API_
-
 // Prevent inclusion of winsock.h
 #ifdef _WINSOCKAPI_
 #error Header winsock.h is included unexpectedly.
@@ -52,8 +24,8 @@
 #else
 #include <winsock2.h>
 #endif
-
 #endif//_WINSOCK2API_
+#endif //_UNNEED_INCLUDE_WINDOWS_SYSTEM
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -113,12 +85,12 @@ ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 //define assert
 //only for x86
 #ifdef WIN64
-#define DebugBreak()    				(void)0
+#define ND_DebugBreak()    				(void)0
 #else 
 #ifdef _DEBUG
-#define DebugBreak()    				__debugbreak() //_asm { int 3 }
+#define ND_DebugBreak()    				__debugbreak() //_asm { int 3 }
 #else  
-#define DebugBreak()    				(void)0
+#define ND_DebugBreak()    				(void)0
 #endif
 #endif
 
@@ -129,7 +101,7 @@ __INLINE__ void ND_MsgBox(LPCSTR s) {
 }
 __INLINE__ void ND_FAILED(LPCSTR szMsg) {
    ND_MsgBox(szMsg);
-   DebugBreak();
+   ND_DebugBreak();
 }
 // Put up an assertion failure message box.
 __INLINE__ void ND_ASSERTFAIL(LPCSTR file, int line, PCSTR expr) {

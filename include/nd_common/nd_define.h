@@ -41,15 +41,30 @@ typedef unsigned char	NDBYTE;
 typedef signed __int64		NDINT64  ;
 typedef unsigned __int64	NDUINT64 ; 
 //typedef signed long			ssize_t;
-
-#else
-typedef signed long long	INT64  ;
+#else 
 typedef signed long long	NDINT64  ;
-typedef unsigned long long  NDUINT64 ;
+typedef unsigned long long  NDUINT64;
+#endif
+
+#if !defined(ND_UNDEF_WIN32_TYPE) && !defined(_MSC_VER)
+#ifndef INT64
+typedef signed long long	INT64  ;
+#endif 
+
+#ifndef DWORD
 typedef unsigned int		DWORD ;
-typedef unsigned char 		BYTE ;
+#endif
+
+#ifndef BYTE
+typedef unsigned char 		BYTE; 
+#endif
+
+#ifndef WORD
 typedef unsigned short		WORD ;
 #endif
+
+#endif
+
 
 #define ND_ELEMENTS_NUM(a) (sizeof(a)/sizeof(a[0]))
 

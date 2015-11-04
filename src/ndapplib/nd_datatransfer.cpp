@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 duanxiuyun. All rights reserved.
 //
 
+#include "nd_common/nd_common.h"
 #include "ndapplib/nd_datatransfer.h"
 #include "ndapplib/nd_msgpacket.h"
 #include "nd_msg.h"

@@ -9,6 +9,8 @@
 #ifndef _ND_COMMON_H_
 #define _ND_COMMON_H_
 
+#include "nd_common/nd_export_def.h"
+
 #include "nd_common/nd_comcfg.h"
 
 #include "nd_common/nd_define.h"

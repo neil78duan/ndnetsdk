@@ -19,8 +19,11 @@
 #include "nd_net/nd_netlib.h"
 #include "nd_crypt/nd_crypt.h"
 #include "ndapplib/nd_msgpacket.h"
-//#include "ndcli/nd_api_c.h"
 #endif 
+#include "ndcli/nd_api_c.h"
+
+
+//#define ND_CONNCLI_API NDNET_API 
 
 class NDIConn ;
 typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
@@ -74,14 +77,14 @@ protected:
 	virtual~NDIConn() {}
 };
 
-ND_COMMON_API int InitNet();
-ND_COMMON_API void DeinitNet();
-ND_COMMON_API NDIConn* CreateConnectorObj(const char *protocol_name);
-ND_COMMON_API void DestroyConnectorObj(NDIConn *pconn);
-ND_COMMON_API NDIConn * htoConnector(nd_handle h);
+ND_CONNCLI_API int InitNet();
+ND_CONNCLI_API void DeinitNet();
+ND_CONNCLI_API NDIConn* CreateConnectorObj(const char *protocol_name);
+ND_CONNCLI_API void DestroyConnectorObj(NDIConn *pconn);
+ND_CONNCLI_API NDIConn * htoConnector(nd_handle h);
 
-ND_COMMON_API void* ndSetLogoutFunc(void *func);
-ND_COMMON_API void ndSetLogFile(const char *pathfile);
+ND_CONNCLI_API void* ndSetLogoutFunc(void *func);
+ND_CONNCLI_API void ndSetLogFile(const char *pathfile);
 
 
 #endif

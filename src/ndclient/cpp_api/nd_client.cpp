@@ -149,7 +149,6 @@ const char *NDConnector::ConvertErrorDesc(NDUINT32 errcode)
 	return nd_error_desc(errcode) ;
 }
 
-//…Ë÷√œ˚œ¢”≥…‰±Ì¥Û–°,±ÿ–Î‘⁄OPEN∫Ø ˝«∞µ˜”√
 void NDConnector::SetMsgNum(int maxmsg_num , int maxid_start) 
 {
 	msg_kinds = maxmsg_num;
@@ -484,25 +483,10 @@ int _big_data_recv_handler(NDIConn* pconn, nd_usermsgbuf_t *msg )
 
 
 /*
-struct msg_entry_node
-{
-    NDUINT32			level;
-    nd_usermsg_func		entry ;	//»Îø⁄∫Ø ˝
-};
 
 struct sub_msgentry
 {
     struct msg_entry_node   msg_buf[SUB_MSG_NUM] ;
-};
-
-struct msgentry_root
-{
-	ND_OBJ_BASE;
-	NDUINT16	main_num ;			//∞¸∫¨∂‡…Ÿ∏ˆœ˚œ¢¿‡±
-	NDUINT16	msgid_base ;		//÷˜œ˚œ¢∫≈∆ ºµÿ÷∑
-	NDUINT32	msg_node_size ;
-    nd_usermsg_func		def_entry ;	//ƒ¨»œ»Îø⁄∫Ø ˝
-    struct sub_msgentry sub_buf[ND_MAIN_MSG_CAPACITY] ;
 };
 
 
