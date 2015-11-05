@@ -79,6 +79,6 @@ private:
 	nd_linebuf m_buf ;
 };
 
-ND_COMMON_API int BigDataAsyncSend(nd_handle connector, void *data, size_t datalen, NDUINT64 param,data_transfer_callback callback) ;
+ND_CONNCLI_API int BigDataAsyncSend(nd_handle connector, void *data, size_t datalen, NDUINT64 param, data_transfer_callback callback);
 
 #endif /* defined(__ndMacStatic__nd_datatransfer__) */
