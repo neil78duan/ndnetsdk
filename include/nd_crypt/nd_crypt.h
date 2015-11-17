@@ -98,7 +98,10 @@ ND_CRYPT_API char *MD5CryptToStr32(char *input, int inlen, char output[33]);
 ND_CRYPT_API int MD5cmp(char src[16], char desc[16]) ;
 
 ND_CRYPT_API int base64_encode( const char * source, int len, char * destination_string );
+
+ND_CRYPT_API int base64_decode( unsigned char *input, unsigned int input_len, unsigned char *output, unsigned int *output_len ) ;
 #define nd_base64_encode base64_encode
+#define nd_base64_decode base64_decode
 
 /* rsa crypt*/
 

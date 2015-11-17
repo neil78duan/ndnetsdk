@@ -83,6 +83,13 @@ nd_handle _object_create(const char *name)
 
 			return &(ao->alloced_obj) ;
 		}
+		else {
+			nd_logerror("malloc error: %s\n", nd_last_error()) ;;
+		}
+	}
+	
+	else {
+		nd_logerror("not found object %s \n", name) ;
 	}
 	return NULL ;
 }

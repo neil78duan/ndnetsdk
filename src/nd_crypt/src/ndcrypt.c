@@ -193,6 +193,8 @@ int MD5cmp(char src[16], char desc[16])
 
 //base 64
 
+const char _nd_alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
 #define END_OF_BASE64_ENCODED_DATA           ('=')
 #define BASE64_END_OF_BUFFER                 (0xFD)
 #define BASE64_IGNORABLE_CHARACTER           (0xFE)
@@ -201,8 +203,6 @@ int MD5cmp(char src[16], char desc[16])
 
 int base64_encode( const char * source, int len, char * destination_string )
 {
-
-	const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 	int loop_index                = 0;
 	int number_of_bytes_to_encode = len;
@@ -224,7 +224,7 @@ int base64_encode( const char * source, int len, char * destination_string )
 	while( loop_index < number_of_bytes_to_encode ) {
 		// Output the first byte
 		byte_1 = source[ loop_index ];
-		byte_to_add = alphabet[ ( byte_1 >> 2 ) ];
+		byte_to_add = _nd_alphabet[ ( byte_1 >> 2 ) ];
 
 		destination[ number_of_bytes_encoded ] =  byte_to_add ;
 		number_of_bytes_encoded++;
@@ -234,7 +234,7 @@ int base64_encode( const char * source, int len, char * destination_string )
 		if ( loop_index >= number_of_bytes_to_encode ) {
 			// We're at the end of the data to encode
 			byte_2 = 0;
-			byte_to_add = alphabet[ ( ( ( byte_1 & 0x03 ) << 4 ) | ( ( byte_2 & 0xF0 ) >> 4 ) ) ];
+			byte_to_add = _nd_alphabet[ ( ( ( byte_1 & 0x03 ) << 4 ) | ( ( byte_2 & 0xF0 ) >> 4 ) ) ];
 
 			destination[ number_of_bytes_encoded ] = byte_to_add;
 			number_of_bytes_encoded++;
@@ -252,7 +252,7 @@ int base64_encode( const char * source, int len, char * destination_string )
 			byte_2 = source[ loop_index ];
 		}
 
-		byte_to_add = alphabet[ ( ( ( byte_1 & 0x03 ) << 4 ) | ( ( byte_2 & 0xF0 ) >> 4 ) ) ];
+		byte_to_add = _nd_alphabet[ ( ( ( byte_1 & 0x03 ) << 4 ) | ( ( byte_2 & 0xF0 ) >> 4 ) ) ];
 
 		destination[ number_of_bytes_encoded ] = byte_to_add;
 		number_of_bytes_encoded++;
@@ -264,7 +264,7 @@ int base64_encode( const char * source, int len, char * destination_string )
 			// We ran out of bytes, we need to add the last half of byte_2 and pad
 			byte_3 = 0;
 
-			byte_to_add = alphabet[ ( ( ( byte_2 & 0x0F ) << 2 ) | ( ( byte_3 & 0xC0 ) >> 6 ) ) ];
+			byte_to_add = _nd_alphabet[ ( ( ( byte_2 & 0x0F ) << 2 ) | ( ( byte_3 & 0xC0 ) >> 6 ) ) ];
 
 			destination[ number_of_bytes_encoded ] = byte_to_add;
 			number_of_bytes_encoded++;
@@ -282,12 +282,12 @@ int base64_encode( const char * source, int len, char * destination_string )
 
 		loop_index++;
 
-		byte_to_add = alphabet[ ( ( ( byte_2 & 0x0F ) << 2 ) | ( ( byte_3 & 0xC0 ) >> 6 ) ) ];
+		byte_to_add = _nd_alphabet[ ( ( ( byte_2 & 0x0F ) << 2 ) | ( ( byte_3 & 0xC0 ) >> 6 ) ) ];
 
 		destination[ number_of_bytes_encoded ] = byte_to_add;
 		number_of_bytes_encoded++;
 
-		byte_to_add = alphabet[ ( byte_3 & 0x3F ) ];
+		byte_to_add = _nd_alphabet[ ( byte_3 & 0x3F ) ];
 
 		destination[ number_of_bytes_encoded ] = byte_to_add;
 		number_of_bytes_encoded++;
@@ -307,5 +307,65 @@ int base64_encode( const char * source, int len, char * destination_string )
 	destination[ number_of_bytes_encoded + 1 ] = 0;
 
 	return 0;
+}
+
+
+int base64_decode( unsigned char *input, unsigned int input_len, unsigned char *output, unsigned int *output_len )
+{
+	static char inalphabet[256], decoder[256];
+	int i, bits, c = 0, char_count, errors = 0;
+	unsigned int input_idx = 0;
+	unsigned int output_idx = 0;
+	
+	for (i = (sizeof _nd_alphabet) - 1; i >= 0 ; i--) {
+		inalphabet[_nd_alphabet[i]] = 1;
+		decoder[_nd_alphabet[i]] = i;
+	}
+	
+	char_count = 0;
+	bits = 0;
+	for( input_idx=0; input_idx < input_len ; input_idx++ ) {
+		c = input[ input_idx ];
+		if (c == '=')
+			break;
+		if (c > 255 || ! inalphabet[c])
+			continue;
+		bits += decoder[c];
+		char_count++;
+		if (char_count == 4) {
+			output[ output_idx++ ] = (bits >> 16);
+			output[ output_idx++ ] = ((bits >> 8) & 0xff);
+			output[ output_idx++ ] = ( bits & 0xff);
+			bits = 0;
+			char_count = 0;
+		} else {
+			bits <<= 6;
+		}
+	}
+	
+	if( c == '=' ) {
+		switch (char_count) {
+			case 1:
+				errors++;
+				break;
+			case 2:
+				output[ output_idx++ ] = ( bits >> 10 );
+				break;
+			case 3:
+				output[ output_idx++ ] = ( bits >> 16 );
+				output[ output_idx++ ] = (( bits >> 8 ) & 0xff);
+				break;
+		}
+	} else if ( input_idx < input_len ) {
+		if (char_count) {
+			errors++;
+		}
+	}
+	
+	if (output_len) {
+		*output_len = output_idx;
+	}
+	
+	return errors ? -1 : 0;
 }
 
