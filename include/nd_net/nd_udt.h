@@ -177,7 +177,7 @@ ND_NET_API void udt_reset(nd_udt_node* socket_node,int issend_reset) ;
 ND_NET_API int udt_close(nd_udt_node* socket_node,int force);
 
 //连接到服务器
-ND_NET_API nd_udt_node* udt_connect(nd_udt_node *socket_node,char *host, short port,struct nd_proxy_info *proxy) ;
+ND_NET_API nd_udt_node* udt_connect(nd_udt_node *socket_node,const char *host, short port,struct nd_proxy_info *proxy) ;
 
 //发送可靠的流式协议
 ND_NET_API int udt_send(nd_udt_node* socket_node,void *data, int len ) ;

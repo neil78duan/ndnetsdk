@@ -25,7 +25,7 @@ typedef struct _udt_icmp_hdr
 } udt_icmp_hdr;
 
 
-nd_udt_node* udt_icmp_connect(nd_udt_node *socket_node,char *host, short port, struct nd_proxy_info *proxy)
+nd_udt_node* udt_icmp_connect(nd_udt_node *socket_node,const char *host, short port, struct nd_proxy_info *proxy)
 {
 	int opt = 1;
 	if(proxy && proxy->proxy_type) {

@@ -174,7 +174,8 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 				nd_assert(0);
 				return -1;
 			}
-			read_len = _packet_handler(node, &pack_buf.hdr, h_listen) ;
+			//read_len = _packet_handler(node, &pack_buf.hdr, h_listen) ;
+			read_len = node->data_entry(node, (void*)&pack_buf, read_len, h_listen);
 			if(-1==read_len) {
 				ret = -1 ;
 				break ;
@@ -184,6 +185,7 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 				nd_object_seterror(node,NDERR_SUCCESS) ;
 				break ;
 			}
+			nd_hdr_init(&pack_buf.hdr);
 		}
 		if (-1==read_len) {
 			ret = -1;
@@ -212,28 +214,7 @@ int _packet_handler(nd_netui_handle node,nd_packhdr_t *msg, nd_handle h_listen)
 	else {
 		ret = node->msg_entry(node, msg,h_listen) ; 
 	}
-	/*
-	if(msg->encrypt) {
-		int new_len ,old_len;
-		new_len = nd_packet_decrypt(node, (nd_packetbuf_t*)msg) ;
-		if(new_len==0) {			
-			LEAVE_FUNC();
-			return -1;
-		}
-		CURRENT_IS_CRYPT(node) = 1 ;
-		old_len = (int) nd_pack_len(msg) ;
-		nd_pack_len(msg)  = (NDUINT16)new_len ;
-
-		ret = node->msg_entry(node, msg,h_listen) ;
-		//ret = nd_translate_message((nd_netui_handle)node, msg ) ;
-		nd_pack_len(msg) = old_len ;
-		ret = old_len ; //返回解密之前的数据长度，无论如何，解密后的数据都认为是已经被处理的
-	}
-	else {
-		CURRENT_IS_CRYPT(node) = 0 ;
-		ret = node->msg_entry(node, msg,h_listen) ;
-	}
-	*/
+	
 	LEAVE_FUNC();
 	return ret;
 }
@@ -242,66 +223,70 @@ int _packet_handler(nd_netui_handle node,nd_packhdr_t *msg, nd_handle h_listen)
 //default net message handle , parse data to ND_PROTOCOL
 int nd_dft_packet_handler(nd_netui_handle node,void *data , size_t data_len , nd_handle h_listen)
 {
-	ENTER_FUNC()
-	int ret =0;		
-	size_t used_len = 0   ;
-	nd_packhdr_t *msg_addr ; //; = (nd_packhdr_t *)data ;
-
-	nd_assert(node->msg_entry) ;
-
-	if (nd_tryto_clear_err(node))	{
-		LEAVE_FUNC();
-		return -1;
+	if (!data || data_len==0){
+		return 0;
 	}
-	//node->myerrno = NDERR_SUCCESS ;
-	
-RE_MESSAGE:
-	if(data_len < ND_PACKET_HDR_SIZE){
-		LEAVE_FUNC();
-		return ret ;
-	}
-
-	msg_addr  = (nd_packhdr_t *)data ;
-
-	packet_ntoh(msg_addr) ;
-	used_len = nd_pack_len(msg_addr) ;
-
-	if(used_len > ND_PACKET_SIZE || used_len < _min_packet_len) {
-		//packet_hton(msg_addr) ;
-		node->myerrno = NDERR_BADPACKET ;
-		LEAVE_FUNC();
-		return -1 ;
-	}
-	if(used_len<=data_len){
-		int user_ret ;
-		//node->myerrno = NDERR_USER  ;
-		user_ret =_packet_handler(node,msg_addr,h_listen) ;
-		if(-1==user_ret ) {
-			LEAVE_FUNC();
-			return -1;
-		}
-		else if(0==user_ret) {
-			//上层函数暂时不能处理这些数据
-			node->myerrno = NDERR_SUCCESS ;
-			LEAVE_FUNC();
-			return ret ;
-		}
-		ret += (int) used_len ;
-		data = (void*) (((char*)data) + used_len );
-		data_len -= used_len ;
-
-		if (!nd_connector_valid(node)) {
-			LEAVE_FUNC();
-			return -1 ;
-		}
-		if(data_len >= ND_PACKET_HDR_SIZE && node->myerrno != NDERR_USER_BREAK ){
-			node->myerrno = NDERR_SUCCESS ;
-			goto RE_MESSAGE ;
-		}
-		node->myerrno = NDERR_SUCCESS ;
-	}
-	LEAVE_FUNC();
-	return ret;
+	return _packet_handler(node, (nd_packhdr_t*)data, h_listen);
+//	ENTER_FUNC()
+// 	int ret =0;		
+// 	size_t used_len = 0   ;
+// 	nd_packhdr_t *msg_addr ; //; = (nd_packhdr_t *)data ;
+// 
+// 	nd_assert(node->msg_entry) ;
+// 
+// 	if (nd_tryto_clear_err(node))	{
+// 		LEAVE_FUNC();
+// 		return -1;
+// 	}
+// 	//node->myerrno = NDERR_SUCCESS ;
+// 	
+// RE_MESSAGE:
+// 	if(data_len < ND_PACKET_HDR_SIZE){
+// 		LEAVE_FUNC();
+// 		return ret ;
+// 	}
+// 
+// 	msg_addr  = (nd_packhdr_t *)data ;
+// 
+// 	packet_ntoh(msg_addr) ;
+// 	used_len = nd_pack_len(msg_addr) ;
+// 
+// 	if(used_len > ND_PACKET_SIZE || used_len < _min_packet_len) {
+// 		//packet_hton(msg_addr) ;
+// 		node->myerrno = NDERR_BADPACKET ;
+// 		LEAVE_FUNC();
+// 		return -1 ;
+// 	}
+// 	if(used_len<=data_len){
+// 		int user_ret ;
+// 		//node->myerrno = NDERR_USER  ;
+// 		user_ret =_packet_handler(node,msg_addr,h_listen) ;
+// 		if(-1==user_ret ) {
+// 			LEAVE_FUNC();
+// 			return -1;
+// 		}
+// 		else if(0==user_ret) {
+// 			//上层函数暂时不能处理这些数据
+// 			node->myerrno = NDERR_SUCCESS ;
+// 			LEAVE_FUNC();
+// 			return ret ;
+// 		}
+// 		ret += (int) used_len ;
+// 		data = (void*) (((char*)data) + used_len );
+// 		data_len -= used_len ;
+// 
+// 		if (!nd_connector_valid(node)) {
+// 			LEAVE_FUNC();
+// 			return -1 ;
+// 		}
+// 		if(data_len >= ND_PACKET_HDR_SIZE && node->myerrno != NDERR_USER_BREAK ){
+// 			node->myerrno = NDERR_SUCCESS ;
+// 			goto RE_MESSAGE ;
+// 		}
+// 		node->myerrno = NDERR_SUCCESS ;
+// 	}
+// 	LEAVE_FUNC();
+// 	return ret;
 }
 
 //fetch recvd message in nd_packhdr_t format
