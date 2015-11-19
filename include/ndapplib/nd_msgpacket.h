@@ -10,8 +10,8 @@
 #ifndef BUILD_AS_THIRD_PARTY
 #include "nd_net/nd_netlib.h"
 #include "nd_common/nd_common.h"
+#endif
 #include "ndcli/nd_api_c.h"
-#endif 
 
 class ND_CONNCLI_CLASS NDSendMsg
 {
