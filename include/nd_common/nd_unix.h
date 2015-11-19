@@ -28,7 +28,7 @@
 	#define __INLINE__			inline
 #endif
 
-#ifdef  ND_IOS
+#if  defined(ND_IOS) || defined(ND_ANDROID)
 #define __ndthread  
 #else
 #define __ndthread  __thread
