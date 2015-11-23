@@ -23,6 +23,25 @@
 #define ND_ENCODE_TYPE E_SRC_CODE_UTF_8
 #endif
 
+#if defined(ND_ANDROID)
+
+//#define ND_OPEN_TRACE		1
+#define ND_OPEN_LOG_COMMON 	1
+//#define ND_OPEN_LOG_DEBUG	1
+#define ND_OPEN_LOG_WARN	1
+#define ND_OPEN_LOG_ERROR	1
+#define ND_OPEN_LOG_FATAL	1
+//#define ND_SOURCE_TRACE	1
+//#define ND_FILE_TRACE		1
+#define ND_OUT_LOG_2CTRL	1
+#define ND_OUT_LOG_2FILE	1
+//#define ND_MEM_CHECK		1
+#define ND_USE_MSGBOX		1
+#define ND_LOG_WITH_SOURCE	1
+#define ND_LOG_WITH_TIME	1
+//#define ND_MEM_STATICS		1
+
+#else 
 
 
 //#define ND_USE_GPERF		1		//使用GOOGLE的内存优化库
@@ -81,6 +100,7 @@
 //#define ND_MEM_STATICS		1		//内测申请统计
 
 #endif			//end debug
+#endif 			//ANDROID
 
 #define ND_BUFSIZE 4096						//默认缓冲大小(临时缓冲,不要修改)
 
@@ -95,7 +115,7 @@
 #define ND_CALLSTACK_TRACE	1			//跟踪函数调用堆栈
 
 #ifndef BUILD_AS_STATIC_LIB
-#define BUILD_AS_STATIC_LIB
+	#define BUILD_AS_STATIC_LIB
 #endif
 // 
 // #ifdef BUILD_AS_STATIC_LIB
