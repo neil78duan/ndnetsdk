@@ -247,6 +247,10 @@ int getgranularity() {	return (64*1024) ;}
 static void *__sys_alloc(size_t size )
 {
     void *p = malloc(size) ;
+	if (!p) {
+		nd_logerror("malloc(%d) ,error :%s\n" AND size  AND nd_last_error()) ;
+		return 0;
+	}
     allocFillMem(p, size) ;
     return  p ;
 }
@@ -265,7 +269,7 @@ static void* __sys_page_alloc(size_t size)
     //ret = (struct alloc_node *) malloc( size ) ;
 	if (!ret){
 		NDUINT32 lsterr = nd_last_errno() ;
-		nd_logerror("VirtualAlloc(%x) ,errcode =%d :%s\n" AND size AND lsterr AND nd_str_error(lsterr)) ;
+		nd_logerror("nd_mmap(%x) ,errcode =%d :%s\n" AND size AND lsterr AND nd_str_error(lsterr)) ;
 	}
 	else {
         allocFillMem(ret, size) ;
@@ -295,7 +299,7 @@ int nd_mempool_root_init()
 	if(	__mem_root.init )
 		return 0 ;
     
-    //nd_logdebug("page size = %d getgranularity=%d \n", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
+    nd_logdebug("nd_mempool_root_init : page size = %d getgranularity=%d \n", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
     
 	INIT_LIST_HEAD(&__mem_root.inuser_list) ;
 	//INIT_LIST_HEAD(&__mem_root.free_page);
@@ -308,6 +312,7 @@ int nd_mempool_root_init()
 	if(!s_common_mmpool) {
 		nd_mutex_destroy(&__mem_root.lock) ;
 		__mem_root.init = 0 ;
+		nd_logerror("Init memory pool error \n") ;
 		return -1 ;
 	}
 	nd_pool_set_trace(s_common_mmpool,1) ;
@@ -446,6 +451,7 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 
 	pool = (nd_handle)__sys_page_alloc(size) ;
 	if(!pool) {
+		nd_logerror("create mempool error on __sys_page_alloc(): %s\n", nd_last_error()) ;
 		return NULL ;
 	}
 
@@ -510,6 +516,7 @@ void* nd_pool_realloc(nd_mmpool_t *pool ,void *oldaddr, size_t newsize)
 	struct alloc_node *allocaddr ;
 
 	if(! ND_ALLOC_MM_VALID (oldaddr) ) {
+		nd_logerror("pool realloc error : old addr(%x) is not valid ", oldaddr) ;
 		return NULL;
 	}
 	allocaddr = _user_addr_2sys( oldaddr, &user_len, &alloc_len) ;
@@ -875,16 +882,19 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 	nd_assert(pool) ;
 	nd_assert(size>0) ;
 	if (!ND_ALLOC_MM_VALID(pool)){
+		nd_logerror("pool alloc error: input pool is invalid (%x)\n", pool) ;
 		return NULL;
 	}
 
 	pool->myerrno = NDERR_SUCCESS ;
 	if (size==0){
 		pool->myerrno = NDERR_INVALID_INPUT ;
+		nd_logerror("pool alloc error: malloc size is zero\n") ;
 		return 0;
 	}
 	else if (pool->allocated_size > pool->capacity){
 		pool->myerrno = NDERR_NOSOURCE ;
+		nd_logerror("pool alloc error:  malloc size is too much \n") ;
 		return 0;
 	}
 
@@ -895,6 +905,7 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 		struct alloc_node *new_chunk = __sys_page_alloc(size + sizeof(struct big_chunk_list ) ) ;
 		if(!new_chunk){
 			pool->myerrno = NDERR_NOSOURCE ;
+			nd_logerror("pool alloc error: no memory \n") ;
 			return 0;
 		}
 		alloc_size = new_chunk->size ;
