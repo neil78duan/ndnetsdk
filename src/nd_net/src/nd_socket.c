@@ -391,16 +391,18 @@ ndsocket_t nd_socket_connect(const char *host_name, short port,int sock_type, SO
 	ndsocket_t conn_sock ;
 	SOCKADDR_IN their_addr = {0} ;
 	if(-1==get_sockaddr_in(host_name, port, &their_addr) ) {
+		nd_logerror("get_sockaddr_in(%s, %d) error: %s\n",host_name, port, nd_last_error()) ;
 		LEAVE_FUNC() ;
 		return -1 ;
 	}
 	conn_sock = (ndsocket_t ) socket (AF_INET, sock_type, 0);
 	if(-1==conn_sock) {
+		nd_logerror("socket(AF_INET, %d) error: %s\n",sock_type, nd_last_error()) ;
 		LEAVE_FUNC() ;
 		return -1;
 	}
 	if(-1==connect(conn_sock,(LPSOCKADDR)&their_addr, sizeof(struct sockaddr)) ) {
-        nd_logdebug("connect to %s:%d error %s\n", host_name, port, nd_last_error()) ;
+        nd_logerror("connect to %s:%d error %s\n", host_name, port, nd_last_error()) ;
 		LEAVE_FUNC() ;
 		return -1 ;
 	}

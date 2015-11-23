@@ -46,8 +46,14 @@ nd_handle _object_create(const char *name)
 	struct register_object_info *objlist ;
 	struct nd_handle_reginfo *reginfo = 0  ;
 	struct list_head *pos = __reg_list.next ;
+	
+	nd_logmsg(" start create %s object \n", name) ;
+	
 	if(0==__inited) {
-		nd_mutex_init(&__alloced_lock) ;
+		if(-1==nd_mutex_init(&__alloced_lock) ) {
+			
+			nd_logmsg(" nd_mutex_init error :%s \n", nd_last_error()) ;
+		}
 		__inited = 1 ;
 	}
 	while (pos != &__reg_list) {
@@ -81,6 +87,8 @@ nd_handle _object_create(const char *name)
 			
 			nd_reg_handle((nd_handle)&ao->alloced_obj) ;
 
+			
+			nd_logmsg(" create %s object success ! \n", name) ;
 			return &(ao->alloced_obj) ;
 		}
 		else {
@@ -140,6 +148,7 @@ int nd_object_register(struct nd_handle_reginfo *reginfo)
 	
 	pobj = (struct register_object_info *)malloc(sizeof(*pobj)) ;
 	if(!pobj) {
+		nd_logerror("nd_object_register: malloc error %s\n", nd_last_error()) ;
 		return -1 ;
 	}
 
@@ -148,6 +157,8 @@ int nd_object_register(struct nd_handle_reginfo *reginfo)
 	pobj->obj.name[OBJECT_NAME_SIZE-1] = 0 ;
 
 	list_add_tail(&pobj->list, &__reg_list) ;
+	
+	nd_logmsg(" register object success : %s\n", pobj->obj.name) ;
 	return 0 ;
 }
 

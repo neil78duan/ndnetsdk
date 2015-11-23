@@ -41,6 +41,7 @@ int nd_net_init(void)
 #endif
 	
 	register_connector() ;
+	nd_logmsg("nd_net_init success \n") ;
 	return 0 ;
 }
 

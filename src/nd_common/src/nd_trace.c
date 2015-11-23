@@ -27,6 +27,8 @@ static NDUINT8 __close_screen_log = 0 ;
 static NDUINT8 __without_file_info = 0;
 static NDUINT8 __without_file_time = 0;
 
+
+
 int nd_log_no_file(int without_file)
 {
 	int ret = __without_file_info;
@@ -298,7 +300,9 @@ int _logmsg_screen(const char *filePath, int line, const char *stm,...)
 int nd_logtext(const char *buf)
 {
 	int ret = 0;
-#ifdef 	ND_OUT_LOG_2CTRL
+	
+	
+#if defined(ND_OUT_LOG_2CTRL)
 	if (__close_screen_log == 0) {
 		ret = fprintf(stderr, "%s", buf);
 	}

@@ -58,8 +58,18 @@ ND_COMMON_API const char *nd_get_datetimestr_ex(time_t in_tm, char *buf, int siz
 #define AND ,
 
 //////////////////////////////////////////////////////////////////////////
+#if defined(ND_ANDROID)
+#include <android/log.h>
+#define NDLOG_TAG    "ndnet-log"
+#define nd_logdebug(...)  __android_log_print(ANDROID_LOG_DEBUG,NDLOG_TAG,__VA_ARGS__)
+#define nd_logmsg(...)  __android_log_print(ANDROID_LOG_INFO,NDLOG_TAG,__VA_ARGS__)
+#define nd_logwarn(...)  __android_log_print(ANDROID_LOG_WARN,NDLOG_TAG,__VA_ARGS__)
+#define nd_logerror(...)  __android_log_print(ANDROID_LOG_ERROR,NDLOG_TAG,__VA_ARGS__)
+#define nd_logfatal(...)  __android_log_print(ANDROID_LOG_FATAL,NDLOG_TAG,__VA_ARGS__)
+#define nd_log_screen(...)  __android_log_print(ANDROID_LOG_INFO,NDLOG_TAG,__VA_ARGS__)
+
 //windows
-#if !defined(ND_UNIX) 
+#elif !defined(ND_UNIX)
 //#if 0
 
 #ifdef ND_OPEN_TRACE

@@ -165,7 +165,7 @@ int NDConnector::Open(const char *host, int port,const char *protocol_name,nd_pr
 	}
 
 	if(-1==nd_connector_open( m_objhandle, host,  port,(struct nd_proxy_info*)proxy ) ) {
-		nd_logerror("connect error :%s!" AND nd_last_error()) ;
+		nd_logerror("connect error %s %d :%s!" AND host AND port AND nd_last_error()) ;
 		nd_object_destroy(m_objhandle,1) ;
 		m_objhandle = NULL ;
 		return -1;
@@ -207,7 +207,7 @@ int NDConnector::Create(const char *protocol_name)
 	m_objhandle = nd_object_create(protocol_name? protocol_name: "tcp-connector"  ) ;
 
 	if(!m_objhandle){		
-		nd_logerror("connect error :%s!" AND nd_last_error()) ;
+		nd_logerror("NDConnector::create connector (%s) object error :%s!" AND protocol_name AND nd_last_error()) ;
 		return -1;
 	}
 	((nd_netui_handle)m_objhandle)->user_data =(void*) this ;

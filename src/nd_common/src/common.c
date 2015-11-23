@@ -96,7 +96,7 @@ int nd_common_init()
 
 #endif
 
-	NDTRAC("%s common init\n" AND nd_process_name() ) ;
+	nd_logmsg("%s common init\n" AND nd_process_name() ) ;
 #ifdef ND_UNIX
 	setlocale(LC_CTYPE, "zh-CN.UTF-8");  //支持中文
 #else 
