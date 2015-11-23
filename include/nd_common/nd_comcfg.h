@@ -39,8 +39,8 @@
 #define ND_USE_MSGBOX		1
 #define ND_LOG_WITH_SOURCE	1
 #define ND_LOG_WITH_TIME	1
-//#define ND_MEM_STATICS		1
-
+//#define ND_MEM_STATICS	1
+//#define ND_UNUSE_STDC_ALLOC 1
 #else 
 
 

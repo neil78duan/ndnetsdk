@@ -1739,7 +1739,8 @@ int nd_addr_checkvalid(void *addr)
 #endif
 	return 1;
 }
-#elif defined(__LINUX__)
+
+#elif defined(__LINUX__) && !defined(ND_ANDROID)
 int nd_addr_checkvalid(void *addr)
 {
 	if (addr <(void*) 0x10000)	{
