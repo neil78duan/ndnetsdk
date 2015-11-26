@@ -335,7 +335,7 @@ RE_FETCH:
 		//user define packet data
 		nd_atomic_inc(&socket_addr->recv_pack_times) ;
 		ndlbuf_read(pbuf, msgbuf,valid_len,EBUF_SPECIFIED ) ;
-        nd_packet_ntoh(msgbuf) ;
+        //nd_packet_ntoh(msgbuf) ;
 		return valid_len ;
 	}
 
@@ -390,11 +390,11 @@ int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
 		if (socket_addr->save_recv_stream) {
 			if (CURRENT_IS_CRYPT(socket_addr)) {
 				msgbuf->encrypt = 1 ;
-				nd_netobj_recv_stream_save(socket_addr, msgbuf, (int) socket_addr->get_pack_size(socket_addr, (void*) msgbuf) ) ;
+				nd_netobj_recv_stream_save(socket_addr, msgbuf, readlen ) ;
 				msgbuf->encrypt = 0 ;
 			}
 			else {
-				nd_netobj_recv_stream_save(socket_addr, msgbuf, (int) socket_addr->get_pack_size(socket_addr, (void*) msgbuf) ) ;
+				nd_netobj_recv_stream_save(socket_addr, msgbuf,readlen ) ;
 			}
 		}
 		
@@ -447,11 +447,11 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 	if (net_handle->save_send_stream) {
 		if ((flag & ESF_ENCRYPT)) {
 			msg_buf->encrypt = 1 ;
-			nd_netobj_send_stream_save(net_handle, msg_buf, (int) net_handle->get_pack_size(net_handle, (void*) msg_buf) ) ;
+			nd_netobj_send_stream_save(net_handle, msg_buf, (int) msg_buf->length ) ;
 			msg_buf->encrypt = 0 ;
 		}
 		else {
-			nd_netobj_send_stream_save(net_handle, msg_buf, (int) net_handle->get_pack_size(net_handle, (void*) msg_buf) ) ;
+			nd_netobj_send_stream_save(net_handle, msg_buf, (int)msg_buf->length);
 		}
 	}
     msg_buf->version = NDNETMSG_VERSION ;

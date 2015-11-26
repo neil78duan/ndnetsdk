@@ -534,7 +534,7 @@ void* nd_connector_get_userdata(nd_netui_handle net_handle)
 int _log_net_stream(const char *fileName,   void *data, int size)
 {
 	FILE *fp = fopen(fileName, "a") ;
-	if (fp) {
+	if (!fp) {
 		return -1 ;
 	}
 	NDUINT32 now = nd_time() ;
