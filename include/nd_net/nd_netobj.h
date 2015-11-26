@@ -68,6 +68,8 @@ typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 	NDUINT8		is_session:1;	\
 	NDUINT8		is_log_send:1;	\
 	NDUINT8		is_log_recv:1;	\
+	NDUINT8 	save_send_stream:1;\
+	NDUINT8 	save_recv_stream:1;\
 	NDUINT16	session_id;		\
 	ndtime_t	start_time ;	\
 	ndtime_t	last_recv ;		\
@@ -185,4 +187,7 @@ ND_NET_API int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN 
 ND_NET_API int nd_net_ipbind(nd_handle net_handle, ndip_t ip) ;
 ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
 
+
+ND_NET_API int nd_netobj_recv_stream_save(nd_netui_handle net_handle, void *data, int size );
+ND_NET_API int nd_netobj_send_stream_save(nd_netui_handle net_handle, void *data, int size );
 #endif

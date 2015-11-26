@@ -12,6 +12,9 @@ typedef struct netui_info *nd_handle;
 #include "nd_net/nd_netlib.h"
 //#include "nd_common/nd_alloc.h"
 
+static char *_s_send_stream =NULL;
+static char *_s_recv_stream =NULL;
+
 int net_init_sendlock(nd_netui_handle socket_node)
 {
 	socket_node->send_lock=malloc(sizeof(nd_mutex )) ;
@@ -363,6 +366,51 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 			ret = 0;
 		}
 		break ;
+			
+			
+			
+	case NDIOCTL_LOG_SEND_STRAM_FILE:
+			ret = -1 ;
+			if (val) {
+				socket_node->save_send_stream = 1 ;
+				if (_s_send_stream) {
+					free(_s_send_stream) ;
+				}
+				_s_send_stream = (char*) malloc(*size + 1) ;
+				if (_s_send_stream) {
+					strncpy(_s_send_stream, (const char*)val, *size +1) ;
+					ret =  0 ;
+				}
+			}
+			else {
+				socket_node->save_send_stream = 0;
+				if (_s_send_stream) {
+					free(_s_send_stream) ;
+				}
+				ret = 0 ;
+			}
+		break ;
+	case NDIOCTL_LOG_RECV_STRAM_FILE:
+			ret = -1 ;
+			if (val) {
+				socket_node->save_recv_stream = 1 ;
+				if (_s_recv_stream) {
+					free(_s_recv_stream) ;
+				}
+				_s_recv_stream = (char*) malloc(*size + 1) ;
+				if (_s_recv_stream) {
+					strncpy(_s_recv_stream, (const char*)val, *size +1) ;
+					ret =  0 ;
+				}
+			}
+			else {
+				socket_node->save_recv_stream = 0;
+				if (_s_recv_stream) {
+					free(_s_recv_stream) ;
+				}
+				ret = 0 ;
+			}
+		break ;
 	default :
 		ret =-1 ;
 		break ;
@@ -481,6 +529,49 @@ void nd_connector_set_userdata(nd_netui_handle net_handle, void *p)
 void* nd_connector_get_userdata(nd_netui_handle net_handle)
 {
 	return net_handle->user_data ;
+}
+
+int _log_net_stream(const char *fileName,   void *data, int size)
+{
+	FILE *fp = fopen(fileName, "a") ;
+	if (fp) {
+		return -1 ;
+	}
+	NDUINT32 now = nd_time() ;
+	NDUINT16 mark = ND_STREAM_MESSAGE_START ;
+	fwrite(&mark, sizeof(mark), 1, fp) ;
+	//write time
+	fwrite(&now, sizeof(now), 1, fp) ;
+	
+	//data size
+	mark = size ;
+	fwrite(&mark, sizeof(mark), 1, fp) ;
+	//WRITE data
+	fwrite(data, size, 1, fp) ;
+	
+	mark = ND_STREAM_MESSAGE_END ;
+	fwrite(&mark, sizeof(mark), 1, fp) ;
+	fflush(fp) ;
+	fclose(fp) ;
+	
+	return 0;
+
+}
+int nd_netobj_recv_stream_save(nd_netui_handle net_handle, void *data, int size )
+{
+	if (!_s_recv_stream || !_s_recv_stream[0]) {
+		return -1;
+	}
+	return _log_net_stream(_s_recv_stream, data, size) ;
+}
+
+int nd_netobj_send_stream_save(nd_netui_handle net_handle,  void *data, int size )
+{
+	if (!_s_send_stream || !_s_send_stream[0]) {
+		return -1;
+	}
+	return _log_net_stream(_s_send_stream, data, size) ;
+	
 }
 
 #undef ND_IMPLEMENT_HANDLE

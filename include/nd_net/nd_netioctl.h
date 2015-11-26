@@ -69,10 +69,16 @@ enum ND_IOCTRL_CMD
 
 	NDIOCTL_SYS_SET_LOG_FUNC,
 	NDIOCTL_SYS_GET_LOG_FUNC,
+	
+	NDIOCTL_LOG_SEND_STRAM_FILE, //write send-stream to bin-file
+	NDIOCTL_LOG_RECV_STRAM_FILE, //write recv-stream to bin-file
 
 	NDIOCTL_NUMBER						//ÃüÁî¸öÊý
 };
 
+
+#define ND_STREAM_MESSAGE_START 0x7f7e
+#define ND_STREAM_MESSAGE_END 0x7f7c
 
 #endif
  
