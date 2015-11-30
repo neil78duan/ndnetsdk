@@ -37,6 +37,14 @@ struct connect_config
 	char connector_name[32] ;
 };
 
+struct nd_db_config
+{
+	char db_host[ND_HOST_NAME_SIZE] ;
+	char db_database[64] ;
+	char db_user[32] ;
+	char db_password[32] ;
+};
+
 //实例配置信息
 struct instance_config
 {
@@ -81,4 +89,6 @@ int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg);
 
 //从xml读取配置信息
 int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg) ;
+
+int read_dbconfig(const char *fileName, const char *dbCfgname ,struct nd_db_config *db_cfg) ;
 #endif

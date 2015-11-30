@@ -219,3 +219,47 @@ int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg)
 	
 	return 0 ;
 }
+
+int read_dbconfig(const char *fileName, const char *dbCfgname ,struct nd_db_config *db_cfg)
+{
+	//ND_TRACE_FUNC() ;
+	
+	int ret = -1;
+	ndxml *xmlroot, *xmlsub, *xmlnode ;
+	ndxml_root xmlfile;
+	
+#define GET_VAL(name)                       \
+	xmlnode = ndxml_refsub(xmlsub, #name) ; \
+	if (!xmlnode){                          \
+		ret = -1;                               \
+		goto READ_EXIT ;                        \
+	}                                       \
+	strncpy(db_cfg->db_##name, ndxml_getval(xmlnode), sizeof(db_cfg->db_##name) )
+	
+	
+	if ( 0 != ndxml_load(fileName , &xmlfile ) ){
+		nd_logfatal("read file %s error %s\n", fileName, nd_last_error() ) ;
+		return -1;
+	}
+	
+	xmlroot = ndxml_getnode( &xmlfile, "root" ) ;
+	if ( !xmlroot )   {
+		goto READ_EXIT;
+	}
+	//read connect config
+	xmlsub = ndxml_refsub( xmlroot, dbCfgname ) ;
+	if ( !xmlsub )   {
+		goto READ_EXIT;
+	}
+	
+	GET_VAL( host ) ;
+	GET_VAL( database ) ;
+	GET_VAL( user ) ;
+	GET_VAL( password) ;
+	ret = 0 ;
+	
+	
+READ_EXIT:
+	ndxml_destroy( &xmlfile );
+	return ret ;
+}

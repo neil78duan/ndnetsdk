@@ -66,7 +66,7 @@ ND_COMMON_API void nd_init_daemon(void) ;
 
 #ifdef __MAC_OS__
 
-#define ND_SEM_NAME_SIZE 16
+#define ND_SEM_NAME_SIZE 128
 typedef struct nd_mac_sem
 {
     sem_t *_sem ;

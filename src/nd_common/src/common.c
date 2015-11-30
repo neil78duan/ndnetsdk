@@ -23,7 +23,7 @@ const char *nd_process_name()
 	static char s_proname[128] = {0};
 
 	if(!__g_process_name) {
-		return "nd_engine" ;
+		return "ndengine" ;
 	}
 	else if(0==s_proname[0]) {
 		size_t len = strlen(__g_process_name) ;
