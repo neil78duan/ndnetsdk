@@ -8,6 +8,7 @@
 
 #include "nd_common/nd_iconv.h"
 
+#ifndef WITHOUT_ICONV
 // ------------------------------------------------------------------------------------------
 #ifdef _MSC_VER
 
@@ -134,3 +135,5 @@ char * nd_ndcode_to_utf8(const char *input_text, char *outbuf, int size)
 
 
 }
+
+#endif

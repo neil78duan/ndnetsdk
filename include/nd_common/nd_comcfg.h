@@ -126,4 +126,7 @@
 //²»Ö§³Öunicode
 //#define ND_UNICODE			1
 
+//without iconv
+//#define WITHOUT_ICONV 1
+
 #endif

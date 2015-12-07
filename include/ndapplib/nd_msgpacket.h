@@ -46,6 +46,8 @@ public :
 	NDOStreamMsg(int maxid, int minid) ;
 	
 	NDOStreamMsg(NDUINT16 msgID) ;
+	void Init(int maxid, int minid) ;
+	
 	virtual ~NDOStreamMsg() ;
 	int Write(NDUINT32 ) ;
 	int Write(NDUINT16 ) ;
@@ -119,6 +121,7 @@ public :
 	NDIStreamMsg(nd_usermsgbuf_t *pmsg) ;
 	virtual ~NDIStreamMsg() ;
 
+	void Init(nd_usermsgbuf_t *pmsg) ;
 private:
 	NDIStreamMsg() ;
 	char *_op_addr ;

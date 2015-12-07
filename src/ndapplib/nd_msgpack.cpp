@@ -65,6 +65,14 @@ NDOStreamMsg::~NDOStreamMsg()
 {
 }
 
+
+void NDOStreamMsg::Init(int maxid, int minid)
+{
+	Reset() ;
+	MsgMaxid() = maxid ;
+	MsgMinid() = minid ;
+}
+
 //size_t NDOStreamMsg::GetDataLen() 
 //{
 //	//return _op_addr - (char*)(_packet.data) ;
@@ -302,6 +310,22 @@ NDIStreamMsg::NDIStreamMsg() : NDRecvMsg(0)
 }
 NDIStreamMsg::NDIStreamMsg(nd_usermsgbuf_t *pmsg) : NDRecvMsg(pmsg)
 {
+	Init(pmsg) ;
+//	if(pmsg) {
+//		_op_addr = ND_USERMSG_DATA(pmsg) ;//pmsg->data ;
+//		_end = (char*)pmsg ;
+//		_end += (size_t) ND_USERMSG_LEN(pmsg) ;
+//	}
+//	else {
+//		_op_addr = NULL ;
+//		_end = NULL ;
+//	}
+
+}
+
+void NDIStreamMsg::Init(nd_usermsgbuf_t *pmsg)
+{
+	recv_packet = pmsg ;
 	if(pmsg) {
 		_op_addr = ND_USERMSG_DATA(pmsg) ;//pmsg->data ;
 		_end = (char*)pmsg ;
@@ -311,8 +335,9 @@ NDIStreamMsg::NDIStreamMsg(nd_usermsgbuf_t *pmsg) : NDRecvMsg(pmsg)
 		_op_addr = NULL ;
 		_end = NULL ;
 	}
-
+	
 }
+
 NDIStreamMsg::~NDIStreamMsg() 
 {
 
