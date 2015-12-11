@@ -233,6 +233,103 @@ int nd_time_zone()
 	return loca_tm.tm_hour - gm_tm.tm_hour;	
 }
 
+//convert the clock-time (9:30:00) to the index-of-second from 00:00:00
+int nd_time_clock_to_seconds(const char *timetext)
+{
+	int hour=0, minute=0, second=0 ;
+	
+	char *p = (char*)timetext;
+	hour =(int) strtol(p, &p, 0);
+	if (hour <0 || hour>23) {
+		return 0;
+	}
+	
+	if (p && *p) {
+		while ( *p && !IS_NUMERALS(*p)) {
+			++p ;
+		}
+		if (*p) {
+			minute =(int) strtol(p, &p, 0);
+			if (minute <0 || minute>=60) {
+				return 0;
+			}
+		}
+		
+		
+	}
+	if (p && *p) {
+		while ( *p && !IS_NUMERALS(*p)) {
+			++p ;
+		}
+		if (*p) {
+			second =(int) strtol(p, &p, 0);
+			if (second <0 || second>=60) {
+				return 0;
+			}
+		}
+	}
+	return hour *3600 + minute * 60 + second ;
+}
+
+//get time_t from text-clock "9:30:10" GT
+time_t nd_time_from_clock(const char *timetext)
+{
+	int hour=0, minute=0, second=0 ;
+	
+	char *p = (char*)timetext;
+	hour =(int) strtol(p, &p, 0);
+	if (hour <0 || hour>23) {
+		return 0;
+	}
+	
+	if (p && *p) {
+		while ( *p && !IS_NUMERALS(*p)) {
+			++p ;
+		}
+		if (*p) {
+			minute =(int) strtol(p, &p, 0);
+			if (minute <0 || minute>=60) {
+				return 0;
+			}
+		}
+		
+		
+	}
+	if (p && *p) {
+		while ( *p && !IS_NUMERALS(*p)) {
+			++p ;
+		}
+		if (*p) {
+			second =(int) strtol(p, &p, 0);
+			if (second <0 || second>=60) {
+				return 0;
+			}
+		}
+	}
+	
+	
+	time_t now = time(NULL) ;
+	struct  tm loca_tm  ;
+	localtime_r(&now, &loca_tm);
+	
+	loca_tm.tm_sec = second ;
+	loca_tm.tm_hour = hour ;
+	loca_tm.tm_min = minute ;
+	return mktime(&loca_tm) ;
+	
+}
+
+//get second index from 00:00:00 (local time)
+int nd_time_second_index_day(time_t timest)
+{
+	NDINT64 timezone = nd_time_zone();
+	NDINT64 start64 = (NDINT64)timest;
+	
+	start64 += timezone * 3600;
+	
+	return (int)(start64 % (3600 * 24)) ;
+}
+
 time_t  nd_time_from_str(const char *pInput, time_t* tim)
 {
 	time_t ret = 0;
