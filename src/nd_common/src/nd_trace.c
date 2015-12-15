@@ -272,11 +272,14 @@ int nd_time_clock_to_seconds(const char *timetext)
 }
 
 //get time_t from text-clock "9:30:10" GT
-time_t nd_time_from_clock(const char *timetext)
+time_t nd_time_from_clock(const char *timetext, time_t cur_time)
 {
 	int hour=0, minute=0, second=0 ;
 	
 	char *p = (char*)timetext;
+	if(!p || !*p) {
+		return 0;
+	}
 	hour =(int) strtol(p, &p, 0);
 	if (hour <0 || hour>23) {
 		return 0;
@@ -308,7 +311,7 @@ time_t nd_time_from_clock(const char *timetext)
 	}
 	
 	
-	time_t now = time(NULL) ;
+	time_t now = cur_time ; //get the current day
 	struct  tm loca_tm  ;
 	localtime_r(&now, &loca_tm);
 	
