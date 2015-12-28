@@ -11,6 +11,21 @@
 #define MAX_FILE_SIZE 4*4096
 #define XML_H_END   0x3e2f			// /> xml node end mark
 #define XML_T_END   0x2f3c			// </ xml end node mark,高字节在高地址 /地址高于 >
+static int  _is_mark_end(const char *p)
+{
+	if (*p == 0x2f && *(p+1)=='>') {
+		return 1;
+	}
+	return 0;
+}
+
+static int  _is_mark_start(const char *p)
+{
+	if (*p == '<' && *(p+1)==0x2f) {
+		return 1;
+	}
+	return 0;
+}
 
 ndxml *parse_xmlbuf(char *xmlbuf, int size,char **parse_end, char **error_addr) ;
 ndxml *alloc_xml();
@@ -847,7 +862,8 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 		*parse_end = NULL ;
 		return NULL ;
 	}
-	if(XML_T_END==*((short int*)paddr)) {
+	//if(XML_T_END==*((short int*)paddr)) {
+	if (_is_mark_start(paddr)) {
 		*parse_end = (char*)paddr ;
 		*error_addr = NULL ;
 		return NULL ;
@@ -880,7 +896,8 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 	while(*paddr) {
 		struct ndxml_attr *attrib_node ;
 		char attr_name[MAX_XMLNAME_SIZE] ;
-		if(*((short int*)paddr)==XML_H_END ) {
+		//if(*((short int*)paddr)==XML_H_END ) {
+		if (_is_mark_end(paddr)) {
 			//这个xml节点结束了,应该返回了
 			*parse_end = (char*)paddr + 2 ;
 			return xmlnode ;
@@ -913,7 +930,8 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 	
 	//read value and sub-xmlnode
 	paddr = ndstr_first_valid(paddr) ;
-	if(XML_T_END==*((short*)paddr)) {
+	//if(XML_T_END==*((short*)paddr)) {
+	if (_is_mark_start(paddr)) {
 		//xml node end </
 		goto READ_END ;
 	}
@@ -937,7 +955,8 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 				return NULL ;
 			}
 			paddr = ndstr_first_valid(parsed) ;
-			if(XML_T_END==*((short*)paddr)) {
+			//if(XML_T_END==*((short*)paddr)) {
+			if (_is_mark_start(paddr)) {
 				goto READ_END ;
 			}
 
@@ -978,7 +997,8 @@ READ_END :
 	{
 		char end_name[MAX_XMLNAME_SIZE] ;
 		
-		if(XML_T_END != *((short*)paddr)) {
+		//if(XML_T_END != *((short*)paddr)) {
+		if (!_is_mark_start(paddr)) {
 			//解析出错,没有遇到结束标志
 			if(xmlnode)
 				dealloc_xml(xmlnode) ;
