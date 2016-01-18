@@ -40,4 +40,8 @@ ND_COMMON_API char * nd_utf8_to_ndcode(const char *input_text, char *outbuf, int
 ND_COMMON_API char * nd_ndcode_to_utf8(const char *input_text, char *outbuf, int size);
 #endif
 
+
+typedef char*(*nd_code_convert_func)(const char *, char *, int);
+ND_COMMON_API nd_code_convert_func nd_get_code_convert(int fromType, int toType);
+ND_COMMON_API int nd_code_convert_file(const char *file, int fromType, int toType);
 #endif /* defined(__gameHall__nd_iconv__) */

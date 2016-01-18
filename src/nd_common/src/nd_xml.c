@@ -44,6 +44,7 @@ static int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, 
 static int xml_set_code_type(ndxml_root *xmlroot);
 static xml_errlog __xml_logfunc = _errlog ;
 
+
 int xml_load_from_buf(char *buf, size_t size, ndxml_root *xmlroot,const char *filename)
 {
 	int data_len = (int)size;
@@ -97,15 +98,16 @@ int ndxml_load_ex(const char *file, ndxml_root *xmlroot, const char*encodeType)
 			int nNeedType = nd_get_encode_val(encodeType);
 			//char *pconvertbuf;
 			//const char *encodeTextType = 0;
-			typedef char*(*__convert_function)(const char *, char *, int);
-			__convert_function func = NULL;
-			//CONVERT CODE 
-			if (nNeedType == E_SRC_CODE_UTF_8 && nTextType != E_SRC_CODE_UTF_8)	{
-				func = nd_gbk_to_utf8;
-			}
-			else if (nNeedType != E_SRC_CODE_UTF_8 && nTextType == E_SRC_CODE_UTF_8)	{
-				func = nd_utf8_to_gbk;	
-			}
+			nd_code_convert_func func = nd_get_code_convert(nTextType, nNeedType);
+// 			typedef char*(*__convert_function)(const char *, char *, int);
+// 			__convert_function func = NULL;
+// 			//CONVERT CODE 
+// 			if (nNeedType == E_SRC_CODE_UTF_8 && nTextType != E_SRC_CODE_UTF_8)	{
+// 				func = nd_gbk_to_utf8;
+// 			}
+// 			else if (nNeedType != E_SRC_CODE_UTF_8 && nTextType == E_SRC_CODE_UTF_8)	{
+// 				func = nd_utf8_to_gbk;	
+// 			}
 
 			if (func){
 				char *pconvertbuf = malloc(size * 2);
@@ -360,6 +362,31 @@ int ndxml_save(ndxml_root *xmlroot, const char *file)
     return ndxml_save_ex(xmlroot, file, buf) ;
 }
 
+
+int ndxml_save_encode(ndxml_root *xmlroot, const char *file, int inputCode, int outputCode)
+{
+	char buf[128];
+	buf[0] = 0;
+	
+	if (outputCode == E_SRC_CODE_GBK){
+		snprintf(buf, sizeof(buf), "version=\"1.0\" encoding=\"GBK\"");
+	}
+	else if (outputCode == E_SRC_CODE_UTF_8){
+		snprintf(buf, sizeof(buf), "version=\"1.0\" encoding=\"utf-8\"");
+	}
+	else {
+		snprintf(buf, sizeof(buf), "version=\"1.0\" encoding=\"ANSI\"");
+	}
+
+		
+	int ret = ndxml_save_ex(xmlroot, file, buf); 
+	nd_code_convert_func func = nd_get_code_convert(inputCode, outputCode);
+
+	if (func){
+		return nd_code_convert_file(file, inputCode, outputCode);
+	}
+	return ret;
+}
 
 ndxml *ndxml_copy(ndxml *node)
 {

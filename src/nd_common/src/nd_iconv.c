@@ -137,3 +137,46 @@ char * nd_ndcode_to_utf8(const char *input_text, char *outbuf, int size)
 }
 
 #endif
+
+
+nd_code_convert_func nd_get_code_convert(int fromType, int toType)
+{
+	nd_code_convert_func func = NULL;
+	//CONVERT CODE 
+	if (toType == E_SRC_CODE_UTF_8 && fromType != E_SRC_CODE_UTF_8)	{
+		func = nd_gbk_to_utf8;
+	}
+	else if (toType != E_SRC_CODE_UTF_8 && fromType == E_SRC_CODE_UTF_8)	{
+		func = nd_utf8_to_gbk;
+	}
+	return func;
+}
+
+int nd_code_convert_file(const char *file, int fromType, int toType)
+{
+	nd_code_convert_func func = nd_get_code_convert(fromType, toType);
+	if (!func){
+		return 0;
+	}
+	size_t size = 0;
+	char*pBuf = nd_load_file(file, &size);
+	if (!pBuf){
+		return -1;
+	}
+	char *pconvertbuf = malloc(size * 2);
+	if (!pconvertbuf)	{
+		nd_unload_file(pBuf);
+		return -1;
+	}
+	func(pBuf, pconvertbuf, size * 2);
+	nd_unload_file(pBuf);
+	size = strlen(pconvertbuf);
+
+	FILE *pf = fopen(file, "w");
+	if (!pf){
+		return -1;
+	}
+	fwrite(pconvertbuf,size,1,pf);
+	fclose(pf);
+	return 0;
+}
