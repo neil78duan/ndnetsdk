@@ -241,7 +241,7 @@ int nd_time_clock_to_seconds(const char *timetext)
 	char *p = (char*)timetext;
 	hour =(int) strtol(p, &p, 0);
 	if (hour <0 || hour>23) {
-		return 0;
+		return -1;
 	}
 	
 	if (p && *p) {
@@ -251,7 +251,7 @@ int nd_time_clock_to_seconds(const char *timetext)
 		if (*p) {
 			minute =(int) strtol(p, &p, 0);
 			if (minute <0 || minute>=60) {
-				return 0;
+				return -1;
 			}
 		}
 		
@@ -264,7 +264,7 @@ int nd_time_clock_to_seconds(const char *timetext)
 		if (*p) {
 			second =(int) strtol(p, &p, 0);
 			if (second <0 || second>=60) {
-				return 0;
+				return -1;
 			}
 		}
 	}

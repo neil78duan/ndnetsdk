@@ -20,7 +20,7 @@ size_t nd_get_file_size(const char *file)
 	size_t size =0 ;
 	FILE *fp;
 
-	fp = fopen(file, "r+b") ;
+	fp = fopen(file, "rb") ;
 	if(!fp) {
 		return 0;
 	}
@@ -43,7 +43,7 @@ void* nd_load_file(const char *file, size_t *size)
 	FILE *fp;
 	char *buf= NULL ;
 
-	fp = fopen(file, "r+b") ;
+	fp = fopen(file, "rb") ;
 	if(!fp) {
 		return 0;
 	}
