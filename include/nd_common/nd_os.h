@@ -147,14 +147,16 @@ static  __INLINE__ int nd_key_esc()
 }
 #include <time.h>
 ND_COMMON_API int nd_time_day_interval(time_t end_tm, time_t start_tm)  ;	//计算两个时间的天数间隔
+ND_COMMON_API int nd_time_day_interval_ex(time_t end_tm, time_t start_tm, int time_zone)  ;
 
 ND_COMMON_API int nd_time_zone();
 ND_COMMON_API time_t  nd_time_from_str(const char *pInput, time_t* tim);
 
 //convert the clock-time (9:30:00) to the index-of-second from 00:00:00
 ND_COMMON_API int nd_time_clock_to_seconds(const char *timetext);
-//get time_t from text-clock "9:30:10" GT, cur_time means the current day 
-ND_COMMON_API time_t nd_time_from_clock(const char *timetext, time_t cur_time);
+//get time_t from text-clock "9:30:10" GT, cur_time means the current day
+// @timezone = 0xff ,use the system time-zone, else time zone is set as param
+ND_COMMON_API time_t nd_time_from_clock(const char *timetext, time_t cur_time,int timezone);
 //get second index from 00:00:00 (local time)
 ND_COMMON_API int nd_time_second_index_day(time_t timest);
 

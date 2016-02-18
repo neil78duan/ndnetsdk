@@ -212,12 +212,18 @@ const char * _getfilename(const char *filenamePath)
 int nd_time_day_interval(time_t end_tm, time_t start_tm) 
 {
 	NDINT64 timezone = nd_time_zone();
+	return nd_time_day_interval_ex(end_tm, start_tm, (int) timezone) ;
+}
+
+int nd_time_day_interval_ex(time_t end_tm, time_t start_tm, int timezone)
+{
+	
 	NDINT64 start64 = (NDINT64)start_tm;
 	NDINT64 end64 = (NDINT64)end_tm;
-
+	
 	start64 += timezone * 3600;
 	end64 += timezone * 3600;
-
+	
 	NDINT64 start = (int)(start64 / (3600 * 24));
 	NDINT64 end = (int)(end64 / (3600 * 24));
 	return (int)(end - start );
@@ -272,7 +278,7 @@ int nd_time_clock_to_seconds(const char *timetext)
 }
 
 //get time_t from text-clock "9:30:10" GT
-time_t nd_time_from_clock(const char *timetext, time_t cur_time)
+time_t nd_time_from_clock(const char *timetext, time_t cur_time,int timezone)
 {
 	int hour=0, minute=0, second=0 ;
 	
@@ -313,7 +319,13 @@ time_t nd_time_from_clock(const char *timetext, time_t cur_time)
 	
 	time_t now = cur_time ; //get the current day
 	struct  tm loca_tm  ;
-	localtime_r(&now, &loca_tm);
+	if (timezone == 0xff) {
+		localtime_r(&now, &loca_tm);
+	}
+	else {
+		now += timezone*3600 ;
+		gmtime_r(&now, &loca_tm);
+	}
 	
 	loca_tm.tm_sec = second ;
 	loca_tm.tm_hour = hour ;
