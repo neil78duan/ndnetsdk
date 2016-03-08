@@ -8,5 +8,5 @@
 
 #include <stdio.h>
 
-const char *__g_version_desc ="version 1.0 \n build time: \n" ;
-int __g_version_id = 100000 ;
+const char *__g_version_desc ="version 1.1 \n build time: \n" ;
+int __g_version_id = 101000 ;

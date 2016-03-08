@@ -25,9 +25,8 @@ static int data_in_ofconnect(nd_handle h,void *data , size_t len,nd_handle liste
 	return 0;
 }
 
-NDConnector::NDConnector(int maxmsg_num , int maxid_start) 
+NDConnector::NDConnector(int maxmsg_num, int maxid_start) : NDObject() 
 {
-	m_objhandle = NULL ;
 	msg_kinds = maxmsg_num;
 	msg_base = maxid_start;
 	m_old_in_func = 0;
@@ -52,8 +51,11 @@ int NDConnector::_data_func(void *data, size_t size)
 	if (!data || 0==size){
 		//OnClose() ;
 	}
-	else if(m_old_in_func) {
+	else if (m_old_in_func && m_old_in_func != data_in_ofconnect) {
 		return m_old_in_func(m_objhandle,data,size,NULL) ;
+	}
+	else {
+		((struct netui_info*)m_objhandle)->data_entry(m_objhandle, data, size, NULL);
 	}
 	return 0;
 }
@@ -77,10 +79,7 @@ int NDConnector::Open(const char *host, int port, const char *protocol_name,nd_p
 		//m_objhandle = NULL ;
 		return -1;
 	}
-
-	m_old_in_func = ((struct netui_info*)m_objhandle)->data_entry ;
-	((struct netui_info*)m_objhandle)->data_entry = data_in_ofconnect ;
-
+	
 	OnInitilize() ;
 	m_open = 1 ;
 	return 0 ;
@@ -116,7 +115,10 @@ int NDConnector::Create(const char *protocol_name)
 		nd_logerror((char*)"connect error :%s!" AND nd_last_error()) ;
 		return -1;
 	}
+
 	((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
+	m_old_in_func = ((nd_netui_handle)m_objhandle)->data_entry;
+	((nd_netui_handle)m_objhandle)->data_entry = data_in_ofconnect;
 
 	//set message handle	
 	if (msg_kinds > 0){

@@ -249,6 +249,7 @@ public:
 			m_enable = 1 ;
 		}
 		m_affair_stat = 0 ;
+		m_dataChanged = 0;
 		//m_num = 0;
 		m_buf.clear() ;
 	}
@@ -269,38 +270,29 @@ public:
 	}
 	void AffairAdd(const TIndex &index,const TValue &old_val)
 	{
-		if (m_affair_stat)	{
-			
+		if (m_affair_stat)	{			
 			AffairSet(index, old_val ,EAO_DEL) ;
-			//nd_assert(m_num<=number);
-//			m_buf[m_num].first = index ;
-//			m_buf[m_num].second = old_val;
-//			m_buf[m_num].optype = EAO_DEL ;
-//			m_num++;
+		}
+		else {
+			m_dataChanged = 1;
 		}
 	}
 	void AffairDel(const TIndex &index,const TValue &old_val)
 	{
-		if (m_affair_stat)	{
-			
+		if (m_affair_stat)	{			
 			AffairSet(index, old_val ,EAO_ADD) ;
-//			nd_assert(m_num<=number);
-//			m_buf[m_num].first = index ;
-//			m_buf[m_num].second = old_val;
-//			m_buf[m_num].optype = EAO_ADD ;
-//			m_num++;
+		}
+		else {
+			m_dataChanged = 1;
 		}
 	}
 	void AffairModify(const TIndex &index,const  TValue &old_val)
 	{
 		if (m_affair_stat)	{
 			AffairSet(index, old_val ,EAO_MODIFIED) ;
-			
-//			nd_assert(m_num<=number);
-//			m_buf[m_num].first = index ;
-//			m_buf[m_num].second = old_val;
-//			m_buf[m_num].optype = EAO_MODIFIED ;
-//			m_num++;
+		}
+		else {
+			m_dataChanged = 1;
 		}
 	}
 	void AffairSet(const TIndex &index,const  TValue &val ,int affair_op) 
@@ -312,11 +304,6 @@ public:
 			op.optype = affair_op ;
 			m_buf.push_back(op) ;
 
-			//nd_assert(m_num<=number);
-//			m_buf[m_num].first = index ;
-//			m_buf[m_num].second = val;
-//			m_buf[m_num].optype = affair_op ;
-//			m_num++;
 		}
 	}
 	int GetAffairStat() {return m_affair_stat;}
