@@ -47,6 +47,7 @@ int nd_net_init(void)
 
 void nd_net_destroy(void)
 {
+	_release_send_stream();
 #if !defined(ND_UNIX) 
 	WSACleanup();
 #else 

@@ -15,6 +15,19 @@ typedef struct netui_info *nd_handle;
 static char *_s_send_stream =NULL;
 static char *_s_recv_stream =NULL;
 
+void _release_send_stream()
+{
+	if (_s_send_stream) {
+		free(_s_send_stream);
+		_s_send_stream = 0;
+	}
+
+	if (_s_recv_stream) {
+		free(_s_recv_stream);
+		_s_recv_stream = 0;
+	}
+
+}
 int net_init_sendlock(nd_netui_handle socket_node)
 {
 	socket_node->send_lock=malloc(sizeof(nd_mutex )) ;

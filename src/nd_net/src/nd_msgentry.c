@@ -20,7 +20,8 @@ struct msg_entry_node
     NDUINT32            is_log:1;   //log current message
 	NDUINT32			is_script : 1;// handle message with script
 	nd_usermsg_func		entry ;	//入口函数
-	char* name;
+	//char* name;
+	char name[NET_MSG_NAME_SIZE];
 };
 
 /*主消息结果*/
@@ -75,10 +76,10 @@ static void destroy_msgroot(struct msgentry_root *root)
 		struct sub_msgentry *psub = &root->sub_buf[i];
 		for (j = 0; j < SUB_MSG_NUM; j++) {
 			struct  msg_entry_node *node = &psub->msg_buf[j];
-			if (node->name)	{
-				free(node->name);
-				node->name = 0;
-			}
+// 			if (node->name)	{
+// 				free(node->name);
+// 				node->name = 0;
+// 			}
 			if (node->is_script)	{
 				free((void*)node->entry);
 				node->entry = NULL;
@@ -283,10 +284,10 @@ int nd_msgentry_install(nd_netui_handle handle, nd_usermsg_func func, ndmsgid_t 
 #if 1
 		if (name && name[0]) {
 			int len = strlen(name) + 1;
-			node->name = malloc(len);
-			if (node->name) {
-				strncpy(node->name, name, len);
+			if (len > (int) sizeof(node->name)) {
+				len = sizeof(node->name);
 			}
+			strncpy(node->name, name, len);
 		}
 #endif
 		ret = 0 ;

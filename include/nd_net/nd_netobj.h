@@ -145,6 +145,7 @@ static __INLINE__ void nd_net_connbuf_init(nd_netui_handle node)
 int net_init_sendlock(nd_netui_handle socket_node);
 void net_release_sendlock(nd_netui_handle  socket_node);
 size_t nd_net_getpack_size(nd_handle  handle, void *data) ;
+void _release_send_stream();
 
 //设置每个网络封包长度最小值,如果小于这个值,认为接收网络数据错误
 ND_NET_API int nd_net_set_packet_minsize(int minsize) ;

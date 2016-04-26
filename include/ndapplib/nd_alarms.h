@@ -15,10 +15,9 @@
 class NDAlarm : public NDObject
 {
 public:
-    
-    virtual int Update() ;
-    
-	virtual int Update(ndtime_t tminterval) ;	//update per frame
+
+	virtual int Update();
+	virtual int UpdateFrame(ndtime_t tminterval) ;	//update per frame
 	virtual int UpdateSecond() ;				//update per second
 	virtual int UpdateMinute() ;				//update minute
 	virtual int UpdateHour() ;				//update hour

@@ -143,7 +143,7 @@ int NDAlarm::tick(ndtime_t tminterval)
     m_tick_minute += tminterval ;
     m_tick_sec += tminterval ;
     ++m_tick_index ;
-    Update(tminterval) ;
+    UpdateFrame(tminterval) ;
     if (m_tick_sec >= 1000){
         if(-1==UpdateSecond())
             return -1 ;
@@ -223,7 +223,7 @@ void NDAlarm::update_alarm()
 	}
 }
 
-int NDAlarm::Update(ndtime_t tminterval)
+int NDAlarm::UpdateFrame(ndtime_t tminterval)
 {
     return 0;
 }
