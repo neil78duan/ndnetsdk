@@ -84,32 +84,35 @@ ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
 //define assert
 //only for x86
-#ifdef WIN64
-#define ND_DebugBreak()    				(void)0
-#else 
+// #ifdef WIN64
+// #define ND_DebugBreak()    				__debugbreak
+// #else 
+// #endif
+
 #ifdef _DEBUG
 #define ND_DebugBreak()    				__debugbreak() //_asm { int 3 }
 #else  
 #define ND_DebugBreak()    				(void)0
 #endif
-#endif
 
 __INLINE__ void ND_MsgBox(LPCSTR s) {
-	char buf[1024] ;
-	snprintf(buf, 1024, ("%s ASSERT FAILED") , nd_process_name()) ;
+	char buf[1024];
+	snprintf(buf, 1024, ("%s ASSERT FAILED"), nd_process_name());
 	MessageBoxA(GetActiveWindow(), s, buf, MB_OK);
 }
+
 __INLINE__ void ND_FAILED(LPCSTR szMsg) {
-   ND_MsgBox(szMsg);
-   ND_DebugBreak();
+	ND_MsgBox(szMsg);
+	ND_DebugBreak();
 }
 // Put up an assertion failure message box.
 __INLINE__ void ND_ASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
-   char sz[1024];
-   snprintf(sz, 1024, "ASSERT failed in\nFile %s, line %d \n"
-	   "nd_assert(%s)", file, line, expr);
-   ND_FAILED(sz);
+	char sz[1024];
+	snprintf(sz, 1024, "ASSERT failed in\nFile %s, line %d \n"
+		"nd_assert(%s)", file, line, expr);
+	ND_FAILED(sz);
 }
+
 // Put up a message box if an assertion fails in a debug build.
 //¶¨ÒåNDASSERT()´úÌæassert()
 

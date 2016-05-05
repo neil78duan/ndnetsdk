@@ -554,6 +554,7 @@ int ndxml_delxml(ndxml *node, ndxml *xmlParent)
 	}
 	return -1;
 }
+
 //引用一个子节点
 ndxml *ndxml_refsub(ndxml *root, const char *name) 
 {
