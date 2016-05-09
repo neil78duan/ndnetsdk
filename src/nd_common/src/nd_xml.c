@@ -51,16 +51,20 @@ int xml_load_from_buf(char *buf, size_t size, ndxml_root *xmlroot,const char *fi
 	char *parse_addr = buf;
 	char *error_addr = 0;
 	do {
-		ndxml *xmlnode = parse_xmlbuf(parse_addr, data_len, &parse_addr, &error_addr);
-		if (xmlnode) {
-			list_add_tail(&xmlnode->lst_self, &xmlroot->lst_sub);
-			xmlroot->sub_num++;
+		parse_addr = ndstr_first_valid(parse_addr) ;
+		if (parse_addr) {
+			ndxml *xmlnode = parse_xmlbuf(parse_addr, data_len, &parse_addr, &error_addr);
+			if (xmlnode) {
+				list_add_tail(&xmlnode->lst_self, &xmlroot->lst_sub);
+				xmlroot->sub_num++;
+			}
+			else if (error_addr) {
+				ndxml_destroy(xmlroot);
+				show_xmlerror(filename, error_addr, buf, (size_t)data_len);
+				return -1;
+			}
 		}
-		else if (error_addr) {
-			ndxml_destroy(xmlroot);
-			show_xmlerror(filename, error_addr, buf, (size_t)data_len);
-			return -1;
-		}
+		
 	} while (parse_addr && *parse_addr);
 
 	return 0;
@@ -844,7 +848,12 @@ static char* parse_marked(char *xmlbuf, int size, char **error_addr)
 	
 	while(pstart< xmlbuf+size) {
 		*error_addr = pstart ;
-		paddr = strchr(pstart, '<') ;
+		//paddr = strchr(pstart, '<') ;
+		paddr = ndstr_first_valid(pstart) ;
+		if (!paddr || *paddr != '<') {
+			//*error_addr = pstart ;
+			return NULL ;
+		}
 
 		if(!paddr || paddr >= xmlbuf+size) {
 			*error_addr = 0 ;
@@ -888,6 +897,10 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 	paddr = parse_marked(xmlbuf, size, error_addr)  ;
 	if(!paddr){
 		*parse_end = NULL ;
+		if (!*error_addr) {
+			*error_addr = xmlbuf ;
+		}
+		
 		return NULL ;
 	}
 	//if(XML_T_END==*((short int*)paddr)) {

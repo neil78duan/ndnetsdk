@@ -105,6 +105,7 @@ const char * nd_get_init_dir()
 
 int nd_cpfile(const char *oldfile,const  char *newfile)
 {
+	int ret = 0 ;
 	int readsize;
 	FILE *fp1, *fp2 ;
 	char buf[1024] ;
@@ -120,12 +121,25 @@ int nd_cpfile(const char *oldfile,const  char *newfile)
 	}
 
 	while((readsize = fread(buf,1,sizeof(buf),fp1))>0){
-		fwrite(buf,sizeof(buf),1,fp2);
+		if (readsize != sizeof(buf)) {
+			int err = ferror(fp1) ;
+			if (err) {
+				ret = -1 ;
+				break ;
+			}
+		}
+		fwrite(buf,1,readsize,fp2);
+		if (feof(fp1)) {
+			break ;
+		}
 	}
 
 	fclose(fp1);
 	fclose(fp2);
-	return 0;
+	if (ret !=0) {
+		nd_rmfile(newfile) ;
+	}
+	return ret;
 }
 
 int nd_mkfile(const char *file)
