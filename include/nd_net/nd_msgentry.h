@@ -109,7 +109,7 @@ ND_NET_API int nd_message_set_script_engine(nd_handle handle, void *script_engin
 /* 设置默认消息处理函数*/
 ND_NET_API int nd_msgentry_def_handler(nd_handle handle, nd_usermsg_func func)  ;
 
-ND_NET_API nd_usermsg_func nd_msgentry_get_func(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid) ;
+ND_NET_API nd_usermsg_func nd_msgentry_get_func(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid);
 ND_NET_API nd_usermsg_func nd_msgentry_get_def_func(nd_handle handle) ;
 ND_NET_API const char * nd_msgentry_get_name(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid) ;
 ND_NET_API NDUINT32 nd_msgentry_get_id(nd_handle handle, const char *msgname);
@@ -161,6 +161,7 @@ static __INLINE__ int nd_connectmsg_sendex(nd_handle  connector_handle, nd_userm
  */
 ND_NET_API int nd_translate_message(nd_handle  connector_handle, nd_packhdr_t *msg,nd_handle listen_handle ) ;
 
+ND_NET_API int nd_translate_message_ex(nd_handle owner, nd_packhdr_t *msg, nd_handle listen_handle, nd_handle caller);
 
 /* 
  * 服务器端消息传递函数

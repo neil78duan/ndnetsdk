@@ -358,25 +358,48 @@ static int _call_message_func(struct msgentry_root *root,struct msg_entry_node *
 	}
 	return ret;
 }
+
 int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle) 
 {
-	ENTER_FUNC()	
+	return nd_translate_message_ex(connect_handle, msg, listen_handle, connect_handle);
+// 	ENTER_FUNC()	
+// 	
+// 	int ret = 0 ;
+// 	int data_len = nd_pack_len(msg);
+// 	struct msgentry_root *root_entry= (struct msgentry_root *) connect_handle->msg_handle;
+// 	nd_usermsghdr_t *usermsg = (nd_usermsghdr_t *) (msg) ;	
+// 	//nd_usermsg_func func ;
+// 	struct msg_entry_node * node;
+// 
+// 	nd_netmsg_ntoh(usermsg);
+// 	node = _nd_msgentry_get_node(connect_handle, usermsg->maxid, usermsg->minid);
+// 	ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, connect_handle, listen_handle);
+// 	
+// 	LEAVE_FUNC();
+// 	return  ret ==-1? -1: data_len ;
 	
-	int ret = 0 ;
+}
+
+int nd_translate_message_ex(nd_netui_handle owner,  nd_packhdr_t *msg, nd_handle listen_handle, nd_handle caller)
+{
+	ENTER_FUNC()
+
+		int ret = 0;
 	int data_len = nd_pack_len(msg);
-	struct msgentry_root *root_entry= (struct msgentry_root *) connect_handle->msg_handle;
-	nd_usermsghdr_t *usermsg = (nd_usermsghdr_t *) (msg) ;	
+	struct msgentry_root *root_entry = (struct msgentry_root *) owner->msg_handle;
+	nd_usermsghdr_t *usermsg = (nd_usermsghdr_t *)(msg);
 	//nd_usermsg_func func ;
 	struct msg_entry_node * node;
 
 	nd_netmsg_ntoh(usermsg);
-	node = _nd_msgentry_get_node(connect_handle, usermsg->maxid, usermsg->minid);
-	ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, connect_handle, listen_handle);
-	
+	node = _nd_msgentry_get_node(owner, usermsg->maxid, usermsg->minid);
+	ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, caller, listen_handle);
+
 	LEAVE_FUNC();
-	return  ret ==-1? -1: data_len ;
-	
+	return  ret == -1 ? -1 : data_len;
+
 }
+
 
 
 int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle) 

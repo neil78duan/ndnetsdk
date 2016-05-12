@@ -236,6 +236,8 @@ RE_WAIT:
 		if(ret > 0) {			
 			//msg_entry(connect_handle, &msg_recv) ;
 			nd_translate_message(m_objhandle, (nd_packhdr_t*)&msg_recv, 0) ;
+
+			//nd_translate_message_ex(m_objhandle, (nd_packhdr_t*)&msg_recv, 0, (nd_handle)this);
 			wait_time = 0;
 			goto RE_WAIT;
 			//return 0;

@@ -316,7 +316,8 @@ RE_WAIT:
 		ret = nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)&msg_recv,wait_time);
 		if(ret > 0) {			
 			//msg_entry(connect_handle, &msg_recv) ;
-			cliconn_translate_message((nd_netui_handle)m_objhandle, (nd_packhdr_t*)&msg_recv, 0) ;
+			//cliconn_translate_message((nd_netui_handle)m_objhandle, (nd_packhdr_t*)&msg_recv, 0) ;
+			nd_translate_message_ex(m_objhandle, (nd_packhdr_t*)&msg_recv, 0, (nd_handle)this);
 			wait_time = 0;
 			goto RE_WAIT;
 			//return 0;
@@ -440,6 +441,8 @@ void ndSetLogFile(const char *pathfile)
 
 int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
 {
+	return nd_translate_message_ex((nd_handle)connect_handle, msg, 0, (nd_handle)htoConnector((nd_handle)connect_handle));
+	/*
 	ENTER_FUNC()	
 	
 	int ret = 0 ;
@@ -464,6 +467,7 @@ int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg 
 	
 	LEAVE_FUNC();
 	return  ret==-1? -1:data_len ;
+	*/
 }
 
 
