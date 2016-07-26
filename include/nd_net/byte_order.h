@@ -83,11 +83,37 @@ static __inline int nd_byte_order()
 	(((unsigned int)(_a) & (unsigned int)0x00ff0000) >> 8) | \
 	(((unsigned int)(_a) & (unsigned int)0xff000000) >> 24) ))
 
+
+static __inline unsigned long long  nd_btolll(unsigned long long val)
+{
+	union {
+		unsigned long long val;
+		char _data[8];
+	}v1 , v2 ;
+	v2.val = val;
+
+	v1._data[7] = v2._data[0];
+	v1._data[6] = v2._data[1];
+	v1._data[5] = v2._data[2];
+	v1._data[4] = v2._data[3];
+
+	v1._data[3] = v2._data[4];
+	v1._data[2] = v2._data[5];
+	v1._data[1] = v2._data[6];
+	v1._data[0] = v2._data[7];
+
+	return v1.val;
+
+}
+
 //小尾数 转换大尾数
 #define nd_ltobs(x) 	nd_btols(x)
         
 #define nd_ltobl(x) 	nd_btoll(x) 
 
+#define nd_order_change_short(x) nd_btols(x)
+#define nd_order_change_long(x) nd_btoll(x)
+#define nd_order_change_longlong(x) nd_btolll(x)
 
 
 #endif 
