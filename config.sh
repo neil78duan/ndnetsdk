@@ -13,10 +13,10 @@ create_ndhome() {
     cd $HOME
     if [ -f .bash_profile ]; then
         echo "export NDHOME=\"$workDir\"" >> .bash_profile
-        source .bash_profile
+        source $HOME/.bash_profile
     elif [ -f .profile ]; then
         echo "export NDHOME=\"$workDir\"" >> .profile
-        source .profile
+        source $HOME/.profile
     else
         echo "could not create NDHOME "
         echo "PLEASE set evn $NDHOME "
