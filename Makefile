@@ -39,7 +39,7 @@ run-cli2:
 	$(BIN_AIM)/client_test localhost 9000 10
 
 config:
-	./config.sh
+	chmod u+x ./config.sh ; ./config.sh
 
 runtest:
 	./bin/Test
