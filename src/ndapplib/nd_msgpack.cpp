@@ -177,6 +177,33 @@ int NDOStreamMsg::Write(NDUINT8 a)
 	return -1 ;
 }
 
+
+
+int NDOStreamMsg::WriteIp(ndip_t a)
+{
+	if(_op_addr + sizeof(a) <= _end) {
+		memcpy(_op_addr, &a, sizeof(a)) ;
+		MsgLength() += sizeof(a) ;
+		_op_addr+= sizeof(a) ;
+		return 0 ;
+	}
+	return -1 ;
+}
+
+int NDOStreamMsg::WriteIp(ndip_v6_t a)
+{
+	
+	if(_op_addr + sizeof(a) <= _end) {
+		memcpy(_op_addr, &a, sizeof(a)) ;
+		MsgLength() += sizeof(a) ;
+		_op_addr+= sizeof(a) ;
+		return 0 ;
+	}
+	return -1 ;
+}
+
+
+
 int NDOStreamMsg::Write(const char *text)
 {
 	return Write((const NDUINT8 *)text);
@@ -372,6 +399,7 @@ int NDIStreamMsg::Read (NDUINT16 &a)
 	return -1;
 }
 
+
 int NDIStreamMsg::Read (NDUINT8 &a) 
 {
 	if(_end >= _op_addr + sizeof(a) ) {
@@ -497,6 +525,29 @@ int NDIStreamMsg::Read(NDOStreamMsg &omsg)
 
 	return (int) data_size;
 
+}
+
+int NDIStreamMsg::ReadIp(ndip_t &a)
+{
+	if(_end >= _op_addr + sizeof(a) ) {
+		
+		memcpy(&a, _op_addr, sizeof(a)) ;
+		_op_addr += sizeof(a) ;
+		return 0 ;
+		
+	}
+	return -1;
+}
+int NDIStreamMsg::ReadIp(ndip_v6_t &a )
+{
+	if(_end >= _op_addr + sizeof(a) ) {
+		
+		memcpy(&a, _op_addr, sizeof(a)) ;
+		_op_addr += sizeof(a) ;
+		return 0 ;
+		
+	}
+	return -1;
 }
 
 

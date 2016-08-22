@@ -24,10 +24,6 @@ typedef unsigned int	NDBOOL ;
 typedef unsigned int	ndtime_t ;	//时间 1/1000 s
 typedef long long		ndbigtime_t;	//超级时间，time_t*1000+tick
 
-typedef unsigned int ndip_t ;
-
-typedef unsigned short ndport_t ;
-
 #if defined(ND_UNICODE)
 typedef unsigned short  NDBYTE;
 #else 
@@ -64,6 +60,12 @@ typedef unsigned short		WORD ;
 #endif
 
 #endif
+
+
+typedef NDUINT32 ndip_t ;
+typedef NDUINT64 ndip_v6_t ;
+
+typedef unsigned short ndport_t ;
 
 
 #define ND_ELEMENTS_NUM(a) (sizeof(a)/sizeof(a[0]))

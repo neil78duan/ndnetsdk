@@ -60,6 +60,10 @@ public :
 	int WriteBin(void *data, size_t size) ;
 	
 	int WriteStream(char *stream_buf, size_t dataLen);
+	
+	
+	int WriteIp(ndip_t ) ;
+	int WriteIp(ndip_v6_t ) ;
 
 //    
 //	int WriteByte(int ) ;
@@ -104,8 +108,12 @@ public :
 	int Read(float &a) ;
 	int Read(double &a) ;
 	size_t Read(NDUINT8 *buf, size_t size) ;
+	size_t Read(char *buf, size_t size) {return	 Read((NDUINT8 *)buf, size) ;}
 	size_t ReadBin (void *buf, size_t size_buf) ;
 	int Read(NDOStreamMsg &omsg) ;
+	
+	int ReadIp(ndip_t &a) ;
+	int ReadIp(ndip_v6_t &a ) ;
 	
 	//read all left data to stream_buf
 	size_t ReadLeftStream(char *stream_buf, size_t buf_size) ;

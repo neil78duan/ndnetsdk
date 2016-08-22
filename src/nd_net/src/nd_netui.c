@@ -504,11 +504,12 @@ int nd_reconnect(nd_netui_handle net_handle, ndip_t ip, int port, struct nd_prox
 {
 	ENTER_FUNC() 
 	int ret = 0 ;
+	char ip_text[32] ;
 	ndtime_t starttime = net_handle->start_time ;
 	nd_connector_close(net_handle, 0) ;
 
 
-	ret = nd_connector_open( net_handle,(char*)nd_inet_ntoa(ip,NULL), port, proxy) ;
+	ret = nd_connector_open( net_handle,(char*)nd_inet_ntoa(ip,ip_text), port, proxy) ;
 	if (ret == 0){
 		net_handle->start_time = starttime;
 		nd_object_seterror(net_handle,NDERR_SUCCESS);
