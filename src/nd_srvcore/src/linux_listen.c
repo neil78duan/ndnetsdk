@@ -5,12 +5,14 @@
  * 2007-10-22
  */
 
+#include "nd_common/nd_common.h"
+
 #include "nd_srvcore/nd_srvlib.h"
 
 
-#if defined( __LINUX__ )
+#if defined( __ND_LINUX__ )
 #include <sys/epoll.h>
-#elif defined (__MAC_OS__)
+#elif defined (__ND_MAC__)
 #include "nd_srvcore/nd_epoll.h"
 #endif
 

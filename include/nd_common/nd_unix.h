@@ -9,6 +9,8 @@
 #ifndef _ND_UINX_H_
 #define _ND_UINX_H_
 
+#include "nd_common/nd_comcfg.h"
+
 #if defined(ND_UNIX) 
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,7 +30,7 @@
 	#define __INLINE__			inline
 #endif
 
-#if  defined(ND_IOS) || defined(ND_ANDROID)
+#if  defined(__ND_IOS__) || defined(__ND_ANDROID__)
 #define __ndthread  
 #else
 #define __ndthread  __thread
@@ -64,7 +66,7 @@ ND_COMMON_API void nd_init_daemon(void) ;
 #define NDSEM_TIMEOUT		1
 #define INFINITE            0xFFFFFFFF
 
-#ifdef __MAC_OS__
+#if defined(__ND_MAC__) || defined(__ND_IOS__)
 
 #define ND_SEM_NAME_SIZE 128
 typedef struct nd_mac_sem

@@ -10,6 +10,7 @@
 #ifndef _ND_DEFINE_H_
 #define _ND_DEFINE_H_
 
+
 typedef signed char 	NDINT8  ;
 typedef unsigned char 	NDUINT8 ;
 
@@ -33,7 +34,7 @@ typedef unsigned char	NDBYTE;
 #define NDTRUE			1 
 #define NDFALSE			0
 
-#if !defined(ND_UNIX) 
+#if defined(_MSC_VER) 
 typedef signed __int64		NDINT64  ;
 typedef unsigned __int64	NDUINT64 ; 
 //typedef signed long			ssize_t;

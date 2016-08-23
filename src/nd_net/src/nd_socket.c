@@ -159,7 +159,7 @@ int nd_sock_cmp_ip(ndip_t src, ndip_t dest, ndip_t ipmask)
 	return 0 ;
 }
 
-#ifdef __LINUX__
+#if defined(__ND_LINUX__) || defined(__ND_ANDROID__)
 
 ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int listen_nums)
 {

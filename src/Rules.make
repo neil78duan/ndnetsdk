@@ -38,15 +38,15 @@ LIBDIR = $(TOPDIR)/lib/$(AIM_NAME)
 LIBOUTPUT = $(TOPDIR)/lib
 
 ifeq ($(OS_kernel),linux)
-    CFLAGS += -D__LINUX__
+    CFLAGS += -D__ND_LINUX__
 endif
 ifeq ($(OS_kernel),darwin)
-    CFLAGS += -D__MAC_OS__
+    CFLAGS += -D__ND_MAC__
 	LFLAGS += -liconv
 
 endif
 
-CFLAGS += -c -w -O  -DND_UNIX
+CFLAGS += -c -w -O
 LFLAGS +=  -lpthread  -lm
 
 

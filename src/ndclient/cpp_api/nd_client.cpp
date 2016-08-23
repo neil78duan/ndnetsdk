@@ -6,7 +6,7 @@
  * 2011/4/2 15:59:39
  */
 
-#define BUILD_AS_STATIC_LIB
+//#define BUILD_AS_STATIC_LIB
 // 
 // #if _MSC_VER==1600
 // #ifdef ND_DEBUG

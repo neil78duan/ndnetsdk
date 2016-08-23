@@ -345,6 +345,9 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_export_def.h">
       <Filter>include\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_common\nd_time.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
@@ -600,6 +603,9 @@
       <Filter>src\srvcoe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_common\src\nd_iconv.c">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_time.c">
       <Filter>src\common</Filter>
     </ClCompile>
   </ItemGroup>

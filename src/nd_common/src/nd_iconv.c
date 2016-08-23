@@ -56,17 +56,6 @@ char * nd_utf8_to_gbk(const char *input_text, char *output_buf, int size_buf)
 	return  output_buf;
 	
 }
-#elif defined(ND_ANDROID)
-
-char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf)
-{
-	return (char*)input_text;
-}
-
-char * nd_utf8_to_gbk(const char *input_text, char *output_buf, int size_buf)
-{
-	return (char*)input_text;
-}
 
 #else
 #include <iconv.h>

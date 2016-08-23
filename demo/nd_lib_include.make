@@ -29,10 +29,10 @@ OS_kernel = $(shell uname -s | tr '[A-Z]' '[a-z]')
 AIM_NAME = $(OS_kernel)_$(ARCH_MACHINE)
 
 ifeq ($(OS_kernel),linux)
-    CFLAGS += -D__LINUX__
+    CFLAGS += -D__ND_LINUX__
 endif
 ifeq ($(OS_kernel),darwin)
-	CFLAGS += -D__MAC_OS__
+	CFLAGS += -D__ND_MAC__
 	LFLAGS += -liconv
 
 endif
@@ -62,7 +62,7 @@ else
 endif
 
 
-CFLAGS += -c -w -O  -DND_UNIX -I$(NDHOME)/include
+CFLAGS += -c -w -O  -I$(NDHOME)/include
 LFLAGS +=  -lpthread  -lm -L$(NDHOME)/lib
 
 

@@ -9,6 +9,7 @@
 #ifndef _ND_ATOMIC_H_
 #define _ND_ATOMIC_H_
 
+#include "nd_common/nd_comcfg.h"
 /*
  atomic operation type : ndatomic_t 
 
@@ -72,7 +73,7 @@ int nd_testandset(ndatomic_t *p)
 void nd_atomic_set(ndatomic_t* p, ndatomic_t val);
 void nd_atomic_read(ndatomic_t *p);
   */
-#if !defined(ND_UNIX) 
+#if defined(__ND_WIN__) 
 
 #if _MSC_VER < 1300 // 1200 == VC++ 6.0
 
@@ -101,10 +102,10 @@ __INLINE__ int nd_compare_swap(ndatomic_t *lpDest,ndatomic_t lComp,ndatomic_t lE
 #define nd_atomic_set(p, val)    InterlockedExchange((p), val)
 #define nd_atomic_read(p)        (*(p))
 
-#elif defined(__LINUX__)
-typedef int ndatomic_t ;
 
-#if 1
+
+#elif defined(__ND_LINUX__) || defined(__ND_ANDROID__)
+typedef int ndatomic_t ;
 
 #define nd_atomic_inc(x) __sync_add_and_fetch((x),1)  
 #define nd_atomic_dec(x) __sync_sub_and_fetch((x),1)  
@@ -123,111 +124,9 @@ static __INLINE__ ndatomic_t nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t e
 #define nd_atomic_set(p, val)    nd_atomic_swap(p,val)
 #define nd_atomic_read(p)        (*(p))
 
-#else 
-/*
-#include <asm/atomic.h>
-#ifdef CONFIG_SMP
-#define LOCK "lock ; "
-#else
-#define LOCK ""
-#endif
-/*/
-#define LOCK "lock ; "
-/**/
-static __INLINE__ int nd_testandset (ndatomic_t  *p)
-{
-  long int ret;
-
-  __asm__ __volatile__(
-       "xchgl %0, %1"
-       : "=r"(ret), "=m"(*p)
-       : "0"(1), "m"(*p)
-       : "memory");
-
-  return ret;
-}
-static __INLINE__ int nd_compare_swap (ndatomic_t *p, ndatomic_t cmpval, ndatomic_t exchval)
-{
-  char ret;
-  ndatomic_t readval;
-  __asm__ __volatile__ (LOCK" cmpxchgl %3, %1; sete %0"
-			: "=q" (ret), "=m" (*p), "=a" (readval)
-			: "r" (exchval), "m" (*p), "a" (cmpval)
-			: "memory");
-  return ret;
-}
-
-/* Atomically swap memory location [32 bits] with `newval'*/
-/*
-	ret = *p ;
-	*p =newval ;
-	return ret ;
-*/
-
-static __INLINE__ ndatomic_t  nd_atomic_swap(ndatomic_t * ptr, ndatomic_t x )
-{
-	__asm__ __volatile__("xchgl %0,%1"
-			:"=r" (x)
-			:"m" (*ptr), "0" (x)
-			:"memory");
-		
-	return x;
-}
-
-/* (*val)++ 
-	return *val;
- */
-static __INLINE__ int nd_atomic_inc(int *val)
-{
-	register int oldval;
-	do {
-		oldval = *val ;
-	}while (!nd_compare_swap(val, oldval, oldval+1)) ;
-	return oldval+1 ;
-}
-
-/* (*val)++
-	return *val;
- */
-static __INLINE__ int nd_atomic_dec(int *val)
-{
-	register int oldval;
-	do {
-		oldval = *val ;
-	}while (!nd_compare_swap(val, oldval, oldval-1)) ;
-	return oldval-1 ;
-}
-
-/* (*val)+= nstep 
-	return *val;
- */
-static __INLINE__ int nd_atomic_add(int *val, int nstep)
-{
-	register int oldval;
-	do {
-		oldval = *val ;
-	}while (!nd_compare_swap(val, oldval, oldval+nstep)) ;
-	return oldval;
-}
-
-/* (*val)-=nstep
-	return *val;
- */
-static __INLINE__ int nd_atomic_sub(int *val, int nstep)
-{
-	register int oldval;
-	do {
-		oldval = *val ;
-	}while (!nd_compare_swap(val, oldval, oldval-nstep)) ;
-	return oldval;
-}
-
-#define nd_atomic_set(p, val)    nd_atomic_swap(p, val)
-#define nd_atomic_read(p)        (*(p))
-#endif 
 
 
-#elif defined(__BSD__)
+#elif defined(__ND_BSD__)
 
 typedef int ndatomic_t ;
 
@@ -253,7 +152,7 @@ static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 #define nd_atomic_set(p, val)    atomic_set_int(p, val)
 #define nd_atomic_read(p)        (*(p))
 
-#elif defined(__MAC_OS__)
+#elif defined(__ND_MAC__) || defined(__ND_IOS__)
 #include <libkern/OSAtomic.h>
 typedef int ndatomic_t ;
 //define for xcode
@@ -298,8 +197,10 @@ static inline void nd_atomic_set(volatile ndatomic_t *p, ndatomic_t val)
     *p = val ;
 }
 #define nd_atomic_read(p)        (*(p))
+
 #else 
 #error unknow platform!
+
 #endif
 
 #endif

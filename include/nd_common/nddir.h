@@ -35,8 +35,6 @@ ND_COMMON_API int nd_rmdir(const char *dir);
 
 #include<dirent.h>
 #include <sys/stat.h>
-#if defined(__MAC_OS__) || defined(__MAC_IOS__)
-#endif
 
 #define nd_rmfile remove
 #define nd_renfile rename

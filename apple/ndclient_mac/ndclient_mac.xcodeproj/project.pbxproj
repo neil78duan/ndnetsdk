@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		071780B11C05A00B00C47A99 /* libiconv.2.4.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 071780B01C05A00B00C47A99 /* libiconv.2.4.0.tbd */; };
+		074D85021D6C264F00201121 /* nd_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 074D85011D6C264F00201121 /* nd_time.c */; };
+		074D85061D6C266B00201121 /* _nderr.h in Headers */ = {isa = PBXBuildFile; fileRef = 074D85031D6C266B00201121 /* _nderr.h */; };
+		074D85071D6C266B00201121 /* nd_cmdline.h in Headers */ = {isa = PBXBuildFile; fileRef = 074D85041D6C266B00201121 /* nd_cmdline.h */; };
+		074D85081D6C266B00201121 /* nd_time.h in Headers */ = {isa = PBXBuildFile; fileRef = 074D85051D6C266B00201121 /* nd_time.h */; };
 		07647B541A400D9B00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B531A400D9B00A96620 /* nd_cmdline.c */; };
 		0764C01E1A664CA3005C469D /* nd_datatransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0764C01D1A664CA3005C469D /* nd_datatransfer.h */; };
 		07A2669B19C7F4C700F51698 /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A2663C19C7F4C700F51698 /* list.h */; };
@@ -162,7 +166,11 @@
 
 /* Begin PBXFileReference section */
 		071780B01C05A00B00C47A99 /* libiconv.2.4.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.4.0.tbd; path = usr/lib/libiconv.2.4.0.tbd; sourceTree = SDKROOT; };
-		07647B531A400D9B00A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nd_cmdline.c; path = src/nd_cmdline.c; sourceTree = "<group>"; };
+		074D85011D6C264F00201121 /* nd_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_time.c; sourceTree = "<group>"; };
+		074D85031D6C266B00201121 /* _nderr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
+		074D85041D6C266B00201121 /* nd_cmdline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_cmdline.h; sourceTree = "<group>"; };
+		074D85051D6C266B00201121 /* nd_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_time.h; sourceTree = "<group>"; };
+		07647B531A400D9B00A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_cmdline.c; sourceTree = "<group>"; };
 		0764C01D1A664CA3005C469D /* nd_datatransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_datatransfer.h; sourceTree = "<group>"; };
 		07A2663119C7F3E700F51698 /* libndclient_mac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndclient_mac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A2663C19C7F4C700F51698 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
@@ -384,6 +392,9 @@
 		07A2663B19C7F4C700F51698 /* nd_common */ = {
 			isa = PBXGroup;
 			children = (
+				074D85031D6C266B00201121 /* _nderr.h */,
+				074D85041D6C266B00201121 /* nd_cmdline.h */,
+				074D85051D6C266B00201121 /* nd_time.h */,
 				07CFB07B1B130A110061C219 /* nd_iconv.h */,
 				07A2663C19C7F4C700F51698 /* list.h */,
 				07A2663D19C7F4C700F51698 /* nd_alloc.h */,
@@ -549,7 +560,6 @@
 		07A266F419C7F4EE00F51698 /* nd_common */ = {
 			isa = PBXGroup;
 			children = (
-				07647B531A400D9B00A96620 /* nd_cmdline.c */,
 				07A266F619C7F4EE00F51698 /* Makefile */,
 				07A2671A19C7F4EE00F51698 /* src */,
 			);
@@ -559,6 +569,8 @@
 		07A2671A19C7F4EE00F51698 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				074D85011D6C264F00201121 /* nd_time.c */,
+				07647B531A400D9B00A96620 /* nd_cmdline.c */,
 				07CFB0421B13095A0061C219 /* nd_iconv.c */,
 				07A2671B19C7F4EE00F51698 /* bintree.c */,
 				07A2671C19C7F4EE00F51698 /* callstack.c */,
@@ -688,6 +700,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				074D85071D6C266B00201121 /* nd_cmdline.h in Headers */,
 				07A266EA19C7F4C700F51698 /* nd_reftree.h in Headers */,
 				07A266C619C7F4C700F51698 /* nd_netobj.h in Headers */,
 				07A266AC19C7F4C700F51698 /* nd_unix.h in Headers */,
@@ -724,6 +737,7 @@
 				07A266C219C7F4C700F51698 /* nd_msgentry.h in Headers */,
 				07A266AE19C7F4C700F51698 /* nd_xml.h in Headers */,
 				07A266A219C7F4C700F51698 /* nd_dbg.h in Headers */,
+				074D85061D6C266B00201121 /* _nderr.h in Headers */,
 				07A266AA19C7F4C700F51698 /* nd_str.h in Headers */,
 				07A266B919C7F4C700F51698 /* nn.h in Headers */,
 				07A2669F19C7F4C700F51698 /* nd_comcfg.h in Headers */,
@@ -753,6 +767,7 @@
 				07A266E519C7F4C700F51698 /* nd_iconn.h in Headers */,
 				07A2669D19C7F4C700F51698 /* nd_atomic.h in Headers */,
 				07A266E619C7F4C700F51698 /* nd_allocator.h in Headers */,
+				074D85081D6C266B00201121 /* nd_time.h in Headers */,
 				07A266ED19C7F4C700F51698 /* nd_stlmap.h in Headers */,
 				07A266C019C7F4C700F51698 /* byte_order.h in Headers */,
 				07A266D719C7F4C700F51698 /* applib.h in Headers */,
@@ -862,6 +877,7 @@
 				07A2688D19C7F4F000F51698 /* nddir.c in Sources */,
 				07A2688619C7F4F000F51698 /* nd_static_alloc.c in Sources */,
 				07A268BC19C7F4F000F51698 /* r_dh.c in Sources */,
+				074D85021D6C264F00201121 /* nd_time.c in Sources */,
 				07A268C019C7F4F000F51698 /* r_random.c in Sources */,
 				07A268BD19C7F4F000F51698 /* r_encode.c in Sources */,
 				07A268ED19C7F4F000F51698 /* net_srv.c in Sources */,
@@ -984,8 +1000,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					__MAC_OS__,
-					ND_UNIX,
+					__ND_MAC__,
 					ND_DEBUG,
 					"$(inherited)",
 				);
@@ -1004,10 +1019,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					__MAC_OS__,
-					ND_UNIX,
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = __ND_MAC__;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/duan/xCodeBuild/DerivedData/apollo-bcpuzaenpuzxysecfnbtuaxtrmov/Build/Products/Debug",

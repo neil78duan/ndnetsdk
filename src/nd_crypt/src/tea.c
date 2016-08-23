@@ -7,6 +7,7 @@
    2008-8
    
  **********************************************************/
+#include "nd_common/nd_comcfg.h"
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>

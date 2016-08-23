@@ -12,7 +12,8 @@
 
 #ifndef _LIST_H_
 #define _LIST_H_
-#if defined __LINUX__
+#include "nd_common/nd_comcfg.h"
+#if defined __ND_LINUX__
 /*static inline void prefetch(const void *x) {;}*/
 /* Prefetch instructions for Pentium III, IIII and AMD Athlon */
 //static __inline__ void prefetch(const void *x)

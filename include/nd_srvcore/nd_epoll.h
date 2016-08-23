@@ -9,8 +9,7 @@
 #ifndef mtnetwork_myEpoll_h
 #define mtnetwork_myEpoll_h
 
-
-#if defined(__MAC_OS__)
+#if defined(__ND_MAC__)
 
 #include <sys/types.h>
 #include <sys/event.h>

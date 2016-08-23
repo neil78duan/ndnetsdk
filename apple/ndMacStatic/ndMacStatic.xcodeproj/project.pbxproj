@@ -10,6 +10,9 @@
 		071156BF1AD415BB003B3B46 /* session.c in Sources */ = {isa = PBXBuildFile; fileRef = 071156BE1AD415BB003B3B46 /* session.c */; };
 		0739F41E1A676B1C00520AE2 /* nd_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0739F41D1A676B1C00520AE2 /* nd_version.cpp */; };
 		073DB4321B67162E00A93310 /* ndsingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 073DB4311B67162E00A93310 /* ndsingleton.h */; };
+		074D84FC1D6C25D200201121 /* nd_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 074D84FB1D6C25D200201121 /* nd_time.c */; };
+		074D850B1D6C267D00201121 /* nd_iconv.h in Headers */ = {isa = PBXBuildFile; fileRef = 074D85091D6C267D00201121 /* nd_iconv.h */; };
+		074D850C1D6C267D00201121 /* nd_time.h in Headers */ = {isa = PBXBuildFile; fileRef = 074D850A1D6C267D00201121 /* nd_time.h */; };
 		0760D30D1B26CAE5005F076C /* httpParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0760D30C1B26CAE5005F076C /* httpParser.cpp */; };
 		0760D30F1B26CAF5005F076C /* httpParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 0760D30E1B26CAF5005F076C /* httpParser.h */; };
 		07631C7F1A539BEB00C82B5A /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */; };
@@ -197,6 +200,9 @@
 		073129B01B57613B00D3F203 /* nd_netbyte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_netbyte.h; sourceTree = "<group>"; };
 		0739F41D1A676B1C00520AE2 /* nd_version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_version.cpp; sourceTree = "<group>"; };
 		073DB4311B67162E00A93310 /* ndsingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ndsingleton.h; sourceTree = "<group>"; };
+		074D84FB1D6C25D200201121 /* nd_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_time.c; sourceTree = "<group>"; };
+		074D85091D6C267D00201121 /* nd_iconv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconv.h; sourceTree = "<group>"; };
+		074D850A1D6C267D00201121 /* nd_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_time.h; sourceTree = "<group>"; };
 		0760D30C1B26CAE5005F076C /* httpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = httpParser.cpp; sourceTree = "<group>"; };
 		0760D30E1B26CAF5005F076C /* httpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = httpParser.h; sourceTree = "<group>"; };
 		07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_datatransfer.cpp; sourceTree = "<group>"; };
@@ -452,6 +458,7 @@
 		07EBCEB619A8DFCD00802576 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				074D84FB1D6C25D200201121 /* nd_time.c */,
 				07CFB03E1B1308EE0061C219 /* nd_iconv.c */,
 				07EBCEB719A8DFCD00802576 /* bintree.c */,
 				07EBCEB819A8DFCD00802576 /* callstack.c */,
@@ -640,6 +647,8 @@
 		07EBCFCF19A8E01500802576 /* nd_common */ = {
 			isa = PBXGroup;
 			children = (
+				074D85091D6C267D00201121 /* nd_iconv.h */,
+				074D850A1D6C267D00201121 /* nd_time.h */,
 				07EBCFD019A8E01500802576 /* list.h */,
 				07EBCFD119A8E01500802576 /* nd_alloc.h */,
 				07EBCFD219A8E01500802576 /* nd_atomic.h */,
@@ -851,6 +860,7 @@
 				07EBD07719A8E01500802576 /* nd_new.h in Headers */,
 				07EBD03419A8E01500802576 /* nd_define.h in Headers */,
 				07EBD03B19A8E01500802576 /* nd_str.h in Headers */,
+				074D850B1D6C267D00201121 /* nd_iconv.h in Headers */,
 				07EBD07B19A8E01500802576 /* nd_stllist.h in Headers */,
 				07EBD04519A8E01500802576 /* des.h in Headers */,
 				07EBD07F19A8E01500802576 /* nd_utility.h in Headers */,
@@ -866,6 +876,7 @@
 				07EBD07119A8E01500802576 /* nd_object.h in Headers */,
 				07EBD04719A8E01500802576 /* global.h in Headers */,
 				07EBD07019A8E01500802576 /* nd_msgpacket.h in Headers */,
+				074D850C1D6C267D00201121 /* nd_time.h in Headers */,
 				07EBD04119A8E01500802576 /* nddir.h in Headers */,
 				07EBD04C19A8E01500802576 /* r_random.h in Headers */,
 				07EBD07619A8E01500802576 /* nd_array.h in Headers */,
@@ -1029,6 +1040,7 @@
 				07EBCF6B19A8DFCD00802576 /* nddir.c in Sources */,
 				07EBCFB119A8DFCD00802576 /* nd_msgpack.cpp in Sources */,
 				07D47C5319D9695A00D08BB6 /* nd_alarms.cpp in Sources */,
+				074D84FC1D6C25D200201121 /* nd_time.c in Sources */,
 				07EBCF7E19A8DFCD00802576 /* nd_pubkey.c in Sources */,
 				07EBCFA819A8DFCD00802576 /* nd_vmmain.c in Sources */,
 				07EBCF8D19A8DFCD00802576 /* udt_icmp.c in Sources */,
@@ -1134,6 +1146,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					ND_DEBUG,
+					__ND_MAC__,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1142,6 +1158,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = __ND_MAC__;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

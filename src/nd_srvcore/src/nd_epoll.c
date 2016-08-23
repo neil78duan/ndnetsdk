@@ -6,7 +6,7 @@
 //  Copyright (c) 2015Äê duanxiuyun. All rights reserved.
 //
 
-#if defined(__MAC_OS__)
+#if defined(__ND_MAC__)
 #include "nd_srvcore/nd_epoll.h"
 /*
 int regeister_socket(int epool_handle, int sock_fd,uint64_t udata)

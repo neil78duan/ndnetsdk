@@ -70,7 +70,7 @@ int vm_error( const char *stm,...)
 		return done ;
 	}
 	else {
-		return fprintf(stderr,  buf) ;
+		return fprintf(stderr, "%s",  buf) ;
 	}
 	
 }
@@ -92,7 +92,7 @@ int vm_print( const char *stm,...)
 		return done ;
 	}
 	else {
-		return fprintf(stderr,  buf) ;
+		return fprintf(stderr, "%s", buf) ;
 	}
 	
 }
@@ -444,7 +444,7 @@ int vm_output_asm(struct vm_instruction_node *node, void *outstream, int type)
 		return fprintf((FILE*)outstream, "%s\n", buf) ;
 	}
 	else if(MEDIUM_BUF==type) {
-		return sprintf(outstream,  buf) ;
+		return snprintf(outstream, sizeof(buf),"%s", buf) ;
 	}
 	return 0 ;
 }

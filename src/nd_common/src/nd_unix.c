@@ -7,8 +7,9 @@
  */
  
 
-#if defined(ND_UNIX) 
 #include "nd_common/nd_common.h"
+
+#if defined(ND_UNIX)
 #include <time.h>  
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -79,7 +80,7 @@ int mythread_cond_timewait(pthread_cond_t *cond,
 #endif
 void nd_init_daemon(void)
 {
-#if !defined(ND_ANDROID) && !defined(ND_IOS)
+#if !defined(__ND_ANDROID__) && !defined(__ND_IOS__)
 	pid_t pid;
 	//int i;
 	pid = fork();
@@ -106,7 +107,7 @@ void nd_init_daemon(void)
 #endif
 }
 
-#ifdef __MAC_OS__
+#if defined(__ND_MAC__) || defined(__ND_IOS__)
 
 void pthread_sleep(NDUINT32 msec)
 {
@@ -177,6 +178,7 @@ int _nd_sem_close(ndsem_t sem)
 }
 
 #else
+
 
 void pthread_sleep(NDUINT32 msec)
 {
@@ -308,7 +310,7 @@ int nd_waitthread(ndth_handle handle)
 
 int nd_terminal_thread(ndth_handle handle,int exit_code)
 {
-#ifdef ND_ANDROID
+#ifdef __ND_ANDROID__
     return -1;
 #else
 	return pthread_cancel(handle) ;
@@ -319,7 +321,7 @@ int nd_terminal_thread(ndth_handle handle,int exit_code)
 #include <sys/ioctl.h>
 #include <termios.h>
 
-#ifdef __LINUX__
+#if defined(__ND_LINUX__) || defined(__ND_ANDROID__)
 int nd_getch(void)
 {
 	int ret ;
@@ -412,7 +414,7 @@ size_t get_maxopen_fd()
 	if(0==getrlimit(RLIMIT_NOFILE, &rt) ) {
 		return rt.rlim_max ;
 	}
-#ifdef __LINUX__
+#if defined(__ND_LINUX__) || defined(__ND_ANDROID__)
 	return 1024 ;
 #else
 	return 256;
@@ -439,7 +441,7 @@ int enable_core_dump(void)
 char* get_rlimit_info(char *buf, int buf_size) 
 {
 	char *p = buf ;
-#if defined(__LINUX__) || defined(__MAC_OS__)
+#ifdef ND_UNIX
 	GET_RLIMIT_INFO(RLIMIT_CORE, p, buf_size) ;
 	GET_RLIMIT_INFO(RLIMIT_CPU,  p, buf_size) ;
 	GET_RLIMIT_INFO(RLIMIT_DATA, p, buf_size) ;
@@ -542,7 +544,7 @@ int nd_getcpu_num()
 	return sysconf(_SC_NPROCESSORS_ONLN);
 }
 
-#ifndef ND_ANDROID
+#ifndef __ND_ANDROID__
 #include <execinfo.h>
 
 int nd_get_sys_callstack(char *buf, size_t size)

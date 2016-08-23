@@ -5,8 +5,8 @@
  * version 1.0
  */
 
-#ifdef ND_UNIX
 #include "nd_common/nd_common.h"
+#ifdef ND_UNIX
 //#include "nd_app.h"
 #include <signal.h>
 

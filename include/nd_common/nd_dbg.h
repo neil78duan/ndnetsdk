@@ -49,16 +49,11 @@ ND_COMMON_API NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size); // set log file
 ND_COMMON_API int nd_logtext(const char *text);
 ND_COMMON_API int _logmsg_screen(const char *filePath, int line, const char *stm,...) ;
 ND_COMMON_API int _logmsg(const char *func, const char *file, int line, int level, const char *stm,...) ;
-ND_COMMON_API const char *nd_get_timestr(void);			//得到字符串形式的时间
-ND_COMMON_API const char *nd_get_datestr(void);			//得到字符串形式的日期
-ND_COMMON_API const char *nd_get_datetimestr(void);		//得到字符串形式的时间和日期
-
-ND_COMMON_API const char *nd_get_datetimestr_ex(time_t in_tm, char *buf, int size);
 
 #define AND ,
 
 //////////////////////////////////////////////////////////////////////////
-#if defined(ND_ANDROID)
+#if defined(__ND_ANDROID__)
 #include <android/log.h>
 #define NDLOG_TAG    "ndnet-log"
 #define nd_logdebug(...)  __android_log_print(ANDROID_LOG_DEBUG,NDLOG_TAG,__VA_ARGS__)

@@ -78,5 +78,8 @@
     <ClCompile Include="..\..\..\src\nd_common\src\source_log.c">
       <Filter>ndsdk</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_time.c">
+      <Filter>ndsdk</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

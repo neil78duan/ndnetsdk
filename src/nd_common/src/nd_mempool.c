@@ -237,7 +237,7 @@ static void __sys_free(void *addr)
 #else
 #include <sys/mman.h>
 
-#ifdef __MAC_OS__
+#if defined(__ND_MAC__) || defined(__ND_IOS__)
 #define MAP_ANONYMOUS MAP_ANON
 #endif
 
@@ -1740,7 +1740,7 @@ int nd_addr_checkvalid(void *addr)
 	return 1;
 }
 
-#elif defined(__LINUX__) && !defined(ND_ANDROID)
+#elif defined(__ND_LINUX__) && !defined(__ND_ANDROID__)
 int nd_addr_checkvalid(void *addr)
 {
 	if (addr <(void*) 0x10000)	{

@@ -11,9 +11,9 @@
 // #include "nd_common/nd_alloc.h"
 #include "nd_srvcore/nd_srvlib.h"
 
-#if defined(_WINDOWS)  || defined(WIN32) || defined(WIN64)
+#if defined(__ND_WIN__)
 extern int nd_start_iocp_listen(struct listen_contex *listen_info) ;
-#elif defined(__LINUX__)
+#elif defined(__ND_LINUX__)
 extern int _linux_listen_srv(struct listen_contex *listen_info) ;
 #endif
 void host_congest(ndsocket_t fd) ;

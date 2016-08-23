@@ -9,7 +9,7 @@
 #define _READCFG_H_
 
 #define ND_HOST_NAME_SIZE 256 
-#define ND_FILE_PATH_SIZE 256
+//#define ND_FILE_PATH_SIZE 256
 #define ND_IP_TEXT_SIZE 20
 #define ND_CONNECT_OTHER_HOSTR_NUM 8
 #define ND_DOMAIN_SIZE 64

@@ -171,6 +171,7 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_recbuf.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_static_alloc.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_str.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_time.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_timer.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_unix.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_win.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="..\..\..\src\nd_common\src\nd_mutex.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_static_alloc.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_str.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_time.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_timer.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_trace.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_unix.c" />

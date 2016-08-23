@@ -131,21 +131,3 @@ int nd_common_isinit()
 }
 
 
-static time_t app_inst_delta = 0;
-
-void app_inst_set_hm(int _h, int _m)
-{
-	app_inst_delta += _h * 3600 + _m * 60;
-}
-
-time_t app_inst_time(time_t* _t)
-{
-	//porting to linux 
-	time_t cur = time(NULL);
-	cur += app_inst_delta;
-	if (_t){
-		*_t = cur;
-	}
-	return cur;
-}
-

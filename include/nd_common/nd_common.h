@@ -24,6 +24,8 @@
 
 #include "nd_common/nd_dbg.h"
 
+#include "nd_common/nd_time.h"
+
 #include "nd_common/nd_handle.h"
 
 #include "nd_common/nd_mempool.h"
@@ -51,15 +53,10 @@
 
 #include "nd_common/nd_iconv.h"
 
-ND_COMMON_API ndtime_t		nd_time(void) ;
-ND_COMMON_API ndbigtime_t	nd_bigtime(void);
 ND_COMMON_API int nd_common_init();
 ND_COMMON_API void nd_common_release();
 ND_COMMON_API int nd_common_isinit() ;
 
-#include <time.h>
-ND_COMMON_API time_t app_inst_time(time_t* _t);
-ND_COMMON_API void	 app_inst_set_hm(int _h, int _m);
 
 ND_COMMON_API const char *nd_process_name() ;
 //ND_COMMON_API char *process_name();

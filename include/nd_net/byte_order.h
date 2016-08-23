@@ -36,7 +36,7 @@ bit0是最右端的，bit7是最左端的
 #define ND_B_ENDIAN  0
 
 
-#ifdef ND_ANDROID
+#ifdef __ND_ANDROID__
 
 	#if defined(__mips__) || defined(__mips64__)
 		#define ND_BYTE_ORDER 0

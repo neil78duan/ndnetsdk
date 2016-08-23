@@ -6,7 +6,7 @@
  * 2009-4-24 22:41
  */
 
-#if !defined(ND_UNIX) 
+#if defined(_MSC_VER) 
 
 #pragma comment(lib,"Psapi.lib")
 
@@ -69,7 +69,7 @@ public:
 #ifdef _MSC_VER
 #pragma init_seg(".CRT$XCB")
 #define __initdata__ 
-#elif defined(__LINUX__)
+#elif defined(__ND_LINUX__)
 #define __initdata__ __attribute__ (( section(".init.data")))
 #else
 #define __initdata__
@@ -656,7 +656,7 @@ int ipaddr_mac_cmp(const char *input_addr)
 	return -1;
 }
 
-#elif defined (__LINUX__)
+#elif defined (__ND_LINUX__)
 
 int set_mp() 
 {

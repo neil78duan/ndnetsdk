@@ -7,8 +7,7 @@
  */
 
 /*
- * 移植了linux的内核代码,为了不冲突
- * 为了不冲突,名字需要改一下
+ * porting from linux , and change function name .
  *
  desc :
  Linux's rbtree implementation lives in the file "lib/rbtree.c".  To use it,

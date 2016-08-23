@@ -30,7 +30,8 @@
 #include <netinet/tcp.h> 
 #include <netdb.h> 
 
-#ifndef __MAC_OS__
+//#ifndef __MAC_OS__
+#if !defined(__ND_MAC__) && !defined(__ND_IOS__)
 #include <netpacket/packet.h>
 #include <net/ethernet.h>
 #endif
