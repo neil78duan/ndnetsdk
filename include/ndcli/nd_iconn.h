@@ -71,6 +71,7 @@ public :
 
 	virtual int ioctl(int cmd, void *val, int *size) = 0;
 	virtual void SetBigDataHandler(nd_bigdata_handler entry) = 0 ;
+	virtual int GetStatus() = 0;
 	
 protected:
 	NDIConn() {} 

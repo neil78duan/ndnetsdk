@@ -122,7 +122,7 @@ char *get_ins_name(vm_ins ins)
 char *read_instruction(char *src,  vm_ins *instruction)
 {
 	char buf[128]; 
-	char *ret_addr = ndstr_parse_word_n(src, buf, 128) ;
+	char *ret_addr = (char *) ndstr_parse_word_n(src, buf, 128) ;
 	if(!ret_addr) {
 		vm_error("syntax error: [%s]\n",src) ;
 		return NULL ;
@@ -141,7 +141,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 {
 	char *_start_addr ;
 	char buf[128] ;
-	addr = ndstr_first_valid(addr) ;
+	addr = (char *)ndstr_first_valid(addr);
 	if(!addr) {
 		return -1 ;
 	}
@@ -154,7 +154,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 			*data_desc = EDS_STACK ;
 			addr += 3 ;
 
-			addr = ndstr_first_valid(addr) ;
+			addr = (char *)ndstr_first_valid(addr);
 			if(!addr) {
 
 				//vm_error("syntax error: [%s]\n",_start_addr) ;
@@ -167,7 +167,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 			*data_desc = EDS_ADDRESS ;
 			++addr ;
 		}
-		addr = ndstr_nstr_end(addr, buf, ']', 20) ;
+		addr = (char *)ndstr_nstr_end(addr, buf, ']', 20);
 		if(!addr || !*addr || *addr != ']' ) {
 			//vm_error("syntax error: [%s]\n",_start_addr) ;
 			return -1 ;
@@ -179,7 +179,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 		*val =*((vm_value*) (&mm_addr) ); 
 	}
 	else if(IS_BIG_LATIN(*addr) || IS_LITTLE_LATIN(*addr)){
-		addr = ndstr_parse_word_n(addr, buf, 20) ;
+		addr = (char *)ndstr_parse_word_n(addr, buf, 20);
 		if(0==ndstricmp("reg1", buf)) {
 			*data_desc = EDS_REG1 ;
 		}
@@ -194,7 +194,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 	else {
 		int isok = 0 ;
 		
-		addr = ndstr_read_numerals(addr, buf, &isok) ;
+		addr = (char *)ndstr_read_numerals(addr, buf, &isok);
 		if(!isok) {
 			//vm_error("bad operand: [%s]\n",_start_addr) ;
 			return -1 ;
@@ -215,7 +215,7 @@ int vm_compiler_line(char *text , struct vm_instruction_node *out_node)
 {
 	int num ;
 
-	char *addr = ndstr_first_valid(text) ;
+	char *addr = (char *)ndstr_first_valid(text);
 	if(!addr) {
 
 		vm_error("syntax error: [%s]\n",text) ;
@@ -238,7 +238,7 @@ int vm_compiler_line(char *text , struct vm_instruction_node *out_node)
 		return check_no_operand(out_node->ins) ? 1 : -1 ;
 	}
 
-	addr = ndstr_first_valid(addr) ;
+	addr = (char *)ndstr_first_valid(addr);
 	if(!addr) {
 		if( check_no_operand(out_node->ins) ) {
 			return 1 ;
@@ -288,7 +288,7 @@ int vm_file_compile(/*struct vm_instruction_node *out_node,*/ FILE *infp, FILE *
 
 	while ( fgets( buf, 1024, infp ) ) {
 		
-		p = ndstr_first_valid(buf) ;
+		p = (char *)ndstr_first_valid(buf);
 		if(!p) 
 			continue ;
 

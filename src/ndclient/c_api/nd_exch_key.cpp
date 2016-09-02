@@ -27,7 +27,7 @@
 	nd_connector_send(__handle,(nd_packhdr_t*) (_omsg.GetMsgAddr()), ESF_URGENCY)
 
 
-
+/*
 #define SEND_AND_WAIT(_handle, _omsg, _rmsg_buf,_wait_min_id) \
 if(SEND_MSG(_handle, _omsg) <= 0) {	\
 	nd_object_seterror(_handle, NDERR_WRITE) ;	\
@@ -48,6 +48,12 @@ else if(ND_USERMSG_MAXID(_rmsg_buf)!=ND_MAIN_ID_SYS || ND_USERMSG_MINID(_rmsg_bu
 	nd_logdebug("received error-return message(%d,%d) \n" AND ND_USERMSG_MAXID(_rmsg_buf) AND ND_USERMSG_MINID(_rmsg_buf)) ;				\
 	return -1 ;										\
 }
+*/
+
+#define SEND_AND_WAIT(_handle, _omsg, _rmsg_buf,_wait_min_id) \
+	if(0 != ndSendAndWaitMessage(_handle, _omsg.GetMsgAddr(), _rmsg_buf,ND_MAIN_ID_SYS,_wait_min_id, 0,  WAITMSG_TIMEOUT) ) {	\
+		return -1;				\
+	}							
 
 static int _check_public_key(nd_handle nethandle)
 {

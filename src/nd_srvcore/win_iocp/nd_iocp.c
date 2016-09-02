@@ -571,7 +571,7 @@ int iocp_accept(struct nd_client_map_iocp *node)
 int nd_iocp_sendmsg(struct nd_client_map_iocp *iocp_map,nd_packhdr_t *msg_buf, int flag) 
 {
 	struct netui_info *socket_addr = (struct netui_info* )& iocp_map->__client_map.connect_node;
-    size_t s =  socket_addr->get_pack_size(socket_addr, &msg_buf) ;
+    size_t s =  socket_addr->get_pack_size((nd_handle)socket_addr, &msg_buf) ;
     //size_t s =(size_t) ntohs(nd_pack_len(msg_buf)) ;
 	return iocp_socket_write(iocp_map, msg_buf, s)  ;
 }

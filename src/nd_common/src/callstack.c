@@ -22,7 +22,7 @@
 
 extern	int create_filemap( const char *filename, size_t size,nd_filemap_t *out_handle)  ;
 #else 
-extern	int create_filemap( const char *filename,char *map_name, size_t size,nd_filemap_t *out_handle)  ;
+extern	int create_filemap( const char *filename,const char *map_name, size_t size,nd_filemap_t *out_handle)  ;
 #endif
 extern	int close_filemap(nd_filemap_t *mapinfo) ;
 extern	int open_filemap(const char *filename, nd_filemap_t *out_handle)  ;

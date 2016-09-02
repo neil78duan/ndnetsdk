@@ -87,8 +87,8 @@ int nd_sendto_all_ex(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_lev
 		for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
 			client = pmanger->lock_next (pmanger,&cm_iterator) ) {
 			
-			if (nd_connect_level_get(client)>= priv_level )	{
-				nd_sessionmsg_sendex(client,data, flag) ;
+			if (nd_connect_level_get((nd_handle)client)>= priv_level )	{
+				nd_sessionmsg_sendex((nd_handle)client, data, flag);
 			}
 			++ret ;
 		}
@@ -492,10 +492,10 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 		int i;
 		for (i=pthinfo->session_num-1; i>=0;i-- ) {
 			NDUINT16 session_id = pthinfo->sid_buf[i];
-			client =(nd_handle) pmanger->lock(pmanger,session_id) ;
+			client =(nd_netui_handle) pmanger->lock(pmanger,session_id) ;
 			if (!client)
 				continue ;
-			if (nd_connect_level_get(client)>= priv_level )	{
+			if (nd_connect_level_get((nd_handle)client)>= priv_level )	{
 				nd_sessionmsg_post(client,net_msg) ;
 			}
 			pmanger->unlock(pmanger,session_id) ;

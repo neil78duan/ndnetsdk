@@ -30,7 +30,7 @@ unsigned int inputLen;                             /* length of input block */
 R_RSA_PUBLIC_KEY *publicKey;                              /* RSA public key */
 R_RANDOM_STRUCT *randomStruct;                          /* random structure */
 {
-  int status,i;
+	int status, i;
   unsigned char byte, pkcsBlock[MAX_RSA_MODULUS_LEN];
   unsigned int  modulusLen;
 #if 0
@@ -79,7 +79,7 @@ R_RANDOM_STRUCT *randomStruct;                          /* random structure */
 	pkcsBlock[0] = 0;
 	pkcsBlock[1] = 2;
 
-	for (i = 2; i < needLen - inputLen - 1; i++) {
+	for (i = 2; i < (int)(needLen - inputLen - 1); i++) {
 		/* Find nonzero random byte.
 		 */
 		do {
@@ -124,7 +124,8 @@ unsigned char *input;                                        /* input block */
 unsigned int inputLen;                             /* length of input block */
 R_RSA_PUBLIC_KEY *publicKey;                              /* RSA public key */
 {
-  int status,i;
+	int status;
+	unsigned int i;
   unsigned char pkcsBlock[MAX_RSA_MODULUS_LEN];
   unsigned int modulusLen, pkcsBlockLen;
 #if 0
@@ -163,7 +164,7 @@ R_RSA_PUBLIC_KEY *publicKey;                              /* RSA public key */
    */
   R_memset ((POINTER)pkcsBlock, 0, sizeof (pkcsBlock));
 #else
-	int steps;
+	unsigned int steps;
 	unsigned int  stepLen ;
 	char *pOut = output, *pIn=input ;
 
@@ -229,7 +230,7 @@ unsigned char *input;                                        /* input block */
 unsigned int inputLen;                             /* length of input block */
 R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
 {
-  int status,i;
+	int status, i;
   unsigned char pkcsBlock[MAX_RSA_MODULUS_LEN];
   unsigned int  modulusLen;
 #if 0  
@@ -273,7 +274,7 @@ R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
 	pkcsBlock[0] = 0;
 	pkcsBlock[1] = 1;
 
-	for (i = 2; i < needLen - inputLen - 1; i++) {
+	for (i = 2; i < (int) (needLen - inputLen - 1); i++) {
 		pkcsBlock[i] = 0xff;
 	}
 
@@ -287,7 +288,7 @@ R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
 	}
 	*outputLen = cryptLen ;
 
-	for(i =0; i<steps -1 ; i++) {
+	for(i =0; i<(int)steps -1 ; i++) {
 		pIn += stepLen ;
 		pOut += cryptLen ;
 
@@ -390,7 +391,7 @@ R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
 
 	*outputLen = stepLen ;
 
-	for(i = 0; i<steps-1; i++) {
+	for(i = 0; i<(unsigned int)steps-1; i++) {
 		pOut += stepLen ;
 		pIn += modulusLen ;
 		if ((status = RSAPrivateBlock(pOut, &pkcsBlockLen, pIn, modulusLen, privateKey)))

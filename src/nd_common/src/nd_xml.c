@@ -27,7 +27,7 @@ static int  _is_mark_start(const char *p)
 	return 0;
 }
 
-ndxml *parse_xmlbuf(char *xmlbuf, int size,char **parse_end, char **error_addr) ;
+ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const char **error_addr) ;
 ndxml *alloc_xml();
 void _release_xml(ndxml *node);
 void  dealloc_xml(ndxml *node );
@@ -45,11 +45,11 @@ static int xml_set_code_type(ndxml_root *xmlroot);
 static xml_errlog __xml_logfunc = _errlog ;
 
 
-int xml_load_from_buf(char *buf, size_t size, ndxml_root *xmlroot,const char *filename)
+int xml_load_from_buf(const char *buf, size_t size, ndxml_root *xmlroot,const char *filename)
 {
 	int data_len = (int)size;
-	char *parse_addr = buf;
-	char *error_addr = 0;
+	const char *parse_addr =  buf;
+	const char *error_addr = 0;
 	do {
 		parse_addr = ndstr_first_valid(parse_addr) ;
 		if (parse_addr) {
@@ -841,15 +841,15 @@ int ndxml_delsubnodei(ndxml *parent, int index)
 }
 //////////////////////////////////////////////////////////////////////////
 //去掉注释
-static char* parse_marked(char *xmlbuf, int size, char **error_addr) 
+static const char* parse_marked(const char *xmlbuf, int size, const char **error_addr) 
 {
-	char *pstart = xmlbuf ;
-	char *paddr ;
+	const char *pstart = xmlbuf ;
+	const char *paddr;
 	
 	while(pstart< xmlbuf+size) {
 		*error_addr = pstart ;
 		//paddr = strchr(pstart, '<') ;
-		paddr = ndstr_first_valid(pstart) ;
+		paddr =  ndstr_first_valid(pstart) ;
 		if (!paddr || *paddr != '<') {
 			//*error_addr = pstart ;
 			return NULL ;
@@ -888,7 +888,7 @@ static char* parse_marked(char *xmlbuf, int size, char **error_addr)
 	return NULL ;
 }
 //从内存块中解析出一个XML节点
-ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
+ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const char **error_addr)
 {
 	ndxml *xmlnode =NULL ;
 	const char *paddr ;//, *error_addr =NULL;
@@ -905,7 +905,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 	}
 	//if(XML_T_END==*((short int*)paddr)) {
 	if (_is_mark_start(paddr)) {
-		*parse_end = (char*)paddr ;
+		*parse_end = paddr ;
 		*error_addr = NULL ;
 		return NULL ;
 		//goto READ_END ;
@@ -920,7 +920,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 	//check valid 
 	if(*paddr=='>' || *paddr=='<' || *paddr=='\"' || *paddr=='/') {
 		*parse_end = NULL ;
-		*error_addr = (char*)paddr ;
+		*error_addr = paddr ;
 		return NULL ;
 	}
 
@@ -940,7 +940,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 		//if(*((short int*)paddr)==XML_H_END ) {
 		if (_is_mark_end(paddr)) {
 			//这个xml节点结束了,应该返回了
-			*parse_end = (char*)paddr + 2 ;
+			*parse_end = paddr + 2 ;
 			return xmlnode ;
 		}
 		else if('>'==*paddr) {
@@ -988,7 +988,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 			}
 			else if(*error_addr && NULL==parsed) {
 				if (!error_addr) {
-					*error_addr = paddr;
+					*error_addr = (char *) paddr;
 				}
 				//parse error 
 				dealloc_xml(xmlnode) ;
@@ -1006,9 +1006,7 @@ ndxml *parse_xmlbuf(char *xmlbuf, int size, char **parse_end, char **error_addr)
 	else {
 		//read xml value 
 		size_t val_size ;
-		char *tmp  ;
-
-		tmp = ndstr_reverse_chr(paddr, '>', xmlbuf) ;
+		const char *tmp  = ndstr_reverse_chr(paddr, '>', xmlbuf) ;
 		if(!tmp){
 			tmp = paddr ;
 		}

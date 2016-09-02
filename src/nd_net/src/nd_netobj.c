@@ -439,6 +439,9 @@ void nd_connector_set_crypt(nd_netui_handle net_handle, void *key, int size)
 			net_handle->crypt_key.size = size ;
 			memcpy(&net_handle->crypt_key.key, key, size) ;
 		}
+		else if (!key || size == 0) {
+			net_handle->crypt_key.size = 0;
+		}
 	}
 }
 void* nd_connector_get_crypt(nd_handle net_handle, int *size)

@@ -244,7 +244,7 @@ typedef int (*vm_param_replace_func)(const char *input,char *buf, int size,void 
 
 			
  */
-ND_VM_API size_t vm_parse_expression(const char *textbuf, const char *code_buf,size_t buf_size, vm_param_replace_func func,void*user_data) ;
+ND_VM_API size_t vm_parse_expression(const char *textbuf, char *code_buf,size_t buf_size, vm_param_replace_func func,void*user_data) ;
 
 //得到文件长度
 ND_VM_API size_t _filesize(FILE *stream);

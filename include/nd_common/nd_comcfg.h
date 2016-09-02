@@ -152,24 +152,25 @@
 
 #define WITHOUT_ICONV		1
 
-#define ND_OPEN_TRACE		1		//vs TRACE 
+//#define ND_OPEN_TRACE		1		//vs TRACE
 #define ND_OPEN_LOG_COMMON 	1
 #define ND_OPEN_LOG_DEBUG	1
 #define ND_OPEN_LOG_WARN	1
 #define ND_OPEN_LOG_ERROR	1
 #define ND_OPEN_LOG_FATAL	1
-#define ND_SOURCE_TRACE		1
-#define ND_FILE_TRACE		1
+//#define ND_SOURCE_TRACE		1
+//#define ND_FILE_TRACE		1
 #define ND_OUT_LOG_2CTRL	1
 #define ND_OUT_LOG_2FILE	1
-#define ND_MEM_CHECK		1
-#define ND_USE_MSGBOX		1
+//#define ND_MEM_CHECK		1
+//#define ND_USE_MSGBOX		1
 #define ND_LOG_WITH_SOURCE	1
 #define ND_LOG_WITH_TIME	1
-#define ND_MEM_STATICS		1
-#define ND_UNUSE_STDC_ALLOC 1
-#define ND_OVER_RIDE_NEW	1			// use myself new/delete
-#define ND_CALLSTACK_TRACE	1			//trace function call
+//#define ND_MEM_STATICS		1
+//#define ND_UNUSE_STDC_ALLOC 1
+//#define ND_OVER_RIDE_NEW	1			// use myself new/delete
+//#define ND_CALLSTACK_TRACE	1			//trace function call
+#define ND_LOG_WITH_ND_MARK 1 			//log with nd-log different other module
 
 #elif defined(__ND_ADNROID__)	//-----------------------------android----------------------
 
@@ -183,7 +184,7 @@
 //#define ND_SOURCE_TRACE		1
 //#define ND_FILE_TRACE		1
 #define ND_OUT_LOG_2CTRL	1
-//#define ND_OUT_LOG_2FILE	1
+#define ND_OUT_LOG_2FILE	1
 #define ND_MEM_CHECK		1
 //#define ND_USE_MSGBOX		1
 #define ND_LOG_WITH_SOURCE	1
@@ -192,6 +193,7 @@
 //#define ND_UNUSE_STDC_ALLOC 1
 #define ND_OVER_RIDE_NEW	1			// use myself new/delete
 #define ND_CALLSTACK_TRACE	1			//trace function call
+#define ND_LOG_WITH_ND_MARK 1 			//log with nd-log different other module
 
 #else						//-------------------------------------UNKNOWN----------------------
 #error unknown platform !!!!!!!!!!!!!!!!!

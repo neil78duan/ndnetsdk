@@ -81,6 +81,7 @@ public :
 	void SetBigDataHandler(nd_bigdata_handler entry) ;
 
 	NDBigDataReceiver *getBigDataRecver() {return &m_dataRecv;} 
+	int GetStatus();
 	
 private:	
 	//nd_handle m_objhandle ;
@@ -382,6 +383,15 @@ int NDConnector::ExchangeKey(void *output_key)
 	return 	nd_exchange_key((netObject)m_objhandle,output_key) ;
 }
 
+int NDConnector::GetStatus()
+{
+	if (CheckValid()) {
+		return nd_connect_level_get(m_objhandle);
+	}
+	else {
+		return EPL_NONE;
+	}
+}
 
 NDIConn * htoConnector(nd_handle h)
 {

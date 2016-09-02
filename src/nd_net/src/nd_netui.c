@@ -552,18 +552,19 @@ int nd_connector_open(nd_netui_handle net_handle,const char *host, int port,stru
 	if (net_handle->fd){
 		nd_connector_reset(net_handle) ;
 	}
-	else {
-		ndlbuf_reset(&(net_handle->recv_buffer)) ;		/* buffer store data recv from net */
-		ndlbuf_reset(&(net_handle->send_buffer)) ;		/* buffer store data send from net */
-	}
+	ndlbuf_reset(&(net_handle->recv_buffer));		/* buffer store data recv from net */
+	ndlbuf_reset(&(net_handle->send_buffer));		/* buffer store data send from net */
 	
 	if(net_handle->type==NDHANDLE_TCPNODE){
 		struct nd_tcp_node* socket_addr=(struct nd_tcp_node*)net_handle ;
 		socket_addr->myerrno = NDERR_SUCCESS ;
+		nd_connect_level_set(net_handle, 0);
 		ret = nd_tcpnode_connect(host, port,socket_addr, proxy ) ;
 		if(-1==ret  ) {
 			socket_addr->myerrno = NDERR_OPENFILE ;
 		}else {
+
+			nd_connect_level_set(net_handle, EPL_CONNECT);
 			net_init_sendlock(net_handle) ;
 			socket_addr->write_entry = (packet_write_entry)_tcp_connector_send ;
 		}
@@ -576,7 +577,8 @@ int nd_connector_open(nd_netui_handle net_handle,const char *host, int port,stru
 			net_init_sendlock(net_handle) ;		//client socket need send lock
 		}
 		else {
-			ret = socket_addr->status == NETSTAT_ESTABLISHED ;
+			ret = socket_addr->status == NETSTAT_ESTABLISHED;
+			nd_connect_level_set(net_handle, EPL_CONNECT);
 		}
 	}
 	else {
@@ -624,6 +626,7 @@ int nd_connector_close(nd_netui_handle net_handle, int flag)
 	//struct net_handle_header *h_header =(struct net_handle_header *)net_handle ;
 	nd_assert(net_handle) ;
 	//nd_msgtable_destroy(net_handle) ;
+	nd_connect_level_set(net_handle, EPL_NONE);
 	if(net_handle->type==NDHANDLE_TCPNODE){
 
 		if (((struct nd_tcp_node*)net_handle)->status != ETS_DEAD )	{

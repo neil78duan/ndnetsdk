@@ -68,8 +68,9 @@ static struct msgentry_root *create_msgroot(int max_mainmsg, int base)
 	return root ;	
 };
 
-static void destroy_msgroot(struct msgentry_root *root)
+static void destroy_msgroot(nd_handle h)
 {
+	struct msgentry_root *root = (struct msgentry_root *)h;
 	int i = 0;
 	for (i = 0; i < root->main_num;i++) {
 		int j = 0;
@@ -235,7 +236,7 @@ const char * nd_msgentry_get_name(nd_netui_handle handle, ndmsgid_t maxid, ndmsg
 NDUINT32 nd_msgentry_get_id(nd_handle handle, const char *msgname)
 {
 	int i, x;
-	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
+	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
 	if (!root_entry){
 		return (NDUINT32)-1;
 	}
@@ -328,7 +329,7 @@ int nd_msgentry_script_install(nd_handle handle, const char*script, ndmsgid_t ma
 
 int nd_message_set_script_engine(nd_handle handle, void *script_engine, nd_msg_script_entry entry)
 {
-	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
+	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
 	if (root_entry) {
 		root_entry->script_engine = script_engine;
 		root_entry->script_entry = entry;
@@ -504,7 +505,7 @@ int nd_message_set_log(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int i
 
 int nd_message_set_system(nd_netui_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int issystem) 
 {
-	struct msgentry_root *root_entry = nd_get_msg_hadle(handle);
+	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
 
 	if(root_entry) {
 		int i;

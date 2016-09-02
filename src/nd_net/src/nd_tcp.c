@@ -149,14 +149,14 @@ int nd_tcpnode_close(struct nd_tcp_node *node,int force)
 {
 	ENTER_FUNC()
 	//nd_assert(0);
-	nd_assert(node) ;
+	nd_assert(node);
+	node->status = ETS_DEAD;
 	if(node->fd==0) {
 		LEAVE_FUNC();
 		return 0 ;
 	}
 	nd_socket_close(node->fd) ;
 	node->fd = 0 ;
-	node->status = ETS_DEAD ;
 
 	LEAVE_FUNC();
 	return 0 ;

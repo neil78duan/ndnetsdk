@@ -20,7 +20,7 @@
 
 #include "nd_common/nd_time.h"
 
-static char __log_filename[128] ;
+static char __log_filename[256] ;
 static logfunc __log_func =NULL;
 static ndatomic_t __log_write_len = 0 ;
 static NDUINT32 __log_file_length = -1 ;
@@ -65,7 +65,7 @@ NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size)
 
 void set_log_file(const char *file_name)
 {
-	strncpy(__log_filename, file_name,128) ;
+	strncpy(__log_filename, file_name,sizeof(__log_filename)) ;
 }
 char *get_log_file() 
 {
@@ -203,6 +203,7 @@ int nd_logtext(const char *buf)
 		nd_default_filelog(buf);
 #endif
 	}
+	
 	return ret;
 }
 
@@ -216,6 +217,14 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 	const char *file = _getfilename(filePath) ;
 	
 	size = sizeof(buf);
+#ifdef ND_LOG_WITH_ND_MARK
+	
+	strncpy(p, "[nd-log]  ",sizeof(buf)) ;
+	p += 9 ;
+	size = sizeof(buf) - (p - buf);
+	
+#endif
+	
 #ifdef	ND_LOG_WITH_TIME
 	if (__without_file_time==0) {
 		p += snprintf(p, size, "%s ", nd_get_datetimestr());

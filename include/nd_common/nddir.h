@@ -17,6 +17,8 @@ ND_COMMON_API size_t nd_get_file_size(const char *file);
 ND_COMMON_API void nd_unload_file(void *file_data);
 ND_COMMON_API void* nd_load_file(const char *file, size_t *size);
 
+//merge path and file to full-path
+ND_COMMON_API char* nd_full_path(const char*in_path, const char *in_file, char *outbuf, size_t size);
 
 #ifdef _MSC_VER
 #include <io.h>

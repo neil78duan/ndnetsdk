@@ -40,6 +40,13 @@ private:
 #define ND_TRACE_FUNC_EX(name) NDCallTrace name(__FUNC__)
 
 #else
+
+struct NDCallTrace
+{
+	NDCallTrace(const char *funcname)
+	{
+	}
+};
 #define ND_TRACE_FUNC() //
 #define ND_TRACE_FUNC_EX(name) //
 #endif

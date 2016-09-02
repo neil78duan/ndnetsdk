@@ -105,7 +105,7 @@ int nd_udp_send(struct nd_udp_node*node,const char *data, size_t len)
 			ret = nd_proxy_sendtoex(node->fd,data,len, prox->remote_name,prox->remote_port,&prox->proxy_addr) ;
 		}
 		else {
-			ret = nd_proxy_sendto(node->fd,data,len, &node->remote_addr,&prox->proxy_addr) ;
+			ret = nd_proxy_sendto(node->fd,(void*)data,len, &node->remote_addr,&prox->proxy_addr) ;
 		}
 		if(ret >0)
 			ret = (int)len ;
@@ -132,7 +132,7 @@ int nd_udp_sendto(struct nd_udp_node*node,const char *data, size_t len, SOCKADDR
 		ret = sendto(node->fd, data, (int)len,0,(LPSOCKADDR)to_addr, (int)sizeof(*to_addr)) ;
 	}
 	else {
-		ret = nd_proxy_sendto(node->fd,data,len, to_addr,&node->prox_info->proxy_addr) ;
+		ret = nd_proxy_sendto(node->fd,(void*)data,len, to_addr,&node->prox_info->proxy_addr) ;
 	}
 
 	if(ret > 0) {

@@ -150,6 +150,7 @@ ND_CONNCLI_API void ndMsgfuncInit(netObject netObj);
 ND_CONNCLI_API int nd_exchange_key(netObject nethandle, void *output_key);
 ND_CONNCLI_API int nd_checkErrorMsg(netObject nethandle, struct ndMsgData *msg);
 
+ND_CONNCLI_API int ndSendAndWaitMessage(nd_handle nethandle, nd_usermsgbuf_t *sendBuf, nd_usermsgbuf_t* recvBuf, ndmsgid_t waitMaxid, ndmsgid_t waitMinid, int sendFlag, int timeout);
 //add function call when object destroyed
 typedef void (*nd_conn_close_entry)(netObject handle, void *param) ;
 ND_CONNCLI_API int ndAddOnCloseCallback(netObject handle, nd_conn_close_entry callback, void *param);

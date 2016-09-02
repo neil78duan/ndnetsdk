@@ -204,13 +204,13 @@ int read_operand(const char *textbuf,char* operand_buf, char **next)
 		operand_buf[0] = 0 ;
 		textbuf = ndstr_str_end(textbuf, operand_buf, ']') ;
 		if(!textbuf || !*textbuf || *textbuf != ']') {
-			*next = textbuf ;
+			*next = (char*) textbuf ;
 
 			vm_error("syntax error:  miss ']' in %s  \n", error_addr) ;
 			return -1 ;
 		}
 		if(!ndstr_is_naturalnumber(operand_buf+1)) {
-			*next = textbuf ;
+			*next = (char*)textbuf;
 
 			vm_error("syntax error: int [] must be numbers, %s  \n", error_addr) ;
 			return -1 ;
@@ -236,7 +236,7 @@ int read_operand(const char *textbuf,char* operand_buf, char **next)
 	else if(IS_NUMERALS(*textbuf) || _DOT==*textbuf || _MINUS==*textbuf || *textbuf=='+' ) {
 		textbuf = ndstr_read_numerals(textbuf, operand_buf, &readOk) ; 
 		if(! readOk){
-			*next = textbuf;
+			*next = (char*)textbuf;
 			vm_error("bad operand [%s] is not numeral  \n", error_addr) ;			
 			return -1 ;
 		}
@@ -246,7 +246,7 @@ int read_operand(const char *textbuf,char* operand_buf, char **next)
 		char optmp[OPERAND_SIZE] ;
 		textbuf = ndstr_parse_word(textbuf, operand_buf) ;
 		if(is_function(operand_buf) ) {
-			*next = textbuf ;
+			*next = (char*)textbuf;
 			return 3 ;
 		}
 		else if(0==repace_param(operand_buf,optmp, sizeof(optmp) ) ){
@@ -262,7 +262,7 @@ int read_operand(const char *textbuf,char* operand_buf, char **next)
 	
 	//*(++operand_buf) = 0 ;
 	//if(*textbuf)
-		*next = textbuf ;
+	*next = (char*)textbuf;
 	
 	return 1 ;
 }
@@ -271,7 +271,7 @@ int read_operand(const char *textbuf,char* operand_buf, char **next)
 //返回0 没有读取内容,返回-1出错
 int readOperator(char *textbuf, char *ch, char**next) 
 {
-	textbuf = ndstr_first_valid(textbuf) ;
+	textbuf = (char *) ndstr_first_valid(textbuf) ;
 	if(!textbuf){
 		*next = NULL;
 		return 0 ;
@@ -560,7 +560,7 @@ int repace_param(char *param, char *buf, int size)
 	return -1 ;
 }
 //计算表达式结果
-size_t vm_parse_expression(const char *textbuf,const char *code_buf,size_t buf_size,vm_param_replace_func func, void*user_data)
+size_t vm_parse_expression(const char *textbuf, char *code_buf,size_t buf_size,vm_param_replace_func func, void*user_data)
 {
 	int ret ;
 
@@ -571,7 +571,7 @@ size_t vm_parse_expression(const char *textbuf,const char *code_buf,size_t buf_s
 	__asm_out.parse_user_data = user_data;
 	init_operator_buf() ;
 
-	ret = parse_express_2node(textbuf, &op_list)  ;
+	ret = parse_express_2node((char*)textbuf, &op_list)  ;
 	if(-1==ret) {
 		return 0 ;
 	}
@@ -704,7 +704,7 @@ int parse_function(struct sOperateUnit *pUnit,  char *textbuf, char **next)
 	char * error_addr = textbuf ;
 	char f_param[FUNCTION_SIZE] ;
 
-	textbuf = ndstr_first_valid(textbuf) ;
+	textbuf =(char*) ndstr_first_valid(textbuf) ;
 	if(!textbuf || *textbuf != '(') {
 		vm_error("syntax error : miss '(' \n") ;
 		return -1 ;

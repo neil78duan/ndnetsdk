@@ -273,7 +273,7 @@ const char *ndstr_parse_word_n(const char *src, char *outstr, int n)
 	return *src?src:NULL ;
 }
 
-const char *_ndstr_read_cmd(char *src, char *outstr, int n, char endmark)
+const char *_ndstr_read_cmd(const char *src, char *outstr, int n, char endmark)
 {
 	register unsigned char a ;
 	while(*src && n-- > 0) {
@@ -298,7 +298,7 @@ const char *_ndstr_read_cmd(char *src, char *outstr, int n, char endmark)
 int ndstr_parse_command(const char *input_text, char *argv[], int bufize, int number)
 {
 	int ret = 0 ;
-	char *next_text = ndstr_first_valid((const char*)input_text) ;
+	const char *next_text = ndstr_first_valid((const char*)input_text) ;
 	while (next_text && *next_text ) {
 #ifdef ND_UNIX
 		if (*next_text==0x24) { // $
@@ -365,7 +365,7 @@ int ndstr_get_ip(const char *src, ndip_t *ip)
 		ndip_t ip ;
 		NDUINT8 buf[4] ;
 	}readip;
-	char *p = src ;
+	char *p = (char*) src ;
 	if(!p)
 		return -1;
 	while( *p) {
@@ -377,7 +377,7 @@ int ndstr_get_ip(const char *src, ndip_t *ip)
 		}
 	}
 	//1
-	p = src ;
+	p = (char*)src ;
 	for(i=0; i<3; i++) {
 		if(*p==0)
 			return -1;
@@ -497,8 +497,8 @@ const char *ndstristr(const char *src, const char *desc)
 {
 	int ret=0 ;
 	while(*src) {
-		char *tmp = src;
-		char *aid = desc;
+		const char *tmp = src;
+		const char *aid = desc;
 
 		while(*aid) {
 			ret = *tmp - *aid ;

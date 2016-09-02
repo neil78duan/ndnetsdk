@@ -32,7 +32,7 @@ int _parse_input_and_run(struct nd_cmdline_root *root,char *input_text)
 {
 	int i ;
 	int argc = 0 ;
-	char *p = ndstr_first_valid(input_text) ;
+	const char *p = ndstr_first_valid(input_text) ;
 	char commands_buf[ND_COMMAND_LINE_NUMBER][ND_COMMAND_LINE_SIZE] ; 
 	char *argv[ND_COMMAND_LINE_NUMBER] ;
 	

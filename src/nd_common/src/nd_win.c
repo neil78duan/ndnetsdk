@@ -172,7 +172,7 @@ int nd_terminal_thread(ndth_handle handle,int exit_code)
 }
 
 
-int create_filemap( char *filename,char *map_name, size_t size,nd_filemap_t *out_handle) 
+int create_filemap(const char *filename,const char *map_name, size_t size,nd_filemap_t *out_handle) 
 {
 	PVOID pvFile ;
 	HANDLE hFile =INVALID_HANDLE_VALUE,hFileMap ;

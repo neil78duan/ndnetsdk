@@ -182,6 +182,7 @@
     <ClInclude Include="..\..\..\include\ndapplib\nd_objmgr.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_session.h" />
     <ClInclude Include="..\..\..\include\ndapplib\readcfg.h" />
+    <ClInclude Include="..\..\..\include\ndlib.h" />
     <ClInclude Include="..\..\..\include\ndstl\nd_allocator.h" />
     <ClInclude Include="..\..\..\include\ndstl\nd_array.h" />
     <ClInclude Include="..\..\..\include\ndstl\nd_new.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="..\..\..\include\nd_crypt\rsah\rsaref.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\rsah\r_random.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\tea.h" />
+    <ClInclude Include="..\..\..\include\nd_msg.h" />
     <ClInclude Include="..\..\..\include\nd_net\byte_order.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_iphdr.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_msgentry.h" />

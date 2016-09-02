@@ -32,6 +32,36 @@ size_t nd_get_file_size(const char *file)
 	return size ;
 }
 
+//merge path and file to full-path
+char* nd_full_path(const char*in_path, const char *in_file, char *outbuf, size_t size)
+{
+	size_t len = 0;
+	if (!in_file) {
+		return NULL;
+	}
+
+	if(in_path &&*in_path) {
+		len =strlen(in_path);
+	}
+
+	if (len == 0)	{
+		snprintf(outbuf, size,"%s/%s", nd_getcwd(), in_file);
+	}
+	else {
+		if (in_path[len - 1] == '/' || in_path[len - 1] == '\\') {
+			snprintf(outbuf, size, "%s%s", in_path, in_file);
+		}
+		else {
+#ifdef _MSC_VER
+			snprintf(outbuf, size, "%s\\%s", in_path, in_file);
+#else 
+			snprintf(outbuf, size, "%s/%s", in_path, in_file);
+#endif
+		}
+	}
+	return outbuf;
+}
+
 void nd_unload_file(void *file_data)
 {
 	free(file_data) ;
