@@ -65,6 +65,7 @@ struct instance_config
 struct server_config
 {
 	NDUINT8 m_un_develop;	//是否是开发版本
+	NDUINT8 reliable_num;
 	struct listen_config   l_cfg ;
 	struct instance_config i_cfg ;
 

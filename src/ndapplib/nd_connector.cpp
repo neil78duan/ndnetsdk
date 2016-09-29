@@ -158,7 +158,7 @@ int NDConnector::SendMsg(NDSendMsg &msg, int flag)
 			nd_tcpnode_flush_sendbuf((nd_netui_handle)m_objhandle) ;
 		}
 	}
-	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WUOLD_BLOCK) {
+	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WOULD_BLOCK) {
 		Close(0);
 	}
 	return ret ;
@@ -181,7 +181,7 @@ int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
 			nd_tcpnode_flush_sendbuf((nd_netui_handle)m_objhandle) ;
 		}
 	}
-	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WUOLD_BLOCK) {
+	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WOULD_BLOCK) {
 		nd_logerror("Send data error errorcode =%d\n", LastError() ) ;
 		Close(0);
 	}
@@ -204,7 +204,7 @@ int NDConnector::SendRawData(void *data , size_t size)
 			nd_tcpnode_flush_sendbuf((nd_netui_handle)m_objhandle) ;
 		}
 	}
-	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WUOLD_BLOCK) {
+	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WOULD_BLOCK) {
 		Close(0);
 	}
 	return ret ;

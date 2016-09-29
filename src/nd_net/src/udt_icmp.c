@@ -157,7 +157,7 @@ int udt_icmp_write(nd_udt_node* node,char *data, size_t len)
 	
 	if(-1==ret) {
 		if(ESOCKETTIMEOUT==nd_last_errno())
-			node->myerrno = NDERR_WUOLD_BLOCK ;
+			node->myerrno = NDERR_WOULD_BLOCK;
 		else 
 			node->myerrno = NDERR_WRITE ;
 	}
@@ -233,14 +233,14 @@ RE_READ:
 		if((int)outval > 0 ) {
 			ndtime_t start = nd_time() ;
 			if(nd_socket_wait_read(node->fd, outval)  <= 0) {
-				node->myerrno =  NDERR_WUOLD_BLOCK;
+				node->myerrno = NDERR_WOULD_BLOCK;
 				return 0;
 			}
 			outval -= (nd_time() - start) ;
 			goto RE_READ ;
 		}
 		else {
-			node->myerrno = NDERR_WUOLD_BLOCK ;
+			node->myerrno = NDERR_WOULD_BLOCK;
 			return -1;
 		}
 	}

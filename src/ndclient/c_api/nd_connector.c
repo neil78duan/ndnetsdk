@@ -131,7 +131,7 @@ int ndSendData(netObject netObj, char *data, int dataLen, int flag)
     packet_ntoh(&msghdr) ;
     ret = nd_connector_send((nd_handle) netObj, (nd_packhdr_t *)data, flag) ;
     packet_hton(&msghdr) ;
-	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj)) {
+	if (-1 == ret && NDERR_WOULD_BLOCK != nd_object_lasterror((nd_handle)netObj)) {
 		tryto_terminate(netObj) ;
 	}
     return ret ;
@@ -140,7 +140,7 @@ int ndSendData(netObject netObj, char *data, int dataLen, int flag)
 int ndSendRaw(netObject netObj,char *data, int size)
 {
     int ret = nd_connector_raw_write((nd_handle) netObj , data, (size_t) size) ;
-	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj)) {
+	if (-1 == ret && NDERR_WOULD_BLOCK != nd_object_lasterror((nd_handle)netObj)) {
 		tryto_terminate(netObj) ;
 	}
 	return ret ;
@@ -152,7 +152,7 @@ int ndSendMsg(netObject netObj,struct ndMsgData *data, int flag)
 	int ret ;
     data->reserved = 0 ;
     ret = nd_connector_send((nd_handle) netObj, (nd_packhdr_t *)data, flag) ;
-	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj)) {
+	if (-1 == ret && NDERR_WOULD_BLOCK != nd_object_lasterror((nd_handle)netObj)) {
 		tryto_terminate(netObj) ;
 	}
 	return ret ;
@@ -168,7 +168,7 @@ int ndUpdateConnect(netObject netObj, int timeOutMS)
     ret = nd_connector_update((nd_handle)netObj,timeOutMS);
 	
 	if (-1==ret ) {
-		if (NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj) &&
+		if (NDERR_WOULD_BLOCK != nd_object_lasterror((nd_handle)netObj) &&
 			NDERR_TIMEOUT != nd_object_lasterror((nd_handle) netObj) ) {
 			tryto_terminate(netObj) ;
 		}		
@@ -198,7 +198,7 @@ int ndWaitMsg(netObject netObj, char *buf, int timeOutMS)
     int ret = nd_connector_waitmsg(netObj, (nd_packetbuf_t *)buf,timeOutMS);
 	
 	if (-1==ret ) {
-		if (NDERR_WUOLD_BLOCK != nd_object_lasterror((nd_handle) netObj) &&
+		if (NDERR_WOULD_BLOCK != nd_object_lasterror((nd_handle)netObj) &&
 			NDERR_TIMEOUT != nd_object_lasterror((nd_handle) netObj) &&
 			NDERR_INVALID_INPUT != nd_object_lasterror((nd_handle) netObj) ) {
 			tryto_terminate(netObj) ;
@@ -241,7 +241,8 @@ RE_RECV:
 			return -1;
 		}
 		if (((nd_netui_handle)nethandle)->msg_handle) {
-			int ret = nd_translate_message(nethandle, (nd_packhdr_t*)recvBuf, NULL);
+			//int ret = nd_translate_message(nethandle, (nd_packhdr_t*)recvBuf, NULL);
+			int ret = _packet_handler((nd_netui_handle)nethandle, &recvBuf->msg_hdr.packet_hdr, NULL);
 			if (ret == -1){
 				nd_logerror("wait message(%d,%d) error ,recvd(%d,%d)\n", waitMaxid, waitMinid, ND_USERMSG_MAXID(recvBuf), ND_USERMSG_MINID(recvBuf));
 				return ret;

@@ -912,7 +912,7 @@ int nd_connector_raw_waitdata(nd_netui_handle net_handle, void *buf, size_t size
 		
 		if (timeout)	{
 			if(nd_socket_wait_read(socket_node->fd, timeout) <= 0) {
-				socket_node->myerrno = NDERR_WUOLD_BLOCK ;
+				socket_node->myerrno = NDERR_WOULD_BLOCK;
 				LEAVE_FUNC();
 				return -1 ;
 			}
@@ -925,7 +925,7 @@ int nd_connector_raw_waitdata(nd_netui_handle net_handle, void *buf, size_t size
 		}
 		if (ret== -1 ){
 			if (nd_last_errno() == ESOCKETTIMEOUT)	{
-				socket_node->myerrno= NDERR_WUOLD_BLOCK ;
+				socket_node->myerrno = NDERR_WOULD_BLOCK;
 			}
 			else {
 				socket_node->myerrno= NDERR_BADSOCKET ;

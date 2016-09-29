@@ -333,10 +333,19 @@ bool NDInstanceBase::CheckReliableConn(nd_handle hsession)
 bool NDInstanceBase::CheckReliableHost(ndip_t peerip) 
 {
 	ND_TRACE_FUNC();
-	for(int i=0; i<MAX_RELIABLE_HOST; i++) {
-		if(0==nd_sock_cmp_ip(m_config.reliable_hosts[i], peerip, m_config.reliable_ipmask[i]) )
-			return true ;
+	for(int i=0; i<m_config.reliable_num; i++) {
+		if (0 == nd_sock_cmp_ip(m_config.reliable_hosts[i], peerip, m_config.reliable_ipmask[i])){
+#ifdef ND_DEBUG
+			char reliable_buf[20],peer_buf[20], mask_buf[20];
+			nd_inet_ntoa(m_config.reliable_hosts[i], reliable_buf);
+			nd_inet_ntoa(peerip, peer_buf);
+			nd_inet_ntoa(m_config.reliable_ipmask[i], mask_buf);
 
+			nd_logdebug("check ip success reliable=%s peer=%s mask=%s\n", reliable_buf, peer_buf, mask_buf);
+
+#endif
+			return true;
+		}
 	}
 	return false ;
 }

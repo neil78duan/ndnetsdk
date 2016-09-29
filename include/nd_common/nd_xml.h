@@ -126,7 +126,7 @@ ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;
 ND_COMMON_API ndxml *ndxml_refsubi(ndxml *root, int index) ;
 
 //得到xml的值
-ND_COMMON_API char *ndxml_getval(ndxml *node);
+ND_COMMON_API const char *ndxml_getval(ndxml *node);
 ND_COMMON_API char *ndxml_getval_buf(ndxml *node, char *buf, size_t size);
 ND_COMMON_API int ndxml_getval_int(ndxml *node);
 ND_COMMON_API float ndxml_getval_float(ndxml *node);

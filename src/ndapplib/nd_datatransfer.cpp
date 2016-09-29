@@ -284,7 +284,7 @@ int NDBigDataReceiver::OnRecv(NDIStreamMsg &inmsg)
 		return NDERR_SUCCESS ;
 	}
 	
-	return NDERR_WUOLD_BLOCK;
+	return NDERR_WOULD_BLOCK;
 }
 
 bool NDBigDataReceiver::CheckInit() 

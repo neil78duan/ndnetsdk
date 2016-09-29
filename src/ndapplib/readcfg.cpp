@@ -130,9 +130,12 @@ int read_iplist(ndxml *xmlnode, ndip_t *ipbuf, int num )
 	for (int i=0; i<ndxml_getsub_num(xmlnode) && real_num<num; i++){
 		ndip_t ip =0;
 		ndxml *xmlip = ndxml_refsubi(xmlnode,i) ;
-		char *p = ndxml_getval(xmlip) ;
+		const char *p = ndxml_getval(xmlip) ;
 		if (p) {
-			if(0!=ndstr_get_ip(p, &ip) ) {
+			if (0 == ndstricmp(p, "localhost")) {
+				ip = 0x0100007f;
+			}
+			else if(0!=ndstr_get_ip(p, &ip) ) {
 				ip =nd_inet_aton(p) ;
 			}
 			if (ip){
@@ -174,6 +177,7 @@ int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg)
 	}
 	//
 
+	scfg->reliable_num = 0;
 	xml_listen = ndxml_refsub(xml_sub,"reliable_host") ;
 	if (xml_listen){
 		read_iplist(xml_listen, scfg->reliable_hosts, MAX_RELIABLE_HOST ) ;
@@ -194,6 +198,7 @@ int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg)
 				}
 			}
 			scfg->reliable_ipmask[i] = ipmask.ip;
+			scfg->reliable_num++;
 		}
 		//get netmask
 	}

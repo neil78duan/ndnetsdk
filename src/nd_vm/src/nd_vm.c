@@ -44,27 +44,55 @@ void vm_set_mmfunc(struct vm_cpu *vm,vm_mm_port mm_func,size_t mm_size)
 		vm->mem_size = mm_size;
 	}
 }
+#define _READ_STREAM(_val, addr) \
+	do 	{\
+		int i  ; \
+		char *_p1 = (char*)&_val; \
+		for (i = 0; i<sizeof(_val); i++) {	\
+			*_p1++ = *((*(char**)&(addr))++);	\
+		}							\
+	} while (0)
 
-#define _FETCH_AND_INC_ADDR(_type, addr) \
-	*((*(_type**)&(addr))++) 
+//#define _FETCH_AND_INC_ADDR(_type, addr) \
+//	*((*(_type**)&(addr))++) 
+// 
+
+#define _WRITE_AND_INC_ADDR(_type, addr, _val)  \
+	do 	{\
+		int i  ; \
+		char *_p1 = (char*)&(_val); \
+		for (i = 0; i<sizeof(_type); i++) {	\
+			*((*(char**)&(addr))++) =*_p1++ ;	\
+		}							\
+	} while (0)
 
 static __INLINE__ vm_ins _read_ins(struct vm_cpu *vm)
 {
-	//return *(((vm_ins*)(vm->ip))++) ;
-	return _FETCH_AND_INC_ADDR(vm_ins,vm->ip) ;
+	//return _FETCH_AND_INC_ADDR(vm_ins,vm->ip) ;
+	vm_ins a;
+	_READ_STREAM(a, vm->ip);
+	return a;
 }
 
 static __INLINE__ vm_data_src _read_data_src(struct vm_cpu *vm)
 {
-	//return *(((vm_data_src*)(vm->ip))++) ;
-	return _FETCH_AND_INC_ADDR(vm_data_src,vm->ip) ;
+	//return _FETCH_AND_INC_ADDR(vm_data_src,vm->ip) ;
+
+	vm_data_src a;
+	_READ_STREAM(a, vm->ip);
+	return a;
+
 }
 
 static __INLINE__ vm_value _read_data(struct vm_cpu *vm)
 {
-	//return *(((vm_value*)(vm->ip))++) ;
+	//return _FETCH_AND_INC_ADDR(vm_value,vm->ip) ;
 
-	return _FETCH_AND_INC_ADDR(vm_value,vm->ip) ;
+	vm_value a;
+	_READ_STREAM(a, vm->ip);
+	return a;
+
+
 }
 
 /*得到内存地址,主要是为了打印调试信息*/
@@ -181,28 +209,28 @@ size_t vm_instruct_2buf(struct vm_instruction_node *node, void *buf)
 	int num ;
 	
 	//*((vm_ins *)buf)++ = node->ins ;
-	_FETCH_AND_INC_ADDR(vm_ins,buf) = node->ins;
+	_WRITE_AND_INC_ADDR(vm_ins, buf, node->ins);
 
 	num = get_operand_num(node->ins) ;
 	size += sizeof(vm_ins) ;
 
 	if(num--) {
 		//*((vm_data_src  *)buf)++ = node->ds1 ;
-		_FETCH_AND_INC_ADDR(vm_data_src,buf) = node->ds1;
+		_WRITE_AND_INC_ADDR(vm_data_src, buf, node->ds1);
 		size += sizeof(vm_data_src) ;
 		if(EDS_IMMEDIATE==node->ds1 || EDS_ADDRESS==node->ds1||EDS_STACK==node->ds1) {
 			//*((vm_value*)buf)++ = node->val1 ;
-			_FETCH_AND_INC_ADDR(vm_value,buf) = node->val1;
+			_WRITE_AND_INC_ADDR(vm_value, buf, node->val1);
 			size += sizeof(vm_value) ;
 		}
 	}	
 	if(num--) {
 		//*((vm_data_src  *)buf)++ = node->ds2 ;
-		_FETCH_AND_INC_ADDR(vm_data_src,buf) = node->ds2;
+		_WRITE_AND_INC_ADDR(vm_data_src, buf, node->ds2);
 		size += sizeof(vm_data_src) ;
 		if(EDS_IMMEDIATE==node->ds2 || EDS_ADDRESS==node->ds2||EDS_STACK==node->ds2) {
 			//*((vm_value*)buf)++ = node->val2 ;
-			_FETCH_AND_INC_ADDR(vm_value,buf) = node->val2;
+			_WRITE_AND_INC_ADDR(vm_value, buf, node->val2);
 			size += sizeof(vm_value) ;
 		}
 	}	

@@ -522,7 +522,7 @@ MSG_ENTRY_INSTANCE(__data_recv_handler)
 	if (__bigDataRecv) {
 		__bigDataRecv->OnRecv(inmsg) ;
 		
-		if (len!= NDERR_SUCCESS && len!=NDERR_WUOLD_BLOCK) {
+		if (len != NDERR_SUCCESS && len != NDERR_WOULD_BLOCK) {
 			nd_logerror("error onRecv big data message ret=%d\n", len) ;
 		}
 	}

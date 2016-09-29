@@ -37,7 +37,7 @@ int _socket_send(struct nd_tcp_node *node,void *data , size_t len)
 	else if(-1==ret)  {
 		node->sys_error = nd_socket_last_error() ;
 		if (node->sys_error == ESOCKETTIMEOUT) {
-			node->myerrno = NDERR_WUOLD_BLOCK ;
+			node->myerrno = NDERR_WOULD_BLOCK;
 		}
 		else {
 			node->myerrno = NDERR_IO ;
@@ -91,7 +91,7 @@ RE_SEND:
 		if(wait_ret < 0 ){
 			node->sys_error = nd_socket_last_error() ;
 			if (node->sys_error == ESOCKETTIMEOUT) {
-				node->myerrno = NDERR_WUOLD_BLOCK ;
+				node->myerrno = NDERR_WOULD_BLOCK;
 			}
 			else {
 				TCPNODE_SET_RESET(node) ;
@@ -185,7 +185,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int fl
 			}
 			if(-1 == _tcpnode_push_sendbuf(node,1) ){ //Çå¿Õ»º³å
 				LEAVE_FUNC();
-				if (NDERR_WUOLD_BLOCK==node->myerrno ){
+				if (NDERR_WOULD_BLOCK == node->myerrno){
 					return 0 ;
 				}
 				return -1 ;
@@ -236,7 +236,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int fl
 			else {
 				push_len = _tcpnode_push_sendbuf(node,0) ;
 			}
-			if (push_len==-1 && NDERR_WUOLD_BLOCK!=node->myerrno )	{
+			if (push_len == -1 && NDERR_WOULD_BLOCK != node->myerrno)	{
 				LEAVE_FUNC();
 				return -1;
 			}
@@ -416,7 +416,7 @@ int nd_tcpnode_read(struct nd_tcp_node *node)
 	else {
 		node->sys_error = nd_socket_last_error() ;
 		if(node->sys_error==ESOCKETTIMEOUT) {
-			node->myerrno = NDERR_WUOLD_BLOCK ;
+			node->myerrno = NDERR_WOULD_BLOCK;
 			read_len = 0;
 		}
 		else
@@ -460,7 +460,7 @@ int tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout)
 		if(ret==-1) {
 			node->sys_error = nd_socket_last_error() ;
 			if (node->sys_error == ESOCKETTIMEOUT) {
-				node->myerrno = NDERR_WUOLD_BLOCK ;
+				node->myerrno = NDERR_WOULD_BLOCK;
 			}
 			else {
 				node->myerrno = NDERR_IO ;
@@ -469,7 +469,7 @@ int tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout)
 			return -1 ;
 		}
 		else if(ret==0){
-			node->myerrno = NDERR_WUOLD_BLOCK ;
+			node->myerrno = NDERR_WOULD_BLOCK;
 			LEAVE_FUNC();
 			return 0;
 		}
@@ -577,7 +577,7 @@ int _tcp_node_update(struct nd_tcp_node *node)
 				ndlbuf_sub_data(pbuf,(size_t)ret) ;
 			}
 			else if(ret < 0) {
-				if (node->myerrno == NDERR_WUOLD_BLOCK ){
+				if (node->myerrno == NDERR_WOULD_BLOCK){
 					ret = 0;
 				}
 			}

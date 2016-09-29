@@ -415,7 +415,7 @@ int iocp_read(struct nd_client_map_iocp *iocp_map)
 
 	if(0==ret) {
 		if(0==dwBytesRecvd) {
-			nd_object_seterror((nd_handle)iocp_map, NDERR_WUOLD_BLOCK) ;
+			nd_object_seterror((nd_handle)iocp_map, NDERR_WOULD_BLOCK) ;
 			return -1 ;
 		}
 		return (int)dwBytesRecvd ;
@@ -424,7 +424,7 @@ int iocp_read(struct nd_client_map_iocp *iocp_map)
 		int serr = WSAGetLastError();
 		iocp_map->__client_map.connect_node.sys_error = serr;
 		if(WSA_IO_PENDING==serr || WSAEINTR==serr || WSAEWOULDBLOCK==serr) {
-			nd_object_seterror((nd_handle)iocp_map, NDERR_WUOLD_BLOCK) ;
+			nd_object_seterror((nd_handle)iocp_map, NDERR_WOULD_BLOCK) ;
 			return -1 ;
 		}
 		nd_object_seterror((nd_handle)iocp_map, NDERR_READ) ;
@@ -592,7 +592,7 @@ int iocp_socket_write(struct nd_client_map_iocp *iocp_map, void *data, size_t se
 		return -1;
 
 	if (free_space <send_len) {
-		iocp_map->__client_map.connect_node.myerrno = NDERR_WUOLD_BLOCK ;
+		iocp_map->__client_map.connect_node.myerrno = NDERR_WOULD_BLOCK ;
 		return -1;
 	}
 	ret = ndlbuf_write(send_buf,data, send_len,EBUF_SPECIFIED) ;

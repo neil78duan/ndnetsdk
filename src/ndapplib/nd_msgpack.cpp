@@ -12,6 +12,35 @@
 #include "nd_common/nd_common.h"
 #include "ndapplib/nd_msgpacket.h"
 
+static int _write_file(const char *file,const nd_usermsgbuf_t *msgdata)
+{
+	FILE *pf = fopen(file, "wb");
+	if (!pf) {
+		return -1;
+	}
+	size_t s = fwrite(msgdata, 1, msgdata->msg_hdr.packet_hdr.length, pf);
+	fclose(pf);
+	if (s != msgdata->msg_hdr.packet_hdr.length){
+		return -1;
+	}
+	return 0;
+}
+
+static int _read_file(const char *file, nd_usermsgbuf_t *msgdata)
+{
+	FILE *pf = fopen(file, "rb");
+	if (!pf) {
+		return -1;
+	}
+	size_t s= fread(msgdata, 1, sizeof(nd_usermsgbuf_t) , pf);
+
+	fclose(pf);
+	if (s != msgdata->msg_hdr.packet_hdr.length) {
+		return -1;
+	}
+	return 0;
+}
+
 NDSendMsg::NDSendMsg() 
 {
 	nd_usermsghdr_init( (nd_usermsghdr_t*)&_packet.msg_hdr) ;
@@ -41,6 +70,7 @@ size_t NDSendMsg::GetSerialBin(void *buf, size_t bufsize)
 }
 
 size_t NDSendMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(&_packet); }
+
 
 //////////////////////////////////////////////////////////////////////////
 // class NDOStreamMsg
@@ -72,6 +102,18 @@ void NDOStreamMsg::Init(int maxid, int minid)
 	MsgMaxid() = maxid ;
 	MsgMinid() = minid ;
 }
+
+
+int NDOStreamMsg::ToFile(const char *file)const
+{
+	return _write_file(file, &_packet);
+}
+int NDOStreamMsg::FromFile(const char *file)
+{
+	Reset();
+	return _read_file(file, &_packet);
+}
+
 
 //size_t NDOStreamMsg::GetDataLen() 
 //{
@@ -327,6 +369,8 @@ size_t NDRecvMsg::GetSerialBin(void *buf, size_t bufsize)
 
 size_t NDRecvMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(recv_packet); }
 
+
+
 //////////////////////////////////////////////////////////////////////////
 //class NDIStreamMsg
 
@@ -363,6 +407,11 @@ void NDIStreamMsg::Init(nd_usermsgbuf_t *pmsg)
 		_end = NULL ;
 	}
 	
+}
+
+int NDIStreamMsg::ToFile(const char *file)const
+{
+	return _write_file(file, recv_packet);
 }
 
 NDIStreamMsg::~NDIStreamMsg() 

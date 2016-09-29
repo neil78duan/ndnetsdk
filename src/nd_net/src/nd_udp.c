@@ -116,7 +116,7 @@ int nd_udp_send(struct nd_udp_node*node,const char *data, size_t len)
 	}
 	else if(-1==ret) {
 		if(ESOCKETTIMEOUT==nd_last_errno())
-			node->myerrno = NDERR_WUOLD_BLOCK ;
+			node->myerrno = NDERR_WOULD_BLOCK;
 		else 
 			node->myerrno = NDERR_WRITE ;
 	}
@@ -142,7 +142,7 @@ int nd_udp_sendto(struct nd_udp_node*node,const char *data, size_t len, SOCKADDR
 	}
 	else if(-1==ret) {
 		if(ESOCKETTIMEOUT==nd_last_errno())
-			node->myerrno = NDERR_WUOLD_BLOCK ;
+			node->myerrno = NDERR_WOULD_BLOCK;
 		else 
 			node->myerrno = NDERR_WRITE ;
 	}
@@ -170,7 +170,7 @@ int nd_udp_sendtoex(struct nd_udp_node*node,const char *data, size_t len, char *
 		node->send_len += len ;
 	else if(-1==ret) {
 		if(ESOCKETTIMEOUT==nd_last_errno())
-			node->myerrno = NDERR_WUOLD_BLOCK ;
+			node->myerrno = NDERR_WOULD_BLOCK;
 		else 
 			node->myerrno = NDERR_WRITE ;
 	}
@@ -190,7 +190,7 @@ int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t o
 	if(outval ) {
 		ret = nd_socket_wait_read(node->fd, outval) ;
 		if(ret <= 0) {
-			node->myerrno = (ret==0) ? NDERR_WUOLD_BLOCK:NDERR_IO ;
+			node->myerrno = (ret == 0) ? NDERR_WOULD_BLOCK: NDERR_IO;
 			return ret  ;
 		}
 	}

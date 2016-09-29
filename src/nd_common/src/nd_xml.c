@@ -594,7 +594,7 @@ ndxml *ndxml_refsubi(ndxml *root, int index)
 }
 
 //得到xml的值
-char *ndxml_getval(ndxml *node)
+const char *ndxml_getval(ndxml *node)
 {
 	if(node->value && node->value[0])
 		return node->value ;

@@ -35,9 +35,6 @@
  ND_UNICODE //inter-char as unicode-16
  BUILD_AS_STATIC_LIB //build as static lib
  
- //��֧��unicode
- //#define 			1
- you need define the macro which you need porting to .
 */
 
 #ifdef _MSC_VER
@@ -48,8 +45,10 @@
 #endif  //_MSC_VER
 
 #else
+
 #define ND_ENCODE_TYPE E_SRC_CODE_UTF_8
 #define ND_UNIX 
+
 #endif
 
 #define BUILD_AS_STATIC_LIB 1 

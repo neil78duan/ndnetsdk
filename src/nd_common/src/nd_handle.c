@@ -237,28 +237,41 @@ int _nd_object_on_destroy(nd_handle handle,int type)
 
 ///////////////////////////
 
+static nd_error_parse_func __err_parser;
+nd_error_parse_func nd_set_error_parser(nd_error_parse_func func)
+{
+	nd_error_parse_func ret = __err_parser;
+	__err_parser = func;
+	return ret;
+}
 const char *nd_error_desc(int errcode)
 {
-	static char errdesc[128] ;
+	static __ndthread char errdesc[128];
 	
-	char *perr[] = {
-		"NDERR_SUCCESS " ,
-		
+	if (__err_parser) {
+		return __err_parser(errcode);
+	}
+	else {
+		char *perr[] = {
+			"NDERR_SUCCESS ",
+
 #undef ErrorElement 
 #define ErrorElement(a) #a
 #include "nd_common/_nderr.h"		
 #undef ErrorElement 		
-	} ;
+		};
+
+		if (errcode <= NDERR_UNKNOWN)
+			return perr[errcode];
+		else if (__error_convert) {
+			return __error_convert(errcode);
+		}
+		else {
+			snprintf(errdesc, sizeof(errdesc), "Error code =%d", errcode);
+			return errdesc;
+		}
+	}
 	
-	if(errcode <= NDERR_UNKNOW)
-		return perr[errcode] ;
-	else if(__error_convert) {
-		return __error_convert(errcode) ;
-	}
-	else {
-		snprintf(errdesc, sizeof(errdesc), "Error code =%d",errcode) ;
-		return errdesc ;
-	}
 }
 
 const char *nd_object_errordesc(nd_handle h)
@@ -269,10 +282,9 @@ const char *nd_object_errordesc(nd_handle h)
 int nd_object_check_error(nd_handle h) 
 {
 	if (h->myerrno ==NDERR_SUCCESS ||
-		h->myerrno ==NDERR_WUOLD_BLOCK || 
-		h->myerrno==NDERR_USER_BREAK || 
+		h->myerrno == NDERR_WOULD_BLOCK ||
 		h->myerrno==NDERR_NO_PRIVILAGE ||
-		h->myerrno >= NDERR_USERDEFINE)	{
+		h->myerrno >= NDERR_USER_BREAK)	{
 		return 0 ;
 	}
 	return h->myerrno ;

@@ -347,7 +347,7 @@ int udt_retranslate(nd_udt_node* socket_node)
 
 	if (socket_node->is_retranslate) {
 		if (socket_node->resend_times >= MAX_ATTEMPT_SEND)	{
-			nd_object_seterror((nd_handle)socket_node,NDERR_WUOLD_BLOCK) ;
+			nd_object_seterror((nd_handle)socket_node, NDERR_WOULD_BLOCK);
 			return -1;
 		}
 	}
@@ -493,7 +493,7 @@ int _wait_data(nd_udt_node *socket_node,udt_pocketbuf* buf,ndtime_t outval)
 	int ret = socket_node->sock_read((nd_handle)socket_node,(char*)buf, sizeof(udt_pocketbuf),outval) ;
 	if(ret <= 0) {
 		if (socket_node->myerrno ==NDERR_BADPACKET) {
-			socket_node->myerrno = NDERR_WUOLD_BLOCK ;
+			socket_node->myerrno = NDERR_WOULD_BLOCK;
 			ret = 0 ;
 		}
 		LEAVE_FUNC();
@@ -504,7 +504,7 @@ int _wait_data(nd_udt_node *socket_node,udt_pocketbuf* buf,ndtime_t outval)
 	
 	//Êý¾Ý¼ì²â
 	if(!socket_node->check_entry(socket_node,&buf->pocket,ret, &socket_node->last_read) ) {
-		socket_node->myerrno = NDERR_WUOLD_BLOCK ;
+		socket_node->myerrno = NDERR_WOULD_BLOCK;
 		LEAVE_FUNC();
 		return -1;
 	} 

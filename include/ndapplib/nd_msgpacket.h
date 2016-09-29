@@ -65,16 +65,13 @@ public :
 	int WriteIp(ndip_t ) ;
 	int WriteIp(ndip_v6_t ) ;
 
-//    
-//	int WriteByte(int ) ;
-//	int WriteInt(int ) ;
-//	int WriteShort(int ) ;
-//	int WriteText(char* ) ;
 	void SetID(int maxid, int minid) ;
 	friend class NDIStreamMsg ;
 	void *GetWriteAddr() {return (void*)_op_addr;}
-	//size_t GetDataLen() ;
 	size_t GetFreeLen() ;
+
+	int ToFile(const char *file)const;
+	int FromFile(const char *file);
 private:
 	char *_op_addr ;
 	char *_end ;
@@ -93,7 +90,8 @@ public:
 	inline nd_usermsgbuf_t *GetMsgAddr() {return recv_packet ;}
 	
 	size_t GetDataLen();
-	size_t GetSerialBin(void *buf, size_t bufsize) ;	//∞—œ˚œ¢ ‰≥ˆ≥…∂˛Ω¯÷∆
+	size_t GetSerialBin(void *buf, size_t bufsize);	//∞—œ˚œ¢ ‰≥ˆ≥…∂˛Ω¯÷∆
+
 protected:
 	nd_usermsgbuf_t  *recv_packet ;
 };
@@ -129,7 +127,8 @@ public :
 	NDIStreamMsg(nd_usermsgbuf_t *pmsg) ;
 	virtual ~NDIStreamMsg() ;
 
-	void Init(nd_usermsgbuf_t *pmsg) ;
+	void Init(nd_usermsgbuf_t *pmsg);
+	int ToFile(const char *file)const;
 private:
 	NDIStreamMsg() ;
 	char *_op_addr ;

@@ -172,7 +172,13 @@ ND_COMMON_API int nd_reg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_unreg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_handle_checkvalid(nd_handle hobj, NDUINT16 objtype);
 
+typedef const char* (*nd_error_parse_func)(int errcode);
+
 ND_COMMON_API const char *nd_error_desc(int errcode);
+
+ND_COMMON_API nd_error_parse_func nd_set_error_parser(nd_error_parse_func func);
+
+
 ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
 
 

@@ -51,13 +51,14 @@ enum eNDMsgSys{
 	ND_MSG_SYS_SHUTDOW_NTF, //close server ntf
 	ND_MSG_SYS_BEGIN_MEM_STATICS,
 	ND_MSG_SYS_END_MEM_STATICS,
-	ND_MSG_SYS_GET_USER_DEFINE_DATA,	//get user defined data format
+	ND_MSG_SYS_GET_USER_DEFINE_DATA,	//get user defined data format,from datatype.xml
 
 	ND_MSG_SYS_REQUEST_CLIENT_LOG_FILE, //get the log file from client (32bit:user_id, text:file_name) 
 	ND_MSG_SYS_BACK_CLIENT_LOG_FILE, //get the log file from client (32bit:user_id,text:file_name, bin:file_data) 
 
 	ND_MSG_SYS_GET_MESSAGE_FORMAT_LIST , // get message id, name ,and data stream-format : 16bits:number [16bits:id, string:name, string:format]
 
+	ND_MSG_SYS_GET_MESSAGE_BUILD_TIME, //get message build time or version 
     ND_MSG_SYS_NUMBER
 };
 

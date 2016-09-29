@@ -252,7 +252,7 @@ int NDConnector::SendMsg(nd_usermsgbuf_t *msghdr, int flag)
 	nd_assert(m_objhandle);
 	ND_USERMSG_SYS_RESERVED(msghdr) = 0 ;
 	int ret = nd_connector_send(m_objhandle,(nd_packhdr_t*)msghdr, flag) ;
-	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle)) {
+	if (-1==ret && NDERR_WOULD_BLOCK != nd_object_lasterror(m_objhandle)) {
 		tryto_terminate((netObject)m_objhandle) ;
 	}
 	return ret ;
@@ -263,7 +263,7 @@ int NDConnector::SendRawData(void *data , size_t size)
 {
 	nd_assert(m_objhandle) ;
 	int ret = nd_connector_raw_write(m_objhandle,data,size) ;
-	if (-1==ret && NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle)) {
+	if (-1 == ret && NDERR_WOULD_BLOCK != nd_object_lasterror(m_objhandle)) {
 		tryto_terminate((netObject)m_objhandle) ;
 	}
 	return ret ;
@@ -292,7 +292,7 @@ int NDConnector::RecvRawData(void *buf, size_t size, ndtime_t waittm)
 	int ret = nd_connector_raw_waitdata(m_objhandle, buf, size, waittm) ;
 		
 	if (-1==ret ) {
-		if (NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle) &&
+		if (NDERR_WOULD_BLOCK != nd_object_lasterror(m_objhandle) &&
 			NDERR_TIMEOUT != nd_object_lasterror(m_objhandle) &&
 			NDERR_INVALID_INPUT != nd_object_lasterror(m_objhandle) ) {
 			tryto_terminate((netObject)m_objhandle) ;
@@ -330,7 +330,7 @@ RE_WAIT:
 	}
 	
 	if (-1==ret ) {
-		if (NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle) &&
+		if (NDERR_WOULD_BLOCK != nd_object_lasterror(m_objhandle) &&
 			NDERR_TIMEOUT != nd_object_lasterror(m_objhandle)  ) {
 			tryto_terminate((netObject)m_objhandle) ;
 		}
@@ -345,7 +345,7 @@ int NDConnector::WaitMsg(nd_usermsgbuf_t*msgbuf, ndtime_t wait_time)
 	int ret = nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)msgbuf,wait_time);
 	
 	if (-1==ret ) {
-		if (NDERR_WUOLD_BLOCK != nd_object_lasterror(m_objhandle) &&
+		if (NDERR_WOULD_BLOCK != nd_object_lasterror(m_objhandle) &&
 			NDERR_TIMEOUT != nd_object_lasterror(m_objhandle) &&
 			NDERR_INVALID_INPUT != nd_object_lasterror(m_objhandle) ) {
 			tryto_terminate((netObject)m_objhandle) ;
@@ -488,7 +488,7 @@ int _big_data_recv_handler(NDIConn* pconn, nd_usermsgbuf_t *msg )
 	
 	NDIStreamMsg inmsg(msg) ;
 	len = pNetObj->getBigDataRecver()->OnRecv(inmsg) ;
-	if (len!= NDERR_SUCCESS && len!=NDERR_WUOLD_BLOCK) {
+	if (len != NDERR_SUCCESS && len != NDERR_WOULD_BLOCK) {
 		nd_logerror("error onRecv big data message ret=%d\n", len) ;
 	}
 	return 0 ;

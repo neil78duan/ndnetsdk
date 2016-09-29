@@ -305,7 +305,7 @@ RE_READ:
 	read_len = nd_tcpnode_read(& (cli_map->connect_node)) ;
 	
 	if(-1== read_len) {
-		if(cli_map->connect_node.myerrno==NDERR_WUOLD_BLOCK) {
+		if(cli_map->connect_node.myerrno==NDERR_WOULD_BLOCK) {
 			LEAVE_FUNC();
 			return 0 ;
 		}
