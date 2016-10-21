@@ -17,6 +17,23 @@
 #define _CRTTRAC(msg)
 #endif
 
+
+const char *nd_get_sys_username()
+{
+	DWORD length ;
+	static char s_username[256] = {0};
+	if (s_username[0]) {
+		return s_username ;
+	}
+	length =(DWORD)sizeof(s_username);
+	GetUserNameA(s_username, &length);
+	if(length==0) {
+		nd_logerror("get system user name error :%s\n", nd_last_error()) ;
+		return NULL ;
+	}
+	return s_username ;
+}
+
 //如果错误弹出错误提示窗口
 DWORD _ErrBox(char *file, int line)
 {

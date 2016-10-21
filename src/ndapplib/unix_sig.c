@@ -73,7 +73,7 @@ void _terminate_server(int signo)
 	nd_instance_exit(0) ;
 }
 
-static int _s_terminate_sigs[] = {SIGHUP,SIGINT,SIGQUIT,SIGTERM, SIGQUIT,SIGTSTP} ;
+static int _s_terminate_sigs[] = {SIGHUP,SIGINT,SIGQUIT,SIGTERM,SIGTSTP} ;
 #define terminate_sigs_num  ND_ELEMENTS_NUM(_s_terminate_sigs)
 
 static int _s_ignore_sigs[] = {SIGALRM,SIGCHLD,SIGIO,SIGCONT,SIGPIPE,SIGVTALRM,SIGUSR1,SIGUSR2} ;

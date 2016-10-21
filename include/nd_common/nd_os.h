@@ -73,6 +73,8 @@ ND_COMMON_API int nd_getcpu_num() ;
 
 ND_COMMON_API int nd_get_sys_callstack(char *buf, size_t size) ;
 
+ND_COMMON_API const char *nd_get_sys_username() ;//get system user name
+
 typedef struct _sND_mutex
 {
 	int _spinCount ;	//spin

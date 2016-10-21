@@ -237,34 +237,25 @@ int _nd_object_on_destroy(nd_handle handle,int type)
 
 ///////////////////////////
 
-static nd_error_parse_func __err_parser;
-nd_error_parse_func nd_set_error_parser(nd_error_parse_func func)
-{
-	nd_error_parse_func ret = __err_parser;
-	__err_parser = func;
-	return ret;
-}
 const char *nd_error_desc(int errcode)
 {
 	static __ndthread char errdesc[128];
 	
-	if (__err_parser) {
-		return __err_parser(errcode);
+	if (__error_convert) {
+		return __error_convert(errcode);
 	}
 	else {
 		char *perr[] = {
 			"NDERR_SUCCESS ",
 
 #undef ErrorElement 
-#define ErrorElement(a) #a
+#define ErrorElement(a,_err_desc) "system(ND"#a "):" _err_desc
 #include "nd_common/_nderr.h"		
-#undef ErrorElement 		
+#undef ErrorElement 
 		};
 
-		if (errcode <= NDERR_UNKNOWN)
+		if (errcode <= NDERR_UNKNOWN) {
 			return perr[errcode];
-		else if (__error_convert) {
-			return __error_convert(errcode);
 		}
 		else {
 			snprintf(errdesc, sizeof(errdesc), "Error code =%d", errcode);

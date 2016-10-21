@@ -10,7 +10,7 @@
 enum END_ERROR_TYPE
 {
 #undef ErrorElement 
-#define ErrorElement(a) ND##a
+#define ErrorElement(_errId, _err_description) ND##_errId 
 	NDERR_SUCCESS  = 0 ,	//ÕýÈ·
 #include "_nderr.h"
 	

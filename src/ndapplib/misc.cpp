@@ -73,6 +73,7 @@ int wait_services()
     //wait_key_esc();
     
     while(!nd_host_check_exit() ){
+		nd_sleep(1000) ;
         if(-1==nd_wait_terminate_signals() ) {
             printf_dbg("exit from wait signal!\n") ;
 			ret = (nd_host_check_exit()==NDERR_HOST_CRASH ) ;

@@ -14,12 +14,24 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <pwd.h>
 #include <unistd.h>
 
 #include <semaphore.h>
 #include <signal.h>
 
 
+const char *nd_get_sys_username()
+{
+	struct passwd *pwd = getpwuid(getuid());
+	if(pwd){
+		return pwd->pw_name;
+	}
+	else {
+		nd_logerror("get system user name error :%s\n", nd_last_error()) ;
+		return "unknow-user";
+	}
+}
 //return NDSEM_SUCCESS wait success, NDSEM_ERROR error , NDSEM_TIMEOUT timeout
 
 static int nd_clock_gettime( struct timespec *t)
@@ -118,18 +130,18 @@ void pthread_sleep(NDUINT32 msec)
 int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
 {
     sem_t *sem = pSem->_sem ;
-    int times = waittime / 10 ;
+    int times = waittime / 50 ;
     int ret ;
     if(ND_INFINITE==waittime) {
         return sem_wait(sem) ;
     }
     else if(times > 0){
-        
         while (times) {
             --times ;
             ret = sem_trywait(sem) ;
             if (ret==-1 ) {
                 if (errno==EAGAIN) {
+					pthread_sleep(50) ;
                     continue ;
                 }
                 return NDSEM_ERROR ;
@@ -139,7 +151,16 @@ int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
         return NDSEM_TIMEOUT ;
     }
     else {
-        return  sem_trywait(sem);
+        ret = sem_trywait(sem);
+		if(ret==0) {
+			return NDSEM_ERROR ;
+		}
+		else if (errno==EAGAIN) {
+			pthread_sleep(50) ;
+			return sem_trywait(sem); ;
+		}
+		
+		return NDSEM_TIMEOUT ;
     }
 }
 

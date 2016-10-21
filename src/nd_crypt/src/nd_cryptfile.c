@@ -34,7 +34,7 @@ NDC_FILE *ndc_fopen_r(const char *filename, const char *passwd)
 	pndcf->is_flush = 0;
 
 	nd_TEAGenKey(&pndcf->passwd,(char*) passwd) ;
-	pndcf->pf = fopen(filename, "r+b") ;
+	pndcf->pf = fopen(filename, "rb") ;
 	if(!pndcf->pf) {
 		free(pndcf);
 		return NULL ;
