@@ -58,13 +58,12 @@
 #define ND_MULTI_THREADED 1				// must be define 
 #define ND_MAX_THREAD_NUM 16			//for server
 
-#if defined(__ND_WIN__)  //--------------------windows platform------------------
+
+//------------debug
 
 #ifdef ND_DEBUG
-//#define ND_USE_VLD		1  // use vld to check memory leak
-#endif 
 
-#define ND_OPEN_TRACE		1		//vs TRACE 
+#define ND_OPEN_TRACE		1		//vs TRACE
 #define ND_OPEN_LOG_COMMON 	1
 #define ND_OPEN_LOG_DEBUG	1
 #define ND_OPEN_LOG_WARN	1
@@ -83,83 +82,17 @@
 #define ND_OVER_RIDE_NEW	1
 #define ND_CALLSTACK_TRACE	1			//trace function call
 
-
-#elif defined(__ND_LINUX__)		//----------------------linux platform------------------------
+#else 
 
 //#define ND_OPEN_TRACE		1
 #define ND_OPEN_LOG_COMMON 	1
-#define ND_OPEN_LOG_DEBUG	1
-#define ND_OPEN_LOG_WARN	1
-#define ND_OPEN_LOG_ERROR	1
-#define ND_OPEN_LOG_FATAL	1
-#define ND_SOURCE_TRACE		1
-#define ND_FILE_TRACE		1
-#define ND_OUT_LOG_2CTRL	1
-#define ND_OUT_LOG_2FILE	1
-#define ND_MEM_CHECK		1
-#define ND_USE_MSGBOX		1
-#define ND_LOG_WITH_SOURCE	1
-#define ND_LOG_WITH_TIME	1
-#define ND_MEM_STATICS		1
-#define ND_UNUSE_STDC_ALLOC 1
-#define ND_OVER_RIDE_NEW	1			// use myself new/delete
-#define ND_CALLSTACK_TRACE	1			//trace function call
-
-#elif defined(__ND_MAC__)		//-----------------------------mac-os-----------------------
-
-#define ND_OPEN_TRACE		1		//vs TRACE 
-#define ND_OPEN_LOG_COMMON 	1
-#define ND_OPEN_LOG_DEBUG	1
-#define ND_OPEN_LOG_WARN	1
-#define ND_OPEN_LOG_ERROR	1
-#define ND_OPEN_LOG_FATAL	1
-#define ND_SOURCE_TRACE		1
-#define ND_FILE_TRACE		1
-#define ND_OUT_LOG_2CTRL	1
-#define ND_OUT_LOG_2FILE	1
-#define ND_MEM_CHECK		1
-#define ND_USE_MSGBOX		1
-#define ND_LOG_WITH_SOURCE	1
-#define ND_LOG_WITH_TIME	1
-#define ND_MEM_STATICS		1
-#define ND_UNUSE_STDC_ALLOC 1
-#define ND_OVER_RIDE_NEW	1			// use myself new/delete
-#define ND_CALLSTACK_TRACE	1			//trace function call
-
-#elif defined(__ND_BSD__)		//---------------------------- bsd----------------------------
-
-#define ND_OPEN_TRACE		1		//vs TRACE 
-#define ND_OPEN_LOG_COMMON 	1
-#define ND_OPEN_LOG_DEBUG	1
-#define ND_OPEN_LOG_WARN	1
-#define ND_OPEN_LOG_ERROR	1
-#define ND_OPEN_LOG_FATAL	1
-#define ND_SOURCE_TRACE		1
-#define ND_FILE_TRACE		1
-#define ND_OUT_LOG_2CTRL	1
-#define ND_OUT_LOG_2FILE	1
-#define ND_MEM_CHECK		1
-#define ND_USE_MSGBOX		1
-#define ND_LOG_WITH_SOURCE	1
-#define ND_LOG_WITH_TIME	1
-#define ND_MEM_STATICS		1
-#define ND_UNUSE_STDC_ALLOC 1
-#define ND_OVER_RIDE_NEW	1			// use myself new/delete
-#define ND_CALLSTACK_TRACE	1			//trace function call
-
-#elif defined(__ND_IOS__)		//-----------------------------iOS---------------------------
-
-#define WITHOUT_ICONV		1
-
-//#define ND_OPEN_TRACE		1		//vs TRACE
-#define ND_OPEN_LOG_COMMON 	1
-#define ND_OPEN_LOG_DEBUG	1
+//#define ND_OPEN_LOG_DEBUG	1
 #define ND_OPEN_LOG_WARN	1
 #define ND_OPEN_LOG_ERROR	1
 #define ND_OPEN_LOG_FATAL	1
 //#define ND_SOURCE_TRACE		1
 //#define ND_FILE_TRACE		1
-#define ND_OUT_LOG_2CTRL	1
+//#define ND_OUT_LOG_2CTRL	1
 #define ND_OUT_LOG_2FILE	1
 //#define ND_MEM_CHECK		1
 //#define ND_USE_MSGBOX		1
@@ -169,29 +102,59 @@
 //#define ND_UNUSE_STDC_ALLOC 1
 //#define ND_OVER_RIDE_NEW	1			// use myself new/delete
 //#define ND_CALLSTACK_TRACE	1			//trace function call
-#define ND_LOG_WITH_ND_MARK 1 			//log with nd-log different other module
+
+#endif
+
+
+//------------
+#if defined(__ND_WIN__)  //--------------------windows platform------------------
+
+#ifdef ND_DEBUG
+//#define ND_USE_VLD		1  // use vld to check memory leak
+#else 
+
+#define ND_MEM_STATICS		1
+#define ND_UNUSE_STDC_ALLOC 1
+#define ND_OVER_RIDE_NEW	1
+#define ND_CALLSTACK_TRACE	1			//trace function call
+
+#endif 
+
+#elif defined(__ND_LINUX__)		//----------------------linux platform------------------------
+
+#ifdef ND_DEBUG
+
+#else
+
+#define ND_MEM_STATICS		1
+#define ND_UNUSE_STDC_ALLOC 1
+#define ND_OVER_RIDE_NEW	1
+#define ND_CALLSTACK_TRACE	1			//trace function call
+
+#endif
+
+
+#elif defined(__ND_MAC__)		//-----------------------------mac-os-----------------------
+
+#ifdef ND_DEBUG
+
+#else
+
+#define ND_MEM_STATICS		1
+#define ND_UNUSE_STDC_ALLOC 1
+#define ND_OVER_RIDE_NEW	1
+#define ND_CALLSTACK_TRACE	1			//trace function call
+
+#endif
+
+#elif defined(__ND_IOS__)		//-----------------------------iOS---------------------------
+
+#define WITHOUT_ICONV		1
+
 
 #elif defined(__ND_ADNROID__)	//-----------------------------android----------------------
 
 #define WITHOUT_ICONV		1
-
-#define ND_OPEN_LOG_COMMON 	1
-#define ND_OPEN_LOG_DEBUG	1
-#define ND_OPEN_LOG_WARN	1
-#define ND_OPEN_LOG_ERROR	1
-#define ND_OPEN_LOG_FATAL	1
-//#define ND_SOURCE_TRACE		1
-//#define ND_FILE_TRACE		1
-#define ND_OUT_LOG_2CTRL	1
-#define ND_OUT_LOG_2FILE	1
-#define ND_MEM_CHECK		1
-//#define ND_USE_MSGBOX		1
-#define ND_LOG_WITH_SOURCE	1
-#define ND_LOG_WITH_TIME	1
-//#define ND_MEM_STATICS		1
-//#define ND_UNUSE_STDC_ALLOC 1
-#define ND_OVER_RIDE_NEW	1			// use myself new/delete
-#define ND_CALLSTACK_TRACE	1			//trace function call
 #define ND_LOG_WITH_ND_MARK 1 			//log with nd-log different other module
 
 #else						//-------------------------------------UNKNOWN----------------------

@@ -175,7 +175,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 		if(! ndstr_is_numerals(buf)) {
 			return -1 ;
 		}
-		mm_addr = atoi(buf) ;
+		mm_addr = ndstr_atoi_hex(buf);
 		*val =*((vm_value*) (&mm_addr) ); 
 	}
 	else if(IS_BIG_LATIN(*addr) || IS_LITTLE_LATIN(*addr)){

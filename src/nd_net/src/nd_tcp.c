@@ -162,7 +162,6 @@ int nd_tcpnode_close(struct nd_tcp_node *node,int force)
 	return 0 ;
 }
 
-#if 1 
 static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 {
 	ENTER_FUNC()
@@ -171,7 +170,6 @@ static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int fl
 	nd_assert(node) ;
 	nd_assert(msg_buf) ;
 	nd_assert(datalen<ndlbuf_capacity(&node->send_buffer)) ;
-	//packet_hton(msg_buf) ;//把网络消息的主机格式变成网络格式
 	
 	if(ndlbuf_datalen(&(node->send_buffer))>0) {
 		size_t space_len = ndlbuf_free_capacity(&(node->send_buffer)) ;
@@ -268,120 +266,6 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 	}
 
 }
-#else 
-/*
- *	send data throught nd_tcp_node
- */
-int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
-{
-	ENTER_FUNC() ;
-	signed int ret ;
-	//size_t datalen =(size_t)(NDNET_DATALEN(msg_buf) + ND_PACKET_HDR_SIZE) ;
-	//nd_msgbuf_t
-	size_t datalen =  node->get_pack_size(node, msg_buf) ;//(size_t)nd_pack_len( msg_buf) ;
-	
-	nd_assert(node) ;
-	nd_assert(msg_buf) ;
-	nd_assert(datalen<ndlbuf_capacity(&node->send_buffer)) ;
-
-	//packet_hton(msg_buf) ;//把网络消息的主机格式变成网络格式
-	
-	if((ESF_WRITEBUF+ESF_POST)&flag ) {	//写入发送缓冲
-		size_t space_len = ndlbuf_free_capacity(&(node->send_buffer)) ;
-		if(space_len<datalen) {
-			if(ESF_POST&flag) {
-				node->myerrno = NDERR_LIMITED ;
-				LEAVE_FUNC();
-				return -1 ;
-			}
-			if(-1==nd_tcpnode_flush_sendbuf_force(node)) {
-				nd_assert(0);
-				LEAVE_FUNC();
-				return -1 ;
-			}
-		}
-		ret = ndlbuf_write(&(node->send_buffer), (void*)msg_buf,datalen,EBUF_SPECIFIED) ;
-		LEAVE_FUNC();
-		return ret ;
-		
-	}
-	else if(ESF_URGENCY&flag) { //紧急发送
-		if(-1 == nd_tcpnode_flush_sendbuf_force(node) ){
-			LEAVE_FUNC();
-			return -1 ;
-		}
-		ret = socket_send_one_msg(node,msg_buf,datalen) ;
-		LEAVE_FUNC();
-		return ret ;
-	}
-	else {			//正常发送
-		/*
-		 * 这里会对发送进行优化,如果数据少则放到缓冲中,如果缓冲中数据多,则一起发送出起
-		 * 需要对缓冲上限进行限制,达到一定程度强制发送出去!
-		 * 发送过程:
-			1. 如果有数据在缓冲,并且数据能够放入缓则只是写入缓冲,
-				写入缓冲以后尝试发送(主要是为了减少WRITE次数,并且保证缓冲区数据在前
-			2. 缓冲没有数据,若达到发送下限则直接发送,否则写入缓冲
-			3. 缓冲有数据,数据必须按先后顺序发送
-		 */
-		
-		if(ndlbuf_datalen(&(node->send_buffer))>0) {
-			//处理缓冲数据
-			size_t space_len = ndlbuf_free_capacity(&(node->send_buffer)) ;
-			if(space_len >= datalen) {
-				ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
-				nd_assert(ret == datalen);
-				nd_tcpnode_tryto_flush_sendbuf(node);
-				LEAVE_FUNC();
-				return datalen ;
-			}
-			else {
-				if(-1 == nd_tcpnode_flush_sendbuf_force(node) ){ //清空缓冲
-					LEAVE_FUNC();
-					return -1 ;
-				}
-			}
-		}
-		//now send buffer is empty
-		if(datalen>ALONE_SEND_SIZE) {
-			//数据需要单独发送,不适用缓冲too long
-			nd_assert(ndlbuf_datalen(&(node->send_buffer))==0) ;
-			ret = node->sock_write((nd_handle)node,msg_buf,datalen) ;
-			if(-1==ret ) {
-				if(node->sys_error!=ESOCKETTIMEOUT){
-					LEAVE_FUNC();
-					return -1 ;
-				}
-				else {
-					//数据不能发送,尝试写入缓冲
-					ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
-
-					LEAVE_FUNC();
-					return ret ;
-				}
-			}
-			else if(ret==datalen) {
-				LEAVE_FUNC();
-				return datalen ;
-			}
-			else {
-				int wlen ;
-				char *padd = (char*) msg_buf ;
-				padd += ret ;
-				wlen = ndlbuf_write(&(node->send_buffer),padd,datalen-ret,EBUF_SPECIFIED) ;
-				LEAVE_FUNC();
-				return datalen ;
-			}
-		}
-		else {
-			//数据太少写入缓冲
-			ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
-			LEAVE_FUNC();
-			return ret ;
-		}
-	}	
-}
-#endif
 
 int nd_tcpnode_read(struct nd_tcp_node *node)
 {
@@ -545,11 +429,8 @@ int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node,int force)
 		LEAVE_FUNC();
 		return 0;
 	}
-	/*
-	if(force && !conn_node->is_session)
-		ret = (signed int)socket_send_one_msg(conn_node,ndlbuf_data(pbuf),data_len) ;
-	else */	
-		ret = (signed int)_socket_send(conn_node,ndlbuf_data(pbuf),data_len) ;
+	
+	ret = (signed int)_socket_send(conn_node,ndlbuf_data(pbuf),data_len) ;
 	if(ret>0) {
 		nd_assert(ret<= data_len) ;
 		ndlbuf_sub_data(pbuf,(size_t)ret) ;
@@ -563,6 +444,27 @@ int _tcp_node_update(struct nd_tcp_node *node)
 	ENTER_FUNC()
 	ndtime_t now = nd_time() ;
 	int ret = 0;
+
+#if 1
+	int alive_timeout = node->disconn_timeout >> 1;
+	if (!node->fd || nd_object_check_error((nd_handle)node) || !TCPNODE_CHECK_OK(node)) {
+		LEAVE_FUNC();
+		return -1;
+	}
+
+	alive_timeout = alive_timeout? alive_timeout:ND_ALIVE_TIMEOUT;
+
+	if (nd_tcpnode_flush_sendbuf((nd_netui_handle)node) == 0) {		
+		if ((now - node->last_push) > alive_timeout){
+			nd_sysresv_pack_t alive;
+			nd_make_alive_pack(&alive);
+			packet_hton(&alive);
+			ret = nd_tcpnode_send(node, &alive.hdr, ESF_URGENCY);
+		}
+	}
+	TCPNODE_TRY_CALLBACK_WRITE(node);
+	
+#else 
 	if(0==nd_send_trytolock((nd_netui_handle)node)) {
 		nd_netbuf_t *pbuf = &(node->send_buffer) ;
 		size_t data_len = ndlbuf_datalen(pbuf) ;
@@ -596,6 +498,7 @@ int _tcp_node_update(struct nd_tcp_node *node)
 		nd_send_unlock((nd_netui_handle)node) ;
 	}
 	
+#endif
 	if (now - node->last_recv > node->disconn_timeout) {
 		node->myerrno = NDERR_TIMEOUT ;
 		LEAVE_FUNC();
@@ -674,7 +577,7 @@ void nd_tcpnode_deinit(struct nd_tcp_node *conn_node)
 /* set ndnet connector default options */
 void _set_ndtcp_conn_dft_option(ndsocket_t sock_fd)
 {
-	size_t sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF *2  ;
+	size_t sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF  ;
 	socklen_t output_len ;
 	
 	struct linger lin ;
@@ -696,7 +599,7 @@ void _set_ndtcp_conn_dft_option(ndsocket_t sock_fd)
 	}*/
 
 	//set send buffer
-	sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF * 2;	
+	sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF ;	
 	output_len = sizeof(sock_bufsize) ;
 	
 	if(-1==setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&sock_bufsize, sizeof(sock_bufsize)) ){
@@ -735,49 +638,4 @@ void _set_ndtcp_session_dft_option(ndsocket_t sock_fd)
 		nd_logerror("set socket send buffer error %s\n" AND nd_last_error() ) ;
 	}
 	
-}
-
-/* set socket attribute */
-int _set_socket_addribute(ndsocket_t sock_fd)
-{
-#if 0
-	int sock_bufsize = 0 , new_bufsize = ND_PACKET_SIZE *2 ;
-	int output_len ;
-	struct timeval timeout ;
-	int ret ;
-	int keeplive = 1 ;
-	int value ;
-	
-	/* 设置接收和发送的缓冲BUF*/
-	output_len= sizeof(sock_bufsize) ;
-	ret = getsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF,(void*)&sock_bufsize,(socklen_t*)&output_len) ;
-	
-	if(sock_bufsize < new_bufsize)
-		setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (void*)&new_bufsize, sizeof(new_bufsize)) ;
-	
-	ret = getsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF,(void*)&sock_bufsize,(socklen_t*)&output_len) ;
-	if(sock_bufsize < new_bufsize)
-		setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (void*)&new_bufsize, sizeof(new_bufsize)) ;
-	
-//#ifdef __LINUX__	
-	/*设置接收和发送的超时*/
-	timeout.tv_sec = 1 ;			// one second 
-	timeout.tv_usec = 0 ;		
-	
-	setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, (void*)&timeout,sizeof(timeout)) ;
-	setsockopt(sock_fd, SOL_SOCKET, SO_SNDTIMEO, (void*)&timeout,sizeof(timeout)) ;
-
-	
-	/*设置保持活动选项*/
-	ret = setsockopt(sock_fd, SOL_SOCKET, SO_KEEPALIVE, (void*)&keeplive,sizeof(keeplive)) ;
-	//if(ret )
-	//	PERROR("setsockopt") ;		//only for test
-	
-//#endif 
-	/* 设置接收下限*/
-	value = ND_PACKET_HDR_SIZE ;
-	setsockopt(sock_fd, SOL_SOCKET, SO_RCVLOWAT, (void*)&value,sizeof(value)) ;
-	
-#endif
-	return 0 ;
 }

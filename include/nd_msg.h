@@ -59,6 +59,7 @@ enum eNDMsgSys{
 	ND_MSG_SYS_GET_MESSAGE_FORMAT_LIST , // get message id, name ,and data stream-format : 16bits:number [16bits:id, string:name, string:format]
 
 	ND_MSG_SYS_GET_MESSAGE_BUILD_TIME, //get message build time or version 
+	ND_MSG_SYS_GET_ERROR_DESC, // SEND, int32 errorid, recv { int32:errorId, string:errordesc}
     ND_MSG_SYS_NUMBER
 };
 

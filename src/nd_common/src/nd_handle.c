@@ -237,9 +237,11 @@ int _nd_object_on_destroy(nd_handle handle,int type)
 
 ///////////////////////////
 
-const char *nd_error_desc(int errcode)
+const char *nd_error_desc(int in_err)
 {
 	static __ndthread char errdesc[128];
+
+	NDUINT32 errcode = in_err;
 	
 	if (__error_convert) {
 		return __error_convert(errcode);

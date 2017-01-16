@@ -21,19 +21,19 @@ public:
 	NDSendMsg(int maxid, int minid)  ;
 	virtual ~NDSendMsg() ;
 	//inline ndmsgparam_t &MsgParam() {return _packet.msg_hdr.param ; }
-	inline ndmsgid_t &MsgMinid() {return _packet.msg_hdr.minid ; }
-	inline ndmsgid_t &MsgMaxid() {return _packet.msg_hdr.maxid ; }
-	inline NDUINT16 &MsgLength() {return _packet.msg_hdr.packet_hdr.length;}
-	inline NDUINT16 Capacity() {return sizeof(_packet.data) ;} 
+	inline ndmsgid_t &MsgMinid() {return _packet->msg_hdr.minid ; }
+	inline ndmsgid_t &MsgMaxid() {return _packet->msg_hdr.maxid ; }
+	inline NDUINT16 &MsgLength() {return _packet->msg_hdr.packet_hdr.length;}
+	inline NDUINT16 Capacity() {return sizeof(_packet->data) ;}
 	//size_t MsgLength() {return (size_t)(msg_hdr.packet_hdr.length) ;}
 	//void SetLength(size_t s) {msg_hdr.packet_hdr.length = s ;	}
-	inline char *MsgData() {return _packet.data ;}
-	inline nd_usermsgbuf_t *GetMsgAddr() {return &_packet ;}
+	inline char *MsgData() {return _packet->data ;}
+	inline nd_usermsgbuf_t *GetMsgAddr() {return _packet ;}
 	size_t GetSerialBin(void *buf, size_t bufsize) ;	//∞—œ˚œ¢ ‰≥ˆ≥…∂˛Ω¯÷∆
 	
 	size_t GetDataLen();
 protected:
-	nd_usermsgbuf_t  _packet ;
+	nd_usermsgbuf_t  *_packet ;
 };
 
 class NDIStreamMsg;
@@ -47,6 +47,7 @@ public :
 	
 	NDOStreamMsg(NDUINT16 msgID) ;
 	void Init(int maxid, int minid) ;
+	void Init(NDUINT16 msgID);
 	
 	virtual ~NDOStreamMsg() ;
 	int Write(NDUINT32 ) ;
@@ -108,6 +109,8 @@ public :
 	size_t Read(NDUINT8 *buf, size_t size) ;
 	size_t Read(char *buf, size_t size) {return	 Read((NDUINT8 *)buf, size) ;}
 	size_t ReadBin (void *buf, size_t size_buf) ;
+	int  PeekBinSize(); //return -1 error
+	
 	int Read(NDOStreamMsg &omsg) ;
 	
 	int ReadIp(ndip_t &a) ;

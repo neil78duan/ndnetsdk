@@ -29,7 +29,7 @@ int set_xml_value(char *file, char *node_name_list, char *attr_name, char*attr_v
     p = (char*)ndstr_nstr_end(p, name, '.', sizeof(name)) ;
     
     if (IS_NUMERALS(name[0])) {
-        xnode = ndxml_getnodei(&xmlfile, atoi(name)) ;
+		xnode = ndxml_getnodei(&xmlfile, ndstr_atoi_hex(name));
     }
     else {
         xnode = ndxml_getnode(&xmlfile, name) ;
@@ -51,7 +51,7 @@ int set_xml_value(char *file, char *node_name_list, char *attr_name, char*attr_v
         p = (char*) ndstr_nstr_end(p, name, '.', sizeof(name)) ;
         
         if (IS_NUMERALS(name[0])) {
-            xnode = ndxml_refsubi(xnode, atoi(name)) ;
+			xnode = ndxml_refsubi(xnode, ndstr_atoi_hex(name));
         }
         else {
             xnode = ndxml_refsub(xnode, name) ;

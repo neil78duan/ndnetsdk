@@ -13,7 +13,7 @@
 #ifndef _CBUF_H_
 #define _CBUF_H_
 
-enum{ C_BUF_SIZE = 0x10000} ;	
+enum{ C_BUF_SIZE = 16384} ;
 typedef struct nd_recbuf
 {
 	char *m_pstart, *m_pend ;	

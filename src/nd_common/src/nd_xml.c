@@ -613,7 +613,7 @@ char *ndxml_getval_buf(ndxml *node, char *buf, size_t size)
 int ndxml_getval_int(ndxml *node)
 {
 	if(node->value && node->value[0])
-		return atoi(node->value );
+		return ndstr_atoi_hex(node->value );
 	else
 		return 0 ;
 }

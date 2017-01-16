@@ -347,6 +347,7 @@ static int _call_message_func(struct msgentry_root *root,struct msg_entry_node *
 		}
 		else{
 			nd_logmsg("received message (%d,%d) UNHANDLED\n" AND msg->msg_hdr.maxid AND msg->msg_hdr.minid);
+
 		}
 	}
 	else {

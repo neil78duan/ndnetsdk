@@ -241,7 +241,7 @@ public:
 			m_enable = 0 ;
 			
 			if (m_buf.size() > 0) {
-				for(size_t i=m_buf.size()-1; i>=0; i--) {
+				for(int i= (int)(m_buf.size()-1); i>=0; i--) {
 					Undo(m_buf[i].first,m_buf[i].second,m_buf[i].optype) ;
 				}
 			}
@@ -385,6 +385,9 @@ public:
 	bool CheckChanged()
 	{
 		return m_dataChanged ? true : false;
+	}
+	void SetDataChanged() {
+		m_dataChanged = true;
 	}
 	void ClearDataChange() {
 		m_dataChanged = 0;

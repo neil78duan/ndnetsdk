@@ -57,10 +57,27 @@ ND_NET_API int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node
 ND_NET_API int nd_tcpnode_close(struct nd_tcp_node *node,int force);				//关闭连接
 ND_NET_API int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf, int flag) ;	//发送网络消息 flag ref send_flag
 ND_NET_API int nd_tcpnode_read(struct nd_tcp_node *node) ;		//读取数据,0 timeout ,-1 error or closed ,else datalen
+
 ND_NET_API int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node, int force) ;	//发送缓冲中的数据
 ND_NET_API int nd_tcpnode_tryto_flush_sendbuf(struct nd_tcp_node *conn_node) ;	//发送缓冲中的数据
+static __INLINE__ int nd_tcpnode_flush_sendbuf(nd_netui_handle node)
+{
+	int ret = 0;
+	nd_send_lock(node);
+	ret = _tcpnode_push_sendbuf((struct nd_tcp_node *)node, 0);
+	nd_send_unlock(node);
+	return ret;
+}
+static __INLINE__ int nd_tcpnode_flush_sendbuf_force(nd_netui_handle node)
+{
+	int ret = 0;
+	nd_send_lock(node);
+	ret = _tcpnode_push_sendbuf((struct nd_tcp_node *)node, 1);
+	nd_send_unlock(node);
+	return ret;
 
-ND_NET_API int tcpnode_parse_recv_msgex(struct nd_tcp_node *node,NDNET_MSGENTRY msg_entry , void *param) ;
+}
+
 ND_NET_API void nd_tcpnode_init(struct nd_tcp_node *conn_node) ;	//初始化连接节点
 
 ND_NET_API void nd_tcpnode_deinit(struct nd_tcp_node *conn_node)  ;
@@ -72,7 +89,6 @@ ND_NET_API void nd_tcpnode_sendlock_deinit(struct nd_tcp_node *conn_node) ;
  */
 ND_NET_API void nd_tcpnode_reset(struct nd_tcp_node *conn_node)  ;
 ND_NET_API int nd_socket_wait_writablity(ndsocket_t fd,int timeval) ;
-ND_NET_API  int _set_socket_addribute(ndsocket_t sock_fd) ;
 ND_NET_API void _tcp_connector_init(struct nd_tcp_node *conn_node) ;
 
 /* set ndnet connector default options */
@@ -119,19 +135,6 @@ void _set_ndtcp_session_dft_option(ndsocket_t sock_fd);
 
 #define TCPNODE_CHECK_RESET(conn_node) (((struct nd_tcp_node*)(conn_node))->status == ETS_RESET)
 
-static __INLINE__ void nd_tcpnode_flush_sendbuf(nd_netui_handle node)	
-{
-	nd_send_lock(node) ;
-	_tcpnode_push_sendbuf((struct nd_tcp_node *)node,0) ;
-	nd_send_unlock(node) ;
-}
-
-static __INLINE__ void nd_tcpnode_flush_sendbuf_force(nd_netui_handle node)	
-{
-	nd_send_lock(node) ;
-	_tcpnode_push_sendbuf((struct nd_tcp_node *)node,1) ;
-	nd_send_unlock(node) ;
-}
 
 ND_NET_API int nd_set_wait_writablity_time(int newtimeval) ;
 ND_NET_API int nd_get_wait_writablity_time() ;

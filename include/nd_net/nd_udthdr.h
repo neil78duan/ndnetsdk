@@ -151,8 +151,9 @@ static __INLINE__ void init_udt_header(struct ndudt_header *hdr)
 
 static __INLINE__ void init_udt_pocket(struct ndudt_pocket *pocket)
 {
-	u_32 *p =(u_32 *) pocket ;
-	*p++ = 0 ;*p++=0; *p++=0; 
+	memset(pocket, 0, sizeof(*pocket));
+	//u_32 *p =(u_32 *) pocket ;
+	//*p++ = 0 ;*p++=0; *p++=0; 
 	pocket->header.protocol=PROTOCOL_UDT ;
 }
 

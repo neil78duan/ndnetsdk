@@ -71,6 +71,10 @@ ND_COMMON_API const char *ndstristr(const char *src, const char *desc);
 //如果找到end位置还没有找到则返回null
 ND_COMMON_API const char *ndstr_reverse_chr(const char *src, char ch, const char *end);
 
+
+ND_COMMON_API unsigned long ndstr_atoi_hex(const char *src);
+ND_COMMON_API NDUINT64 ndstr_atoll_hex(const char *src);
+
 #ifdef _MSC_VER
 #define nd_atoi64 _atoi64
 #else 

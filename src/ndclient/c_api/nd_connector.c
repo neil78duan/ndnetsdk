@@ -193,7 +193,7 @@ int ndSetDftMsgHandler(netObject netObj,ndNetFunc dftFunc)
     return -1;
 }
 
-int ndWaitMsg(netObject netObj, char *buf, int timeOutMS)
+int ndWaitMsg(netObject netObj, char *buf, int bufsize, int timeOutMS)
 {
     int ret = nd_connector_waitmsg(netObj, (nd_packetbuf_t *)buf,timeOutMS);
 	
@@ -203,6 +203,10 @@ int ndWaitMsg(netObject netObj, char *buf, int timeOutMS)
 			NDERR_INVALID_INPUT != nd_object_lasterror((nd_handle) netObj) ) {
 			tryto_terminate(netObj) ;
 		}		
+	}
+	else if (ret > bufsize) {
+		nd_object_seterror(NDERR_LIMITED);
+		return -1;
 	}
 
 	return ret ;

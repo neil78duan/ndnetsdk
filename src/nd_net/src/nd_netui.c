@@ -165,7 +165,13 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 	}
 	else*/ {
 		int read_len = 0;
+		
+#if defined(__ND_IOS__) || defined(__ND_ADNROID__)
 		nd_packetbuf_t pack_buf ;
+#else 
+		static __ndthread  nd_packetbuf_t pack_buf ;
+#endif
+		
 		nd_hdr_init(&pack_buf.hdr) ;
 
 		//把数据拷贝出来在处理,防止迭代
@@ -554,16 +560,18 @@ int nd_connector_open(nd_netui_handle net_handle,const char *host, int port,stru
 	}
 	ndlbuf_reset(&(net_handle->recv_buffer));		/* buffer store data recv from net */
 	ndlbuf_reset(&(net_handle->send_buffer));		/* buffer store data send from net */
-	
+
+	net_handle->last_push = net_handle->last_recv = nd_time();
+	net_handle->sys_error = 0;
+	net_handle->myerrno = NDERR_SUCCESS;
+	nd_connect_level_set(net_handle, 0);
+
 	if(net_handle->type==NDHANDLE_TCPNODE){
 		struct nd_tcp_node* socket_addr=(struct nd_tcp_node*)net_handle ;
-		socket_addr->myerrno = NDERR_SUCCESS ;
-		nd_connect_level_set(net_handle, 0);
 		ret = nd_tcpnode_connect(host, port,socket_addr, proxy ) ;
 		if(-1==ret  ) {
 			socket_addr->myerrno = NDERR_OPENFILE ;
 		}else {
-
 			nd_connect_level_set(net_handle, EPL_CONNECT);
 			net_init_sendlock(net_handle) ;
 			socket_addr->write_entry = (packet_write_entry)_tcp_connector_send ;
@@ -585,9 +593,6 @@ int nd_connector_open(nd_netui_handle net_handle,const char *host, int port,stru
 		ret = -1 ;
 	}
 
-	if (0==ret ){
-		net_handle->last_push = net_handle->last_recv = nd_time() ;
-	}
 
 	LEAVE_FUNC();
 	return ret ;
@@ -792,23 +797,25 @@ TCP_REWAIT:
 		
 		ret = tcpnode_wait_msg(socket_node, waittime) ;
 		if(ret <= 0) {
-			if(socket_node->update_entry((nd_handle)socket_node)==-1) {
-				LEAVE_FUNC();
-				return -1;
+			if(socket_node->myerrno == NDERR_WOULD_BLOCK) {
+				if(socket_node->update_entry((nd_handle)socket_node)==-1) {
+					LEAVE_FUNC();
+					return -1;
+				}
+				tmout -= waittime ;
+				if (tmout > 0)
+					goto TCP_REWAIT ;
 			}
-
-			tmout -= waittime ;
-			if (tmout > 0)
-				goto TCP_REWAIT ;
-
+			
 			LEAVE_FUNC();
 			return ret ;
 		}
-		ret =nd_net_fetch_msg(net_handle, (nd_packhdr_t *)msgbuf) ; 
-
-		if(socket_node->update_entry((nd_handle)socket_node)==-1) {
-			ret = -1;
+		else {
+			ret =nd_net_fetch_msg(net_handle, (nd_packhdr_t *)msgbuf) ; 
 		}
+		//if(socket_node->update_entry((nd_handle)socket_node)==-1) {
+		//	ret = -1;
+		//}
 	}
 	else {
 		ndtime_t now = nd_time() ;

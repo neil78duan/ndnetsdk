@@ -31,6 +31,9 @@ public :
 	int BigDataSend(int maxID, int minID, void *data, size_t datalen);
 	
 	int Send(NDOStreamMsg &omsg) ;		//send message in script
+	int Send(int maxId, int minId, void *data, size_t len);
+	int Send(NDUINT16 messageId, void *data, size_t len);
+
 	int Close(int flag = 0);
 
 	int SendRawData(void *data, size_t size) ;

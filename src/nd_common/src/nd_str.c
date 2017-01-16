@@ -11,7 +11,7 @@
 
 
 static __ndthread int __s_code_type = ND_ENCODE_TYPE;
-
+static int _getBCDindex(char ch);
 int ndstr_set_code(int type)
 {
 	int ret = __s_code_type;
@@ -101,31 +101,43 @@ const char *ndstr_first_valid(const char *src)
 /* 检测字符是否是有效的数字*/
 int ndstr_is_numerals(const char *src)
 {
-	int dot = 0 ;
-	int ret = 0 ;
-	src = ndstr_first_valid(src) ;
-
-	if(*src==_MINUS)
-		++src ;
-	else if(IS_NUMERALS(*src)){
-		++src ; ret = 1 ;
-	}
-	else
-		return 0 ;
-	while(*src) {
-		if(IS_NUMERALS(*src) ){
-			ret = 1 ;
+	if (*src == '0' && (src[1] == 'x' || src[1] == 'X')){
+		src += 2;
+		while (*src){
+			if (-1 == _getBCDindex(*src++) ) {
+				return 0;
+			}
 		}
-		else if(_DOT==*src) {
-			dot++ ;
-			if(dot > 1)
-				return 0 ;
+		return 1;
+	}
+	else {
+
+		int dot = 0;
+		int ret = 0;
+		src = ndstr_first_valid(src);
+
+		if (*src == _MINUS)
+			++src;
+		else if (IS_NUMERALS(*src)){
+			++src; ret = 1;
 		}
 		else
-			return 0 ;
-		++src ;
+			return 0;
+		while (*src) {
+			if (IS_NUMERALS(*src)){
+				ret = 1;
+			}
+			else if (_DOT == *src) {
+				dot++;
+				if (dot > 1)
+					return 0;
+			}
+			else
+				return 0;
+			++src;
+		}
+		return ret;
 	}
-	return ret ;
 }
 
 //检测字符串是否自然数
@@ -544,3 +556,55 @@ const char *ndstr_reverse_chr(const char *src, char ch, const char *end)
 	return NULL;
 }
 
+int _getBCDindex(char ch)
+{
+	const char *bcdText = { "0123456789abcdef" };
+	if (ch >= 'A' && ch <= 'Z') {
+		ch += 0x20;
+	}
+	for (int i = 0; i < 16; i++){
+		if (ch == bcdText[i]){
+			return i;
+		}
+	}
+	return -1;
+}
+unsigned long ndstr_atoi_hex(const char *src)
+{
+	unsigned long val = 0;
+	if (*src == '0' && (src[1] == 'x' || src[1] == 'X')){
+		src += 2;
+		while (*src){
+			int index = _getBCDindex(*src);
+			if (-1==index )	{
+				return 0;
+			}
+			val = (val << 4) | index;
+			++src;
+		}
+		return val;
+	}
+	else {
+		return atoi(src);
+	}
+}
+
+NDUINT64 ndstr_atoll_hex(const char *src)
+{
+	NDUINT64 val = 0;
+	if (*src == '0' && (src[1] == 'x' || src[1] == 'X')){
+		src += 2;
+		while (*src){
+			int index = _getBCDindex(*src);
+			if (-1 == index)	{
+				return 0;
+			}
+			val = (val << 4) | index;
+			++src;
+		}
+		return val;
+	}
+	else {
+		return nd_atoi64(src);
+	}
+}

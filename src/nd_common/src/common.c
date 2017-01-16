@@ -46,28 +46,7 @@ const char *nd_process_name()
 	}
 	return s_proname ;
 }
-/*
 
-ndchar_t *nd_process_name() 
-{
-#ifdef ND_UNICODE
-	int required ;
-	size_t size;
-	char *p = process_name();
-	static ndchar_t s_proname[128] = {0} ;
-	required = mbstowcs(NULL, p, 0);
-
-	size = mbstowcs( s_proname, p, required+1);
-	if (size == (size_t) (-1))
-		return _NDT("ndengine");
-
-	return s_proname ;
-
-#else 
-	return process_name();
-#endif
-	
-}*/
 
 int nd_arg(int argc, const char *argv[])
 {
@@ -93,10 +72,9 @@ int nd_common_init()
 	nd_setxml_log(nd_output) ;
 #else
 	nd_setxml_log(nd_default_filelog) ;
-
 #endif
 
-	nd_logmsg("%s common init\n" AND nd_process_name() ) ;
+	//nd_logmsg("%s common init\n" AND nd_process_name() ) ;
 #ifdef ND_UNIX
 	setlocale(LC_CTYPE, "zh-CN.UTF-8");  //支持中文
 #else 
@@ -104,7 +82,6 @@ int nd_common_init()
 #endif
 	//nd_memory_init() ;
 	if(-1==nd_mempool_root_init() )  {
-		
 		return -1 ;
 	}
 	nd_sourcelog_init() ;
@@ -128,6 +105,41 @@ void nd_common_release()
 int nd_common_isinit() 
 {
 	return __s_common_init  ;
+}
+const char * nd_common_machine_info(char buf[], size_t size)
+{
+	int len = 0;
+	char *p = buf;
+
+#if defined( __ND_WIN__)
+	len = snprintf(buf, size, "MACH-%s", "win");
+#elif defined( __ND_MAC__)
+	len = snprintf(buf, size, "MACH-%s", "mac-");
+#elif defined( __ND_IOS__)
+	len = snprintf(buf, size, "MACH-%s", "ios-");
+#elif defined( __ND_ANDROID__)
+	len = snprintf(buf, size, "MACH-%s", "android-");
+#elif defined( __ND_LINUX__)
+	len = snprintf(buf, size, "MACH-%s", "linux-");
+#else 
+	len = snprintf(buf, size, "MACH-%s", "unknown-");
+#endif 
+	p += len;
+	size -= len;
+#if defined(X86_64)
+	len = snprintf(p, size, "-%s", "x86-64");
+#else 
+	len = snprintf(p, size, "-%s", "32");
+#endif 
+	p += len;
+	size -= len;
+
+#ifdef ND_DEBUG
+	len = snprintf(p, size, "-%s", "debug");
+#else 
+	len = snprintf(p, size, "-%s", "release");
+#endif
+	return buf;
 }
 
 

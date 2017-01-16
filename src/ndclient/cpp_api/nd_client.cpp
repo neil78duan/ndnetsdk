@@ -240,11 +240,19 @@ int NDConnector::SendMsg(NDSendMsg &msg, int flag)
 
 int NDConnector::Send(int maxid, int minid, void *data, size_t size) 
 {
-	NDOStreamMsg omsg(maxid, minid) ;
-	if(-1==omsg.WriteBin(data, size) ) {
-		return -1 ;
+	if (!data || size == 0) {
+		nd_usermsghdr_t header;
+		nd_usermsghdr_init(&header);
+		header.maxid = maxid;
+		header.minid = minid;
+		return ::nd_connector_send(m_objhandle, &header.packet_hdr, ESF_NORMAL);
 	}
-	return SendMsg(omsg.GetMsgAddr(), ESF_NORMAL) ;
+	else {
+		NDOStreamMsg omsg(maxid, minid);
+		omsg.WriteStream((char*)data, size);
+		return SendMsg(omsg);
+	}
+
 }
 
 int NDConnector::SendMsg(nd_usermsgbuf_t *msghdr, int flag)
@@ -451,6 +459,11 @@ void ndSetLogFile(const char *pathfile)
 
 int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
 {
+#ifdef ND_DEBUG
+	nd_usermsghdr_t *pmsgHdr = (nd_usermsghdr_t*)msg;
+	nd_logmsg("BEGIN MESSAGE HANDLE(%d,%d)\n", pmsgHdr->maxid, pmsgHdr->minid);
+#endif
+
 	return nd_translate_message_ex((nd_handle)connect_handle, msg, 0, (nd_handle)htoConnector((nd_handle)connect_handle));
 	/*
 	ENTER_FUNC()	

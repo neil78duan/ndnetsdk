@@ -41,22 +41,29 @@ static int _read_file(const char *file, nd_usermsgbuf_t *msgdata)
 	return 0;
 }
 
-NDSendMsg::NDSendMsg() 
+NDSendMsg::NDSendMsg()
 {
-	nd_usermsghdr_init( (nd_usermsghdr_t*)&_packet.msg_hdr) ;
-	_packet.data[0]= 0 ;
+	_packet = new nd_usermsgbuf_t() ;
+	nd_usermsghdr_init( (nd_usermsghdr_t*)_packet) ;
+	_packet->data[0]= 0 ;
 }
 
 NDSendMsg::NDSendMsg(int maxid, int minid)  
 {
-	nd_usermsghdr_init( (nd_usermsghdr_t*)&_packet.msg_hdr) ;
-	_packet.msg_hdr.maxid = (ndmsgid_t)maxid ;
-	_packet.msg_hdr.minid = (ndmsgid_t)minid ;
-	_packet.data[0]= 0 ;
+	_packet = new nd_usermsgbuf_t() ;
+	
+	nd_usermsghdr_init( (nd_usermsghdr_t*)_packet) ;
+	_packet->msg_hdr.maxid = (ndmsgid_t)maxid ;
+	_packet->msg_hdr.minid = (ndmsgid_t)minid ;
+	_packet->data[0]= 0 ;
 }
 
 NDSendMsg::~NDSendMsg() 
 {
+	if(_packet) {
+		delete _packet ;
+		_packet = 0 ;
+	}
 }
 
 size_t NDSendMsg::GetSerialBin(void *buf, size_t bufsize)
@@ -69,7 +76,7 @@ size_t NDSendMsg::GetSerialBin(void *buf, size_t bufsize)
 	return len ;
 }
 
-size_t NDSendMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(&_packet); }
+size_t NDSendMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(_packet); }
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,19 +84,19 @@ size_t NDSendMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(&_packet); }
 NDOStreamMsg::NDOStreamMsg() :  NDSendMsg() 
 {
 	_op_addr = NDSendMsg::MsgData()  ;
-	_end = (char*) ((&_packet) + 1) ;
+	_end = (char*) (_packet + 1) ;
 }
 
 NDOStreamMsg::NDOStreamMsg(int maxid, int minid) : NDSendMsg(maxid, minid)
 {
 	_op_addr = NDSendMsg::MsgData()  ;
-	_end = (char*) ((&_packet) + 1) ;
+	_end = (char*) (_packet + 1) ;
 }
 
 NDOStreamMsg::NDOStreamMsg(NDUINT16 msgID) : NDSendMsg(ND_HIBYTE(msgID), ND_LOBYTE(msgID))
 {
 	_op_addr = NDSendMsg::MsgData()  ;
-	_end = (char*) ((&_packet) + 1) ;
+	_end = (char*) (_packet + 1) ;
 }
 NDOStreamMsg::~NDOStreamMsg() 
 {
@@ -103,15 +110,21 @@ void NDOStreamMsg::Init(int maxid, int minid)
 	MsgMinid() = minid ;
 }
 
+void NDOStreamMsg::Init(NDUINT16 msgID)
+{
+	Reset();
+	MsgMaxid() = ND_HIBYTE(msgID);
+	MsgMinid() = ND_LOBYTE(msgID);
+}
 
 int NDOStreamMsg::ToFile(const char *file)const
 {
-	return _write_file(file, &_packet);
+	return _write_file(file, _packet);
 }
 int NDOStreamMsg::FromFile(const char *file)
 {
 	Reset();
-	return _read_file(file, &_packet);
+	return _read_file(file, _packet);
 }
 
 
@@ -337,8 +350,8 @@ int NDOStreamMsg::WriteStream(char *stream_buf, size_t dataLen)
 
 void NDOStreamMsg::SetID(int maxid, int minid) 
 {
-	_packet.msg_hdr.maxid = (ndmsgid_t)maxid ;
-	_packet.msg_hdr.minid = (ndmsgid_t)minid ;
+	_packet->msg_hdr.maxid = (ndmsgid_t)maxid ;
+	_packet->msg_hdr.minid = (ndmsgid_t)minid ;
 }
 //////////////////////////////////////////////////////////////////////////
 
@@ -350,7 +363,7 @@ void NDOStreamMsg::Reset()
 	MsgMaxid() = maxid ;
 	MsgMinid() = minid ;
 	_op_addr = NDSendMsg::MsgData()  ;
-	_end = (char*) ((&_packet) + 1) ;
+	_end = (char*) (_packet + 1) ;
 }
 //////////////////////////////////////////////////////////////////////////
 
@@ -553,6 +566,13 @@ size_t NDIStreamMsg::ReadBin (void *buf, size_t size_buf)
 		}
 	}
 	return 0;
+}
+int NDIStreamMsg::PeekBinSize()
+{
+	if (_end >= _op_addr + sizeof(NDUINT16)) {
+		 return nd_netstream_to_short(_op_addr);
+	}
+	return -1;
 }
 
 

@@ -178,6 +178,7 @@ int nd_waitthread(ndth_handle handle)
 		return 0 ;
 	}
 	else {
+		nd_logerror("wait handle error: %s", nd_last_error());
 		return -1 ;
 	}
 }

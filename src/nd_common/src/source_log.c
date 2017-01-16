@@ -35,7 +35,7 @@ nd_handle __s_srclog_pool ;
 
 static ND_LIST_HEAD(__s_source_head) ;
 static int _source_numbers = 0 ;
-#define SOURCE_DUMP(msg) nd_logfatal(msg)
+#define SOURCE_DUMP nd_logfatal
 //fprintf(stderr,msg) 
 //定义资源记录器的数据结果
 struct _Source_loginfo{
@@ -94,12 +94,12 @@ static void _destroy_source_node(struct _Source_loginfo *node)
 
 static void _dump_source(struct _Source_loginfo *node)
 {
-	char buf[1024] = {0};
+	//char buf[1024] = {0};
 	nd_assert(node) ;
-	snprintf(buf,1024, "ERROR %s operate [%s] in file %s line %d\n",
+	SOURCE_DUMP( "ERROR %s operate [%s] in file %s line %d\n",
 		node->__msg,node->__operate,node->__file,node->__line) ;
 	
-	SOURCE_DUMP(buf) ;
+	//SOURCE_DUMP(buf) ;
 	list_del(&(node->__list) );
 	//free(node) ;
 	nd_pool_free_real(__s_srclog_pool,node) ;

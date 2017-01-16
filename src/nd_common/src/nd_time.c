@@ -66,17 +66,6 @@ const char *nd_get_datetimestr(void)
 	time_t nowtm;
 	time(&nowtm);
 	return nd_get_datetimestr_ex(nowtm, timebuf, 64);
-	// 	static __ndthread  char timebuf[64] ;
-	// 	time_t nowtm ;
-	// 	struct tm *gtm ;
-	// 
-	// 	time(&nowtm) ;
-	// 	gtm = localtime( &nowtm );
-	// 
-	// 	snprintf(timebuf, 64, "%d-%d-%d %d:%d:%d", 
-	// 		gtm->tm_year+1900,gtm->tm_mon+1,gtm->tm_mday,
-	// 		gtm->tm_hour,gtm->tm_min,gtm->tm_sec) ;
-	// 	return (const char *)timebuf ;
 }
 
 const char *nd_get_datetimestr_ex(time_t in_tm, char *timebuf, int size)

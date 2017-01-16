@@ -212,9 +212,9 @@ static __inline__ void list_join(struct list_head *list, struct list_head *head)
 	for (node = list_entry((head)->next, type, member);	\
 		&node->member != (head);node = list_entry(node->member.next, type, member) )
 
-#define list_for_each_entry_safe(node,n, head, type, member)	\
-	for (node = list_entry((head)->next, type, member),	\
-		n=list_entry(node->member.next, type, member);&node->member != (head); \
-		node = n, n =list_entry(n->member.next, type, member) )
+#define list_for_each_entry_safe(_node,_next_node, _head, _type, _member)	\
+	for (_node = list_entry((_head)->next, _type, _member),	\
+		_next_node=list_entry(_node->_member.next, _type, _member);&_node->_member != (_head); \
+		_node = _next_node, _next_node =list_entry(_next_node->_member.next, _type, _member) )
 
 #endif

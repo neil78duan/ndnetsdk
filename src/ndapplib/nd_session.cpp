@@ -66,6 +66,28 @@ int NDSession::Send(NDOStreamMsg &omsg)
 	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(omsg.GetMsgAddr()), ESF_NORMAL) ;
 }
 
+int NDSession::Send(int maxId, int minId, void *data, size_t len)
+{
+	if (!data || len == 0) {
+		nd_usermsghdr_t header;
+		nd_usermsghdr_init(&header);
+		header.maxid = maxId;
+		header.minid = minId;
+		return ::nd_sessionmsg_sendex(GetHandle(), &header, ESF_NORMAL);
+	}
+	else {
+		NDOStreamMsg omsg(maxId, minId);
+		omsg.WriteStream((char*)data, len);
+
+		return Send(omsg);
+	}
+}
+
+int NDSession::Send(NDUINT16 messageId, void *data, size_t len)
+{
+	return Send((int)ND_HIBYTE(messageId), (int)ND_LOBYTE(messageId), data, len);
+}
+
 int NDSession::SendMsg(NDSendMsg &smsg, int flag)
 {
 	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(smsg.GetMsgAddr()), flag) ;

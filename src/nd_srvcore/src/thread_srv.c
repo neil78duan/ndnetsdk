@@ -709,21 +709,28 @@ void nd_thsrv_setdata(nd_handle handle, void *data)
 void nd_thsrv_release_all() 
 {
 	ENTER_FUNC()
-	struct list_head *pos ,*next;
-	nd_thsrv_context_t *node ;
+	struct list_head *header ;
+	nd_thsrv_context_t *node, *next_node ;
 	struct nd_srv_entry *entry = get_srv_entry() ;
-
-//	nd_host_eixt() ;
-
-nd_log_screen("release all thread server\n") ;
-	pos = entry->th_context_list.next ;
-	while(pos !=&(entry->th_context_list))  {
-		next = pos->next ;
-		node = list_entry(pos,nd_thsrv_context_t,list) ;
-		_destroy_service(node,1) ;
-		pos = next ;
+	if (__s_entry.status == 0)	{
+		return;
 	}
-	__s_entry.status = 0 ;
+	__s_entry.status = 0;
+
+	header =&( entry->th_context_list);
+
+	list_for_each_entry_safe(node, next_node, header, nd_thsrv_context_t, list){
+		_destroy_service(node, 1);
+	}
+// 
+// nd_log_screen("release all thread server\n") ;
+// 	pos = entry->th_context_list.next ;
+// 	while(pos !=&(entry->th_context_list))  {
+// 		next = pos->next ;
+// 		node = list_entry(pos,nd_thsrv_context_t,list) ;
+// 		_destroy_service(node,1) ;
+// 		pos = next ;
+// 	}
 	INIT_LIST_HEAD(&(__s_entry.th_context_list)) ;
 
 	LEAVE_FUNC();

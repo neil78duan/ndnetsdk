@@ -49,16 +49,17 @@ int wait_key_esc()
 {
     int ch;
     while( !nd_host_check_exit() ){
-        if(kbhit()) {
-            ch = getch() ;
-            if(ND_ESC==ch){
-                printf_dbg("you are hit ESC, program eixt\n") ;
-                break ;
-            }
-        }
-        else {
-            nd_sleep(200) ;
-        }
+		nd_sleep(200);
+//         if(kbhit()) {
+//             ch = getch() ;
+//             if(ND_ESC==ch){
+//                 printf_dbg("you are hit ESC, program eixt\n") ;
+//                 break ;
+//             }
+//         }
+//         else {
+//             nd_sleep(200) ;
+//         }
     }
     return 0 ;
 }

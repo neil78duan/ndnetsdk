@@ -831,11 +831,12 @@ MSG_ENTRY_INSTANCE(nd_get_app_ver_handler)
 	NDOStreamMsg omsg(ND_USERMSG_MAXID(msg),ND_USERMSG_MINID(msg)) ;
 	
 	omsg.Write((NDUINT32)__g_version_id) ;
-#ifdef ND_DEBUG
-	omsg.Write((NDUINT8)1) ;
-#else
-	omsg.Write((NDUINT8)0) ;
-#endif
+	if (getbase_inst()->CheckIsDeveVer()) {
+		omsg.Write((NDUINT8)1);
+	}
+	else {
+		omsg.Write((NDUINT8)0);
+	}
 	omsg.Write((NDUINT8*)__g_version_desc) ;
 		
 	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(),  h_listen) ;

@@ -51,28 +51,6 @@ int nd_socket_udp_read(ndsocket_t fd ,char *buf, size_t size, SOCKADDR_IN* from_
 
 	read_len  = recvfrom(fd, buf,(int)  size, 0, (LPSOCKADDR)from_addr, &sock_len )  ;
 	return read_len  ;
-
-/*	int sock_len, read_len ;
-	SOCKADDR_IN *paddr, addr ;
-
-	nd_assert(buf && size > 0) ;
-
-	sock_len = sizeof(addr) ;
-	if(from_addr) {
-		paddr = from_addr ;
-	}
-	else {
-		memset(&addr, 0, sizeof(addr)) ;
-		paddr = &addr ;
-	}
-
-	read_len = recvfrom(fd, buf, size, 0, (LPSOCKADDR)paddr, &sock_len )  ;
-#ifdef ND_DEBUG
-	if(-1==read_len)
-		nd_showerror();
-#endif
-	return read_len  ;
-	*/
 }
 
 
@@ -191,7 +169,8 @@ ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int
       If socket(2) (or bind(2)) fails, we (close the socket
       and) try the next address. */
 
-    for (rp = result; rp != NULL; rp = rp->ai_next) {
+	for (rp = result; rp != NULL; rp = rp->ai_next) {
+		int re_usr_addr = 1 ;
         if(INADDR_ANY != bindip) {
             if((ndip_t)rp->ai_addr->sa_family != htonl(bindip)) {
                 continue ;
@@ -201,6 +180,8 @@ ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int
         if (listen_fd == -1)
             continue;
 
+		setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, (void*)&re_usr_addr, sizeof(re_usr_addr));
+		
         if (bind(listen_fd, rp->ai_addr, rp->ai_addrlen) == 0)
             break;                  /* Success */
 
@@ -219,10 +200,7 @@ ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int
 	}
 
 	if(type==SOCK_STREAM){
-        int re_usr_addr = 1 ;
-		if(-1==setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, (void*)&re_usr_addr, sizeof(re_usr_addr)) ) {
-			goto OPEN_ERROR ;
-		}
+		
 		if(-1==listen(listen_fd, listen_nums)){
 			goto OPEN_ERROR ;
 		}
@@ -336,6 +314,17 @@ ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int
 		else
 			serv_addr.sin_addr.s_addr = htonl(INADDR_ANY) ;
 		serv_addr.sin_port = tmp_port;
+#ifdef __ND_MAC__
+		re_usr_addr = 1 ;
+		if(-1==setsockopt(listen_fd, SOL_SOCKET, SO_REUSEPORT, (void*)&re_usr_addr, sizeof(re_usr_addr)) ) {
+			goto OPEN_ERROR ;
+		}
+#endif
+		re_usr_addr =1;
+		if(-1==setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, (void*)&re_usr_addr, sizeof(re_usr_addr)) ) {
+			goto OPEN_ERROR ;
+		}
+		
 		if(-1==bind (listen_fd, (struct sockaddr*)&serv_addr, sizeof(serv_addr))){
 			goto OPEN_ERROR ;
 		}
@@ -346,9 +335,7 @@ ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int
 	}
 
 	if(type==SOCK_STREAM){
-		if(-1==setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, (void*)&re_usr_addr, sizeof(re_usr_addr)) ) {
-			goto OPEN_ERROR ;
-		}
+		
 		if(-1==listen(listen_fd, listen_nums)){
 			goto OPEN_ERROR ;
 		}
@@ -416,25 +403,6 @@ ndsocket_t nd_socket_connect(const char *host_name, short port,int sock_type, SO
 #endif // __LINUX__
 
 
-#if 0
-/*
- * udp connect do not real connect
- * only create a socket !
- */
-ndsocket_t nd_socket_udp_connect(const char *host_name, short port,SOCKADDR_IN *out_addr)
-{
-	ndsocket_t conn_sock ;
-
-	if(out_addr)
-		get_sockaddr_in(host_name, port, out_addr)  ;
-	conn_sock = socket(AF_INET, SOCK_DGRAM, 0);
-
-	/*
-	 * to realizing p2p do not use system call 'bind' and 'connect'
-	 */
-	return conn_sock ;
-}
-#endif
 
 //从ip地址int 到字符串形式
 char *nd_inet_ntoa (unsigned int in, char *buffer)
@@ -447,35 +415,12 @@ char *nd_inet_ntoa (unsigned int in, char *buffer)
 	else {
 		return strncpy(buffer, inet_ntoa(inaddr), 20);
 	}
-	/*
-	char *p ;
-
-	unsigned char *bytes = (unsigned char *) &in;
-	if (buffer){
-		p=buffer ;
-	}
-	else {
-		p = _s_iptext;
-	}
-	snprintf (p, 20, "%d.%d.%d.%d", bytes[0], bytes[1], bytes[2], bytes[3]);
-	return p ;
-	 */
+	
 }
 
 ndip_t nd_inet_aton(const char *ipaddr)
 {
 	return (ndip_t) inet_addr(ipaddr) ;
-
-	//int inet_aton(const char *cp, struct in_addr *pin);
-	/*
-	HOSTENT *host ;
-
-	host = gethostbyname((ipaddr));
-	if(!host){
-		return 0 ;
-	}
-	return *((ndip_t*)(host->h_addr)) ;
-*/
 }
 
 

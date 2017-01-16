@@ -75,7 +75,7 @@ void run_print(const char *src, struct vm_cpu *vm)
 		fprintf(stdout, " reg1 = %f\n  reg2 = %f \n", vm->reg1, vm->reg2) ;
 	}
 	else if(0==ndstricmp(buf, "mem")) {
-		int mm_addr = atoi(addr) ;
+		int mm_addr = ndstr_atoi_hex(addr);
 		vm_value * pval = _get_memory(vm ,  (vm_adddress )mm_addr) ;
 		if(pval) {
 			fprintf(stdout, " memory[%d] = %f\n", mm_addr, *pval) ;

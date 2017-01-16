@@ -188,14 +188,14 @@ template<class _Ty> inline
 
 template<class _Ty1,
 class _Ty2> inline
-	nd_pair<typename nd_unrefwrap<_Ty1>::type,
-	typename nd_unrefwrap<_Ty2>::type>
+	nd_pair<typename nd_unrefwrap<const _Ty1>::type,
+	typename nd_unrefwrap<const _Ty2>::type>
 	nd_make_pair(const _Ty1& _Val1, const _Ty2& _Val2)
 {	// return pair composed from arguments
-	typedef nd_pair<typename nd_unrefwrap<_Ty1>::type,
-		typename nd_unrefwrap<_Ty2>::type> _Mypair;
-	return (_Mypair( nd_forward<_Ty1>(_Val1),
-		 nd_forward<_Ty2>(_Val2)));
+	typedef nd_pair<typename nd_unrefwrap<const _Ty1>::type,
+		typename nd_unrefwrap<const _Ty2>::type> _Mypair;
+	return (_Mypair( nd_forward<const _Ty1>(_Val1),
+		 nd_forward<const _Ty2>(_Val2)));
 };
 
 
