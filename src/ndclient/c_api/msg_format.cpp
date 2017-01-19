@@ -28,6 +28,7 @@ int ndSend(netObject netObj,int maxid, int minid, void *data, unsigned int size)
     return nd_connector_send((nd_handle)netObj,(nd_packhdr_t*) (omsg.GetMsgAddr()), ESF_URGENCY) ;
 }
 
+
 int ndSendFormat(netObject netObj,int maxid, int minid,int argc, ...)
 {
     int i=0;

@@ -205,7 +205,7 @@ int ndWaitMsg(netObject netObj, char *buf, int bufsize, int timeOutMS)
 		}		
 	}
 	else if (ret > bufsize) {
-		nd_object_seterror(NDERR_LIMITED);
+		nd_object_seterror(netObj,NDERR_LIMITED);
 		return -1;
 	}
 

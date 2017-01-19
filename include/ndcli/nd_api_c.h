@@ -69,6 +69,7 @@ ND_CONNCLI_API void ndClostConnect(netObject netObj);
 //send message
 /* send message and data */
 ND_CONNCLI_API int ndSend(netObject netObj, int maxid, int minid, void *data, unsigned int size);
+
 /* send message with format*/
 ND_CONNCLI_API int ndSendFormat(netObject netObj, int maxid, int minid, int argc, ...);
 /* send data ,before send the data need to convert to net byte-order*/
@@ -93,7 +94,7 @@ ND_CONNCLI_API int ndSetDftMsgHandler(netObject netObj, ndNetFunc dftFunc);
 //tic net message , maybe you need a single thread to call this function
 ND_CONNCLI_API int ndUpdateConnect(netObject netObj, int timeOutMS);
 //wait net message untill timeout, when you get the data ,you need handle it yourself
-ND_CONNCLI_API int ndWaitMsg(netObject netObj, char *buf, int timeOutMS);
+ND_CONNCLI_API int ndWaitMsg(netObject netObj, char *buf, int bufsize ,int timeOutMS);
 
 //set terminate callback function , return old function
 ND_CONNCLI_API ndNetFunc ndSetTerminateFunc(ndNetFunc func);
