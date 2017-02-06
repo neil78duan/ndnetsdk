@@ -128,7 +128,7 @@ char * nd_ndcode_to_utf8(const char *input_text, char *outbuf, int size)
 }
 
 #endif
-
+//-----------------end WITHOUT_ICONV-------------
 
 nd_code_convert_func nd_get_code_convert(int fromType, int toType)
 {

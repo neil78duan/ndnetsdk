@@ -558,11 +558,12 @@ const char *ndstr_reverse_chr(const char *src, char ch, const char *end)
 
 int _getBCDindex(char ch)
 {
+	int i = 0 ;
 	const char *bcdText = { "0123456789abcdef" };
 	if (ch >= 'A' && ch <= 'Z') {
 		ch += 0x20;
 	}
-	for (int i = 0; i < 16; i++){
+	for (i= 0; i < 16; i++){
 		if (ch == bcdText[i]){
 			return i;
 		}
