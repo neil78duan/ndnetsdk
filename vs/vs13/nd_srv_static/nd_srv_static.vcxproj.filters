@@ -354,6 +354,9 @@
     <ClInclude Include="..\..\..\include\ndlib.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ndlog_wrapper.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">

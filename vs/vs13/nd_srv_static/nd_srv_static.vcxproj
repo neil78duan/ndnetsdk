@@ -183,6 +183,7 @@
     <ClInclude Include="..\..\..\include\ndapplib\nd_session.h" />
     <ClInclude Include="..\..\..\include\ndapplib\readcfg.h" />
     <ClInclude Include="..\..\..\include\ndlib.h" />
+    <ClInclude Include="..\..\..\include\ndlog_wrapper.h" />
     <ClInclude Include="..\..\..\include\ndstl\nd_allocator.h" />
     <ClInclude Include="..\..\..\include\ndstl\nd_array.h" />
     <ClInclude Include="..\..\..\include\ndstl\nd_new.h" />
