@@ -56,6 +56,7 @@ int xml_load_from_buf(const char *buf, size_t size, ndxml_root *xmlroot,const ch
 			ndxml *xmlnode = parse_xmlbuf(parse_addr, data_len, &parse_addr, &error_addr);
 			if (xmlnode) {
 				list_add_tail(&xmlnode->lst_self, &xmlroot->lst_sub);
+				xmlnode->parent = xmlroot;
 				xmlroot->sub_num++;
 			}
 			else if (error_addr) {
@@ -411,6 +412,7 @@ ndxml *ndxml_copy(ndxml *node)
 		ndxml *sub_new = ndxml_copy(sub1);
 		if (sub_new) {
 			list_add_tail(&sub_new->lst_self, &newnode->lst_sub) ;
+			sub_new->parent = newnode;
 			newnode->sub_num++;
 		}
 	}
@@ -420,6 +422,7 @@ ndxml *ndxml_copy(ndxml *node)
 int ndxml_insert(ndxml *parent, ndxml*child)
 {
 	list_add_tail(&child->lst_self, &parent->lst_sub);
+	child->parent = parent;
 	parent->sub_num++;
 	return 0;
 }
@@ -439,17 +442,20 @@ int ndxml_get_index(ndxml *parent, ndxml*child)
 int ndxml_insert_ex(ndxml *parent, ndxml*child, int index)
 {
 	int i = 0;
-	struct list_head *pos;
-	list_for_each(pos, &parent->lst_sub) {
-		if (index <= i)	{
-			list_add(&child->lst_self, pos); 
-			parent->sub_num++;
-			return 0;
+	if (index != -1)	{
+		struct list_head *pos;
+		list_for_each(pos, &parent->lst_sub) {
+			if (index <= i)	{
+				list_add(&child->lst_self, pos);
+				parent->sub_num++;
+				return 0;
+			}
+			++i;
 		}
-		++i;
 	}
 
 	list_add_tail(&child->lst_self, &parent->lst_sub);
+	child->parent = parent;
 	parent->sub_num++;
 	return 0;
 	
@@ -500,9 +506,44 @@ ndxml *ndxml_addnode(ndxml_root *xmlroot, const char *name,const char *value)
 	ndxml *xmlnode = _create_xmlnode(name, value) ;
 	if(xmlnode){
 		list_add_tail(&xmlnode->lst_self, &xmlroot->lst_sub);
+		xmlnode->parent = xmlroot;
+
 		xmlroot->sub_num++ ;
 	}
 	return xmlnode ;
+}
+
+
+ndxml* ndxml_big_brother(ndxml *node)
+{
+	struct list_head *prev = node->lst_self.prev;
+	ndxml *parent = node->parent;
+	if (!parent){
+		return NULL;
+	}
+	if (prev != &parent->lst_sub) {
+		return list_entry(prev, struct tagxml, lst_self);
+	}
+	return NULL;
+}
+ndxml* ndxml_little_brother(ndxml *node)
+{
+	struct list_head *next = node->lst_self.next;
+	ndxml *parent = node->parent;
+	if (!parent){
+		return NULL;
+	}
+	if (next != &parent->lst_sub) {
+		return list_entry(next, struct tagxml, lst_self);
+	}
+	return NULL;
+}
+
+
+ndxml *ndxml_from_text(const char *text)
+{
+	char *pend, *perraddr;
+	return parse_xmlbuf(text, strlen(text), &pend, &perraddr);
 }
 
 int ndxml_delnode(ndxml_root *xmlroot,const  char *name)
@@ -530,10 +571,20 @@ int ndxml_delnodei(ndxml_root *xmlroot, int index)
 int ndxml_remove(ndxml *node, ndxml *xmlParent)
 {
 	int ret = -1;
-	struct list_head *pos = xmlParent->lst_sub.next;
+	struct list_head *pos;
 
-	if (!node || !xmlParent)
+	if (xmlParent == NULL)	{
+		xmlParent = node->parent;
+		if (!xmlParent)	{
+			list_del_init(&node->lst_self);
+			return 0;
+		}
+	}
+	pos = xmlParent->lst_sub.next;
+
+	if (!node )
 		return -1;
+
 	while (pos != &xmlParent->lst_sub) {
 		ndxml *sub_xml = list_entry(pos, struct tagxml, lst_self);
 		pos = pos->next;
@@ -546,15 +597,27 @@ int ndxml_remove(ndxml *node, ndxml *xmlParent)
 	if (ret == -1)	{
 		return ret;
 	}
-	list_del(&node->lst_self);
+	list_del_init(&node->lst_self);
+	node->parent = NULL;
 	xmlParent->sub_num--;
 	return 0;
 }
 int ndxml_delxml(ndxml *node, ndxml *xmlParent)
 {
-	if (0 == ndxml_remove(node, xmlParent)) {
+	if (!xmlParent) {
+		xmlParent = node->parent;
+	}
+
+	if (xmlParent)	{
+		if (0 == ndxml_remove(node, xmlParent)) {
+			dealloc_xml(node);
+			return 0;
+		}
+
+	}
+	else {
+		list_del(&node->lst_self);
 		dealloc_xml(node);
-		return 0;
 	}
 	return -1;
 }
@@ -757,11 +820,27 @@ ndxml *ndxml_addsubnode(ndxml *parent, const char *name, const char *value)
 	ndxml *xmlnode = _create_xmlnode(name, value) ;
 	if(xmlnode){
 		list_add_tail(&xmlnode->lst_self, &parent->lst_sub);
+		xmlnode->parent = parent;
 		parent->sub_num++ ;
 	}
 	return xmlnode ;
 }
 
+
+int ndxml_setval_int(ndxml *node, int val)
+{
+	char buf[20];
+	snprintf(buf, sizeof(buf), "%d", val);
+	return ndxml_setval(node, buf);
+}
+
+int ndxml_setval_float(ndxml *node, float val)
+{
+	char buf[20];
+	snprintf(buf,sizeof(buf), "%f", val);
+	return ndxml_setval(node, buf);
+
+}
 //ÉèÖÃXMLµÄÖµ
 int ndxml_setval(ndxml *node , const char *val)
 {
@@ -984,6 +1063,7 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 			ndxml *new_xml = parse_xmlbuf(paddr, left_size, &parsed, error_addr) ;
 			if(new_xml) {
 				list_add_tail(&new_xml->lst_self, &xmlnode->lst_sub);
+				new_xml->parent = xmlnode;
 				xmlnode->sub_num++ ;
 			}
 			else if(*error_addr && NULL==parsed) {

@@ -20,7 +20,7 @@ class NDLogWrapperBase
 public:
 	NDLogWrapperBase(pointer host)
 	{
-                m_oldLogFunction = nd_setlog_func((logfunc)NDLogWrapperBase< T>::log);
+        m_oldLogFunction = nd_setlog_func((logfunc)NDLogWrapperBase< T>::log);
 		nd_log_no_file(1);
 		nd_log_no_time(1);
 		m_hostWindows = host;
