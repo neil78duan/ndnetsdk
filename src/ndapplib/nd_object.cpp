@@ -174,4 +174,20 @@ void NDObject::OnInitilize()
 
 }
 
+
+const char *NDObject::getName()
+{
+	if (m_objhandle){
+		return nd_object_get_instname(m_objhandle);
+	}
+	return NULL;
+}
+void NDObject::setName(const char *name)
+{
+	if (m_objhandle){
+		nd_object_set_instname(m_objhandle,name);
+	}
+
+}
+
 #pragma  warning(pop)

@@ -71,12 +71,14 @@
 #define ND_OPEN_LOG_FATAL	1
 #define ND_SOURCE_TRACE		1
 #define ND_FILE_TRACE		1
+#define ND_TRACE_MESSAGE	1
 #define ND_OUT_LOG_2CTRL	1
 #define ND_OUT_LOG_2FILE	1
 #define ND_MEM_CHECK		1
 #define ND_USE_MSGBOX		1
 #define ND_LOG_WITH_SOURCE	1
 #define ND_LOG_WITH_TIME	1
+#define ND_LOG_WITH_DATE	1
 #define ND_MEM_STATICS		1
 #define ND_UNUSE_STDC_ALLOC 1
 #define ND_OVER_RIDE_NEW	1

@@ -551,6 +551,7 @@ int NDInstanceBase::connectServer(const char *name,NDConnector *inconnect)
 		inconnect->SetConnectTimeOut(pcof->tmout) ;
 	}
 	
+	inconnect->setName(name);
 	return 0;
 	
 }
@@ -924,4 +925,9 @@ MSG_ENTRY_INSTANCE(app_statics_end)
 	ND_TRACE_FUNC();
 	getbase_inst()->EndStaticsMem();
 	return 0;
+}
+
+MSG_ENTRY_INSTANCE(default_close_handler)
+{
+	return -1;
 }

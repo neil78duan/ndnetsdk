@@ -8,7 +8,7 @@
 #include "nd_common/nd_common.h"
 #include "nd_common/nd_iconv.h"
 
-#define MAX_FILE_SIZE 4*4096
+//#define MAX_FILE_SIZE 4*4096
 #define XML_H_END   0x3e2f			// /> xml node end mark
 #define XML_T_END   0x2f3c			// </ xml end node mark,高字节在高地址 /地址高于 >
 static int  _is_mark_end(const char *p)
@@ -26,6 +26,157 @@ static int  _is_mark_start(const char *p)
 	}
 	return 0;
 }
+
+static const char* _read_replace_text(const char *src, char *outText)
+{
+	const char *p = src;
+	char buf[16];
+	if (*p++ != '&')	{
+		return src;
+	}
+	
+	buf[0] = 0;
+	p = ndstr_nstr_ansi(p, buf, ';', sizeof(buf));
+	if (*p != ';')	{
+		return NULL;
+	}
+	++p;
+
+	if (0 == ndstricmp(buf, "amp")) {
+		*outText = '&';
+	}
+	else if (0 == ndstricmp(buf, "lt")) {
+		*outText = '<';
+	}
+	else if (0 == ndstricmp(buf, "gt")) {
+		*outText = '>';
+	}
+	else if (0 == ndstricmp(buf, "quot")) {
+		*outText = _ND_QUOT;
+	}
+	else if (0 == ndstricmp(buf, "apos")) {
+		*outText = _ND_SINGLE_QUOT;
+	}
+	return p;
+}
+
+
+static  char* _out_replace_text(const char *src, char *outText,size_t len)
+{
+	const char *p = src;	
+	char *ret = outText;
+	int buf_size = (int)len;
+	*outText = 0;
+
+	while (*p && buf_size > 0){
+		if (*p == _ND_SINGLE_QUOT){
+			strncat(outText, "&apos;", buf_size);
+			outText += 6;
+			buf_size -= 6;
+			++p;
+		}
+		else if (*p == _ND_QUOT) {
+			strncat(outText, "&quot;", buf_size);
+			outText += 6;
+			buf_size -= 6;
+			++p;
+		}
+
+		else if (*p == '&') {
+			strncat(outText, "&amp;", buf_size);
+			outText += 5;
+			buf_size -= 5;
+			++p;
+		}
+
+		else if (*p == '<') {
+			strncat(outText, "&lt;", buf_size);
+			outText += 4;
+			buf_size -= 4;
+			++p;
+		}
+
+		else if (*p == '>') {
+
+			strncat(outText, "&gt;", buf_size);
+			outText += 4;
+			buf_size -= 4;
+			++p;
+		}
+		else {
+			int ret = ndstr_read_utf8char((char **)&p, (char**)&outText);
+			buf_size -= ret;
+			*outText = 0;
+		}
+	}
+	*outText = 0;
+
+	return ret;
+
+}
+
+
+static const char *_xml_read_attrval(const char *xmlbuf, char *buf, size_t size)
+{
+	const char *p = xmlbuf;
+	while (*p != _ND_QUOT){
+		if (!*p) {
+			return NULL;
+		}
+		if (*p == '>'){
+			return NULL;
+		}
+		++p;
+	}
+	++p; //skip "
+
+	while (*p && size > 0){
+		if (*p == _ND_QUOT) {
+			++p;
+			break;
+		}
+		else if (*p == '&') {
+			p = _read_replace_text(p, buf);
+			if (!p)	{
+				return NULL;
+			}
+			++buf;
+			--size;
+		}
+		else {
+			int ret = ndstr_read_utf8char((char **)&p, (char**)&buf);
+			if (size < ret)	{
+				return NULL;
+			}
+			size -= ret;
+		}
+	}
+	*buf = 0;
+	return p;
+}
+
+static const char *_xml_read_value(const char *xmlbuf, char *buf, size_t size)
+{
+	const char *p = xmlbuf;
+
+	while (*p){
+		if (*p == '&'){
+			p = _read_replace_text(p, buf);
+			++buf;
+			--size;
+		}
+		else if (*p == '<' && *(p+1)=='/') {
+			break;
+		}
+		else {
+			int ret = ndstr_read_utf8char((char **)&p, (char**)&buf);
+			size -= ret;
+		}
+	}
+	*buf = 0;
+	return p;
+}
+
 
 ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const char **error_addr) ;
 ndxml *alloc_xml();
@@ -309,7 +460,8 @@ int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header)
 	struct list_head *pos = xmlroot->lst_sub.next;
     
     fp = fopen(file, "w") ;
-    if(!fp) {
+	if (!fp) {
+		//nd_logerror("open file %s : %s\n", file, nd_last_error());
         return -1;
     }
     if (header && header[0]) {
@@ -323,6 +475,7 @@ int ndxml_save_ex(ndxml_root *xmlroot, const char *file,const char*header)
         
     }
     
+	fflush(fp);
     fclose(fp) ;
     
     return 0;
@@ -439,6 +592,7 @@ int ndxml_get_index(ndxml *parent, ndxml*child)
 	}
 	return -1;
 }
+
 int ndxml_insert_ex(ndxml *parent, ndxml*child, int index)
 {
 	int i = 0;
@@ -457,9 +611,48 @@ int ndxml_insert_ex(ndxml *parent, ndxml*child, int index)
 	list_add_tail(&child->lst_self, &parent->lst_sub);
 	child->parent = parent;
 	parent->sub_num++;
-	return 0;
-	
+	return 0;	
 }
+
+
+int ndxml_insert_after(ndxml *parent, ndxml*insertNode, ndxml* brother)
+{
+	if (brother == parent){
+		list_add(&insertNode->lst_self, &parent->lst_sub);
+	}
+
+	else if (brother->parent != parent){
+		return -1;
+	}
+	else {
+		list_add(&insertNode->lst_self, &brother->lst_self);
+	}
+
+	insertNode->parent = parent;
+	parent->sub_num++;
+	return 0;
+
+
+}
+int ndxml_insert_before(ndxml *parent, ndxml*insertNode, ndxml*brother)
+{
+	if (brother == parent){
+		list_add_tail(&insertNode->lst_self, &parent->lst_sub);
+	}
+
+	else if (brother->parent != parent){
+		return -1;
+	}
+	else {
+		list_add_tail(&insertNode->lst_self, &brother->lst_self);
+	}
+
+	insertNode->parent = parent;
+	parent->sub_num++;
+	return 0;
+
+}
+
 int ndxml_merge(ndxml_root *host, ndxml_root *merged) 
 {
 	if(merged->sub_num > 0) {
@@ -622,6 +815,12 @@ int ndxml_delxml(ndxml *node, ndxml *xmlParent)
 	return -1;
 }
 
+
+void ndxml_free(ndxml *node)
+{
+	dealloc_xml(node);
+}
+
 //引用一个子节点
 ndxml *ndxml_refsub(ndxml *root, const char *name) 
 {
@@ -659,8 +858,10 @@ ndxml *ndxml_refsubi(ndxml *root, int index)
 //得到xml的值
 const char *ndxml_getval(ndxml *node)
 {
-	if(node->value && node->value[0])
-		return node->value ;
+	if (node->value && node->value[0]){
+		const char *p = node->value;
+		return *p ? p : NULL;
+	}
 	else
 		return NULL ;
 }
@@ -1028,7 +1229,25 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 			break ;
 		}
 		//read attrib name 
+		*error_addr = paddr;
 		paddr = ndstr_parse_word(paddr, attr_name) ;
+		if (!paddr)	{
+			dealloc_xml(xmlnode);
+			*parse_end = NULL;
+			return NULL;
+		}
+
+
+		*error_addr = paddr;
+		paddr = strchr(paddr, '=');
+		if (!paddr)	{
+			dealloc_xml(xmlnode);
+			*parse_end = NULL;
+			return NULL;
+		}
+
+		//---------------
+		/*
 		paddr = strchr(paddr,_ND_QUOT) ;
 		if(!paddr) {
 			dealloc_xml(xmlnode) ;
@@ -1039,7 +1258,15 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 		//read attrib VALUE
 		paddr = ndstr_str_end(paddr,buf, _ND_QUOT) ;
 		++paddr ;
-		
+		*/
+		*error_addr = paddr;
+		paddr = _xml_read_attrval(paddr, buf, sizeof(buf));
+		if (!paddr)	{
+			dealloc_xml(xmlnode);
+			return NULL;
+		}
+		//------------------
+
 		attrib_node = alloc_attrib_node(attr_name, buf) ;
 		if(attrib_node) {
 			list_add_tail(&attrib_node->lst, &xmlnode->lst_attr) ;
@@ -1093,9 +1320,21 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 		else {
 			++tmp ;
 		}
+		//----------------
+		/*
 		paddr = ndstr_str_end(tmp,buf, '<') ;		//读取xml值,一直到"<"结束
-		val_size = paddr - tmp ;
-		
+		*/
+
+		*parse_end = paddr;
+		paddr = _xml_read_value(paddr, buf, sizeof(buf));
+		if (!paddr)	{
+			dealloc_xml(xmlnode);
+			return NULL;
+		}
+
+		//-------
+		val_size = paddr - tmp;
+
 		//store value 
 		val_size += 4 ;val_size &= ~3 ;
 
@@ -1286,6 +1525,7 @@ static __INLINE__ void indent(FILE *fp, int deep)
 //@deep 节点的深度
 int xml_write(ndxml *xmlnode, FILE *fp , int deep)
 {
+	char textBuf[4096];
 	struct list_head *pos ;
 
 	indent(fp,deep) ;
@@ -1298,7 +1538,9 @@ int xml_write(ndxml *xmlnode, FILE *fp , int deep)
         char *attr_val1 = (char*)(xml_attr + 1) +xml_attr->name_size ;
 		pos = pos->next ;
         if( attr_val1[0] ) {
-			fprintf(fp, " %s=\"%s\"", (char*)(xml_attr + 1),attr_val1) ;
+			textBuf[0] = 0;
+			
+			fprintf(fp, " %s=\"%s\"", (char*)(xml_attr + 1), _out_replace_text(attr_val1, textBuf, sizeof(textBuf)));
         }
         else {
             fprintf(fp, " %s=\"\"", (char*)(xml_attr + 1)) ;
@@ -1307,7 +1549,8 @@ int xml_write(ndxml *xmlnode, FILE *fp , int deep)
 	
 	//save value of sub-xmlnode
 	if(xmlnode->value && xmlnode->value[0]) {
-		fprintf(fp, ">%s</%s>\n", xmlnode->value, xmlnode->name) ;
+		textBuf[0] = 0;
+		fprintf(fp, ">%s</%s>\n", _out_replace_text(xmlnode->value, textBuf, sizeof(textBuf)), xmlnode->name);
 	}
 	else if (xmlnode->sub_num>0){
 		fprintf(fp, ">\n") ;
@@ -1327,6 +1570,78 @@ int xml_write(ndxml *xmlnode, FILE *fp , int deep)
 	return 0 ;
 }
 
+int xml_tobuf(ndxml *xmlnode, char *buf, size_t size)
+{
+	int len;
+	char *p = buf;
+	struct list_head *pos;
+
+	char textBuf[4096];
+	
+	//indent(fp, deep);
+	len = snprintf(p,size, "<%s", xmlnode->name);
+	p += len; 
+	size -= len;
+
+	//save attribute to file 
+	pos = xmlnode->lst_attr.next;
+	while (pos != &xmlnode->lst_attr){
+		struct ndxml_attr *xml_attr = list_entry(pos, struct ndxml_attr, lst);
+		char *attr_val1 = (char*)(xml_attr + 1) + xml_attr->name_size;
+		pos = pos->next;
+		if (attr_val1[0]) {
+			textBuf[0] = 0;
+			len = snprintf(p, size, " %s=\"%s\"", (char*)(xml_attr + 1), _out_replace_text(attr_val1, textBuf, sizeof(textBuf)));
+			p += len;
+			size -= len;
+
+		}
+		else {
+			len = snprintf(p, size, " %s=\"\"", (char*)(xml_attr + 1));
+			p += len;
+			size -= len;
+
+		}
+	}
+
+	//save value of sub-xmlnode
+	if (xmlnode->value && xmlnode->value[0]) {
+		textBuf[0] = 0;
+		len = snprintf(p, size, ">%s</%s> ", _out_replace_text(xmlnode->value, textBuf, sizeof(textBuf)), xmlnode->name);
+		p += len;
+		size -= len;
+
+	}
+	else if (xmlnode->sub_num > 0){
+		len = snprintf(p, size, "> ");
+		p += len;
+		size -= len;
+
+
+		pos = xmlnode->lst_sub.next;
+		while (pos != &xmlnode->lst_sub){
+			ndxml *subxml = list_entry(pos, struct tagxml, lst_self);
+			pos = pos->next;
+			len = xml_tobuf(subxml, p, size);
+			p += len;
+			size -= len;
+
+		}
+		//indent(fp, deep);
+		len = snprintf(p, size, "</%s> ", xmlnode->name);
+		p += len;
+		size -= len;
+
+	}
+	else {
+		len = snprintf(p, size, "/> ");
+		p += len;
+		size -= len;
+
+	}
+	return (int) (p-buf);
+}
+
 void _errlog (const char *errdesc)
 {
 	fprintf(stderr,"%s", errdesc) ;	
@@ -1337,3 +1652,145 @@ int ndxml_output(ndxml *node, FILE *pf)
 	return xml_write(node, pf, 0);
 }
 
+
+size_t ndxml_to_buf(ndxml *rootNode, char *buf, size_t size)
+{
+	const char *name = ndxml_getname(rootNode);
+	if (name && *name){
+		//is common xml
+		return xml_tobuf(rootNode, buf, size);
+	}
+	else {
+		size_t ret = 0;
+		struct list_head *pos = rootNode->lst_sub.next;
+		char *p = buf;
+		while (pos != &rootNode->lst_sub) {
+			ndxml *sub_xml = list_entry(pos, struct tagxml, lst_self);
+			pos = pos->next;
+			size_t len = xml_tobuf(sub_xml, p, size);
+			p += len;
+			size -= len; 
+			ret += len;
+		}
+		return ret;
+	}
+}
+//////////////////////////////////////////////////////////////////////////
+//function of recursive getter/setter 
+
+static const char *_get_attrname_from_path(const char *attr_path_name)
+{
+	const char *start = attr_path_name;
+	size_t size = strlen(start);
+	const char *p = start + size;
+
+	int ret = 0;
+
+	while (p-- > start){
+		if (*p == '.'){
+			ret = 1;
+			break;
+		}
+		else if (*p == '/')	{
+			ret = 0;
+			break;
+		}
+	}
+
+	if (ret){
+		return p + 1;
+	}
+	return NULL;
+}
+
+ndxml* ndxml_recursive_ref(ndxml *node, const char *xmlNodePath)
+{
+	//const char *p = ndxml_getval(node);
+	const char *p = xmlNodePath;
+	char nodeName[MAX_XMLNAME_SIZE];
+
+	ndxml *retXml = NULL;
+	if (!p || !*p){
+		return NULL;
+	}
+	while (p && *p && node)	{
+		if (*p == '/') {
+			++p;
+		}
+
+		nodeName[0] = 0;
+		p = ndstr_nstr_ansi(p, nodeName, '/', 128);
+		if (strcmp(nodeName, "..") == 0){
+			retXml = ndxml_get_parent(node);
+		}
+		else if (nodeName[0]) {
+			//skip node.attrName
+			char *attrNameStart = strchr(nodeName, '.');
+			if (attrNameStart)	{
+				*attrNameStart = 0;
+				if (!*nodeName)	{
+					return node;
+				}
+				else {
+					return ndxml_getnode(node, nodeName);
+				}
+			}
+			else {
+				retXml = ndxml_getnode(node, nodeName);
+			}
+		}
+		else {
+			break;
+		}
+		node = retXml;
+	}
+
+	return retXml;
+}
+const char* ndxml_recursive_getval(ndxml *node, const char *xmlNodePath)
+{
+	ndxml*xml = ndxml_recursive_ref(node, xmlNodePath);
+	if (!xml){
+		return NULL;
+	}
+	return ndxml_getval(xml);
+}
+
+int ndxml_recursive_setval(ndxml *node, const char *xmlNodePath, const char *val)
+{
+	ndxml*xml = ndxml_recursive_ref(node, xmlNodePath);
+	if (!xml){
+		return -1;
+	}
+	return ndxml_setval(xml, val);
+}
+
+// get xml node attribute value with recursive : ndxml_recursive_ref(xml, "../../node1/subnode.name")
+const char* ndxml_recursive_getattr(ndxml *node, const char *xmlAttrPathName)
+{
+	const char *pAttrName = _get_attrname_from_path(xmlAttrPathName);
+	if (!pAttrName)	{
+		return NULL;
+	}
+
+	ndxml*xml = ndxml_recursive_ref(node, xmlAttrPathName);
+	if (!xml){
+		return NULL;
+	}
+	return ndxml_getattr_val(xml, pAttrName);
+}
+
+int ndxml_recursive_setattr(ndxml *node, const char *xmlAttrPathName, const char *attrVal)
+{
+	const char *pAttrName = _get_attrname_from_path(xmlAttrPathName);
+	if (!pAttrName)	{
+		return -1;
+	}
+
+	ndxml*xml = ndxml_recursive_ref(node, xmlAttrPathName);
+	if (!xml){
+		return -1;
+	}
+	return ndxml_setattrval(xml, pAttrName, attrVal);
+
+}

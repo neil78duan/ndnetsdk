@@ -143,4 +143,6 @@ MSG_ENTRY_DECLARE(nd_get_game_time);
 MSG_ENTRY_DECLARE(app_statics_begin);
 MSG_ENTRY_DECLARE(app_statics_end);
 
+MSG_ENTRY_DECLARE(default_close_handler);
+
 #endif

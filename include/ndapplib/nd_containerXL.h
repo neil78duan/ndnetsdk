@@ -110,6 +110,24 @@ public:
 		typename _MyBase::_Pairib ret = _MyBase::insert( nd_make_pair(f,val)) ;
 		return ret.second ;
 	}
+	bool fetchData(const _Tkey &k, _Ttype &outVal)
+	{
+		iterator it = _MyBase::find(k);
+		if (it == _MyBase::end()){
+			return false;
+		}
+		outVal = it->second;
+		return true;
+	}
+	bool setData(const _Tkey &k, const _Ttype &inVal)
+	{
+		iterator it = _MyBase::find(k);
+		if (it == _MyBase::end()){
+			return false;
+		}
+		it->second = inVal;
+		return true;
+	}
 // 	pointer LockNode(value_key& id) 
 // 	{
 // 		nd_assert(m_create) ;

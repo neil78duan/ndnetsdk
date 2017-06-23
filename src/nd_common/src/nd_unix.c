@@ -19,6 +19,7 @@
 
 #include <semaphore.h>
 #include <signal.h>
+#include <sys/stat.h>
 
 
 const char *nd_get_sys_username()
@@ -119,6 +120,63 @@ void nd_init_daemon(void)
 #endif
 }
 
+int _nd_sem_open(ndsem_t *sem, unsigned int value)
+{
+	static ndatomic_t _s_sem_index = 0 ;
+	//char sem_name[64] ;
+	ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
+	do {
+		snprintf(psem->_name, sizeof(psem->_name), "%s_sem_%d", nd_process_name(),  nd_atomic_dec( &_s_sem_index)) ;
+		
+		psem->_sem = sem_open( psem->_name, O_CREAT|O_EXCL, 0644, value );
+		if (psem->_sem== SEM_FAILED) {
+			
+			if (errno != EEXIST) {
+				nd_logerror("sem_open(%s) : %s\n",psem->_name, nd_last_error()) ;
+				free(psem) ;
+				return -1 ;
+			}
+			
+		}
+		
+	}while (psem->_sem==SEM_FAILED && errno==EEXIST) ;
+	*sem = psem ;
+	return 0;
+}
+
+ndsem_t _nd_sem_open_ex(const char *name, unsigned int value,int flag)
+{
+	
+	ndsem_t  psem =  NULL ;
+	
+	sem_t *mysem = sem_open( name, flag/*O_CREAT|O_EXCL*/, 0644, value );
+	
+	if (mysem == SEM_FAILED) {
+		nd_logerror("sem_open(%s) : %s\n",name, nd_last_error()) ;
+		return NULL;
+	}
+	psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
+	if(!psem) {
+		sem_close(mysem) ;
+		sem_unlink(name) ;
+		return NULL ;
+	}
+	
+	psem->_sem = mysem ;
+	strncpy(psem->_name,name, sizeof(psem->_name)) ;
+	
+	return psem;
+}
+
+
+int _nd_sem_close(ndsem_t sem)
+{
+	sem_close(sem->_sem) ;
+	sem_unlink(sem->_name) ;
+	free(sem) ;
+	return  0;
+}
+
 #if defined(__ND_MAC__) || defined(__ND_IOS__)
 
 void pthread_sleep(NDUINT32 msec)
@@ -164,42 +222,7 @@ int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
     }
 }
 
-
-int _nd_sem_open(ndsem_t *sem, unsigned int value)
-{
-    static ndatomic_t _s_sem_index = 0 ;
-    //char sem_name[64] ;
-    ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_mac_sem) );
-    do {
-        snprintf(psem->_name, sizeof(psem->_name), "%s_sem_%d", nd_process_name(),  nd_atomic_dec( &_s_sem_index)) ;
-        
-        psem->_sem = sem_open( psem->_name, O_CREAT|O_EXCL, 0644, value );
-        if (psem->_sem== SEM_FAILED) {
-			
-            if (errno != EEXIST) {
-				nd_logerror("sem_open(%s) : %s\n",psem->_name, nd_last_error()) ;
-                free(psem) ;
-                return -1 ;
-            }
-            
-        }
-        
-    }while (psem->_sem==SEM_FAILED && errno==EEXIST) ;
-    *sem = psem ;
-    return 0;
-}
-
-
-int _nd_sem_close(ndsem_t sem)
-{
-    sem_close(sem->_sem) ;
-    sem_unlink(sem->_name) ;
-    free(sem) ;
-    return  0;
-}
-
 #else
-
 
 void pthread_sleep(NDUINT32 msec)
 {
@@ -209,8 +232,9 @@ void pthread_sleep(NDUINT32 msec)
     mythread_cond_timewait(&_cond,&_mutex, msec) ;
 }
 
-int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime) 
+int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
 {
+	sem_t *sem = pSem->_sem ;
 	int ret ;
 	if(ND_INFINITE==waittime) {		
 		return sem_wait(sem) ;
@@ -275,7 +299,7 @@ ndth_handle nd_createthread(NDTH_FUNC func, void* param,ndthread_t *thid,int pri
 {
 	pthread_t threadid ;
 	
-	struct sched_param schparam ;
+	//struct sched_param schparam ;
 	pthread_attr_t attr ;
 	
 	pthread_attr_init(&attr);
@@ -530,7 +554,7 @@ int open_filemap(const char *filename, nd_filemap_t *out_handle)
 	int fd,ret;
 	long start, end ;
 	size_t size ;
-	fd=open( filename,O_CREAT|O_RDWR,00644 );
+	fd=open( filename,/*O_CREAT|*/O_RDWR,00644 );
 	if(fd < 0) {
 		return -1 ;
 	}
@@ -558,6 +582,64 @@ int open_filemap(const char *filename, nd_filemap_t *out_handle)
     }
 
 	return ret ;
+}
+
+int open_filemap_r(const char *filename, nd_filemap_t *out_handle)
+{
+	int fd,ret;
+	long start, end ;
+	size_t size ;
+	fd=open( filename,/*O_CREAT|*/O_RDWR,00644 );
+	if(fd < 0) {
+		return -1 ;
+	}
+	start = lseek( fd, 0L, SEEK_SET );
+	end = lseek( fd, 0L, SEEK_END );
+	if(start==-1 || end == -1) {
+		close(fd) ;
+		return -1;
+	}
+	size = end - start ;
+
+	out_handle->paddr =  mmap( NULL,size, PROT_READ,MAP_SHARED,fd,0 );
+
+	if ( MAP_FAILED==out_handle->paddr) {
+		out_handle->paddr = NULL ;
+		out_handle->size = 0 ;
+		ret = -1 ;
+	}
+	else {
+		out_handle->size = size ;
+		ret = 0 ;
+	}
+	if(-1!=fd) {
+		close( fd );
+	}
+
+	return ret ;
+}
+
+
+int nd_mem_share_create(const char *name, size_t size, nd_filemap_t *map_handle)
+{
+	if (0 == open_filemap( name, map_handle) ){
+		return 0 ;
+	}
+	if(size ==0 ) {
+		return -1;
+	}
+	if(-1==create_filemap( name, size, map_handle) ) {
+		return -1 ;
+	}
+
+	memset(map_handle->paddr, 0, map_handle->size) ;
+
+	return 0 ;
+
+}
+int nd_mem_share_close( nd_filemap_t *map_handle)
+{
+	return close_filemap(map_handle) ;
 }
 
 int nd_getcpu_num() 

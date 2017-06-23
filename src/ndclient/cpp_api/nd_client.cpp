@@ -220,6 +220,9 @@ int NDConnector::Create(const char *protocol_name)
 		}
 		nd_hook_packet(m_objhandle,(net_msg_entry )cliconn_translate_message);
 	}
+	int val = 1;
+	int size = sizeof(val);
+	nd_net_ioctl((nd_netui_handle)m_objhandle, NDIOCTL_LOG_RECV_MSG, &val, &size);
 	return 0 ;
 
 }
@@ -459,38 +462,13 @@ void ndSetLogFile(const char *pathfile)
 
 int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
 {
-#ifdef ND_DEBUG
-	nd_usermsghdr_t *pmsgHdr = (nd_usermsghdr_t*)msg;
-	nd_logmsg("BEGIN MESSAGE HANDLE(%d,%d)\n", pmsgHdr->maxid, pmsgHdr->minid);
-#endif
+	if (connect_handle->is_log_recv){
+		nd_usermsghdr_t *pmsgHdr = (nd_usermsghdr_t*)msg;
+		nd_logmsg("received (%d,%d) len=%d\n", pmsgHdr->maxid, pmsgHdr->minid, ND_USERMSG_LEN(msg));
+	}
 
 	return nd_translate_message_ex((nd_handle)connect_handle, msg, 0, (nd_handle)htoConnector((nd_handle)connect_handle));
-	/*
-	ENTER_FUNC()	
 	
-	int ret = 0 ;
-	int data_len = nd_pack_len(msg);
-	
-	nd_usermsghdr_t *usermsg = (nd_usermsghdr_t *) (msg) ;	
-	nd_usermsg_func func ;
-	
-	nd_netmsg_ntoh(usermsg) ; 
-	func = nd_msgentry_get_func((nd_handle)connect_handle, usermsg->maxid,  usermsg->minid);
-	
-	func = func? func : nd_msgentry_get_def_func((nd_handle)connect_handle) ;
-	
-	if (func){
-		NDIConn *pc = htoConnector((nd_handle)connect_handle);
-		nd_iconn_func handler = (nd_iconn_func) func ;
-		ret = handler(pc, (nd_usermsgbuf_t*)usermsg) ;		
-	}
-	else {
-		nd_logmsg("received message (%d,%d) UNHANDLED\n" AND usermsg->maxid AND usermsg->minid) ;		
-	}
-	
-	LEAVE_FUNC();
-	return  ret==-1? -1:data_len ;
-	*/
 }
 
 

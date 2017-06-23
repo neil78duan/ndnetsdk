@@ -44,6 +44,7 @@ int nd_get_encode_val(const char *encodeText)
 	return E_SRC_CODE_ANSI;
 }
 
+
 static __INLINE__ int _read_word(unsigned  char** dest, unsigned char **src)
 {
 //#if defined(ND_GB2312)
@@ -146,6 +147,15 @@ int ndstr_is_naturalnumber(const char *src)
 	int ret = 1 ;
 	src = ndstr_first_valid(src) ;
 
+	if (*src == '0' && (src[1] == 'x' || src[1] == 'X')){
+		src += 2;
+		while (*src){
+			if (-1 == _getBCDindex(*src++)) {
+				return 0;
+			}
+		}
+		return 1;
+	}
 	if(*src=='+')
 		++src ;
 	else if(IS_NUMERALS(*src)){
@@ -213,7 +223,7 @@ const char *ndstr_parse_word(const char *src, char *outstr)
 	register unsigned char a ;
 	while(*src) {
 		a = (unsigned char)*src ;
-		if(IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a=='_' ){
+		if (IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a == '_' || a == '$'){
 			*outstr++ = *src++ ;
 		}
 //#ifndef ND_ANSI
@@ -310,8 +320,12 @@ const char *_ndstr_read_cmd(const char *src, char *outstr, int n, char endmark)
 int ndstr_parse_command(const char *input_text, char *argv[], int bufize, int number)
 {
 	int ret = 0 ;
-	const char *next_text = ndstr_first_valid((const char*)input_text) ;
+	const char *next_text = input_text;
 	while (next_text && *next_text ) {
+		next_text = ndstr_first_valid((const char*)next_text);
+		if (!next_text)	{
+			break;
+		}
 #ifdef ND_UNIX
 		if (*next_text==0x24) { // $
 			char envValName[1024] ;
@@ -364,7 +378,6 @@ int ndstr_parse_command(const char *input_text, char *argv[], int bufize, int nu
 		if (ret>=number) {
 			break ;
 		}
-		next_text = ndstr_first_valid((const char*)next_text) ;
 	}
 	return ret ;
 
@@ -608,4 +621,18 @@ NDUINT64 ndstr_atoll_hex(const char *src)
 	else {
 		return nd_atoi64(src);
 	}
+}
+
+
+char *ndstr_to_little(char *src)
+{
+	char *ret = src;
+	while (*src){
+		char a = *src;
+		if (IS_BIG_LATIN(a))	{
+			*src = BIG_2_LITTLE(a);
+		}
+		++src;
+	}
+	return ret;
 }

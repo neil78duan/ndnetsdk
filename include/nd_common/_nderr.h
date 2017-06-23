@@ -77,4 +77,6 @@ ErrorElement(ERR_FEW_PARAMS, "脚本参数太少"),
 ErrorElement(ERR_PARAM_TYPE_NOT_MATCH, "参数类型不匹配"),
 ErrorElement(ERR_PARAM_INVALID, "参数无效"),
 
+ErrorElement(ERR_ILLEGAL_REQUEST, "无效的请求"),
+
 ErrorElement(ERR_UNKNOWN, "unknowwing error"),

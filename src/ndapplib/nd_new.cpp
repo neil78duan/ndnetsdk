@@ -27,7 +27,7 @@ static int __look_size = 0 ;
 //implemention of new
 void *_alloc_new(size_t size,nd_handle pool)
 {
-	ND_TRACE_FUNC() ;
+	//ND_TRACE_FUNC() ;
 	if (!pool)
 		pool = nd_global_mmpool();
 
@@ -41,7 +41,7 @@ void *_alloc_new(size_t size,nd_handle pool)
 //implemention of delete
 void _free_delete(void *p,nd_handle pool)
 {
-	ND_TRACE_FUNC() ;
+	//ND_TRACE_FUNC() ;
 	if (ND_ADDR_VALID(p)){
 		nd_pool_free(NULL, p) ;
 	}

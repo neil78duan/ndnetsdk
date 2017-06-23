@@ -38,6 +38,7 @@ typedef void (*logfunc)(const char* text) ;
 ND_COMMON_API logfunc nd_setlog_func(logfunc f);
 ND_COMMON_API int nd_log_no_file(int without_file);
 ND_COMMON_API int nd_log_no_time(int without_time);
+ND_COMMON_API int nd_log_no_date(int without_date);
 ND_COMMON_API void nd_log_close_screen(int flag);
 ND_COMMON_API void set_log_file(const char *file_name)  ;
 #define nd_log_set_file set_log_file
@@ -208,13 +209,13 @@ ND_COMMON_API int nd_callstack_end() ;
 ND_COMMON_API int nd_callstack_monitor_init(const char *filename) ;
 ND_COMMON_API int nd_callstack_monitor_end() ;
 ND_COMMON_API int push_func(const char *funcname);
-ND_COMMON_API void pop_func();
+ND_COMMON_API void pop_func(const char *funcname);
 ND_COMMON_API char *nd_get_callstack_desc(char *buf, size_t size) ;
 
 
 ND_COMMON_API int nd_callstack_monitor_dump(nd_out_func func,FILE *outfile);
 
-ND_COMMON_API int nd_show_cur_stack(nd_out_func func,FILE *outfile) ;
+ND_COMMON_API int nd_show_cur_stack(nd_out_func func, FILE *outfile);
 
 
 #ifdef ND_CALLSTACK_TRACE
@@ -222,7 +223,7 @@ ND_COMMON_API int nd_show_cur_stack(nd_out_func func,FILE *outfile) ;
 #define CALLSTACK_INIT(name)	nd_callstack_init(name)
 #define CALLSTACK_DESTROY()	nd_callstack_end()
 #define ENTER_FUNC()			int __push_func_return_value = push_func(__FUNC__) ;
-#define LEAVE_FUNC()			if(0==__push_func_return_value) pop_func() 
+#define LEAVE_FUNC()			do {if(0==__push_func_return_value) pop_func(__FUNC__) ;}while(0)
 
 #else 
 

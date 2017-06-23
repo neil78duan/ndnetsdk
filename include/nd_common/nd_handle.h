@@ -49,6 +49,7 @@ enum eObjectClose{
 	NDUINT16 myerrno;	\
 	nd_close_callback close_entry ;\
 	ndatomic_t __created  ;\
+	char inst_name[32];		\
 	struct list_head __release_cb_hdr 
 
 #endif
@@ -101,21 +102,21 @@ ND_COMMON_API int nd_object_register(struct nd_handle_reginfo *reginfo) ;
 
 int destroy_object_register_manager(void) ;
 
-#ifdef ND_SOURCE_TRACE
-
 static __INLINE__ int nd_object_set_instname(nd_handle handle, const char *name)
 {
-	struct tag_nd_handle *ptag = (struct tag_nd_handle *)handle ;
+	struct tag_nd_handle *ptag = (struct tag_nd_handle *)handle;
 	if (name && name[0]){
-		strncpy(ptag->inst_name,name, sizeof(ptag->inst_name)) ;
+		strncpy(ptag->inst_name, name, sizeof(ptag->inst_name));
 		return (int)strlen(ptag->inst_name);
 	}
 	return 0;
 }
 static __INLINE__ char* nd_object_get_instname(nd_handle handle)
 {
-	return ((struct tag_nd_handle *)handle )->inst_name ;
+	return ((struct tag_nd_handle *)handle)->inst_name;
 }
+
+#ifdef ND_SOURCE_TRACE
 
 static __INLINE__ nd_handle  object_create(const char *name,const char *file, int line)
 {	
@@ -142,14 +143,6 @@ static __INLINE__ int object_destroy(nd_handle handle, int force)
 #else 
 #define nd_object_create(name)		_object_create(name)
 #define nd_object_destroy(h,flag)	_object_destroy(h, flag)
-static __INLINE__ int nd_object_set_instname(nd_handle handle, const char *name)
-{
-	return 0;
-}
-static __INLINE__ int nd_object_get_instname(nd_handle handle)
-{
-	return 0;
-}
 
 #endif
 

@@ -220,6 +220,7 @@ int _nd_object_on_destroy(nd_handle handle,int type)
 	struct list_head *source_hdr = &handle->__release_cb_hdr ;
 	struct release_callback_source_node *node,*next ;
 	if (list_empty(source_hdr)) {
+		LEAVE_FUNC();
 		return 0;
 	}
 	list_for_each_entry_safe(node, next, source_hdr, struct release_callback_source_node, list) {

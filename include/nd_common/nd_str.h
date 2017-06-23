@@ -75,6 +75,7 @@ ND_COMMON_API const char *ndstr_reverse_chr(const char *src, char ch, const char
 ND_COMMON_API unsigned long ndstr_atoi_hex(const char *src);
 ND_COMMON_API NDUINT64 ndstr_atoll_hex(const char *src);
 
+ND_COMMON_API char *ndstr_to_little(char *src);
 #ifdef _MSC_VER
 #define nd_atoi64 _atoi64
 #else 

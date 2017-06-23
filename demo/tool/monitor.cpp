@@ -4,16 +4,6 @@
 
 
 #include "nd_common/nd_common.h"
-//#if defined(ND_COMPILE_AS_DLL)
-#if defined(ND_DEBUG)
-#pragma comment(lib,"vs10_static_cli_dbg.lib")
-//#pragma comment(lib,"nd_common_dbg.lib")
-#else
-#pragma comment(lib,"vs10_static_cli.lib")
-//#pragma comment(lib,"nd_common.lib")
-#endif
-//#endif
-
 
 void run_monitor() ;
 void exit_mon(int flag);

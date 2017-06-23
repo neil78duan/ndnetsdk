@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nd_cli", "nd_cli\nd_cli.vcxproj", "{971B7798-5B00-4C99-9793-C8DC3384CD5A}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ndclient_s", "ndclient_s\ndclient_s.vcxproj", "{A3A77A64-318E-4F5F-BCC9-D4F690522851}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ndxmlset", "ndxmlset\ndxmlset.vcxproj", "{00A19862-A352-4450-9E63-6D196280B8DE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monitor", "monitor\monitor.vcxproj", "{8B316545-923B-46A0-91D2-396232E93FC8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{00A19862-A352-4450-9E63-6D196280B8DE}.Debug|Win32.Build.0 = Debug|Win32
 		{00A19862-A352-4450-9E63-6D196280B8DE}.Release|Win32.ActiveCfg = Release|Win32
 		{00A19862-A352-4450-9E63-6D196280B8DE}.Release|Win32.Build.0 = Release|Win32
+		{8B316545-923B-46A0-91D2-396232E93FC8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8B316545-923B-46A0-91D2-396232E93FC8}.Debug|Win32.Build.0 = Debug|Win32
+		{8B316545-923B-46A0-91D2-396232E93FC8}.Release|Win32.ActiveCfg = Release|Win32
+		{8B316545-923B-46A0-91D2-396232E93FC8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

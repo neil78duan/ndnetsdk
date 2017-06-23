@@ -28,6 +28,7 @@ static NDUINT8 __close_screen_log = 0 ;
 
 static NDUINT8 __without_file_info = 0;
 static NDUINT8 __without_file_time = 0;
+static NDUINT8 __witout_date = 0;
 
 
 
@@ -44,7 +45,14 @@ int nd_log_no_time(int without_time)
 	return ret;
 
 }
+int nd_log_no_date(int without_date)
+{
+	int ret = __witout_date;
+	__witout_date = without_date;
+	return ret;
 
+	
+}
 logfunc nd_setlog_func(logfunc f)
 {
 	logfunc ret = __log_func;
@@ -167,10 +175,14 @@ int _logmsg_screen(const char *filePath, int line, const char *stm,...)
 	
 	file = _getfilename(filePath) ;
 		
-#ifdef	ND_LOG_WITH_TIME
-	p += snprintf(p, 4096 ,"%s ", nd_get_timestr()) ;
+#ifdef	ND_LOG_WITH_DATE
+	p += snprintf(p, 4096 ,"%s ", nd_get_datestr()) ;
 #endif
-	
+
+#ifdef	ND_LOG_WITH_TIME
+	p += snprintf(p, 4096 - (p - buf), "%s ", nd_get_timestr());
+#endif
+
 #ifdef	ND_LOG_WITH_SOURCE
 	p += snprintf(p, 4096- (p-buf),"[%d:%s] ",   line, file) ;
 #endif
@@ -225,9 +237,16 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 	
 #endif
 	
+#ifdef ND_LOG_WITH_DATE
+	if (__witout_date == 0) {
+		p += snprintf(p, size, "%s ", nd_get_datestr());
+		size = sizeof(buf) - (p - buf);
+	}
+#endif
+
 #ifdef	ND_LOG_WITH_TIME
 	if (__without_file_time==0) {
-		p += snprintf(p, size, "%s ", nd_get_datetimestr());
+		p += snprintf(p, size, " %s ", nd_get_timestr());
 		size = sizeof(buf) - (p - buf);
 	}
 #endif

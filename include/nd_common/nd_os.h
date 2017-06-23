@@ -150,4 +150,16 @@ static  __INLINE__ int nd_key_esc()
 #define NDMIN(a,b) ((a) < (b) ? (a) : (b))
 #define NDMAX(a,b) ((a) > (b) ? (a) : (b))
 
+ND_COMMON_API int nd_mem_share_create(const char *name, size_t size, nd_filemap_t *map_handle);
+ND_COMMON_API int nd_mem_share_close(nd_filemap_t *map_handle);
+
+static  __INLINE__ void * nd_mem_share_addr(nd_filemap_t *map_handler)
+{
+	return (void*)map_handler->paddr;
+}
+static  __INLINE__ size_t nd_mem_share_size(nd_filemap_t *map_handler)
+{
+	return map_handler->size;
+}
+
 #endif

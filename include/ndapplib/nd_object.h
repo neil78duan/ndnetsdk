@@ -56,6 +56,9 @@ public :
 	void SetUserObj(NDObject *obj) {m_userData = obj ;}
 	NDObject *GetUserObj() {return m_userData ;}
 
+	const char *getName();
+	void setName(const char *name);
+
 protected:
     NDUINT8 m_bPoolOwner ;
     nd_handle m_pool ;

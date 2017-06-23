@@ -270,6 +270,50 @@ int open_filemap(char *map_name, nd_filemap_t *out_handle)
 	return 0;
 }
 
+
+//打开一个内存映像文件
+int open_filemap_r(char *map_name, nd_filemap_t *out_handle)
+{
+	out_handle->hFile = INVALID_HANDLE_VALUE;
+
+	out_handle->hFileMap = OpenFileMappingA(FILE_MAP_READ , FALSE, map_name);
+
+	if (out_handle->hFileMap == NULL) {
+		return -1;
+	}
+
+	out_handle->paddr = MapViewOfFile(out_handle->hFileMap, FILE_MAP_READ , 0, 0, 0);
+	if (!out_handle->paddr) {
+		return -1;
+	}
+
+	out_handle->size = GetFileSize(out_handle->hFileMap, NULL);
+
+	return 0;
+}
+
+
+int nd_mem_share_create(const char *name, size_t size, nd_filemap_t *map_handle)
+{
+	if (0 == open_filemap(name, map_handle)){
+		return 0;
+	}
+	if (0 == size) {
+		return -1;
+	}
+	if (-1 == create_filemap(NULL, name, size, map_handle)) {
+		return -1;
+	}
+	memset(map_handle->paddr, 0, map_handle->size);
+	return 0;
+}
+
+int nd_mem_share_close(nd_filemap_t *map_handle)
+{
+	return close_filemap(map_handle);
+}
+
+
 int nd_get_sys_callstack(char *buf, size_t size)
 {
 	return snprintf(buf, size, "call-stack-unknow\n") ;

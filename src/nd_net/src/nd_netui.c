@@ -391,7 +391,7 @@ int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
 	int readlen = __net_fetch_msg( socket_addr, msgbuf);
 	if (readlen>0 && socket_addr->is_log_recv){
 		if (socket_addr->is_log_recv) {
-			nd_logmsg("received message (%d,%d) data-lenght=%d\n", ND_USERMSG_MAXID(msgbuf), ND_USERMSG_MINID(msgbuf), ND_USERMSG_LEN(msgbuf));
+			nd_logmsg("received (%d,%d) len=%d\n\n", ND_USERMSG_MAXID(msgbuf), ND_USERMSG_MINID(msgbuf), ND_USERMSG_LEN(msgbuf));
 		}
 		if (socket_addr->save_recv_stream) {
 			if (CURRENT_IS_CRYPT(socket_addr)) {
@@ -442,6 +442,7 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 {
 	ENTER_FUNC()
 	int ret ;
+	int maxId = ND_USERMSG_MAXID(msg_buf), minId = ND_USERMSG_MINID(msg_buf), msgLen = ND_USERMSG_LEN(msg_buf);
 	nd_assert(net_handle) ;
 	nd_assert(msg_buf) ;
 	nd_assert(net_handle->write_entry) ;
@@ -450,7 +451,9 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 		LEAVE_FUNC();
 		return -1;
 	}
-	if (net_handle->save_send_stream) {
+
+#ifdef ND_TRACE_MESSAGE
+	if (msg_buf->ndsys_msg == 0 && net_handle->save_send_stream) {
 		if ((flag & ESF_ENCRYPT)) {
 			msg_buf->encrypt = 1 ;
 			nd_netobj_send_stream_save(net_handle, msg_buf, (int) msg_buf->length ) ;
@@ -460,6 +463,8 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 			nd_netobj_send_stream_save(net_handle, msg_buf, (int)msg_buf->length);
 		}
 	}
+#endif 
+
     msg_buf->version = NDNETMSG_VERSION ;
 	if((flag & ESF_ENCRYPT) && !msg_buf->encrypt) {
 		nd_packetbuf_t crypt_buf ;
@@ -478,9 +483,17 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
         packet_ntoh(msg_buf) ;
 	}
     
-	if (ret > 0 && net_handle->is_log_send && msg_buf->ndsys_msg==0){
-		nd_logmsg("send message (%d,%d) data-lenght=%d\n", ND_USERMSG_MAXID(msg_buf), ND_USERMSG_MINID(msg_buf), ND_USERMSG_LEN(msg_buf));
+#ifdef ND_TRACE_MESSAGE
+	if (ret > 0 && msg_buf->ndsys_msg==0) {
+		if (net_handle->is_log_send) {
+			nd_logmsg("send message (0x%x,0x%x) data-lenght=%d\n", maxId,minId, msgLen);
+		}
+
+		if (nd_message_is_log(net_handle, maxId,minId)) {
+			nd_logmsg("send message (0x%x,0x%x) data-lenght=%d\n", maxId, minId, msgLen);
+		}
 	}
+#endif
 	
 	LEAVE_FUNC();
 	return ret ;

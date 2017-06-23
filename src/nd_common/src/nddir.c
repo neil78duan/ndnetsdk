@@ -10,6 +10,7 @@
 
 #include "nd_common/nddir.h"
 #include "nd_common/nd_os.h"
+#include "nd_common/nd_str.h"
 
 
 static char _current_dir[ND_FILE_PATH_SIZE] = {0} ; //current dir 
@@ -75,6 +76,7 @@ void* nd_load_file(const char *file, size_t *size)
 
 	fp = fopen(file, "rb") ;
 	if(!fp) {
+		//nd_logerror("open file %s : %s\n", file, nd_last_error());
 		return 0;
 	}
 	fseek(fp, 0, SEEK_END);
@@ -83,6 +85,7 @@ void* nd_load_file(const char *file, size_t *size)
 
 	if(buf_size==0) {
 		fclose(fp) ;
+		//nd_logmsg("load file %s is empty\n", file);
 		return NULL ;
 	}
 	buf_size += 1 ;
@@ -334,6 +337,130 @@ const char * nd_getpath(const char *filenamePath, char *pathbuf, size_t size)
 			return pathbuf;
 		}
 		
+	}
+	return NULL;
+}
+
+#ifdef WIN32
+static int __is_equal_char(char a, char b)
+{
+	if (IS_BIG_LATIN(a)) {
+		a = BIG_2_LITTLE(a);
+	}
+	if (IS_BIG_LATIN(b)) {
+		b = BIG_2_LITTLE(b);
+	}
+
+	if (a == b) {
+		return 1;
+	}
+	else if (a == '/' && b == '\\') {
+		return 1;
+	}
+	else if (b == '/' && a == '\\') {
+		return 1;
+	}
+	return 0;
+}
+
+#else
+static __INLINE__ int __is_equal_char(char a, char b)
+{
+	return (a == b);
+}
+
+#endif
+
+int __path_depth(const char *mypath)
+{
+	int ret = 1;
+	while (*mypath)	{
+		if (*mypath == '/' || *mypath == '\\') {
+			if (*(mypath + 1)){
+				++ret;
+			}
+		}
+		++mypath;
+	}
+	return ret;
+}
+
+const char *nd_relative_path(const char *fullPath, const char *workPath, char *buf, size_t bufsize)
+{
+	const char *srcpath = fullPath;
+	const char *pos = fullPath;
+	char *p = buf;
+	int depth = 0;
+	int i;
+
+	*p = 0;
+	if (!workPath)	{
+		strncpy(buf, fullPath, bufsize);
+		goto _EXIT;
+	}
+
+	//find same path index 
+	while (*fullPath){
+
+		if (!__is_equal_char(*fullPath, *workPath))	{
+			break; 
+		}
+
+		if (*fullPath == '/' || *fullPath == '\\') {
+			++depth;
+			pos = fullPath + 1;
+		}
+		++fullPath;
+		++workPath;
+	}
+
+	if (pos == srcpath){
+		strncpy(buf, fullPath, bufsize);
+		goto _EXIT;
+	}
+
+	depth = __path_depth(workPath);
+
+	for (i = 0; i < depth; i++){
+		strncat(p, "../", bufsize);
+		p += 3;
+		bufsize -= 3;
+	}
+	if (*pos){
+		strncat(p, pos, bufsize);
+	}
+
+_EXIT:
+	p += strlen(p) -1;
+
+	if (*p == '/' || *p == '\\') {
+		*p= 0;
+	}
+	return buf;
+}
+
+//get extend name 
+const char * nd_file_ext_name(const char *fullPath)
+{
+	const char *start = fullPath;
+	size_t size = strlen(start);
+	const char *p = start + size;
+
+	int ret = 0;
+
+	while (p-- > start){
+		if (*p == '.'){
+			ret = 1;
+			break;
+		}
+		else if (*p == '/' || *p=='\\')	{
+			ret = 0;
+			break;
+		}
+	}
+
+	if (ret){
+		return p + 1;
 	}
 	return NULL;
 }

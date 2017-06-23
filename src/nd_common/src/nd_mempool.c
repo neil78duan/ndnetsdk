@@ -299,7 +299,7 @@ int nd_mempool_root_init()
 	if(	__mem_root.init )
 		return 0 ;
     
-    nd_logdebug("nd_mempool_root_init : page size = %d getgranularity=%d \n", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
+    //nd_logdebug("nd_mempool_root_init : page size = %d getgranularity=%d \n", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
     
 	INIT_LIST_HEAD(&__mem_root.inuser_list) ;
 	//INIT_LIST_HEAD(&__mem_root.free_page);

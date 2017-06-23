@@ -138,10 +138,17 @@ static __INLINE__ int _init_event(HANDLE *h)
 	*h = CreateEvent(NULL,FALSE,FALSE,NULL) ;
 	return (*h) ? 0 : -1 ;
 }
+
+static __INLINE__ HANDLE _sem_init_nanme(const char *name)
+{
+	return CreateEventA(NULL, FALSE, FALSE, name);
+}
+
 #define nd_sem_wait(s,t)	WaitForSingleObject(s,t)			//等待信号
 #define nd_sem_post(s)		SetEvent(s)							//发送信号
 #define nd_sem_init(s)		_init_event(&(s))  //(s)=CreateEvent(NULL,FALSE,FALSE,NULL)	//initilize semahpore resource
 #define nd_sem_destroy(s)   CloseHandle(s) 						//destroy semahpore resource
+#define nd_sem_open(name)  _sem_init_nanme(name) 
 
 #define nd_sleep(ms)	Sleep(ms) 			//睡眠1/1000 second
 

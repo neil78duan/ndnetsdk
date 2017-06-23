@@ -66,5 +66,9 @@ ND_COMMON_API  const char * nd_getpath(const char *filenamePath, char *pathbuf, 
 
 #define nd_access access
 
+//ND_COMMON_API  const char * nd_relative_path(const char *fullPath);
+ND_COMMON_API  const char * nd_relative_path(const char *fullPath,const char *workPath, char *outbuf, size_t bufsize);
+//get extend name 
+ND_COMMON_API  const char * nd_file_ext_name(const char *fullPath);
 
 #endif

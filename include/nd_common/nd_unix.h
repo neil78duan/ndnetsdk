@@ -24,6 +24,11 @@
 #include <semaphore.h>
 #include <assert.h>
 
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+
 #define ND_COMMON_API CPPAPI
 
 #ifndef __INLINE__
@@ -66,34 +71,36 @@ ND_COMMON_API void nd_init_daemon(void) ;
 #define NDSEM_TIMEOUT		1
 #define INFINITE            0xFFFFFFFF
 
-#if defined(__ND_MAC__) || defined(__ND_IOS__)
-
 #define ND_SEM_NAME_SIZE 128
-typedef struct nd_mac_sem
+struct nd_name_sem
 {
-    sem_t *_sem ;
-    char _name[ND_SEM_NAME_SIZE] ;
-} *ndsem_t ;
-//typedef sem_t* 				ndsem_t ;
-ND_COMMON_API int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)  ;
+	sem_t *_sem ;
+	char _name[ND_SEM_NAME_SIZE] ;
+};
+typedef struct nd_name_sem *ndsem_t ;
+
 ND_COMMON_API int _nd_sem_open(ndsem_t *sem,  unsigned int value) ;
 ND_COMMON_API int _nd_sem_close(ndsem_t sem) ;
+ND_COMMON_API ndsem_t _nd_sem_open_ex(const char *name, unsigned int value,int flag);
+ND_COMMON_API int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)  ;
 
 #define nd_sem_wait(s, timeout)		_unix_sem_timewait(s, timeout) //sem_wait(&(s))		//µ»¥˝–≈∫≈
 #define nd_sem_post(s)		sem_post((s)->_sem)		//∑¢ÀÕ–≈∫≈
 #define nd_sem_init(s)		_nd_sem_open(&(s),0)	//initilize semahpore resource, return 0 on success , error r
 #define nd_sem_destroy(s)   _nd_sem_close(s) 		//destroy semahpore resource
 
+#define nd_sem_open(name) _nd_sem_open_ex( name, 0, O_CREAT)
+
+#if defined(__ND_MAC__) || defined(__ND_IOS__)
+//int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
 #else
-
-typedef sem_t 				ndsem_t ;			//–≈∫≈±‰¡ø
-ND_COMMON_API int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)  ;
-
-#define nd_sem_wait(s, timeout)		_unix_sem_timewait(&(s), timeout) //sem_wait(&(s))		//µ»¥˝–≈∫≈
-#define nd_sem_post(s)		sem_post(&(s))		//∑¢ÀÕ–≈∫≈
-#define nd_sem_init(s)		sem_init(&(s),0,0)	//initilize semahpore resource, return 0 on success , error r
-#define nd_sem_destroy(s)   sem_destroy(&(s)) 		//destroy semahpore resource
-
+//typedef sem_t 				ndsem_t ;			//–≈∫≈±‰¡ø
+//ND_COMMON_API int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)  ;
+//
+//#define nd_sem_wait(s, timeout)		_unix_sem_timewait(&(s), timeout) //sem_wait(&(s))		//µ»¥˝–≈∫≈
+//#define nd_sem_post(s)		sem_post(&(s))		//∑¢ÀÕ–≈∫≈
+//#define nd_sem_init(s)		sem_init(&(s),0,0)	//initilize semahpore resource, return 0 on success , error r
+//#define nd_sem_destroy(s)   sem_destroy(&(s)) 		//destroy semahpore resource
 
 ND_COMMON_API void nd_init_daemon(void) ;
 #endif

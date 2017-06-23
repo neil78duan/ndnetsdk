@@ -394,7 +394,18 @@ EXIT_SRV:
 		contex->h_timer = 0 ;
 	}
 	nd_log_screen("%s server is exit\n", contex->srv_name) ;
-	LEAVE_FUNC();
+
+#ifdef ND_CALLSTACK_TRACE
+	if (0 == __push_func_return_value) {
+		if (contex->srv_name[0])  {
+			pop_func(contex->srv_name);
+		}
+		else {
+			pop_func(__FUNC__);
+		}
+	}
+#endif
+
 	return (void*)(ret) ;
 }
 
@@ -713,6 +724,7 @@ void nd_thsrv_release_all()
 	nd_thsrv_context_t *node, *next_node ;
 	struct nd_srv_entry *entry = get_srv_entry() ;
 	if (__s_entry.status == 0)	{
+		LEAVE_FUNC();
 		return;
 	}
 	__s_entry.status = 0;

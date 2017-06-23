@@ -25,13 +25,14 @@ extern	int create_filemap( const char *filename, size_t size,nd_filemap_t *out_h
 extern	int create_filemap( const char *filename,const char *map_name, size_t size,nd_filemap_t *out_handle)  ;
 #endif
 extern	int close_filemap(nd_filemap_t *mapinfo) ;
-extern	int open_filemap(const char *filename, nd_filemap_t *out_handle)  ;
+extern	int open_filemap(const char *filename, nd_filemap_t *out_handle);
+extern	int open_filemap_r(const char *filename, nd_filemap_t *out_handle);
 
 typedef char functionname_t[FUNCTION_NAME_SIZE] ;
 struct callstack_info
 {
-	ndatomic_t th_id ;
-	int stack_point ;
+	volatile ndthread_t th_id ;
+	volatile int stack_point;
 	functionname_t names[MAX_CALLSTACK_SIZE];
 };
 
@@ -68,7 +69,7 @@ int nd_callstack_end()
 
 int nd_callstack_monitor_init(const char *filename)
 {
-	return open_filemap( filename, &g_monitor)  ;
+	return open_filemap_r( filename, &g_monitor)  ;
 }
 
 
@@ -85,44 +86,57 @@ int push_func(const char *funcname)
 {
 	if (g_callstack_map.paddr){
 		int i ;
-		ndatomic_t self_id =(ndatomic_t) nd_thread_self() ;
+		ndthread_t self_id = nd_thread_self() ;
 		struct callstack_info *pcs =(struct callstack_info *) g_callstack_map.paddr ;
 
 		for(i=0; i<MAX_THREAD_NUM; i++, pcs++) {
-			if (self_id==nd_atomic_read(&pcs->th_id)) {
+			if (self_id == pcs->th_id || pcs->th_id == 0) {
+				
+				if (pcs->th_id==0){
+					pcs->th_id = self_id;
+					pcs->stack_point = 0;
+				}
+
 				if (pcs->stack_point < MAX_CALLSTACK_SIZE) {
-					strncpy(pcs->names[pcs->stack_point++],funcname, sizeof(functionname_t)) ;
+					strncpy(pcs->names[pcs->stack_point],funcname, sizeof(functionname_t)) ;
+					++(pcs->stack_point);
 					return 0;
 				}
+				//nd_assert(0);
 				return -1;
 			}
 		}
-		pcs =(struct callstack_info *) g_callstack_map.paddr ;
-		for(i=0; i<MAX_THREAD_NUM; i++, pcs++) {
-			if (nd_compare_swap(&pcs->th_id,0, self_id)) {
-				strncpy(pcs->names[0],funcname, sizeof(functionname_t)) ;
-				pcs->stack_point = 1 ;
-				return 0 ;
-			}
-		}
+
+		//nd_assert(0);
 	}
 	return -1;
 }
 
-void pop_func()
+void pop_func(const char *funcname)
 {
 	if (g_callstack_map.paddr){
 		int i ;
-		ndatomic_t self_id =(ndatomic_t) nd_thread_self() ;
+		ndthread_t self_id = nd_thread_self() ;
 		struct callstack_info *pcs =(struct callstack_info *) g_callstack_map.paddr ;
 
 		for(i=0; i<MAX_THREAD_NUM; i++, pcs++) {
-			if (self_id==nd_atomic_read(&pcs->th_id)) {
-				--(pcs->stack_point) ;
+			if (self_id == pcs->th_id) {
+				nd_assert(pcs->stack_point);
+				--(pcs->stack_point);
+				nd_assert(ndstrncmp(funcname, pcs->names[pcs->stack_point], sizeof(functionname_t)) == 0);
+#ifdef ND_DEBUG
+				pcs->names[pcs->stack_point][0] = 0;
+#endif
 				return  ;
 			}
+			else if (pcs->th_id == 0) {
+				break;
+			}
 		}
+
+		//nd_assert(0);
 	}
+
 }
 
 

@@ -102,6 +102,7 @@ ND_COMMON_API ndxml *ndxml_addnode(ndxml_root *xmlroot, const char *name,const c
 
 //create a node from text
 ND_COMMON_API ndxml *ndxml_from_text(const char *text);
+ND_COMMON_API size_t ndxml_to_buf(ndxml *node, char *buf, size_t size);
 
 //删除一个XML节点
 ND_COMMON_API int ndxml_delnode(ndxml_root *xmlroot, const char *name) ;
@@ -117,6 +118,8 @@ static __INLINE__ ndxml *ndxml_get_parent(ndxml *xmlnode)
 {
 	return xmlnode->parent;
 }
+
+ND_COMMON_API void ndxml_free(ndxml *xmlnode);
 //销毁这个xml集合
 ND_COMMON_API void ndxml_destroy(ndxml_root *xmlroot) ;
 
@@ -130,6 +133,10 @@ ND_COMMON_API int ndxml_save_encode(ndxml_root *xmlroot, const char *file, int i
 ND_COMMON_API ndxml *ndxml_copy(ndxml *node);
 ND_COMMON_API int ndxml_insert(ndxml *parent, ndxml*child);
 ND_COMMON_API int ndxml_insert_ex(ndxml *parent, ndxml*child, int index);
+
+ND_COMMON_API int ndxml_insert_after(ndxml *parent, ndxml*insertNode, ndxml* brother); //insertNode after brother
+ND_COMMON_API int ndxml_insert_before(ndxml *parent, ndxml*insertNode, ndxml*brother);//insertNode before brother
+
 ND_COMMON_API int ndxml_get_index(ndxml *parent, ndxml*child);
 
 //引用一个子节点
@@ -173,30 +180,51 @@ ND_COMMON_API int ndxml_delsubnodei(ndxml *parent, int index) ;
 
 ND_COMMON_API int ndxml_output(ndxml *node, FILE *pf);
 
+// get xml node with recursive : ndxml_recursive_ref(xml, "../../node1/subnode")
+ND_COMMON_API ndxml* ndxml_recursive_ref(ndxml *node, const char *xmlNodePath);
+ND_COMMON_API const char* ndxml_recursive_getval(ndxml *node, const char *xmlNodePath);
+ND_COMMON_API int ndxml_recursive_setval(ndxml *node, const char *xmlNodePath, const char *val);
+
+// get xml node attribute value with recursive : ndxml_recursive_ref(xml, "../../node1/subnode.name")
+ND_COMMON_API const char* ndxml_recursive_getattr(ndxml *node, const char *xmlAttrPathName);
+ND_COMMON_API int ndxml_recursive_setattr(ndxml *node, const char *xmlAttrPathName,const char *attrVal);
 
 //////////////////////////////////////////////////////////////////////////
 
 static __INLINE__ const char *ndxml_getname(ndxml *node)
 {
+	if (!node) {
+		return 0;
+	}
 	return node->name ;
 }
 static __INLINE__ int ndxml_getattr_num(ndxml *node)
 {
+	if (!node) {
+		return 0;
+	}
 	return node->attr_num ;
 }
 static __INLINE__ int ndxml_num(ndxml_root *root)
 {
+	if (!root) {
+		return 0;
+	}
 	return root->sub_num;
 }
 static __INLINE__ int ndxml_getsub_num(ndxml *node)
 {
+	if (!node) {
+		return 0;
+	}
 	return node->sub_num ;
 }
 static __INLINE__ const char *ndxml_getattr_name(ndxml *node, int index )
 {
 	struct ndxml_attr  * attr =ndxml_getattribi(node,  index);
 	if(attr) {
-		return (const char*) (attr+1) ;
+		const char *p = (const char*) (attr+1) ;
+		return *p ? p : NULL;
 	}
 	return NULL ;
 }
@@ -205,7 +233,8 @@ static __INLINE__ const char *ndxml_getattr_val(ndxml *node, const char *name )
 {
 	struct ndxml_attr  * attr =ndxml_getattrib(node,  name);
 	if(attr) {
-		return  ((const char*) (attr+1) ) + attr->name_size ;
+		const char *p = ((const char*)(attr + 1)) + attr->name_size;
+		return *p ? p : NULL;
 	}
 	return NULL;
 }
@@ -214,7 +243,8 @@ static __INLINE__ const char *ndxml_getattr_vali(ndxml *node, int index )
 {
 	struct ndxml_attr  * attr =ndxml_getattribi(node,  index);
 	if(attr) {
-		return  ((const char*) (attr+1) ) + attr->name_size ;
+		const char *p = ((const char*)(attr + 1)) + attr->name_size;
+		return *p ? p : NULL;
 	}
 	return NULL;
 }

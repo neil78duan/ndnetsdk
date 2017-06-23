@@ -25,15 +25,17 @@ public:
     NDCallTrace(const char *funcname)
     {
         m_ret = push_func(funcname) ;
+		pName = funcname;
     }
     ~NDCallTrace()
     {
         if(m_ret==0) {
-            pop_func() ;
+            pop_func(pName) ;
         }
     }
 private:
     int m_ret ;
+	const char *pName;
 };
 
 #define ND_TRACE_FUNC() NDCallTrace _tmp_func_trace(__FUNC__)

@@ -364,21 +364,6 @@ static int _call_message_func(struct msgentry_root *root,struct msg_entry_node *
 int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle) 
 {
 	return nd_translate_message_ex(connect_handle, msg, listen_handle, connect_handle);
-// 	ENTER_FUNC()	
-// 	
-// 	int ret = 0 ;
-// 	int data_len = nd_pack_len(msg);
-// 	struct msgentry_root *root_entry= (struct msgentry_root *) connect_handle->msg_handle;
-// 	nd_usermsghdr_t *usermsg = (nd_usermsghdr_t *) (msg) ;	
-// 	//nd_usermsg_func func ;
-// 	struct msg_entry_node * node;
-// 
-// 	nd_netmsg_ntoh(usermsg);
-// 	node = _nd_msgentry_get_node(connect_handle, usermsg->maxid, usermsg->minid);
-// 	ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, connect_handle, listen_handle);
-// 	
-// 	LEAVE_FUNC();
-// 	return  ret ==-1? -1: data_len ;
 	
 }
 
@@ -448,7 +433,8 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 			}
 		}		
 	}
-#if defined(ND_OPEN_TRACE)
+
+#if defined(ND_TRACE_MESSAGE)
     if (node && node->is_log) {
         nd_logmsg("recvived message(%d, %d)\n", usermsg->maxid,  usermsg->minid) ;
     }
@@ -457,6 +443,23 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 	LEAVE_FUNC();	
 	return  ret==-1 ? -1 : data_len ;
 	
+}
+
+int nd_message_is_log(nd_handle nethandle, int maxId, int minId)
+{
+	struct msg_entry_node * node= NULL;
+	if (nethandle->is_session)	{
+		if (nethandle->srv_root){
+			node = _nd_msgentry_get_node(nethandle->srv_root, maxId, minId);
+		}
+	}
+	else {
+		node = _nd_msgentry_get_node(nethandle, maxId, minId);
+	}
+	if (node && node->is_log) {
+		return 1;
+	}
+	return 0;
 }
 
 NDUINT32 nd_connect_level_get(nd_netui_handle handle) 

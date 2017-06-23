@@ -483,10 +483,10 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 	
 	if(session_id) {
 		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
-		if(client) {
-			client->msg_entry((nd_handle)client,(nd_packhdr_t*)net_msg, (nd_handle)lc) ;			
+		if (client ) {
+			client->msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
+			pmanger->unlock(pmanger, session_id);
 		}
-		pmanger->unlock(pmanger,session_id);	
 	}
 	else {
 		int i;
@@ -496,7 +496,7 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 			if (!client)
 				continue ;
 			if (nd_connect_level_get((nd_handle)client)>= priv_level )	{
-				nd_sessionmsg_post(client,net_msg) ;
+				client->msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
 			}
 			pmanger->unlock(pmanger,session_id) ;
 		}
