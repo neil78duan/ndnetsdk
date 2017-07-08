@@ -6,7 +6,7 @@
  */
 
 //#include "nd_common/nd_common.h"
-#include <stdarg.h>
+
 #include "ndapplib/applib.h"
 
 

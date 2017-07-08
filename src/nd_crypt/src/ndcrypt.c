@@ -7,9 +7,6 @@
 #include "nd_common/nd_common.h"
 #include "nd_crypt/nd_crypt.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 /*
 #if defined _DEBUG || defined DEBUG

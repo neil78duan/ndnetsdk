@@ -7,11 +7,6 @@
 
 #include "nd_vm/nd_vm.h"
 #include "nd_common/nd_str.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <memory.h>
-#include <string.h>
 
 //#define _CRT_SECURE_NO_WARNINGS 1
 

@@ -13,10 +13,8 @@
 #include "ndapplib/nd_msgpacket.h"
 #include "ndapplib/nd_datatransfer.h"
 #include "ndcli/nd_api_c.h"
-//#include "ndapplib/applib.h"
 
 #include "nd_msg.h"
-#include <stdarg.h>
 
 int ndSend(netObject netObj,int maxid, int minid, void *data, unsigned int size)
 {

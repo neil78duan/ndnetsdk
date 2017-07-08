@@ -11,9 +11,6 @@
 
 
 #ifndef BUILD_AS_THIRD_PARTY
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "nd_common/nd_common.h"
 #include "nd_net/nd_netlib.h"

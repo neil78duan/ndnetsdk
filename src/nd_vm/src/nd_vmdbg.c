@@ -7,11 +7,7 @@
 
 #include "nd_vm/nd_vm.h"
 #include "nd_common/nd_str.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <memory.h>
-#include <string.h>
+
 
 //size_t vm_parse_expression(char *textbuf, char *code_buf) ;
 

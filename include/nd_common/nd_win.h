@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <conio.h>
 #include <errno.h>
-//#include <crtdbg.h>
+#include <string.h>
 
 #include "nd_common/nd_comcfg.h"
 #include "ndchar.h"

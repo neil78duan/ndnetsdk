@@ -5,10 +5,8 @@
  */
 
 #include "nd_vm/nd_vm.h"
-#include <memory.h>
-#include <stdlib.h>
+
 #include <math.h>
-#include <string.h>
 
 /*
 	÷∏¡ÓΩ·ππ :

@@ -14,12 +14,6 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-//#include <conio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <memory.h>
 
 #include "nd_vm/nd_vm.h"
 #include "nd_common/list.h"
