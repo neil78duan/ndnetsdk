@@ -167,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ndapplib\applib.h" />
+    <ClInclude Include="..\..\..\include\ndapplib\httpParser.h" />
     <ClInclude Include="..\..\..\include\ndapplib\ndsingleton.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_affair.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_alarms.h" />
@@ -266,6 +267,7 @@
     <ClInclude Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\ndapplib\httpParser.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\misc.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_affair.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_alarms.cpp" />

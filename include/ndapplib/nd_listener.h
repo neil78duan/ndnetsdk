@@ -33,7 +33,7 @@ class NDListener : public NDObject
 public:
 	int Close(int force=0);
 	int Open(int port,int thread_num=0);
-	int Create(const char *listen_name,int session_num, size_t session_size);
+	virtual int Create(const char *listen_name,int session_num, size_t session_size);
 	void Destroy(int flag) ;
 	
 	int GetAllocatorFreenum();
@@ -41,11 +41,11 @@ public:
 	
 	int CloseAllConnects() ;
 	void InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level=EPL_CONNECT, const char *msgname=NULL);
-	virtual int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
+	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
 	
-	NDSession *ConstructSession(void *addr);
-	void DestructSession(NDSession *psession);
-	NDSession *GetSession(NDUINT16 sessionId) ;
+	NDBaseSession *ConstructSession(void *addr);
+	void DestructSession(NDBaseSession *psession);
+	NDBaseSession *GetSession(NDUINT16 sessionId);
 	
 
 	int Attach(NDConnector &conn, nd_thsrvid_t thid = 0);
@@ -63,10 +63,10 @@ public:
 	ndthread_t GetListenThid() ;
 
 	ndthread_t OpenListenThread(int session_num) ;
-	int SwitchTothread(NDSession *session, ndthread_t aimth) ;
+	int SwitchTothread(NDBaseSession *session, ndthread_t aimth);
 	int GetClientsInThreads(ndthread_t *threadid_buf, int *count_buf, int size) ;
 
-	NDSession *htoSession(nd_handle h_session) ;
+	NDBaseSession *htoSession(nd_handle h_session);
 	void SetEmptyConnTimeout(int seconds) ;		//设置空连接超时时间
 	NDListener(nd_fectory_base *sf=NULL ) ;	
 	//void SetFectory(nd_ifectory *sf) ;
@@ -92,7 +92,7 @@ public:
 	NDSafeListener(nd_fectory_base *sf=NULL ) ;	
 	void Destroy(int flag) ;
 protected:
-	int OnAccept(NDSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
+	int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
 };
 NDListener *NDGetListener(nd_handle h_listen) ;
 NDSession *NDGetSession(nd_handle session, NDListener * Listener= NULL) ;

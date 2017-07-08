@@ -41,7 +41,7 @@ static int on_accept_entry(nd_handle nethandle, SOCKADDR_IN *addr, nd_handle h_l
 {
 	ND_TRACE_FUNC();
 	NDListener *pListener ;
-	NDSession *newSession = NULL ;
+	NDBaseSession *newSession = NULL;
 	char buf[32] ;
 	char  *pszTemp = nd_inet_ntoa( addr->sin_addr.s_addr ,buf);
 
@@ -82,7 +82,7 @@ static  void on_close_entry(nd_handle nethandle, nd_handle h_listen)
 	ND_TRACE_FUNC();
 	NDListener *pListener ;
 
-	NDSession *newSession = NULL ;
+	NDBaseSession *newSession = NULL;
 	pListener =NDGetListener( h_listen)  ;
 	
 	if(!nethandle|| !pListener)
@@ -154,25 +154,25 @@ NDListener &NDListener::operator = (nd_handle h)
 
 
 
-NDSession *NDListener::ConstructSession(void *addr)
+NDBaseSession *NDListener::ConstructSession(void *addr)
 {
-	return static_cast<NDSession*>(session_fectory->construct(addr) );
+	return static_cast<NDBaseSession*>(session_fectory->construct(addr));
 }
-void NDListener::DestructSession(NDSession *psession)
+void NDListener::DestructSession(NDBaseSession *psession)
 {
 	return session_fectory->destruct(psession);
 }
 
 
-NDSession *NDListener::GetSession(NDUINT16 sessionId)
+NDBaseSession *NDListener::GetSession(NDUINT16 sessionId)
 {
 	NDSessionMgr tmpmgr(this) ;
 	return tmpmgr.TryLock(sessionId) ;
 }
 
-NDSession *NDListener::htoSession(nd_handle h_session) 
+NDBaseSession *NDListener::htoSession(nd_handle h_session)
 {
-	return static_cast<NDSession*>(nd_session_getdata((nd_netui_handle )h_session))  ;
+	return static_cast<NDBaseSession*>(nd_session_getdata((nd_netui_handle)h_session));
 }
 
 int NDListener::Create(const char *listen_name, int session_num, size_t session_size)
@@ -291,7 +291,7 @@ int NDListener::GetAllocatorFreenum()
 
 }
 
-int NDListener::OnAccept(NDSession *pSession, SOCKADDR_IN *addr)
+int NDListener::OnAccept(NDBaseSession *pSession, SOCKADDR_IN *addr)
 {
 	return 0 ;
 }
@@ -345,7 +345,7 @@ ndthread_t NDListener::OpenListenThread(int session_num)
 {
 	return nd_open_listen_thread((nd_listen_handle) GetHandle(),session_num)  ;
 }
-int NDListener::SwitchTothread(NDSession *session, ndthread_t aimth) 
+int NDListener::SwitchTothread(NDBaseSession *session, ndthread_t aimth)
 {
 	return nd_session_switch((nd_listen_handle) GetHandle(),session->GetSessionID(),  aimth);
 }
@@ -371,7 +371,7 @@ void NDSafeListener::Destroy(int flag)
 
 }
 
-int NDSafeListener::OnAccept(NDSession *pSession, SOCKADDR_IN*addr)
+int NDSafeListener::OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr)
 {
 	if (m_inst){
 		if(!m_inst->CheckReliableHost(addr->sin_addr.s_addr) ) {

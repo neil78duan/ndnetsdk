@@ -157,13 +157,14 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 		return 0 ;
 	}
 	//////////////////////////////////////////////////////////////////////////	
-	/*if (node->is_session){		
+	if (node->user_def_data_hook){	
+		int data_len = ndlbuf_datalen(&(node->recv_buffer));
 		ret = node->data_entry(node, ndlbuf_data(&(node->recv_buffer)), data_len, node->srv_root) ;
 		if(ret > 0 ){
 			ndlbuf_sub_data(&(node->recv_buffer),ret) ;
 		}		
 	}
-	else*/ {
+	else {
 		int read_len = 0;
 		
 #if defined(__ND_IOS__) || defined(__ND_ADNROID__)

@@ -502,6 +502,7 @@ data_in_entry nd_hook_data(nd_handle h, data_in_entry data_entry)
 	if(h->type==NDHANDLE_TCPNODE || h->type==NDHANDLE_UDPNODE){
 		ret = ((struct netui_info *)h)->data_entry ;
 		((struct netui_info *)h)->data_entry = data_entry ;
+		((struct netui_info *)h)->user_def_data_hook = 1;
 	}
 	else if(h->type==NDHANDLE_LISTEN){
 		ret = ((struct nd_srv_node *)h)->data_entry ;

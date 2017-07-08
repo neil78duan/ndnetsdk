@@ -357,6 +357,9 @@
     <ClInclude Include="..\..\..\include\ndlog_wrapper.h">
       <Filter>include\ndapplib</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\httpParser.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
@@ -616,6 +619,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_common\src\nd_time.c">
       <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\httpParser.cpp">
+      <Filter>src\ndapplib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

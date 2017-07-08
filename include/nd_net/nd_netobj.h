@@ -70,6 +70,7 @@ typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 	NDUINT8		is_log_recv:1;	\
 	NDUINT8 	save_send_stream:1;\
 	NDUINT8 	save_recv_stream:1;\
+	NDUINT8 	user_def_data_hook:1;\
 	NDUINT16	session_id;		\
 	ndtime_t	start_time ;	\
 	ndtime_t	last_recv ;		\
