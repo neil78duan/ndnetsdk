@@ -104,7 +104,7 @@ int nd_net_bind(int port, int listen_nums,nd_handle net_handle)
 
 int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN *to) 
 {
-	return sendto(((struct nd_netsocket*)node)->fd, data,(int) len,0,(LPSOCKADDR)to, (int) sizeof(*to)) ;
+	return (int)sendto(((struct nd_netsocket*)node)->fd, data,(int) len,0,(LPSOCKADDR)to, (int) sizeof(*to)) ;
 }
 
 

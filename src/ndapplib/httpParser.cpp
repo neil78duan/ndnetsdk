@@ -7,6 +7,7 @@
 //
 
 #include "ndapplib/httpParser.h"
+#include "ndapplib/nd_listener.h"
 
 char *parser_valid( char *src, int size)
 {
@@ -56,8 +57,477 @@ bool parser_check_end(char *src, char **next, int size)
 	return false ;
 }
 
+static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path, const char *host, int port)
+{
+	int bodySize = reques->getBodySize();;
+	int len;
+	char *p;
+	char buf[0x10000];
+
+	p = buf;
+
+	if (NDHttpRequest::E_ACTION_POST == reques->getAction()) {
+		len = snprintf(p, sizeof(buf), "POST /%s HTTP/1.1\r\nHost: %s:%d\r\n", path, host, port);
+		p += len;
+
+		len = snprintf(p, sizeof(buf) - (p - buf), "Accept: */*\r\n");
+		p += len;
+	}
+	else {
+
+		len = snprintf(p, sizeof(buf), "GET /%s HTTP/1.1\r\nHost: %s:%d\r\n", path, host, port);
+		p += len;
+	}
+	
+
+	len = reques->HeaderToBuf(p, sizeof(buf) - (p - buf));
+	p += len; 
+
+	len = snprintf(p, sizeof(buf) - (p - buf), "Content-Type:application/x-user-define;charset=utf-8\r\n"
+		"Content-Length:%d\r\nConnection: Keep-Alive\r\n\r\n", bodySize);
+	p += len;
+
+	if (bodySize) {
+		len = snprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", reques->getBody());
+		p += len;
+	}
+
+	return nd_connector_raw_write(h, buf, p - buf);
+}
+
+static int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc)
+{
+	int bodySize = reques->getBodySize();;
+	int len;
+	char *p;
+	char buf[0x10000];
+
+	p = buf;
 
 
+	len = snprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", reques->getStatus(), errorDesc);
+	p += len;
+
+	len = reques->HeaderToBuf(p, sizeof(buf) -(p - buf));
+	p += len;
+
+	len = snprintf(p, sizeof(buf) - (p - buf),"Server:userDefine\r\nContent-Length:%d\r\nConnection: Keep-Alive\r\n\r\n", bodySize);
+	p += len;
+
+	if (bodySize) {
+		len = snprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", reques->getBody());
+		p += len;
+	}
+
+	return nd_connector_raw_write(h, buf, p - buf);
+}
+
+
+////////////////////
+//http parser
+
+NDHttpRequest::NDHttpRequest() :m_status(0), m_parseStat(0), m_parseProgress(0)
+{
+	ndlbuf_init(&m_recvBuf, 32 * 1024);
+	m_bodySize = -1;
+	m_action = E_ACTION_GET;
+}
+NDHttpRequest:: ~NDHttpRequest()
+{
+
+}
+
+void NDHttpRequest::InData(const char *data, int size)
+{
+	ndlbuf_write(&m_recvBuf, (char*)data, size, 0);
+	while (m_parseStat < 3 && ParseData() > 0) {
+		if (_getDataSize() == 0) {
+			break;
+		}
+	}
+}
+
+int NDHttpRequest::ParseData()
+{
+	if (0 == m_parseStat) {
+		return _parseInit();
+	}
+	else if (1 == m_parseStat) {
+		return _parseHeader();
+	}
+	else if (2 == m_parseStat){
+		if (m_action == E_ACTION_GET){
+
+			m_parseStat = 3;
+			return 0;
+		}
+		return _parseBody();
+	}
+	return 0;
+}
+
+int NDHttpRequest::OnEnd()
+{
+
+	return 0;
+}
+
+
+
+int NDHttpRequest::_parsePathInfo(const char *path)
+{
+	char val[4096];
+	char buf[4096];
+	size_t size = strlen(path);
+	const char *p = ndstr_nstr_ansi(path, buf, '?', sizeof(buf));
+	m_path = buf;
+
+	if (!p || !*p || *p != '?')	{
+		return 0;
+	}
+	++p;
+	do 	{
+		val[0] = 0;
+		buf[0] = 0;
+		p = ndstr_nstr_ansi(p, buf, '=', sizeof(buf));
+		if (!p || !*p || *p != '=')	{
+			return 0;
+		}
+		++p;
+		p = ndstr_nstr_ansi(p, val, '&', sizeof(val));
+		if (p && *p == '&')	{
+			++p;
+		}
+
+		if (buf[0]) 	{
+			httpHeaderNode node = { buf, val };
+			m_requestForms.push_back(node);
+		}
+
+	} while (p && *p);
+
+	return p - path ;
+}
+
+std::string *NDHttpRequest::_getHeader(const char *name, HttpHeader_t &header)
+{
+	HttpHeader_t::iterator it;
+	for (it = header.begin(); it != header.end(); ++it) {
+		if (ndstricmp((char*)it->name.c_str(), (char*)name) == 0) {
+			return &it->value;
+		}
+	}
+	return  NULL;
+}
+
+const char *NDHttpRequest::getHeader(const char *hdrname)
+{
+	//	HttpHeader_t::iterator it = m_header.find(std::string(hdrname) ) ;
+	//	if (it == m_header.end()) {
+	//		return NULL ;
+	//	}
+	//	return (it->second.c_str() );
+
+	HttpHeader_t::iterator it;
+	for (it = m_header.begin(); it != m_header.end(); ++it) {
+		if (ndstricmp((char*)it->name.c_str(), (char*)hdrname) == 0) {
+			return it->value.c_str();
+		}
+	}
+	return  NULL;
+
+}
+int NDHttpRequest::getStatus()
+{
+	return m_status;
+}
+const char *NDHttpRequest::getBody()
+{
+	if (m_body.size() > 0) {
+		return m_body.c_str();
+	}
+	return  NULL;
+}
+
+
+int NDHttpRequest::getBodySize()
+{
+	return m_body.size();
+}
+
+int NDHttpRequest::_findBodySize()
+{
+	const char *p = getHeader("content-length");
+	if (p) {
+		m_bodySize = atoi(p);
+		return m_bodySize;
+	}
+	return -1;
+}
+
+int NDHttpRequest::_dumRequestHeader()
+{
+	int ret = 0;
+	HttpHeader_t::iterator it;
+	for (it = m_header.begin(); it != m_header.end(); ++it) {
+		++ret;
+		fprintf(stderr, "[header] %s : %s \n", it->name.c_str(), it->value.c_str());
+	}
+
+	for (it = m_requestForms.begin(); it != m_requestForms.end(); ++it) {
+		++ret;
+		fprintf(stderr, "[forms] %s : %s \n", it->name.c_str(), it->value.c_str());
+	}
+
+	return  ret;
+}
+
+char *NDHttpRequest::_getCurParseAddr()
+{
+	if (ndlbuf_datalen(&m_recvBuf)) {
+		return (char*)ndlbuf_data(&m_recvBuf);
+	}
+	return NULL;
+
+}
+
+int NDHttpRequest::_getDataSize()
+{
+	return (int)ndlbuf_datalen(&m_recvBuf);
+}
+
+void NDHttpRequest::Reset()
+{
+	ndlbuf_reset(&m_recvBuf);
+	m_parseStat = 0;
+	m_parseProgress = 0;
+	m_header.clear();
+	m_body.clear();
+	m_requestForms.clear();
+	m_path.clear();
+
+	m_action = E_ACTION_GET;
+	m_status = 200;
+	m_bodySize = 0;
+
+}
+
+
+bool NDHttpRequest::CheckRecvOk()
+{
+	return (3 == m_parseStat || (2 == m_parseStat && m_action == E_ACTION_GET));
+}
+
+int NDHttpRequest::_parseInit()
+{
+	int len;
+	int datasize = _getDataSize();
+	char *p_start = _getCurParseAddr();
+	char buf[1024];
+	if (!p_start) {
+		return 0;
+	}
+	char *p = p_start;
+
+	if (0 == ndstricmp_n(p, "POST", 4)){
+		m_action = E_ACTION_POST;
+		p += 4;
+	}
+	else if (0 == ndstricmp_n(p, "GET", 3)) {
+		m_action = E_ACTION_GET;
+		p += 3;
+	}
+
+	p = strchr(p, '/');
+	if (!p || *p != '/'){
+		return 0;
+	}
+	++p;
+	if (*p != ' '){
+		//parse path
+		buf[0] = 0;
+		p = (char*)ndstr_nstr_ansi(p, buf, ' ', sizeof(buf));
+		if (buf[0]) {
+			httpHeaderNode node1 = { "PATH", buf };
+			m_header.push_back(node1);
+			_parsePathInfo(buf);
+		}
+	}
+
+
+	p = (char*)ndstristr(p, (char*)"HTTP");
+
+	if (p) {
+		len = parser_fetch_data(p, buf, datasize - (int)(p - p_start));
+		if (len >= datasize) {
+			return  0;
+		}
+		p += len;
+		//get status
+		//m_httpProtocol = buf ;
+
+		m_status = (int)strtol(p, &p, 10);
+		if (!p) {
+			return 0;
+		}
+
+		if (parser_check_end(p, &p, datasize - (int)(p - p_start))) {
+			//parse prorocol success
+			len = (int)(p - p_start);
+
+			ndlbuf_sub_data(&m_recvBuf, len);
+			m_parseStat = 1;
+			return len;
+		}
+
+	}
+	return 0;
+
+}
+
+
+bool NDHttpRequest::addHeader(const char *name, const char *value)
+{
+	std::string *pHeader = _getHeader(name, m_header);
+	if (pHeader)	{
+		*pHeader = value;
+	}
+	else {
+		httpHeaderNode node1 = { name, value };
+		m_header.push_back(node1);
+	}
+	return true;
+}
+
+
+const char* NDHttpRequest::getRequestVal(const char *name)
+{
+	std::string *pHeader = _getHeader(name, m_requestForms);
+	if (pHeader)	{
+		return pHeader->c_str();
+	}
+	else {
+		return NULL;
+	}
+}
+
+
+size_t NDHttpRequest::HeaderToBuf(char *buf, size_t size)
+{
+	HttpHeader_t::iterator it;
+	char *p = buf;
+	for (it = m_header.begin(); it != m_header.end(); ++it) {
+		if (it->value.size() > 0)	{
+			int len = snprintf(p, size, "%s:%s\r\n", it->name.c_str(), it->value.c_str());
+			p += len;
+			if (size >= len) {
+				size -= len;
+			}
+		}
+	}
+	return  p - buf;
+}
+
+size_t NDHttpRequest::RequestValueTobuf(char *buf, size_t size)
+{
+	HttpHeader_t::iterator it;
+	char *p = buf;
+	for (it = m_requestForms.begin(); it != m_requestForms.end(); ++it) {
+		if (it->value.size() > 0)	{
+			int len = snprintf(p, size, "%s:%s\r\n", it->name.c_str(), it->value.c_str());
+			p += len;
+			if (size >= len) {
+				size -= len;
+			}
+		}
+	}
+	return  p - buf;
+}
+
+
+int NDHttpRequest::_parseHeader()
+{
+
+	int datasize = _getDataSize();
+	char *p_start = _getCurParseAddr();
+	char buf[1024];
+
+	if (!p_start) {
+		return 0;
+	}
+	char *p = p_start;
+
+	p = parser_valid(p, datasize);
+	if (!p) {
+		return  0;
+	}
+
+	p = (char*)ndstr_nstr_end(p, buf, ':', datasize - (int)(p - p_start));
+	if (*p != ':') {
+		return  0;
+	}
+	std::string hdrName = buf;
+
+	++p;
+	p = parser_valid(p, datasize - (int)(p - p_start));
+	char *_st = p;
+	if (parser_check_end(p, &p, datasize - (int)(p - p_start))) {
+		int len = (int)(p - _st);
+		memcpy(buf, _st, len - 2);
+		buf[len - 2] = 0;
+
+		std::string hdrVal = buf;
+
+		httpHeaderNode node1 = { hdrName, hdrVal };
+		m_header.push_back(node1);
+
+		len = (int)(p - p_start);
+		ndlbuf_sub_data(&m_recvBuf, len);
+
+		if (*p == '\r' && *(p + 1) == '\n') {
+			ndlbuf_sub_data(&m_recvBuf, 2);
+			m_parseStat = 2;
+			//_dumRequestHeader() ;
+			if (_findBodySize() == 0) {
+				m_parseProgress = 3;//without body
+
+			}
+		}
+
+		return len;
+	}
+
+	return 0;
+
+
+}
+int NDHttpRequest::_parseBody()
+{
+	int datasize = _getDataSize();
+	char *p_start = _getCurParseAddr();
+
+	if (!p_start) {
+		return 0;
+	}
+	char *p = p_start;
+
+	for (int i = 0; i < datasize; ++i) {
+		m_body.push_back(*p);
+		++p;
+
+		if (m_body.size() >= m_bodySize) {
+			m_parseStat = 3;
+			break;
+		}
+	}
+
+	ndlbuf_sub_data(&m_recvBuf, (p - p_start));
+
+	return (int)(p - p_start);
+
+}
+
+//////////////////////////////////////////////////////////////////////////
 HttpConnector::HttpConnector(NDHttpRequest *request):m_recvRequest(request),m_conn(0),m_port(0)
 {
 	
@@ -111,52 +581,9 @@ void HttpConnector::Destroy()
 }
 
 
-int HttpConnector::SendPostRequest(const char *path, const char* application, const char *dataBody)
+int HttpConnector::SendRequest(NDHttpRequest &request, const char *host, int port, const char *path)
 {
-	int bodySize =0;
-	int len ;
-	char *p ;
-	char buf[8192] ;
-	
-	if (dataBody && dataBody[0]) {
-		bodySize = (int)strlen(dataBody) ;
-	}
-	p = buf ;
-	
-	
-	len = snprintf(p, sizeof(buf) , "POST /%s HTTP/1.1\r\nHost: %s:%d\r\n", path, m_host.c_str(),m_port );
-	p += len ;
-	
-	len = snprintf(p, sizeof(buf) - (p-buf),"Accept: */*\r\n") ;
-	p+= len ;
-	
-	len = snprintf(p, sizeof(buf) - (p-buf), "Content-Type:application/%s;charset=utf-8\r\n"
-				   "Content-Length:%d\r\nConnection: Keep-Alive\r\n\r\n", application, bodySize );
-	p += len;
-	
-	if (bodySize) {
-		len = snprintf(p, sizeof(buf) - (p-buf), "%s\r\n\r\n" ,dataBody ) ;
-		p += len ;
-	}
-	
-	return nd_connector_raw_write(m_conn,buf, p-buf) ;
-	//return m_conn->SendRawData(buf,p-buf) ;
-	
-}
-
-int HttpConnector::SendGetRequest(const char *path)
-{
-	int len ;
-	char *p ;
-	char buf[1024] ;
-	
-	p = buf ;
-	
-	len = snprintf(p, sizeof(buf) , "GET /%s HTTP/1.1\r\nHost: %s:%d\r\n\r\n", path, m_host.c_str(),m_port );
-	p += len ;
-	
-	return nd_connector_raw_write(m_conn,buf, p-buf) ;
-	//return m_conn->SendRawData(buf,p-buf) ;
+	return _sendHttpRequest(m_conn, &request, path, host, port);
 }
 
 int HttpConnector::Recv(char *buf, int size, int timeout)
@@ -208,244 +635,92 @@ bool HttpConnector::CheckValid()
 	return false;
 }
 
-////////////////////
-//http parser
+//////////////////////////////////////////////////////////////////////////
 
-NDHttpRequest::NDHttpRequest():m_status(0),m_parseStat(0),m_parseProgress(0)
+static int _session_data_handler(nd_handle sessionHandler, void *data, size_t len, nd_handle listen_h)
 {
-	ndlbuf_init(&m_recvBuf,32*1024) ;
-	m_bodySize = -1 ;
-}
-NDHttpRequest:: ~NDHttpRequest()
-{
-	
+	NDHttpSession *pSession = (NDHttpSession*) NDGetSession(sessionHandler);
+	if (!pSession){
+		return -1;
+	}
+	return pSession->onDataRecv((char*)data, len);
 }
 
-void NDHttpRequest::InData(const char *data, int size)
-{
-	ndlbuf_write(&m_recvBuf, (char*)data, size, 0) ;
-	while (m_parseStat < 3 && ParseData() > 0) {
-		if (_getDataSize() ==0) {
-			break ;
-		}
-	}
-}
+static int testRequest1(NDHttpSession *pSession, const NDHttpRequest &resuest);
+static int testRequest2(NDHttpSession *pSession, const NDHttpRequest &resuest);
 
-int NDHttpRequest::ParseData()
-{
-	if (0== m_parseStat) {
-		return _parseInit() ;
-	}
-	else if(1==m_parseStat) {
-		return _parseHeader();
-	}
-	else if(2==m_parseStat){
-		return _parseBody() ;
-	}
-	return 0;
-}
+NDHttpSession::requestEntry_map NDHttpSession::m_request_entry;
 
-int NDHttpRequest::OnEnd()
+bool NDHttpSession::installRequest(const char *pathName, http_reqeust_func func)
 {
-	
-	return 0;
-}
-
-const char *NDHttpRequest::getHeader(const char *hdrname)
-{
-//	HttpHeader_t::iterator it = m_header.find(std::string(hdrname) ) ;
-//	if (it == m_header.end()) {
-//		return NULL ;
-//	}
-//	return (it->second.c_str() );
-	
-	HttpHeader_t::iterator it ;
-	for (it = m_header.begin(); it!=m_header.end(); ++it) {
-		if (ndstricmp((char*)it->name.c_str(), (char*) hdrname) == 0) {
-			return it->value.c_str() ;
-		}
+	if (!pathName || !*pathName)	{
+		return false;
 	}
-	return  NULL ;
-	
-}
-int NDHttpRequest::getStatus()
-{
-	return m_status ;
-}
-const char *NDHttpRequest::getBody()
-{
-	if (m_body.size() > 0) {
-		return m_body.c_str() ;
-	}
-	return  NULL;
+	m_request_entry[pathName] = func;
+	return true;
 }
 
 
-int NDHttpRequest::_findBodySize()
+NDHttpSession::NDHttpSession()
 {
-	const char *p = getHeader("content-length") ;
-	if (p) {
-		m_bodySize = atoi(p) ;
-		return m_bodySize ;
-	}
-	return -1;
+	//installRequest("test1", testRequest1);
+	//installRequest("test2", testRequest2);
 }
 
-int NDHttpRequest::_dumRequestHeader()
+NDHttpSession ::~NDHttpSession()
 {
-	int ret = 0 ;
-	HttpHeader_t::iterator it ;
-	for (it = m_header.begin(); it!=m_header.end(); ++it) {
-		++ret ;
-		fprintf(stderr, "%s : %s \n", it->name.c_str(), it->value.c_str()) ;
-	}
-	return  ret ;
 }
 
-char *NDHttpRequest::_getCurParseAddr()
-{
-	if (ndlbuf_datalen(&m_recvBuf)) {
-		return (char*) ndlbuf_data(&m_recvBuf) ;
-	}
-	return NULL ;
 
+int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
+{
+	return _sendHttpResponse(GetHandle(),&response, errorDesc);
 }
 
-int NDHttpRequest::_getDataSize()
+
+int NDHttpSession::sendErrorResponse(int errorCdoe)
 {
-	return (int) ndlbuf_datalen(&m_recvBuf) ;
+	int len;
+	char *p;
+	char buf[0x10000];
+
+	p = buf;
+
+	len = snprintf(p, sizeof(buf), "HTTP/1.1 %d error%d \r\n", errorCdoe, errorCdoe);
+	p += len;
+
+
+	return nd_connector_raw_write(GetHandle(), buf, p - buf);
 }
 
-void NDHttpRequest::Reset()
+void NDHttpSession::OnCreate()
 {
-	ndlbuf_reset(&m_recvBuf) ;
-	m_parseStat = 0;
-	m_parseProgress = 0 ;
-	m_header.clear();
-	m_body.clear() ;
-	m_httpProtocol.clear();
+	nd_hook_data(GetHandle(), _session_data_handler);
 }
 
-int NDHttpRequest::_parseInit()
+int NDHttpSession::onDataRecv(char *buf, int size)
 {
-	int len ;
-	int datasize = _getDataSize () ;
-	char *p_start = _getCurParseAddr() ;
-	char buf[1024] ;
-	if (!p_start) {
-		return 0 ;
-	}
-	char *p = p_start ;
-	
-	p = (char*) ndstristr(p,(char*)"HTTP") ;
-	
-	if (p) {
-		len = parser_fetch_data(p, buf, datasize -(int)( p - p_start)) ;
-		if (len >= datasize) {
-			return  0 ;
-		}
-		p+= len ;
-		//get status
-		m_httpProtocol = buf ;
-		
-		m_status = (int)strtol(p, &p, 10);
-		if (!p) {
-			return 0 ;
-		}
-		
-		if (parser_check_end(p,&p, datasize -(int)( p - p_start)) ) {
-			//parse prorocol success
-			len = (int)( p- p_start );
-			
-			ndlbuf_sub_data(&m_recvBuf, len) ;
-			m_parseStat = 1 ;
-			return len ;
-		}
-		
-	}
-	return 0;
-	
-}
-int NDHttpRequest::_parseHeader()
-{
-	
-	int datasize = _getDataSize () ;
-	char *p_start = _getCurParseAddr() ;
-	char buf[1024] ;
-	
-	if (!p_start) {
-		return 0 ;
-	}
-	char *p = p_start ;
-	
-	p = parser_valid(p, datasize) ;
-	if (!p) {
-		return  0 ;
-	}
-	
-	p = (char*) ndstr_nstr_end(p,buf,':', datasize -(int) (p-p_start) ) ;
-	if(*p != ':') {
-		return  0 ;
-	}
-	std::string hdrName = buf ;
-	
-	++p ;
-	p =  parser_valid(p, datasize -(int) (p-p_start));
-	char *_st = p ;
-	if(parser_check_end(p, &p, datasize -(int) (p-p_start)) ) {
-		int len =(int)( p-_st );
-		memcpy(buf,_st, len-2) ;
-		buf[len-2] = 0 ;
-		
-		std::string hdrVal = buf ;
-		
-		httpHeaderNode node1 = {hdrName, hdrVal} ;
-		m_header.push_back(node1) ;
-		
-		len = (int)( p- p_start );
-		ndlbuf_sub_data(&m_recvBuf, len) ;
-		
-		if (*p=='\r' && *(p+1)=='\n') {
-			ndlbuf_sub_data(&m_recvBuf, 2) ;
-			m_parseStat = 2 ;
-			//_dumRequestHeader() ;
-			if (_findBodySize()==0) {
-				m_parseProgress = 3 ;//without body
+	m_request.InData(buf, size);
 
-			}
-		}
-		
-		return len ;
+	if (m_request.CheckRecvOk()){
+		m_request._dumRequestHeader();
+		onRequest(m_request.getPath(), m_request);
+		m_request.Reset();
 	}
-	
-	return 0;
-	
+	//ndprintf("%s\n", buf);
+	return size;
+}
 
-}
-int NDHttpRequest::_parseBody()
+
+int NDHttpSession::onRequest(const char *path, const NDHttpRequest &request)
 {
-	int datasize = _getDataSize () ;
-	char *p_start = _getCurParseAddr() ;
-	
-	if (!p_start) {
-		return 0 ;
+	requestEntry_map::iterator it =m_request_entry.find(path);
+	if (it == m_request_entry.end()  || !it->second)	{
+		return 404;
 	}
-	char *p = p_start ;
-	
-	for (int i=0; i< datasize; ++i) {
-		m_body.push_back(*p) ;
-		++p ;
-		
-		if (m_body.size() >= m_bodySize) {
-			m_parseStat = 3 ;
-			break ;
-		}
-	}
-	
-	ndlbuf_sub_data(&m_recvBuf, (p - p_start)) ;
-	
-	return (int) (p - p_start);
-	
+
+	return it->second(this, request);
 }
+
 
 

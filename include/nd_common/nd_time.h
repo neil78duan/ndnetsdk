@@ -31,12 +31,13 @@ ND_COMMON_API int nd_time_clock_to_seconds(const char *timetext);
 ND_COMMON_API time_t nd_time_from_clock(const char *timetext, time_t cur_time, int timezone);
 //get second index from 00:00:00 (local time)
 ND_COMMON_API int nd_time_second_index_day(time_t timest);
-
+ND_COMMON_API int nd_time_day_index_second(time_t timest);
 
 ND_COMMON_API const char *nd_get_timestr(void);			//get time in string/text
 ND_COMMON_API const char *nd_get_datestr(void);			//get date in string
 ND_COMMON_API const char *nd_get_datetimestr(void);		//get time and date in string
 
 ND_COMMON_API const char *nd_get_datetimestr_ex(time_t in_tm, char *buf, int size);
+ND_COMMON_API int nd_time_weekday();
 
 #endif

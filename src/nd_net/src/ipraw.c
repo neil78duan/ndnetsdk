@@ -213,7 +213,7 @@ int send_ping(ndsocket_t fd,  SOCKADDR_IN *dest,int seq_no, char *data, int data
 int test_remote_host(char *host)
 {
 	unsigned short pid ;
-	int ret ,i, sock_len;
+	int ret =-1,i, sock_len;
 	ndsocket_t raw_fd;
 	SOCKADDR_IN dest, from  ;
 	char recv_buf[RAW_SYSTEM_BUF];

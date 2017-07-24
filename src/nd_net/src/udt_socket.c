@@ -375,7 +375,7 @@ int udt_retranslate(nd_udt_node* socket_node)
  */
 int update_socket(nd_udt_node* socket_node)
 {
-	size_t len=0;
+	//size_t len=0;
 //	char *send_addr ;
 	ndtime_t now = nd_time() ;
 
@@ -567,7 +567,7 @@ void _udt_connector_init(nd_udt_node *socket_node)
 
 void nd_udtnode_init(nd_udt_node *socket_node)
 {	
-	memset(socket_node,0 , sizeof(socket_node) );
+	memset(socket_node,0 , sizeof(*socket_node) );
 	
 	_udt_connector_init(socket_node) ;
 	nd_net_connbuf_init((nd_netui_handle)socket_node) ;

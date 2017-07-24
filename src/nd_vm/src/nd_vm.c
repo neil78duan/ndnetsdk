@@ -490,7 +490,7 @@ vm_value vm_rand(vm_value val1, vm_value val2)
 	else if(range_max == range_min)
 		return (vm_value) range_max ;
 
-	val =(int)  ((vm_value)rand() / (RAND_MAX + 1) * (range_max - range_min)	+ range_min);
+	val =(int)  ((vm_value)rand() / RAND_MAX  * (range_max - range_min)	+ range_min);
 
 	return (vm_value) val ;
 }

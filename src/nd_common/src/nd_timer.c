@@ -127,7 +127,7 @@ int  nd_timer_destroy(nd_handle timer_handle, int force)
 /* create timer root */
 nd_handle nd_timer_create(nd_handle pallocator) 
 {
-	static ndatomic_t _s_id = 0 ;
+	//static ndatomic_t _s_id = 0 ;
 	struct nd_timer_root *root ;
 	if(!pallocator) {
 		pallocator = nd_global_mmpool() ;

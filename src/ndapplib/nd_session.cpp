@@ -13,7 +13,7 @@
 
 static  int _session_update(nd_handle h)
 {
-	NDSession *pSe = NDGetSession(h) ;
+	NDBaseSession *pSe = NDGetSession(h);
 	if (pSe) {
 		pSe->baseUpdate() ;
 	}

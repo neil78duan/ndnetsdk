@@ -18,14 +18,14 @@ int nd_socket_tcp_write(ndsocket_t fd, void *write_buf, size_t len)
 {
 	nd_assert(fd) ;
 	nd_assert(len>0) ;
-	return send(fd, write_buf, (int) len, 0) ;
+	return (int)send(fd, write_buf, (int) len, 0) ;
 }
 //reand tcp data from socket fd
 int nd_socket_tcp_read(ndsocket_t fd, void *buf, size_t buflen)
 {
 	nd_assert(fd) ;
 	nd_assert(buflen>0) ;
-	return recv(fd, buf,(int)  buflen, 0);
+	return (int)recv(fd, buf,(int)  buflen, 0);
 }
 
 /* write data to net
@@ -86,7 +86,7 @@ int get_sockaddr_in(const char *host_name, short port, SOCKADDR_IN* sock_addr)
 		return -1 ;
 	}
 
-	memset(sock_addr, 0, sizeof(sock_addr)) ;
+	memset(sock_addr, 0, sizeof(*sock_addr)) ;
 
 	sock_addr->sin_family = AF_INET ;
 	sock_addr->sin_port = htons(port) ;

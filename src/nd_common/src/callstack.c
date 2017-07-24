@@ -121,10 +121,14 @@ void pop_func(const char *funcname)
 
 		for(i=0; i<MAX_THREAD_NUM; i++, pcs++) {
 			if (self_id == pcs->th_id) {
+				if (pcs->stack_point<=0) {
+					break; 
+				}
 				nd_assert(pcs->stack_point);
 				--(pcs->stack_point);
 				nd_assert(ndstrncmp(funcname, pcs->names[pcs->stack_point], sizeof(functionname_t)) == 0);
 #ifdef ND_DEBUG
+#else
 				pcs->names[pcs->stack_point][0] = 0;
 #endif
 				return  ;
@@ -143,7 +147,7 @@ void pop_func(const char *funcname)
 char *nd_get_callstack_desc(char *buf, size_t size) 
 {
 	char *p =NULL ;
-	ndatomic_t self_id ;
+	ndthread_t self_id ;
 	int i ,n;
 	size_t len;
 	struct callstack_info *pcs =(struct callstack_info *) g_callstack_map.paddr ;
@@ -153,11 +157,11 @@ char *nd_get_callstack_desc(char *buf, size_t size)
 	}
 
 
-	self_id =(ndatomic_t) nd_thread_self() ;
+	self_id =nd_thread_self() ;
 	len = size ;
 	buf[0] = 0 ;
 	for(i=0; i<MAX_THREAD_NUM; i++, pcs++) {
-		if (nd_atomic_read(&pcs->th_id) == self_id) {
+		if (pcs->th_id == self_id) {
 			p = buf ;
 			for(n=pcs->stack_point-1;n>=0 ; --n){				
 				if (0==pcs->names[n][0]){
@@ -182,7 +186,7 @@ char *nd_get_callstack_desc(char *buf, size_t size)
 
 int nd_show_cur_stack(nd_out_func func,FILE *outfile) 
 {
-	ndatomic_t self_id ;
+	ndthread_t self_id ;
 	int i ,n;
 	int len = 0;
 	struct callstack_info *pcs =(struct callstack_info *) g_callstack_map.paddr ;
@@ -194,10 +198,10 @@ int nd_show_cur_stack(nd_out_func func,FILE *outfile)
 	}	
 	
 	func(outfile, " call stack : " ) ;
-	self_id =(ndatomic_t) nd_thread_self() ;
+	self_id = nd_thread_self() ;
 	
 	for(i=0; i<MAX_THREAD_NUM; i++, pcs++) {
-		if (nd_atomic_read(&pcs->th_id) == self_id) {
+		if (pcs->th_id == self_id) {
 			
 			for(n=pcs->stack_point-1;n>=0 ; --n){				
 				if (0==pcs->names[n][0]){

@@ -430,7 +430,7 @@ void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf,
 			snprintf(errbuf, 1024, "know error in file %s  line %d", file, line) ;
 			break ;				
 		}
-		pnext  ;
+		//pnext  ;
 		++line ;
 		if(error_addr>=pline && error_addr< pnext) {
 			pline = ndstr_first_valid(pline) ;

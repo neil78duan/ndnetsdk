@@ -247,7 +247,7 @@ NDUINT32 nd_msgentry_get_id(nd_handle handle, const char *msgname)
 	for ( i = 0; i < root_entry->main_num; i++)	{
 		for (x = 0; x < SUB_MSG_NUM; x++){
 			struct msg_entry_node*node = &(root_entry->sub_buf[i].msg_buf[x]);
-			if (!node->name || !node->name[0]){
+			if (!node->name[0]){
 				continue;
 			}
 			if (ndstricmp((char*)msgname, node->name)==0 ) {

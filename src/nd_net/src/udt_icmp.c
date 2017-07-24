@@ -27,7 +27,7 @@ typedef struct _udt_icmp_hdr
 
 nd_udt_node* udt_icmp_connect(nd_udt_node *socket_node,const char *host, short port, struct nd_proxy_info *proxy)
 {
-	int opt = 1;
+	//int opt = 1;
 	if(proxy && proxy->proxy_type) {
 		socket_node->myerrno = NDERR_INVALID_INPUT ;
 		return NULL ;

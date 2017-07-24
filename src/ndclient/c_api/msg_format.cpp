@@ -35,9 +35,9 @@ int ndSendFormat(netObject netObj,int maxid, int minid,int argc, ...)
     
     //omsg.SetID(maxid, minid) ;
     
-#define ARG_2_STREAM(_arg, _stream, _type) \
+#define ARG_2_STREAM(_arg, _stream, _type,_convType) \
 {\
-    _type  a= va_arg(_arg, _type ) ; \
+    _type  a= (_type) va_arg(_arg, _convType ) ; \
     _stream.Write(a) ; \
     i+=2 ;  \
 }
@@ -47,24 +47,24 @@ int ndSendFormat(netObject netObj,int maxid, int minid,int argc, ...)
         eStreamType type = (eStreamType)  va_arg(arg, int ) ;
         switch (type) {
             case ESTREAM_BYTE:
-                ARG_2_STREAM(arg, omsg, NDUINT8);
+                ARG_2_STREAM(arg, omsg, NDUINT8, int);
                 break;
             case  ESTREAM_SHORT:
                 
-                ARG_2_STREAM(arg, omsg, NDUINT16);
+                ARG_2_STREAM(arg, omsg, NDUINT16,int);
                 break;
             case  ESTREAM_INT32:
-                ARG_2_STREAM(arg, omsg, NDUINT32);
+                ARG_2_STREAM(arg, omsg, NDUINT32,int);
                 break;
             case  ESTREAM_INT64:
-                ARG_2_STREAM(arg, omsg, NDUINT64);
+                ARG_2_STREAM(arg, omsg, NDUINT64,NDUINT64);
                 break;
             case  ESTREAM_FLOAT:
-                ARG_2_STREAM(arg, omsg, float);
+                ARG_2_STREAM(arg, omsg, float,float);
                 break;
                 
             case  ESTREAM_TEXT:
-                ARG_2_STREAM(arg, omsg, NDUINT8*);
+                ARG_2_STREAM(arg, omsg, NDUINT8*,char*);
                 break;
             case  ESTREAM_BIN:
             {

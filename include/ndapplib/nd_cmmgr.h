@@ -12,21 +12,21 @@
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_objmgr.h"
 
-class NDSession;
+class NDBaseSession;
 class NDListener ;
 class NDInstanceBase ;
 
-extern NDSession *NDGetSession(nd_handle session, NDListener * Listener) ;
+extern NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener);
 
 class NDSessionMgr : public NDObjectMgrBase
 {
 public:	
-	NDSession* GetObject(NDObjectMgrBase::iterator &it) 
+	NDBaseSession* GetObject(NDObjectMgrBase::iterator &it)
 	{
 		return NDGetSession((nd_handle)it.second,NULL) ;
 	}
-	NDSession* Lock(OBJECTID_T oid);
-	NDSession* TryLock(OBJECTID_T oid);
+	NDBaseSession* Lock(OBJECTID_T oid);
+	NDBaseSession* TryLock(OBJECTID_T oid);
 	NDSessionMgr(NDListener *listener) ;
 	NDSessionMgr(NDInstanceBase *inst) ;
 };
@@ -35,7 +35,7 @@ class NDThreadSessionIterator
 {
 public:
 	NDThreadSessionIterator()  ;
-	NDThreadSessionIterator(NDUINT16 *,NDSession *,struct thread_pool_info*)  ;
+	NDThreadSessionIterator(NDUINT16 *, NDBaseSession *, struct thread_pool_info*);
 	~NDThreadSessionIterator() ;
 	const NDThreadSessionIterator& operator = (const NDThreadSessionIterator &) ;
 	bool operator == (const NDThreadSessionIterator &) ;
@@ -44,7 +44,7 @@ public:
 	NDThreadSessionIterator operator++ (int) ;
 
 	NDUINT16 *first ;
-	NDSession *second ;
+	NDBaseSession *second;
 private:
 	struct thread_pool_info *m_tpi;
 };
@@ -56,7 +56,7 @@ public:
 	NDThreadSessionMgr(struct thread_pool_info *pi) ;
 	virtual ~NDThreadSessionMgr() ;
 	
-	NDSession *Search(OBJECTID_T sessionid) ;
+	NDBaseSession *Search(OBJECTID_T sessionid);
 	iterator begin() ;
 	iterator end();
 

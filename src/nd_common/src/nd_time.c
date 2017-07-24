@@ -214,7 +214,15 @@ int nd_time_second_index_day(time_t timest)
 
 	return (int)(start64 % (3600 * 24));
 }
+int nd_time_day_index_second(time_t timest)
+{
+	NDINT64 timezone = nd_time_zone();
+	NDINT64 start64 = (NDINT64)timest;
 
+	start64 += timezone * 3600;
+
+	return (int)(start64 / (3600 * 24));
+}
 time_t  nd_time_from_str(const char *pInput, time_t* tim)
 {
 	time_t ret = 0;
@@ -222,7 +230,7 @@ time_t  nd_time_from_str(const char *pInput, time_t* tim)
 	char *p = (char*)pInput;
 	mytm.tm_year = strtol(p, &p, 0);
 	mytm.tm_year -= 1900;
-	if (!mytm.tm_year <0)	{
+	if (mytm.tm_year <0)	{
 		return -1;
 	}
 
@@ -247,4 +255,17 @@ time_t  nd_time_from_str(const char *pInput, time_t* tim)
 		*tim = ret;
 	}
 	return ret;
+}
+//get weekday for nowtime (1-7)
+int nd_time_weekday()
+{
+	time_t nowtm;
+	struct tm *gtm, tm1;
+
+	time(&nowtm);
+	gtm = localtime_r(&nowtm, &tm1);
+	if (gtm->tm_wday == 0){
+		return 7;
+	}
+	return gtm->tm_wday;
 }

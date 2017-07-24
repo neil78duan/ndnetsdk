@@ -95,7 +95,7 @@ protected:
 	int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
 };
 NDListener *NDGetListener(nd_handle h_listen) ;
-NDSession *NDGetSession(nd_handle session, NDListener * Listener= NULL) ;
+NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener = NULL);
 //#pragma  warning (pop)
 #endif
 

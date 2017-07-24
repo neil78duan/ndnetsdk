@@ -517,6 +517,30 @@ int ndstricmp(const char *src, const char *desc)
 	return ret ;
 }
 
+int ndstricmp_n(const char *src, const char *desc, int n)
+{
+	int ret;
+	do {
+		ret = *src - *desc;
+		if (ret){
+			char a;
+			if (IS_BIG_LATIN(*src)) {
+				a = BIG_2_LITTLE(*src);
+			}
+			else if (IS_LITTLE_LATIN(*src)) {
+				a = LITTLE_2_BIG(*src);
+			}
+			else {
+				return ret;
+			}
+			if (a != *desc)
+				return ret;
+		}
+		desc++;
+	} while (*src++ && --n >0);
+	return ret;
+}
+
 //在src中查找desc 不区分大小写
 const char *ndstristr(const char *src, const char *desc)
 {

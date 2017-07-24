@@ -63,6 +63,7 @@ ND_COMMON_API const char *ndstr_nstr_ansi(const char *src, char *outstr, const c
 
 /*不区分大小写,比较字符串*/
 ND_COMMON_API int ndstricmp(const char *src, const char *desc);
+ND_COMMON_API int ndstricmp_n(const char *src, const char *desc, int n);
 
 //在src中查找desc 不区分大小写
 ND_COMMON_API const char *ndstristr(const char *src, const char *desc);

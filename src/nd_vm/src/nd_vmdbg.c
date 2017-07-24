@@ -71,7 +71,7 @@ void run_print(const char *src, struct vm_cpu *vm)
 		fprintf(stdout, " reg1 = %f\n  reg2 = %f \n", vm->reg1, vm->reg2) ;
 	}
 	else if(0==ndstricmp(buf, "mem")) {
-		int mm_addr = ndstr_atoi_hex(addr);
+		int mm_addr = (int)ndstr_atoi_hex(addr);
 		vm_value * pval = _get_memory(vm ,  (vm_adddress )mm_addr) ;
 		if(pval) {
 			fprintf(stdout, " memory[%d] = %f\n", mm_addr, *pval) ;
@@ -89,7 +89,7 @@ void run_print(const char *src, struct vm_cpu *vm)
 			++i ;
 		}
 		if(0==i) {
-			fprintf(stdout, " empty stack \n", i, *pval) ;
+			fprintf(stdout, " empty stack \n") ;
 		}
 		else 
 			fprintf(stdout, " sp =%d \n", i ) ;
@@ -130,7 +130,7 @@ int try_run_dbgcmd(char *linebuf, struct vm_cpu *vm)
 		
 	switch(cmd) {
 	case DBG_NOP:
-		fprintf(stdout, " NOP\t\n", vm->reg1) ;
+		fprintf(stdout, " NOP\t\n") ;
 		break ;
 	case DBG_PRINT:
 		//fprintf(stdout, " reg = %f\n", vm->reg1) ;

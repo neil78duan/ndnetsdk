@@ -24,7 +24,7 @@ NDListener *NDGetListener(nd_handle h_listen)
 }
 
 //通过句柄得到绘话
-NDSession *NDGetSession(nd_handle session, NDListener * Listener)
+NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener)
 {
 	ND_TRACE_FUNC();
 	if (!check_connect_valid(session)){
@@ -32,7 +32,7 @@ NDSession *NDGetSession(nd_handle session, NDListener * Listener)
 	}
 	NDObject *pobj = (NDObject *) nd_session_getdata((nd_netui_handle )session) ;
 	if (pobj){
-		return dynamic_cast<NDSession*>(pobj)  ;
+		return dynamic_cast<NDBaseSession*>(pobj);
 	}
 	return NULL ;
 }

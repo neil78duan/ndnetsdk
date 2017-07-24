@@ -293,7 +293,7 @@ int NDOStreamMsg::Write(const NDUINT8 *text)
 
 int NDOStreamMsg::WriteBin(void *data, size_t size) 
 {
-	if (_end <= _op_addr ){
+	if (_end <= _op_addr || size >= Capacity() ){
 		return -1 ;
 	}
 	size_t free_size = _end - _op_addr ;

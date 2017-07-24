@@ -11,20 +11,20 @@
 
 #include "ndapplib/applib.h"
 
-static inline NDSession* GetSessionFromHandle(nd_netui_handle handle)
+static inline NDBaseSession* GetSessionFromHandle(nd_netui_handle handle)
 {
 	if(!handle)
 		return NULL;
-	return static_cast<NDSession*>(nd_session_getdata(handle))  ;
+	return static_cast<NDBaseSession*>(nd_session_getdata(handle));
 }
-NDSession* NDSessionMgr::Lock(OBJECTID_T oid)
+NDBaseSession* NDSessionMgr::Lock(OBJECTID_T oid)
 {
 	void *addr = NDObjectMgrBase::Lock(oid) ;
 	if(!addr){return NULL;}
 	return  GetSessionFromHandle((nd_netui_handle )addr) ;
 }
 
-NDSession* NDSessionMgr::TryLock(OBJECTID_T oid)
+NDBaseSession* NDSessionMgr::TryLock(OBJECTID_T oid)
 {
 	void *addr = NDObjectMgrBase::TryLock(oid) ;
 	if(!addr){return NULL;}
@@ -58,7 +58,7 @@ NDThreadSessionIterator::NDThreadSessionIterator()
 
 }
 
-NDThreadSessionIterator::NDThreadSessionIterator(NDUINT16 *f,NDSession *s,struct thread_pool_info* tpi) :
+NDThreadSessionIterator::NDThreadSessionIterator(NDUINT16 *f, NDBaseSession *s, struct thread_pool_info* tpi) :
 	first(f),second(s),m_tpi(tpi)
 {
 
@@ -115,7 +115,7 @@ NDThreadSessionMgr::~NDThreadSessionMgr()
 
 }
 
-NDSession *NDThreadSessionMgr::Search(OBJECTID_T sessionid) 
+NDBaseSession *NDThreadSessionMgr::Search(OBJECTID_T sessionid)
 {
 	struct cm_manager * pcmmgr = nd_listensrv_get_cmmamager((nd_listen_handle)m_tpi->lh);
 	nd_assert(pcmmgr) ;
@@ -129,7 +129,7 @@ NDSession *NDThreadSessionMgr::Search(OBJECTID_T sessionid)
 
 NDThreadSessionMgr::iterator NDThreadSessionMgr::begin() 
 {
-	NDSession *ps = NULL;
+	NDBaseSession *ps = NULL;
 	NDUINT16 *p = m_tpi->sid_buf ;
 
 	if (m_tpi->session_num > 0) {

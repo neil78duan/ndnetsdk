@@ -124,7 +124,7 @@ char *read_instruction(char *src,  vm_ins *instruction)
 	}
 	//find instruct
 	*instruction =  get_ins(buf) ;
-	if(-1==*instruction ) {
+	if((vm_ins)-1==*instruction ) {
 		vm_error("bad instruction : [%s]\n",buf) ;
 		return NULL ;
 	}
@@ -220,7 +220,7 @@ int vm_compiler_line(char *text , struct vm_instruction_node *out_node)
 	if(IS_COMMENT(*addr)) {
 		return 0 ;
 	}
-	memset(out_node, 0, sizeof(out_node)) ;
+	memset(out_node, 0, sizeof(*out_node)) ;
 	out_node->ds1 = EDS_NONE ;
 	addr = read_instruction(addr, &(out_node->ins) ) ;
 	
