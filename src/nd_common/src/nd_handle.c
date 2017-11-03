@@ -158,7 +158,7 @@ int nd_object_register(struct nd_handle_reginfo *reginfo)
 
 	list_add_tail(&pobj->list, &__reg_list) ;
 	
-	nd_logmsg(" register object success : %s\n", pobj->obj.name) ;
+	//nd_logmsg(" register object success : %s\n", pobj->obj.name) ;
 	return 0 ;
 }
 

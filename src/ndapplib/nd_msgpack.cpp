@@ -133,128 +133,202 @@ int NDOStreamMsg::FromFile(const char *file)
 //	//return _op_addr - (char*)(_packet.data) ;
 //	return ND_USERMSG_DATALEN(&_packet) ;
 //}
+void *NDOStreamMsg::GetWriteAddr()
+{
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	return (void*)(_op_addr+1); 
+#else 
+	return (void*)_op_addr; 
+#endif
+}
 size_t NDOStreamMsg::GetFreeLen()
 {
 	return _end - _op_addr ;
 }
 
-int NDOStreamMsg::Write(NDUINT32 a) 
+
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+
+int NDOStreamMsg::WriteForce(NDUINT32 a)
 {
-	if(_op_addr + sizeof(a) <= _end) {
-		//*((NDUINT32*)_op_addr) = htonl(a) ;
-		nd_long_to_netstream(_op_addr, a) ;
-		
-		MsgLength() += sizeof(a) ;
-		_op_addr+= sizeof(a) ;
-		return 0 ;
+	if (-1 == _writeMarker(ENDSTREAM_MARKER_INT32, 4)) {
+		return -1;
 	}
-	return -1 ;
+	return _WriteOrg(a);
 }
-int NDOStreamMsg::Write(NDUINT16 a) 
+int NDOStreamMsg::WriteForce(NDUINT16 a)
 {
-	if(_op_addr + sizeof(a) <= _end) {
-		//*((NDUINT16*)_op_addr) = htons(a) ;
-		nd_short_to_netstream(_op_addr, a) ;
-		MsgLength() += sizeof(a) ;
-		_op_addr+= sizeof(a) ;
-		return 0 ;
+	if (-1 == _writeMarker(ENDSTREAM_MARKER_INT16, 2)) {
+		return -1;
 	}
-	return -1 ;
+	return _WriteOrg(a);
 }
 
-int NDOStreamMsg::Write(NDUINT64 a) 
+
+int NDOStreamMsg::Write(NDUINT32 a)
 {
-	if(_op_addr + sizeof(a) <= _end) {
-		//*((NDUINT64*)_op_addr) = nd_hton64(a) ; //why  htonll is undefine?
-		nd_longlong_to_netstream(_op_addr, a) ;
-		MsgLength() += sizeof(a) ;
-		_op_addr+= sizeof(a) ;
-		return 0 ;
+	if (a == 0) {
+		return _writeMarker(ENDSTREAM_MARKER_INT32, 0);
 	}
-	return -1 ;
+	else if (a <= 0xff) {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT32, 1)) {
+			return -1;
+		}
+		return _WriteOrg((NDUINT8)a);
+	}
+	else if (a <= 0xffff) {
+
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT32, 2)) {
+			return -1;
+		}
+		return _WriteOrg((NDUINT16)a);
+	}
+	else {
+
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT32, 4)) {
+			return -1;
+		}
+		return _WriteOrg(a);
+	}
+}
+int NDOStreamMsg::Write(NDUINT16 a)
+{
+	if (a == 0) {
+		return _writeMarker(ENDSTREAM_MARKER_INT16, 0);
+	}
+	else if (a <= 0xff) {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT16, 1)) {
+			return -1;
+		}
+		return _WriteOrg((NDUINT8)a);
+	}
+	else  {
+
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT16, 2)) {
+			return -1;
+		}
+		return _WriteOrg(a);
+	}
+}
+
+int NDOStreamMsg::Write(NDUINT64 a)
+{
+	if (a == 0) {
+		return _writeMarker(ENDSTREAM_MARKER_INT64, 0);
+	}
+	else if (a <= 0xff) {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT64, 1)) {
+			return -1;
+		}
+		return _WriteOrg((NDUINT8)a);
+	}
+	else if (a <= 0xffff) {
+
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT64, 2)) {
+			return -1;
+		}
+		return _WriteOrg((NDUINT16)a);
+	}
+	else if (a <= 0xffffffff) {
+
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT64, 4)) {
+			return -1;
+		}
+		return _WriteOrg((NDUINT32)a);
+	}
+	else  {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT64, 8)) {
+			return -1;
+		}
+		return _WriteOrg(a);
+	}
 }
 
 
 int NDOStreamMsg::Write(float a)
 {
-    union {
-        char buf[4] ;
-        float f;
-    } val ;
-    if(_op_addr + sizeof(a) <= _end) {
-        val.f = a;
-        _op_addr[0] = val.buf[0] ;
-        _op_addr[1] = val.buf[1] ;
-        _op_addr[2] = val.buf[2] ;
-        _op_addr[3] = val.buf[3] ;
-        //*((float*)_op_addr) = a ;
-        MsgLength() += sizeof(a) ;
-        _op_addr+= sizeof(a) ;
-        return 0 ;
-    }
-    return -1 ;
+	if (a == 0)	{
+		return _writeMarker(ENDSTREAM_MARKER_FLOAT, 0);
+	}
+	else {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_FLOAT, 4)) {
+			return -1;
+		}
+		return _WriteOrg(a);
+	}
+	
 }
 
 int NDOStreamMsg::Write(double a)
 {
-    
-    union {
-        char buf[8] ;
-        double d;
-    } val ;
-    if(_op_addr + sizeof(a) <= _end) {
-        val.d = a;
-        _op_addr[0] = val.buf[0] ;
-        _op_addr[1] = val.buf[1] ;
-        _op_addr[2] = val.buf[2] ;
-        _op_addr[3] = val.buf[3] ;
-        _op_addr[4] = val.buf[4] ;
-        _op_addr[5] = val.buf[5] ;
-        _op_addr[6] = val.buf[6] ;
-        _op_addr[7] = val.buf[7] ;
-        //*((float*)_op_addr) = a ;
-        MsgLength() += sizeof(a) ;
-        _op_addr+= sizeof(a) ;
-        return 0 ;
-    }
-    return -1 ;
-}
-
-
-int NDOStreamMsg::Write(NDUINT8 a) 
-{
-	if(_op_addr + sizeof(a) <= _end) {
-		*((char*)_op_addr) = a ;
-		MsgLength() += sizeof(a) ;
-		_op_addr+= sizeof(a) ;
-		return 0 ;
+	if (a == 0)	{
+		return _writeMarker(ENDSTREAM_MARKER_DOUBLE, 0);
 	}
-	return -1 ;
+	else {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_DOUBLE, 8)) {
+			return -1;
+		}
+		return _WriteOrg(a);
+	}
+
 }
 
+
+int NDOStreamMsg::Write(NDUINT8 a)
+{
+	if (a == 0)	{
+		return _writeMarker(ENDSTREAM_MARKER_INT8, 0);
+	}
+	else {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_INT8, 1)) {
+			return -1;
+		}
+		return _WriteOrg(a);
+	}
+}
+
+
+int NDOStreamMsg::SetStructEnd()
+{
+	return _WriteOrg((NDUINT8)0xff);
+}
+
+#endif
 
 
 int NDOStreamMsg::WriteIp(ndip_t a)
 {
-	if(_op_addr + sizeof(a) <= _end) {
-		memcpy(_op_addr, &a, sizeof(a)) ;
-		MsgLength() += sizeof(a) ;
-		_op_addr+= sizeof(a) ;
-		return 0 ;
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	if (-1 == _writeMarker(ENDSTREAM_MARKER_IP32, 4)) {
+		return -1;
 	}
-	return -1 ;
+#endif 
+
+	if (_op_addr + sizeof(a) <= _end) {
+		memcpy(_op_addr, &a, sizeof(a));
+		MsgLength() += sizeof(a);
+		_op_addr += sizeof(a);
+		return 0;
+	}
+	return -1;
 }
 
 int NDOStreamMsg::WriteIp(ndip_v6_t a)
 {
-	
-	if(_op_addr + sizeof(a) <= _end) {
-		memcpy(_op_addr, &a, sizeof(a)) ;
-		MsgLength() += sizeof(a) ;
-		_op_addr+= sizeof(a) ;
-		return 0 ;
+
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	if (-1 == _writeMarker(ENDSTREAM_MARKER_IP64, 8)) {
+		return -1;
 	}
-	return -1 ;
+#endif 
+
+	if (_op_addr + sizeof(a) <= _end) {
+		memcpy(_op_addr, &a, sizeof(a));
+		MsgLength() += sizeof(a);
+		_op_addr += sizeof(a);
+		return 0;
+	}
+	return -1;
 }
 
 
@@ -265,45 +339,73 @@ int NDOStreamMsg::Write(const char *text)
 }
 int NDOStreamMsg::Write(const NDUINT8 *text)
 {
-	size_t n ;
-	size_t free_size = 0 ;
-	
-	if (_end <= _op_addr ){
-		return -1 ;
+	size_t n;
+	size_t free_size = 0;
+
+	if (_end <= _op_addr){
+		return -1;
 	}
 
-	if(!text || text[0]==0) {
-		Write((NDUINT16)0) ;
+	if (!text || text[0] == 0) {
+
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_TEXT, 0)) {
+			return -1;
+		}
+#else
+		_WriteOrg((NDUINT16)0);
+#endif
 		return 0;
 	}
 	else {
-		n = strlen((const char*)text) ;
-		free_size = (_end - _op_addr );
-		if(n + 3 <= free_size) {
-			Write((NDUINT16)n) ;
-			strcpy(_op_addr, (const char*)text) ;
-			_op_addr[n] = 0x7f ;
-			MsgLength() += (NDUINT16)n+1 ;
-			_op_addr += (n+1) ;
-			return 0 ;
+
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_TEXT, 1)) {
+			return -1;
+		}
+#endif 
+		n = strlen((const char*)text);
+		free_size = (_end - _op_addr);
+		if (n + 3 <= free_size) {
+			_WriteOrg((NDUINT16)n);
+			strcpy(_op_addr, (const char*)text);
+			_op_addr[n] = 0x7f;
+			MsgLength() += (NDUINT16)n + 1;
+			_op_addr += (n + 1);
+			return 0;
 		}
 	}
 	return -1;
 }
 
-int NDOStreamMsg::WriteBin(void *data, size_t size) 
+int NDOStreamMsg::WriteBin(void *data, size_t size)
 {
-	if (_end <= _op_addr || size >= Capacity() ){
-		return -1 ;
+	if (_end <= _op_addr || size >= Capacity()){
+		return -1;
 	}
-	size_t free_size = _end - _op_addr ;
-	if(size + 2 <= free_size) {
-		Write((NDUINT16)size) ;
+
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	if (size ==0){
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_BIN, 0)) {
+			return -1;
+		}
+		return 0;
+	}
+	else {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_BIN, 1)) {
+			return -1;
+		}
+	}
+#endif 
+
+	size_t free_size = _end - _op_addr;
+	if (size + 2 <= free_size) {
+		_WriteOrg((NDUINT16)size);
 		if (size > 0)
-			memcpy(_op_addr, data, size) ;
-		MsgLength() += (NDUINT16) size ;
-		_op_addr += size ;
-		return 0 ;
+			memcpy(_op_addr, data, size);
+		MsgLength() += (NDUINT16)size;
+		_op_addr += size;
+		return 0;
 	}
 	return -1;
 }
@@ -311,42 +413,124 @@ int NDOStreamMsg::WriteBin(void *data, size_t size)
 
 int NDOStreamMsg::WriteStream(char *stream_buf, size_t dataLen)
 {
-	
-	if (_end <= _op_addr ){
-		return -1 ;
+
+	if (_end <= _op_addr){
+		return -1;
 	}
-	size_t free_size = _end - _op_addr ;
+	size_t free_size = _end - _op_addr;
 	if (free_size < dataLen) {
 		return -1;
 	}
 	
-	if(dataLen>0) {
-		memcpy(_op_addr, stream_buf, dataLen) ;
-		MsgLength() += (NDUINT16) dataLen ;
-		_op_addr += dataLen ;
+	if (dataLen > 0) {
+		memcpy(_op_addr, stream_buf, dataLen);
+		MsgLength() += (NDUINT16)dataLen;
+		_op_addr += dataLen;
 	}
 	return 0;
-	
+
 }
-//
-////在脚本中使用
-//int NDOStreamMsg::WriteByte(int a) 
-//{
-//	return Write((NDUINT8)a) ;
-//}
-//int NDOStreamMsg::WriteInt(int a) 
-//{
-//	return Write((NDUINT32)a) ;
-//}
-//int NDOStreamMsg::WriteShort(int a) 
-//{
-//	return Write((NDUINT16)a) ;
-//}
-//
-//int NDOStreamMsg::WriteText(char* a) 
-//{
-//	return Write((NDUINT8*)a) ;
-//}
+
+int NDOStreamMsg::_WriteOrg(NDUINT32 a)
+{
+	if (_op_addr + sizeof(a) <= _end) {
+		//*((NDUINT32*)_op_addr) = htonl(a) ;
+		nd_long_to_netstream(_op_addr, a);
+
+		MsgLength() += sizeof(a);
+		_op_addr += sizeof(a);
+		return 0;
+	}
+	return -1;
+}
+int NDOStreamMsg::_WriteOrg(NDUINT16 a)
+{
+	if (_op_addr + sizeof(a) <= _end) {
+		//*((NDUINT16*)_op_addr) = htons(a) ;
+		nd_short_to_netstream(_op_addr, a);
+		MsgLength() += sizeof(a);
+		_op_addr += sizeof(a);
+		return 0;
+	}
+	return -1;
+}
+
+int NDOStreamMsg::_WriteOrg(NDUINT64 a)
+{
+	if (_op_addr + sizeof(a) <= _end) {
+		nd_longlong_to_netstream(_op_addr, a);
+		MsgLength() += sizeof(a);
+		_op_addr += sizeof(a);
+		return 0;
+	}
+	return -1;
+}
+
+
+int NDOStreamMsg::_WriteOrg(float a)
+{
+	union {
+		char buf[4];
+		float f;
+	} val;
+	if (_op_addr + sizeof(a) <= _end) {
+		val.f = a;
+		_op_addr[0] = val.buf[0];
+		_op_addr[1] = val.buf[1];
+		_op_addr[2] = val.buf[2];
+		_op_addr[3] = val.buf[3];
+		//*((float*)_op_addr) = a ;
+		MsgLength() += sizeof(a);
+		_op_addr += sizeof(a);
+		return 0;
+	}
+	return -1;
+}
+
+int NDOStreamMsg::_WriteOrg(double a)
+{
+
+	union {
+		char buf[8];
+		double d;
+	} val;
+	if (_op_addr + sizeof(a) <= _end) {
+		val.d = a;
+		_op_addr[0] = val.buf[0];
+		_op_addr[1] = val.buf[1];
+		_op_addr[2] = val.buf[2];
+		_op_addr[3] = val.buf[3];
+		_op_addr[4] = val.buf[4];
+		_op_addr[5] = val.buf[5];
+		_op_addr[6] = val.buf[6];
+		_op_addr[7] = val.buf[7];
+		//*((float*)_op_addr) = a ;
+		MsgLength() += sizeof(a);
+		_op_addr += sizeof(a);
+		return 0;
+	}
+	return -1;
+}
+
+
+int NDOStreamMsg::_WriteOrg(NDUINT8 a)
+{
+	if (_op_addr + sizeof(a) <= _end) {
+		*((char*)_op_addr) = a;
+		MsgLength() += sizeof(a);
+		_op_addr += sizeof(a);
+		return 0;
+	}
+	return -1;
+}
+
+int NDOStreamMsg::_writeMarker(eNDnetStreamMarker marker, size_t sizebytes)
+{
+	NDUINT8 m = (NDUINT8)marker << 4 | (NDUINT8)(sizebytes & 0xf);
+	return _WriteOrg(m);	
+}
+
+
 
 void NDOStreamMsg::SetID(int maxid, int minid) 
 {
@@ -389,6 +573,10 @@ size_t NDRecvMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(recv_packet); }
 
 NDIStreamMsg::NDIStreamMsg() : NDRecvMsg(0)
 {
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	m_bStruckEndMarker = false;
+	m_bSkipEndMarker = false ;
+#endif
 	_op_addr = NULL ;
 	_end = NULL;
 }
@@ -409,6 +597,10 @@ NDIStreamMsg::NDIStreamMsg(nd_usermsgbuf_t *pmsg) : NDRecvMsg(pmsg)
 
 void NDIStreamMsg::Init(nd_usermsgbuf_t *pmsg)
 {
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	m_bStruckEndMarker = false;
+	m_bSkipEndMarker = false ;
+#endif
 	recv_packet = pmsg ;
 	if(pmsg) {
 		_op_addr = ND_USERMSG_DATA(pmsg) ;//pmsg->data ;
@@ -432,108 +624,387 @@ NDIStreamMsg::~NDIStreamMsg()
 
 }
 
-int NDIStreamMsg::Read (NDUINT32 &a) 
+
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+
+
+int NDIStreamMsg::Read(NDUINT32 &a)
 {
-	if(_end >= _op_addr + sizeof(a) ) {
+	eNDnetStreamMarker type; 
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return -1;
+	}
+	if (type != ENDSTREAM_MARKER_INT32)	{
+		return -1;
+	}
 
+	a = 0;
+	if (size == 0)	{
+		return 0;
+	}
+	else if (size == 1) {
+		return _ReadOrg((NDUINT8&)a);
+	}
+
+	else if (size == 2) {
+		return _ReadOrg((NDUINT16&)a);
+	}
+
+	else if (size == 4) {
+		return _ReadOrg(a);
+	}
+	else {
+		return -1;
+	}
+}
+
+
+int NDIStreamMsg::Read(NDUINT16 &a)
+{
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return -1;
+	}
+	if (type != ENDSTREAM_MARKER_INT16)	{
+		return -1;
+	}
+
+	a = 0;
+	if (size == 0)	{
+		return 0;
+	}
+	else if (size == 1) {
+		return _ReadOrg((NDUINT8&)a);
+	}
+
+	else if (size == 2) {
+		return _ReadOrg(a);
+	}
+
+	else {
+		return -1;
+	}
+}
+
+
+int NDIStreamMsg::Read(NDUINT8 &a)
+{
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return -1;
+	}
+	if (type != ENDSTREAM_MARKER_INT8)	{
+		return -1;
+	}
+
+	a = 0;
+	if (size == 0)	{
+		return 0;
+	}
+	else if (size == 1) {
+		return _ReadOrg(a);
+	}
+	else {
+		return -1;
+	}
+}
+int NDIStreamMsg::Read(NDUINT64 &a)
+{
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return -1;
+	}
+	if (type != ENDSTREAM_MARKER_INT64)	{
+		return -1;
+	}
+
+	a = 0;
+	if (size == 0)	{
+		return 0;
+	}
+	else if (size == 1) {
+		return _ReadOrg((NDUINT8&)a);
+	}
+
+	else if (size == 2) {
+		return _ReadOrg((NDUINT16&)a);
+	}
+
+	else if (size == 4) {
+		return _ReadOrg((NDUINT32&)a);
+	}
+
+	else if (size == 8) {
+		return _ReadOrg(a);
+	}
+	else {
+		return -1;
+	}
+}
+int NDIStreamMsg::Read(float &a)
+{
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return -1;
+	}
+	if (type != ENDSTREAM_MARKER_FLOAT)	{
+		return -1;
+	}
+
+	a = 0;
+	if (size == 0)	{
+		return 0;
+	}
+	else if (size == 4) {
+		return _ReadOrg(a);
+	}
+	else {
+		return -1;
+	}
+}
+int NDIStreamMsg::Read(double &a)
+{
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return -1;
+	}
+	if (type != ENDSTREAM_MARKER_DOUBLE)	{
+		return -1;
+	}
+
+	a = 0;
+	if (size == 0)	{
+		return 0;
+	}
+	else if (size == 8) {
+		return _ReadOrg(a);
+	}
+	else {
+		return -1;
+	}
+}
+
+int NDIStreamMsg::_ReadTypeSize(eNDnetStreamMarker &type, NDUINT8 &size)
+{
+	NDUINT8 marker=0;
+	
+BEGIN_READ_MARKER:
+	if (-1 == _ReadOrg(marker)) {
+		return -1;
+	}
+	if (marker == NET_STREAM_STRUCT_END_MARK) {
+		if (m_bSkipEndMarker) {
+			goto BEGIN_READ_MARKER ;
+		}
+		m_bStruckEndMarker = true;
+		return 0;
+	}
+	type = (eNDnetStreamMarker)((marker & 0xf0) >> 4);
+	size = marker & 0xf;
+	return 0;
+}
+
+bool NDIStreamMsg::TrytoMoveStructEnd()
+{
+	char *orgAddr = _op_addr;
+	do 	{
+		eNDnetStreamMarker type;
+		NDUINT8 size = 0;
+		m_bStruckEndMarker = false;
+		if (-1 == _ReadTypeSize(type, size)) {
+			break;
+		}
+		if (m_bStruckEndMarker)	{
+			return true;
+		}
+		NDUINT16 data_size=0;
+
+
+		switch (type)
+		{
+		case ENDSTREAM_MARKER_INT8:
+		case ENDSTREAM_MARKER_INT16:
+		case ENDSTREAM_MARKER_INT32:
+		case ENDSTREAM_MARKER_INT64:
+		case ENDSTREAM_MARKER_FLOAT:
+		case ENDSTREAM_MARKER_DOUBLE:
+		case ENDSTREAM_MARKER_IP32:
+		case ENDSTREAM_MARKER_IP64:
+			_op_addr += size;
+			break;
+		case ENDSTREAM_MARKER_TEXT:
+			if (size == 0) {
+				break;
+			}
+			if (-1 == _ReadOrg(data_size)) {
+				_op_addr = orgAddr;
+				return false;
+			}
+			_op_addr += data_size +1;
+			break;
+		case ENDSTREAM_MARKER_BIN:
+			if (size == 0) {
+				break;
+			}
+
+			if (-1 == _ReadOrg(data_size)) {
+				_op_addr = orgAddr;
+				return false;
+			}
+			_op_addr += data_size ;
+			break;
+		default:
+			_op_addr = orgAddr;
+			return false;
+			break;
+		}
+
+	} while (LeftData() > 0);
+	 
+	_op_addr = orgAddr;
+	return false;
+}
+
+
+bool NDIStreamMsg::SetSkipMarker(bool bSkip)
+{
+	bool ret = m_bSkipEndMarker ;
+	m_bSkipEndMarker = bSkip ;
+	return ret ;
+}
+
+#endif 
+
+int NDIStreamMsg::_ReadOrg(NDUINT32 &a)
+{
+	if (_end >= _op_addr + sizeof(a)) {
 		a = nd_netstream_to_long(_op_addr);
-		//a =*((NDUINT32*) _op_addr) ;
-        //a = ntohl(a) ;
-		_op_addr += sizeof(a) ;
-		return 0 ;
-
+		_op_addr += sizeof(a);
+		return 0;
 	}
 	return -1;
 }
 
 
-int NDIStreamMsg::Read (NDUINT16 &a) 
+int NDIStreamMsg::_ReadOrg(NDUINT16 &a)
 {
-	if(_end >= _op_addr + sizeof(a) ) {
+	if (_end >= _op_addr + sizeof(a)) {
 
 		a = nd_netstream_to_short(_op_addr);
 		//a =*((NDUINT16*) _op_addr) ;
-        //a = ntohs(a) ;
-		_op_addr += sizeof(a) ;
-		return 0 ;
+		//a = ntohs(a) ;
+		_op_addr += sizeof(a);
+		return 0;
 
 	}
 	return -1;
 }
 
 
-int NDIStreamMsg::Read (NDUINT8 &a) 
+int NDIStreamMsg::_ReadOrg(NDUINT8 &a)
 {
-	if(_end >= _op_addr + sizeof(a) ) {
+	if (_end >= _op_addr + sizeof(a)) {
 
-		a =*((char*) _op_addr) ;
-		_op_addr += sizeof(a) ;
-		return 0 ;
+		a = *((char*)_op_addr);
+		_op_addr += sizeof(a);
+		return 0;
 
 	}
 	return -1;
 }
-int NDIStreamMsg::Read (NDUINT64 &a) 
-{
-	if(_end >= _op_addr + sizeof(a) ) {
 
-		
+int NDIStreamMsg::_ReadOrg(NDUINT64 &a)
+{
+	if (_end >= _op_addr + sizeof(a)) {
+
+
 		a = nd_netstream_to_longlong(_op_addr);
 		//a =*((NDUINT64*) _op_addr) ;
-        //a = nd_ntoh64(a) ;
-		_op_addr += sizeof(a) ;
-		return 0 ;
+		//a = nd_ntoh64(a) ;
+		_op_addr += sizeof(a);
+		return 0;
 
 	}
 	return -1;
 }
-int NDIStreamMsg::Read (float &a) 
+
+int NDIStreamMsg::_ReadOrg(float &a)
 {
-    union {
-        char buf[4] ;
-        float f;
-    } val ;
-    if(_op_addr + sizeof(a) <= _end) {
-        val.buf[0] = _op_addr[0]  ;
-        val.buf[1] =_op_addr[1]  ;
-        val.buf[2] =_op_addr[2]  ;
-        val.buf[3] =_op_addr[3]  ;
-        a = val.f;
-        _op_addr += sizeof(a) ;
-        return 0 ;
-        
-    }
-    return -1;
-}
-int NDIStreamMsg::Read (double &a) 
-{
-    union {
-        char buf[8] ;
-        double d;
-    } val ;
-    if(_op_addr + sizeof(a) <= _end) {
-        val.buf[0] = _op_addr[0]  ;
-        val.buf[1] =_op_addr[1]  ;
-        val.buf[2] =_op_addr[2]  ;
-        val.buf[3] =_op_addr[3]  ;
-        val.buf[4] =_op_addr[4]  ;
-        val.buf[5] =_op_addr[5]  ;
-        val.buf[6] =_op_addr[6]  ;
-        val.buf[7] =_op_addr[7]  ;
-        
-        a = val.d;
-		_op_addr += sizeof(a) ;
-		return 0 ;
+	union {
+		char buf[4];
+		float f;
+	} val;
+	if (_op_addr + sizeof(a) <= _end) {
+		val.buf[0] = _op_addr[0];
+		val.buf[1] = _op_addr[1];
+		val.buf[2] = _op_addr[2];
+		val.buf[3] = _op_addr[3];
+		a = val.f;
+		_op_addr += sizeof(a);
+		return 0;
 
 	}
 	return -1;
 }
+
+int NDIStreamMsg::_ReadOrg(double &a)
+{
+	union {
+		char buf[8];
+		double d;
+	} val;
+	if (_op_addr + sizeof(a) <= _end) {
+		val.buf[0] = _op_addr[0];
+		val.buf[1] = _op_addr[1];
+		val.buf[2] = _op_addr[2];
+		val.buf[3] = _op_addr[3];
+		val.buf[4] = _op_addr[4];
+		val.buf[5] = _op_addr[5];
+		val.buf[6] = _op_addr[6];
+		val.buf[7] = _op_addr[7];
+
+		a = val.d;
+		_op_addr += sizeof(a);
+		return 0;
+
+	}
+	return -1;
+}
+
 
 size_t NDIStreamMsg::Read (NDUINT8 *a, size_t size_buf) 
 {
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return 0;
+	}
+	if (type != ENDSTREAM_MARKER_TEXT)	{
+		return 0;
+	}
+	if (size ==0){
+		a[0] = 0;
+		return 0;
+	}
+#endif 
+
 	NDUINT16 data_size ;
 	
-	if(-1==Read(data_size)|| 0==data_size) {
+	if (-1 == _ReadOrg(data_size) || 0 == data_size) {
 		return 0 ;
 	}
 
@@ -552,9 +1023,26 @@ size_t NDIStreamMsg::Read (NDUINT8 *a, size_t size_buf)
 
 size_t NDIStreamMsg::ReadBin (void *buf, size_t size_buf) 
 {
+
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return 0;
+	}
+	if (type != ENDSTREAM_MARKER_BIN)	{
+		return 0;
+	}
+	if (size ==0){
+		return 0;
+	}
+#endif 
+
+
 	NDUINT16 data_size ;
 
-	if(-1==Read(data_size)|| 0==data_size) {
+	if (-1 == _ReadOrg(data_size) || 0 == data_size) {
 		return 0 ;
 	}
 
@@ -569,12 +1057,37 @@ size_t NDIStreamMsg::ReadBin (void *buf, size_t size_buf)
 }
 int NDIStreamMsg::PeekBinSize()
 {
-	if (_end >= _op_addr + sizeof(NDUINT16)) {
-		 return nd_netstream_to_short(_op_addr);
+	char *curAddr = _op_addr ;
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	NDUINT8 size = *curAddr & 0xf;
+	curAddr++;
+	if (size == 0) {
+		return 0;
+	}
+#endif 
+
+	if (_end >= curAddr + sizeof(NDUINT16)) {
+		 return nd_netstream_to_short(curAddr);
 	}
 	return -1;
 }
 
+
+eNDnetStreamMarker NDIStreamMsg::PeekDataType()
+{
+	char *orgAddr = _op_addr;
+
+	eNDnetStreamMarker type;
+	NDUINT8 size = 0;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size)) {
+		_op_addr = orgAddr;
+		return ENDSTREAM_MARKER_UNDEFINE;
+	}
+	_op_addr = orgAddr;
+	return type;
+		
+}
 
 int NDIStreamMsg::Read(NDOStreamMsg &omsg) 
 {
@@ -598,8 +1111,21 @@ int NDIStreamMsg::Read(NDOStreamMsg &omsg)
 
 int NDIStreamMsg::ReadIp(ndip_t &a)
 {
-	if(_end >= _op_addr + sizeof(a) ) {
-		
+
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return -1;
+	}
+	if (type != ENDSTREAM_MARKER_IP32)	{
+		return -1;
+	}
+#endif 
+
+
+	if(_end >= _op_addr + sizeof(a) ) {		
 		memcpy(&a, _op_addr, sizeof(a)) ;
 		_op_addr += sizeof(a) ;
 		return 0 ;
@@ -609,6 +1135,18 @@ int NDIStreamMsg::ReadIp(ndip_t &a)
 }
 int NDIStreamMsg::ReadIp(ndip_v6_t &a )
 {
+
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		return -1;
+	}
+	if (type != ENDSTREAM_MARKER_IP64)	{
+		return -1;
+	}
+#endif 
 	if(_end >= _op_addr + sizeof(a) ) {
 		
 		memcpy(&a, _op_addr, sizeof(a)) ;
@@ -636,56 +1174,4 @@ size_t NDIStreamMsg::ReadLeftStream(char *stream_buf, size_t buf_size)
 	return  data_size;
 }
 
-//
-//int NDIStreamMsg::ReadByte() 
-//{
-//	NDUINT8 a ;
-//	if(Read(a)!=-1) {
-//		return a ;
-//	}
-//	return 0 ;
-//}
-//int NDIStreamMsg::ReadShort() 
-//{
-//	NDUINT16 a ;
-//	if(Read(a)!=-1) {
-//		return a ;
-//	}
-//	return 0 ;
-//}
-//int NDIStreamMsg::ReadInt() 
-//{
-//	NDUINT32 a ;
-//	if(Read(a)!=-1) {
-//		return a ;
-//	}
-//	return 0 ;
-//}
-//char* NDIStreamMsg::ReadText() 
-//{
-//	NDUINT8* p ;
-//
-//	NDUINT16 data_size ;
-//	if(-1==Read(data_size)|| 0==data_size) {
-//		return NULL ;
-//	}
-//
-//
-//	if(data_size>0 && _op_addr+ data_size <_end) {
-//		if(_op_addr[data_size]==0x7f ) {
-//			//_op_addr[data_size] = 0 ;
-//			//memcpy(a,_op_addr, data_size ) ;
-//			p = (NDUINT8*)_op_addr ;
-//			_op_addr += data_size + 1 ;	
-//			p[data_size] = 0 ;
-//			return (char*)p ;
-//		}
-//	}
-//	return 0;
-//
-//}
-//
-//int NDIStreamMsg::ReadStream(NDOStreamMsg &omsg) 
-//{
-//	return Read(omsg) ;
-//}
+

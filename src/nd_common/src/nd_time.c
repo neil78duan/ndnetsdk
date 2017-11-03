@@ -79,6 +79,16 @@ const char *nd_get_datetimestr_ex(time_t in_tm, char *timebuf, int size)
 	return (const char *)timebuf;
 }
 
+time_t nd_time_getgm_from_offset(int secondIndexOfDay, time_t now, int timezone)
+{
+	now /= (3600 * 24);
+	now *= (3600 * 24);
+
+	now += secondIndexOfDay; 
+	now -= timezone * 3600;
+	return now;
+}
+
 int nd_time_day_interval(time_t end_tm, time_t start_tm)
 {
 	NDINT64 timezone = nd_time_zone();
@@ -228,7 +238,7 @@ time_t  nd_time_from_str(const char *pInput, time_t* tim)
 	time_t ret = 0;
 	struct tm mytm = { 0 };
 	char *p = (char*)pInput;
-	mytm.tm_year = strtol(p, &p, 0);
+	mytm.tm_year = (int)strtol(p, &p, 0);
 	mytm.tm_year -= 1900;
 	if (mytm.tm_year <0)	{
 		return -1;
@@ -238,7 +248,7 @@ time_t  nd_time_from_str(const char *pInput, time_t* tim)
 	if (p && *p){				\
 				while (*p && !IS_NUMERALS(*p))	{++p;}	\
 		if (*p)	{								\
-			int a = strtol(p, &p, 0);			\
+			int a = (int)strtol(p, &p, 0);			\
 			if(errno==ERANGE || a < 0) {return -1 ;}	\
 			mytm._tm_type = a ;				\
 						}	\

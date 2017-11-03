@@ -81,9 +81,9 @@ int nd_common_init()
 	
 #endif
 	//nd_memory_init() ;
-	if(-1==nd_mempool_root_init() )  {
-		return -1 ;
-	}
+	//if(-1==nd_mempool_root_init() )  {
+	//	return -1 ;
+	//}
 	nd_sourcelog_init() ;
 
 	__s_common_init = 1 ;

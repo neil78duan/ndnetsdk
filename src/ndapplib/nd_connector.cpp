@@ -321,3 +321,75 @@ int NDConnector::Ioctl(int cmd, void *val, int *size)
 	}
 	return 0;
 }
+
+//////////////////////////////////////////////////////////////////////////
+
+NDSafeConnector::NDSafeConnector(int maxmsg_num, int maxid_start) : NDConnector(maxmsg_num, maxid_start)
+{
+	INIT_LIST_HEAD(&m_undeliveried_list);
+}
+
+NDSafeConnector::~NDSafeConnector()
+{
+	if (!list_empty(&m_undeliveried_list))	{
+		struct list_head *pos, *next;
+		list_for_each_safe(pos, next, &m_undeliveried_list) {
+			resend_data *data = list_entry(pos, resend_data, list);
+			free(data);
+		}
+		INIT_LIST_HEAD(&m_undeliveried_list);
+	}
+}
+
+int NDSafeConnector::SendSafe(NDSendMsg &msg, int flag)
+{
+	return SendSafe(&(msg.GetMsgAddr()->msg_hdr), flag);
+}
+
+int NDSafeConnector::SendSafe(nd_usermsghdr_t *msghdr, int flag)
+{
+	int ret = 0;
+	if (CheckValid()){
+		ret = SendMsg(msghdr, flag);
+	}
+	if (ret > 0){
+		return ret;
+	}
+
+	int size = ND_USERMSG_LEN(msghdr);
+
+	resend_data *pdata = (resend_data *)malloc(size + sizeof(resend_data));
+	if (!pdata)	{
+		return -1;
+	}
+
+	pdata->flag = flag;
+
+	INIT_LIST_HEAD(&pdata->list);
+	memcpy(&pdata->msg_hdr, msghdr, size);
+
+	list_add_tail(&pdata->list, &m_undeliveried_list);
+
+	return 0;
+}
+
+int NDSafeConnector::TrytoResennd()
+{
+	int ret = 0;
+	if (!list_empty(&m_undeliveried_list))	{
+		struct list_head *pos, *next;
+		list_for_each_safe(pos, next, &m_undeliveried_list) {
+			resend_data *data = list_entry(pos, resend_data, list);
+
+			if (SendMsg((nd_usermsghdr_t *)&data->msg_hdr, data->flag) > 0) {
+				list_del(pos);
+				free(data);
+				++ret;
+			}
+			else {
+				return ret;
+			}
+		}
+	}
+	return ret;
+}

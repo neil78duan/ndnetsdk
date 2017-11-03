@@ -159,10 +159,15 @@ int NDAlarm::tick(ndtime_t tminterval)
             if(-1==UpdateMinute() )
                 return -1;
             
-            ++m_minute_index ;
+			++m_minute_index;
+			if (m_minute_index % 60 == 0) {
+				UpdateHour();
+			}
+
             m_tick_minute -= 1000*60 ;
             update_alarm() ;
-            
+
+
         }
         
     }
@@ -201,9 +206,7 @@ void NDAlarm::update_alarm()
 	gtm = localtime( &now );
 	tmnow = *gtm;
 	gtm = &tmnow;
-
-	UpdateHour();
-
+	
 	if ( gtm->tm_mday!= m_daily_last_runday){
 		if ((gtm->tm_hour > m_daily_hour) || (gtm->tm_hour == m_daily_hour&& gtm->tm_min >= m_daily_minute)) {
 			UpdateDaily() ;

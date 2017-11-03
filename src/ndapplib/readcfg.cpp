@@ -103,6 +103,8 @@ int read_instance_info(ndxml *xmlroot, struct instance_config *icfg)
 	XML_READ_SUB_BUF(xmlroot,"domain_name", icfg->domain_name) ;
 
 	XML_READ_SUB_INT(xmlroot,"logfilesize", icfg->log_file_size) ;
+	XML_READ_SUB_INT(xmlroot, "logFileNoDate", icfg->log_filename_nodate);
+	
 
 	if (icfg->data_dir[0]){
 		int len = (int) strlen(icfg->data_dir) ;
@@ -261,6 +263,19 @@ int read_dbconfig(const char *fileName, const char *dbCfgname ,struct nd_db_conf
 	GET_VAL( database ) ;
 	GET_VAL( user ) ;
 	GET_VAL( password) ;
+
+	db_cfg->port = 0;
+	xmlnode = ndxml_getnode(xmlsub, "port");
+	if (xmlnode)	{
+		db_cfg->port = ndxml_getval_int(xmlnode);
+	}
+
+	db_cfg->special_read_port = -1;
+	xmlnode = ndxml_getnode(xmlsub, "read_port");
+	if (xmlnode)	{
+		db_cfg->special_read_port = ndxml_getval_int(xmlnode);
+	}
+
 	ret = 0 ;
 	
 	

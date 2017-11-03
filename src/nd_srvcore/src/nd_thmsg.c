@@ -79,23 +79,7 @@ int nd_sendto_all_ex(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_lev
 	if(size==0 || size>ND_PACKET_SIZE) {
 		return -1 ;
 	}
-#ifndef ND_UNIX
-	if (lc->io_mod == ND_LISTEN_OS_EXT) {	
-		int flag = encrypt ? (ESF_ENCRYPT|ESF_POST): ESF_POST ;	
-		nd_netui_handle client ;
-		cmlist_iterator_t cm_iterator ;				
-		for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
-			client = pmanger->lock_next (pmanger,&cm_iterator) ) {
-			
-			if (nd_connect_level_get((nd_handle)client)>= priv_level )	{
-				nd_sessionmsg_sendex((nd_handle)client, data, flag);
-			}
-			++ret ;
-		}
-		return  ret; 
-	}
-#endif
-	
+
 	ND_USERMSG_LEN(data) = 0 ;
 	ver = data->packet_hdr.version ;
 	data->packet_hdr.version = priv_level ;
@@ -191,25 +175,7 @@ int nd_netmsg_2all_handle(nd_usermsghdr_t *data, nd_handle listen_handle,int pri
 	
 	if(size==0 || size>ND_PACKET_SIZE) {
 		return -1 ;
-	}	
-		
-#ifndef ND_UNIX
-	if (lc->io_mod == ND_LISTEN_OS_EXT) {		
-		nd_netui_handle client ;
-		cmlist_iterator_t cm_iterator ;
-		NDUINT8 tmp = data->packet_hdr.ndsys_msg ;
-		data->packet_hdr.ndsys_msg =1 ;
-			
-		for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
-			client = pmanger->lock_next (pmanger,&cm_iterator) ) {
-			client->msg_entry((nd_handle)client,(nd_packhdr_t *) data, listen_handle) ; 
-			++ret ;
-		}		
-		data->packet_hdr.ndsys_msg = tmp ;
-		return  ret; 
 	}
-#endif
-	
 	
 	ND_USERMSG_LEN(data) = 0 ;	
 	ver = data->packet_hdr.version ;		
@@ -417,20 +383,10 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 	else {
 		nd_handle client;
 		int flag = iscrypt?  ESF_POST: (ESF_POST | ESF_ENCRYPT) ;
-		
-#ifndef ND_UNIX
-		if (lc->io_mod == ND_LISTEN_OS_EXT) {
-			cmlist_iterator_t cm_iterator ;
-			for(client = pmanger->lock_first (pmanger,&cm_iterator) ; client; 
-				client = pmanger->lock_next (pmanger,&cm_iterator) ) {
-				if (nd_connect_level_get(client)>= priv_level )	{
-					nd_sessionmsg_sendex((nd_handle)client,&net_msg->msg_hdr,flag) ;
-				}
-			}
-		}
-		else 
-#endif
+
 		if(pthinfo){
+
+#if !defined (USE_NEW_MODE_LISTEN_THREAD)
 			int i;
 			for (i=pthinfo->session_num-1; i>=0;i-- ) {
 				NDUINT16 session_id = pthinfo->sid_buf[i];
@@ -442,6 +398,15 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 				}
 				pmanger->unlock(pmanger,session_id) ;
 			}
+#else 
+			struct list_head *pos, *next;
+			list_for_each_safe(pos, next, &pthinfo->sessions_list) {
+				struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);				
+				if (nd_connect_level_get(client) >= priv_level)	{
+					nd_sessionmsg_sendex((nd_handle)client, &net_msg->msg_hdr, flag);
+				}
+			}
+#endif
 		}	
 	}	
 	
@@ -489,6 +454,7 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 		}
 	}
 	else {
+#if !defined (USE_NEW_MODE_LISTEN_THREAD)
 		int i;
 		for (i=pthinfo->session_num-1; i>=0;i-- ) {
 			NDUINT16 session_id = pthinfo->sid_buf[i];
@@ -500,6 +466,15 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 			}
 			pmanger->unlock(pmanger,session_id) ;
 		}
+#else 
+		struct list_head *pos, *next;
+		list_for_each_safe(pos, next, &pthinfo->sessions_list) {
+			struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
+			if (nd_connect_level_get(client) >= priv_level)	{
+				client->connect_node.msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
+			}
+		}
+#endif
 	}
 	
 	net_msg->msg_hdr.packet_hdr.version = priv_level ;		
@@ -509,11 +484,81 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 	return 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//delay close
+
+static int _delay_close_timer(void *param)
+{
+	struct thread_pool_info *pthinfo;
+	NDUINT16 session_id = (NDUINT16)param;
+
+	nd_handle handle = nd_thsrv_gethandle(0);
+	if (!handle)	{
+		return 0;
+	}
+	pthinfo = (struct thread_pool_info *) nd_thsrv_getdata(handle);
+	if (!pthinfo)	{
+		return 0;
+	}
+	nd_session_closeex(session_id, (nd_handle)pthinfo->lh);
+	return 0;
+}
+static void _walk_all_session(struct node_root *pmanger, void *node_addr, void *param)
+{
+	struct nd_client_map  *client = (struct nd_client_map  *)node_addr;
+	nd_listen_handle listen_info = (nd_listen_handle)param;
+
+	NDUINT16 session_id = nd_session_getid(client);
+
+	client = pmanger->lock(pmanger, session_id);
+	if (client) {
+		NDUINT16 interval = rand();
+		pmanger->unlock(pmanger, session_id);
+		nd_thsrv_timer(nd_thread_self(), _delay_close_timer, (void *)session_id, interval, ETT_ONCE);
+	}
+	else {
+		ndthread_t aim_owner = pmanger->get_owner(pmanger, session_id);
+		if (aim_owner)	{
+			nd_thsrv_send(aim_owner, E_THMSGID_DELAY_CLOSE_RAND, &session_id, sizeof(session_id));
+		}
+		 
+	}
+}
+
+int nd_rand_delay_cloase_all(nd_handle listen_info)
+{
+	int ret = 0;
+	struct nd_client_map  *client;
+	struct nd_srv_node *srv_root = (struct nd_srv_node *)listen_info;
+	struct cm_manager *pmanger = &srv_root->conn_manager;
+	
+	pmanger->walk_node(pmanger, _walk_all_session, listen_info);
+	return 0;
+}
+
+
+static int delay_rand_close_handler(nd_thsrv_msg *msg)
+{
+	NDUINT16 interval = rand();
+	nd_netui_handle client;
+	struct thread_pool_info *pthinfo = (struct thread_pool_info *) msg->th_userdata;
+
+	struct listen_contex *lc = (struct listen_contex *)pthinfo->lh;
+
+	NDUINT16 sessionid = *(NDUINT16*)(msg->data);
+	
+	nd_thsrv_timer(pthinfo->thid, _delay_close_timer, (void *)sessionid,  interval, ETT_ONCE);
+
+	return 0;
+}
+
+
 void init_netthread_msg( nd_handle  thhandle)
 {
-	nd_thsrv_install_msg(  thhandle,E_THMSGID_ADDTO_THREAD, session_add_handler ) ;	
-	nd_thsrv_install_msg(  thhandle,E_THMSGID_SENDTO_CLIENT, msg_sendto_client_handler ) ;	
-	nd_thsrv_install_msg(  thhandle,E_THMSGID_NETMSG_HANDLE, netmsg_recv_handler ) ;
-	nd_thsrv_install_msg(  thhandle,E_THMSGID_CLOSE_SESSION, session_close_handler ) ;
+	nd_thsrv_install_msg(thhandle,E_THMSGID_ADDTO_THREAD, session_add_handler ) ;	
+	nd_thsrv_install_msg(thhandle,E_THMSGID_SENDTO_CLIENT, msg_sendto_client_handler ) ;	
+	nd_thsrv_install_msg(thhandle,E_THMSGID_NETMSG_HANDLE, netmsg_recv_handler ) ;
+	nd_thsrv_install_msg(thhandle,E_THMSGID_CLOSE_SESSION, session_close_handler ) ;
+	nd_thsrv_install_msg(thhandle, E_THMSGID_DELAY_CLOSE_RAND, delay_rand_close_handler);
 }
 

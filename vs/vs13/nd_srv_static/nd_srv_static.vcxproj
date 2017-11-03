@@ -223,7 +223,9 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_unix.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_win.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_xml.h" />
+    <ClInclude Include="..\..\..\include\nd_common\_client_config.h" />
     <ClInclude Include="..\..\..\include\nd_common\_nderr.h" />
+    <ClInclude Include="..\..\..\include\nd_common\_server_config.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_crypt.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_cryptfile.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_pubkey.h" />
@@ -258,6 +260,7 @@
     <ClInclude Include="..\..\..\include\nd_srvcore\client_map.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_epoll.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_listensrv.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_netthread.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_session.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_srvlib.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_thpool.h" />
@@ -339,6 +342,7 @@
     <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\client_map.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_netthread.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thmsg.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thpoolio.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\session.c" />

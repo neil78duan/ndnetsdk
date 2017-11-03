@@ -126,7 +126,7 @@ int nd_cmd_push_next(struct nd_cmdline_root *root, const char *next_cmd_text)
 		return -1;
 	}
 	
-	size =strlen(next_cmd_text) ;
+	size =(int)strlen(next_cmd_text) ;
 	if (root->next_cmd) {
 		free(root->next_cmd) ;
 		root->next_cmd = 0 ;

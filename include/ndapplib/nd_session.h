@@ -73,6 +73,8 @@ public :
 	NDUINT32 GetType() {return m_type;}
 	void SetType(NDUINT32 type) {m_type = type;}
 
+	bool RedirectLogToMe();
+
 #if 0
 	void *  operator new(size_t size,void *addr) throw (std::bad_alloc) ;
 	void operator delete(void *p) ;
@@ -84,6 +86,10 @@ protected:
 	//void *  operator new(size_t size) ;//throw (std::bad_alloc) ;
 	NDUINT32 m_id ;				//id
 	NDUINT32 m_type ;			//¿‡–Õ
+	bool m_bRedirctLog;
+public:
+	static NDSession *g_redirect_log_object;
+	static logfunc g_redirectOrgFunc;
 };
 
 #pragma  warning(pop)

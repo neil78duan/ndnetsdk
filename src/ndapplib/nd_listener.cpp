@@ -128,7 +128,7 @@ static int on_connector_closed(nd_handle connector, int flag)
 
 NDListener::NDListener(nd_fectory_base* sf) : session_fectory(sf)
 {
-	m_msg_kinds = ND_DFT_MAXMSG_NUM;
+	m_msg_kinds = ND_MAIN_MSG_CAPACITY;
 	m_msg_base = 0;
 
 	m_total_send = 0 ;		//总发送长度
@@ -375,6 +375,8 @@ int NDSafeListener::OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr)
 {
 	if (m_inst){
 		if(!m_inst->CheckReliableHost(addr->sin_addr.s_addr) ) {
+			char  peer_buf[40];
+			nd_logwarn("[IP FORBID ] closed connection from %s unreliabled ip\n", nd_inet_ntoa(addr->sin_addr.s_addr, peer_buf));
 			return -1 ;
 		}
 	}

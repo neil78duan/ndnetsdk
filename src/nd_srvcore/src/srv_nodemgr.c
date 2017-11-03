@@ -12,26 +12,29 @@
 *
 * all right reserved by neil duan 
 */
+#include "nd_srvcore/nd_srvlib.h"
+
+#if !defined (USE_NEW_MODE_LISTEN_THREAD)
 
 #define WAIT_LOOPS 2000
 #include "nd_common/nd_common.h"
 
-static void nd_node_init(void *socket_node, nd_handle h) ;
-static NDUINT16 nd_node_accept(struct node_root *root, void *socket_node);
-static int nd_node_deaccept(struct node_root *root, NDUINT16 node_id);
-static void *nd_node_lock(struct node_root *root, NDUINT16 node_id);
-static void *nd_node_trylock(struct node_root *root, NDUINT16 node_id);
-static void nd_node_unlock(struct node_root *root, NDUINT16 node_id);
-static void nd_node_walk_node(struct node_root *root,node_walk_callback cb_entry, void *param);
-static void *nd_node_search(struct node_root *root, NDUINT16 node_id);
-static void* nd_node_lock_first(struct node_root *root,node_iterator *it);
-static void* nd_node_lock_next(struct node_root *root,node_iterator *it) ;
-static void nd_node_unlock_iterator(struct node_root *root, node_iterator *it) ;
-static int nd_node_inc_ref(struct node_root *root, NDUINT16 node_id);
-static void nd_node_dec_ref(struct node_root *root, NDUINT16 node_id);
-static void *nd_node_safe_lock(struct node_root *root, NDUINT16 node_id);
-static int nd_node_free_num(struct node_root *root);
-static int nd_node_capacity(struct node_root *root);
+static void _nd_node_init(void *socket_node, nd_handle h) ;
+static NDUINT16 _nd_node_accept(struct node_root *root, void *socket_node);
+static int _nd_node_deaccept(struct node_root *root, NDUINT16 node_id);
+static void *_nd_node_lock(struct node_root *root, NDUINT16 node_id);
+static void *_nd_node_trylock(struct node_root *root, NDUINT16 node_id);
+static void _nd_node_unlock(struct node_root *root, NDUINT16 node_id);
+static void _nd_node_walk_node(struct node_root *root,node_walk_callback cb_entry, void *param);
+static void *_nd_node_search(struct node_root *root, NDUINT16 node_id);
+static void* _nd_node_lock_first(struct node_root *root,node_iterator *it);
+static void* _nd_node_lock_next(struct node_root *root,node_iterator *it) ;
+static void _nd_node_unlock_iterator(struct node_root *root, node_iterator *it) ;
+static int _nd_node_inc_ref(struct node_root *root, NDUINT16 node_id);
+static void _nd_node_dec_ref(struct node_root *root, NDUINT16 node_id);
+static void *_nd_node_safe_lock(struct node_root *root, NDUINT16 node_id);
+static int _nd_node_free_num(struct node_root *root);
+static int _nd_node_capacity(struct node_root *root);
 
 static void _nd_node_set_owner(struct node_root *root,NDUINT16 node_id , ndthread_t owner) ;
 static ndthread_t  _nd_node_get_owner(struct node_root *root,NDUINT16 node_id ) ;
@@ -99,15 +102,9 @@ int nd_srvnode_create(struct node_root *root, int max_num, size_t node_size,NDUI
 		return -1 ;
 	}
 	memset(root->connmgr_addr, 0, max_num*sizeof(struct srvnode_info)) ;
-// 	conn_node = (srvnode_info*) root->connmgr_addr;
-// 	for (i=0; i<root->max_conn_num; i++,conn_node++){
-// 		//nd_mutex_init(&(conn_node->lock)) ;
-// 		conn_node->node_addr = NULL ;
-// 		conn_node->owner = 0 ;
-// 		nd_atomic_set(&(conn_node->used),0);
-// 	}
 
-#define SET_FUNC(a,name) if((a)-> name==0)(a)-> name = nd_node_##name
+
+#define SET_FUNC(a,name) if((a)-> name==0)(a)-> name = _nd_node_##name
 	//SET_FUNC(root,alloc) ;
 	SET_FUNC(root,init) ;
 	//SET_FUNC(root,dealloc) ;
@@ -165,12 +162,18 @@ void nd_srvnode_destroy(struct node_root *root)
 //减少运用计数
 static void __dec_ref(struct node_root *root, struct srvnode_info *node)
 {
-	ndatomic_t v = 0 ;
+	ndatomic_t v = 0;
+	ndthread_t self = nd_thread_self();
 	while ( (v=nd_atomic_read(&node->used)) > 0) 	{
+		if (node->locked_id != self || v==1)	{
+			break;
+		}
+
 		if(nd_compare_swap(&node->used, v,v-1) ){
 			if (v==1) {
 				node->node_addr = NULL ;
 				node->owner = 0 ;
+				node->locked_id = 0;
 				//nd_atomic_dec(&(root->connect_num)) ;
 			}
 			else if(2==v) {
@@ -184,9 +187,10 @@ static void __dec_ref(struct node_root *root, struct srvnode_info *node)
 static __INLINE__ void* _lock_node(struct srvnode_info *node) 
 {
 	ndthread_t self = nd_thread_self() ;
-	if (self != node->owner){
+	if (self != node->owner || nd_atomic_read(&node->used)==0){
 		return 0 ;
 	}
+	//nd_assert(node->used ==1);
 	if(nd_compare_swap(&node->used,1,2)) {		//only can be lock when used==1
 		if(ND_ALLOC_MM_VALID(node->node_addr) ) {
 			node->locked_id = self ;
@@ -197,6 +201,8 @@ static __INLINE__ void* _lock_node(struct srvnode_info *node)
 	else if (nd_atomic_read(&node->used)>1) {	
 		if (node->locked_id == self && ND_ALLOC_MM_VALID(node->node_addr)){
 			nd_atomic_inc(&node->used) ;
+
+			//nd_assert(node->used < 3);
 			return node->node_addr ;
 		}
 	}
@@ -206,25 +212,10 @@ static __INLINE__ void* _lock_node(struct srvnode_info *node)
 static __INLINE__ void _unlock_node(struct node_root *root,struct srvnode_info *node )
 {
 	__dec_ref(root, node) ;
-// 	ndatomic_t swval = (node->node_addr!=NULL);
-// 	
-// 	if(nd_compare_swap(&node->used,2,swval)) {
-// 		//if (swval==0){
-// 		//	node->owner = 0 ;
-// 		//}
-// 	}	
-// 	else {
-// 		//self lock multitimes needn't unlock mutex
-// 		ndatomic_t v = 0 ;
-// 		while ( (v=nd_atomic_read(&node->used)) > 0) 	{
-// 			if(nd_compare_swap(&node->used, v,v-1) ){
-// 				break ;
-// 			}
-// 		}
-// 	}
+	
 }
 
-NDUINT16 nd_node_accept(struct node_root *root, void *socket_node)
+NDUINT16 _nd_node_accept(struct node_root *root, void *socket_node)
 {	
 	int i ;
 	struct srvnode_info *node;
@@ -247,36 +238,34 @@ NDUINT16 nd_node_accept(struct node_root *root, void *socket_node)
 }
 
 
-int nd_node_deaccept(struct node_root *root, NDUINT16 node_id)
+int _nd_node_deaccept(struct node_root *root, NDUINT16 node_id)
 {
 	int index = node_id - root->base_id  ;
 	struct srvnode_info *node ;
-	
+
 	if(index<0 || index >= root->max_conn_num)
 		return -1;
 
 	node = (struct srvnode_info*) root->connmgr_addr  ;
 	node += index ;
-	nd_assert(node->used>=1) ;
+
 	node->node_addr = 0 ;
 	node->owner = 0 ;
-	__dec_ref(root,node) ;
+	node->locked_id = 0;
+	nd_atomic_set(&node->used, 0);
+
 	nd_atomic_dec(&(root->connect_num)) ;
-// 	p = node->node_addr ;
-// 	
-// 	node->node_addr = NULL ;
-// 	node->owner = 0 ;
-// 	nd_atomic_dec(&(root->connect_num)) ;
+
 	return 0;
 }
 
 //增加引用次数
-int nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
+int _nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
 {
 	ndatomic_t tmp ;
 	int index = node_id  - root->base_id ;
 	struct srvnode_info *node ;
-
+	
 	if(index<0 || index >= root->max_conn_num)
 		return -1;
 
@@ -291,7 +280,7 @@ int nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
 	return -1 ;
 }
 //减少引用次数
-void nd_node_dec_ref(struct node_root *root, NDUINT16 node_id)
+void _nd_node_dec_ref(struct node_root *root, NDUINT16 node_id)
 {
 	int index = node_id - root->base_id  ;
 	struct srvnode_info *node ;
@@ -304,7 +293,7 @@ void nd_node_dec_ref(struct node_root *root, NDUINT16 node_id)
 	__dec_ref(root,node) ;
 }
 
-void *nd_node_lock(struct node_root *root, NDUINT16 node_id)
+void *_nd_node_lock(struct node_root *root, NDUINT16 node_id)
 {
 	int index = node_id - root->base_id ;
 	struct srvnode_info *node ;
@@ -318,7 +307,7 @@ void *nd_node_lock(struct node_root *root, NDUINT16 node_id)
 	return _lock_node(node) ;
 }
 
-void *nd_node_safe_lock(struct node_root *root, NDUINT16 node_id)
+void *_nd_node_safe_lock(struct node_root *root, NDUINT16 node_id)
 {
 	void *paddr  ;
 	int index = node_id - root->base_id ;
@@ -341,26 +330,13 @@ void *nd_node_safe_lock(struct node_root *root, NDUINT16 node_id)
 
 }
 
-void *nd_node_trylock(struct node_root *root, NDUINT16 node_id)
+void *_nd_node_trylock(struct node_root *root, NDUINT16 node_id)
 {
-	return nd_node_lock(root,node_id) ;
-// 
-// 	int index = node_id - root->base_id ;
-// 	struct node_info *node ;
-// 
-// 	if(index<0 || index >= root->max_conn_num)
-// 		return NULL;
-// 
-// 	node = root->connmgr_addr  ;
-// 	node += index ;
-// 
-// 	if(nd_compare_swap(&node->used,1,2)) {		//only can be lock when used==1
-// 		return node->node_addr ;
-// 	}
-// 	return NULL;
+	return _nd_node_lock(root,node_id) ;
+
 }
 
-void nd_node_unlock(struct node_root *root, NDUINT16 node_id)
+void _nd_node_unlock(struct node_root *root, NDUINT16 node_id)
 {
 	int index =  node_id  - root->base_id ;
 	struct srvnode_info *node ;
@@ -373,27 +349,22 @@ void nd_node_unlock(struct node_root *root, NDUINT16 node_id)
 	_unlock_node(root, node) ;
 }
 
-void nd_node_walk_node(struct node_root *root,node_walk_callback cb_entry, void *param)
+void _nd_node_walk_node(struct node_root *root,node_walk_callback cb_entry, void *param)
 {
-	//ndatomic_t v = 0 ;
 	int i;
 	struct srvnode_info *node = (struct srvnode_info *) root->connmgr_addr ;
 	int num = nd_atomic_read(&root->connect_num);
-	//ndthread_t self = nd_thread_self() ;
-
+	
 	for (i=0; i<root->max_conn_num && num>0; i++,node++){
 
 		if(nd_atomic_read(&(node->used)) >0) {
 			--num ;
-			if (_lock_node(node))	{
-				cb_entry(node->node_addr, param);
-				_unlock_node(root,node) ;
-			}
+			cb_entry(root,node->node_addr, param);
 		}
 	}
 }
 
-void *nd_node_search(struct node_root *root, NDUINT16 node_id)
+void *_nd_node_search(struct node_root *root, NDUINT16 node_id)
 {
 
 	int index = node_id - root->base_id  ;
@@ -414,14 +385,14 @@ void *nd_node_search(struct node_root *root, NDUINT16 node_id)
 }
 
 
-void nd_node_init(void *socket_node, nd_handle h)
+void _nd_node_init(void *socket_node, nd_handle h)
 {
 	nd_msgbox("please set initialization function of client manager", "error" ) ;
 	nd_logerror("please set initialization function of client manager") ;
 	return ;
 }
 
-void* nd_node_lock_first(struct node_root *root,node_iterator *it)
+void* _nd_node_lock_first(struct node_root *root,node_iterator *it)
 {
 	//ndatomic_t v = 0 ;
 	int i ;
@@ -448,23 +419,23 @@ void* nd_node_lock_first(struct node_root *root,node_iterator *it)
 	return NULL ;
 }
 
-void nd_node_unlock_iterator(struct node_root *root, node_iterator *it) 
+void _nd_node_unlock_iterator(struct node_root *root, node_iterator *it) 
 {
-	nd_node_unlock(root, it->node_id) ;
+	_nd_node_unlock(root, it->node_id) ;
 
 	it->node_id = 0 ;
 	it->numbers = 0 ;
 	it->total = 0 ;
 }
 
-void* nd_node_lock_next(struct node_root *root,node_iterator *it)
+void* _nd_node_lock_next(struct node_root *root,node_iterator *it)
 {
 	//ndatomic_t v = 0 ;
 	int i = (it->node_id) - root->base_id ;
 
 	nd_assert(i>=0 && i<root->max_conn_num) ;
 
-	nd_node_unlock(root, it->node_id) ;
+	_nd_node_unlock(root, it->node_id) ;
 	++i ;
 	++(it->node_id) ;
 
@@ -483,7 +454,7 @@ void* nd_node_lock_next(struct node_root *root,node_iterator *it)
 	return NULL ;
 }
 
-int nd_node_free_num(struct node_root *root)
+int _nd_node_free_num(struct node_root *root)
 {
 #ifdef USER_STATIC_ALLOC
 	return nd_sa_freenum(root->node_alloctor) ;
@@ -491,7 +462,7 @@ int nd_node_free_num(struct node_root *root)
 	return root->max_conn_num - root->connect_num ;
 #endif
 }
-int nd_node_capacity(struct node_root *root)
+int _nd_node_capacity(struct node_root *root)
 {
 #ifdef USER_STATIC_ALLOC
 	return nd_sa_capacity(root->node_alloctor) ;
@@ -522,5 +493,6 @@ ndthread_t  _nd_node_get_owner(struct node_root *root,NDUINT16 node_id )
 
 	return node[index].owner ;
 }
+#endif
 
 

@@ -18,100 +18,153 @@
 #include <map>
 
 
+
 struct httpHeaderNode{
 	std::string name;
 	std::string value ;
 };
 
-class NDHttpRequest
+class NDHttpParser
+{
+public:
+	NDHttpParser();
+	virtual ~NDHttpParser();
+	
+	virtual void Reset();
+	virtual int dump();
+	bool CheckRecvOk();
+	bool isLongConnect();
+	void InData(const char *data, int size);
+
+	int getStatus(){ return m_status; }
+	void setStatus(int stat) { m_status = stat; }
+
+	const char *getBody() { return m_body.c_str(); }
+	int getBodySize() { return (int)m_body.size(); }
+	const char *getHeader(const char *);	
+	bool addHeader(const char *name, const char *value);
+
+
+	size_t HeaderToBuf(char *buf, size_t size);
+
+	enum eAction{ E_ACTION_GET, E_ACTION_POST, E_ACTION_RESPONSE };
+	eAction getAction() { return m_action; }
+	void setAction(NDHttpParser::eAction act) { m_action = act; }
+
+	typedef std::vector<httpHeaderNode>HttpHeader_t;
+
+protected:
+	virtual int ParseProtocol();
+	virtual void onParseEnd();
+	int ParseData();
+
+	int _parseHeader();
+	int _parseBody();
+
+	httpHeaderNode *_getNode(const char *name, HttpHeader_t &headers);
+	std::string *_getHeader(const char *name);
+	void _adNode(const char *name,const char *value, HttpHeader_t &headers);
+
+	char *_getCurParseAddr();
+	int _getDataSize();
+	int _findBodySize();
+
+	int m_status;
+
+	nd_linebuf *m_recvBuf;
+	int m_parseStat; // 0 empty , 1 start parse ,2 parse body, 3 parse ok
+	int m_parseProgress; // 0 head, 1 body
+
+	eAction m_action;
+public:
+	std::string m_body;
+	HttpHeader_t m_header;
+};
+
+
+class NDHttpRequest : public NDHttpParser 
 {
 public:
 
 	NDHttpRequest() ;
 	virtual ~NDHttpRequest() ;
 	
-	void InData(const char *data, int size) ;
-	int ParseData() ;
-	
-	virtual int OnEnd() ;
-	
-	const char *getHeader(const char *) ;
-	int getStatus() ;
-	void setStatus(int stat) {m_status = stat ;} 
-	const char *getBody() ;
-	int getBodySize();
-	void Reset() ;
-	bool CheckRecvOk();
-
-	bool addHeader(const char *name, const char *value);
-
-	const char* getRequestVal(const char *name);
-
-	size_t HeaderToBuf(char *buf, size_t size);
+	const char *getPath() { return m_path.c_str(); }
+	const char* getRequestVal(const char *name); //get header value
+	bool addRequestFormVal(const char *name, const char *value);
 	size_t RequestValueTobuf(char *buf, size_t size);
 
-
-	enum eAction{E_ACTION_GET, E_ACTION_POST};
-
-	eAction getAction() { return m_action; }
-	void setAction(NDHttpRequest::eAction act) { m_action = act; }
-	const char *getPath() { return m_path.c_str(); }
-	int _dumRequestHeader();
+	int dump();
+	virtual void Reset();
 protected:
 
 	typedef std::vector<httpHeaderNode>HttpHeader_t;
-	int _parseInit() ;
-	int _parseHeader() ;
-	int _parseBody() ;
+
+	virtual int ParseProtocol();
+	virtual void onParseEnd();
 	int _parsePathInfo(const char *path);
-	char *_getCurParseAddr() ;
-	int _getDataSize() ;
-	int _findBodySize() ;
-	
-	std::string *_getHeader(const char *name, HttpHeader_t &header);
+	int _postBodyToJson();
 
 	
-	int m_status ;
-	int m_bodySize ;
-	
-	nd_linebuf m_recvBuf ;
-	int m_parseStat ; // 0 empty , 1 start parse ,2 parse body, 3 parse ok
-	int m_parseProgress ; // 0 head, 1 body
-
-	eAction m_action;
 public:
 
-	HttpHeader_t m_header;
+	//HttpHeader_t m_header;
 	HttpHeader_t m_requestForms;
 	std::string m_path;
-	std::string m_body;
+	//std::string m_body;
 };
 
+
+class NDHttpResponse : public NDHttpParser
+{
+public:
+	NDHttpResponse() : NDHttpParser()
+	{
+		m_action = NDHttpParser::E_ACTION_RESPONSE;
+	}
+	~NDHttpResponse()
+	{
+
+	}
+
+protected:
+	virtual int ParseProtocol();
+
+};
 
 class HttpConnector
 {
 public:
-	HttpConnector(NDHttpRequest *request);
+	HttpConnector(bool bLongConnect=false);
 	virtual ~HttpConnector();
 	int Create(const char *host, int port);
+	int Close();
 	void Destroy();
 	int SendRequest(NDHttpRequest &request, const char *host, int port, const char *path);
 
 	int Recv(char *buf, int size, int timeout);
 	int Update(int timeout);
+	void setLongConnect(bool bLongConnect){ m_bLongConnection = bLongConnect; }
 	bool CheckValid();
-
+	virtual void onResponse(NDHttpResponse *response);
+	void setLast(const char *path){ m_lastRequestPath = path; }
+	nd_handle getHandle(){ return m_conn; }
 protected:
 
 	//NDIConn *m_conn ;
-	nd_handle m_conn;
+	bool m_bLongConnection;
 	int m_port;
+	nd_handle m_conn;
 	std::string m_host;
-	NDHttpRequest *m_recvRequest;
+	std::string m_lastRequestPath;
+	//NDHttpRequest *m_recvRequest;
+	NDHttpResponse m_response;
 };
 
+
 class NDHttpSession;
-typedef NDHttpRequest NDHttpResponse;
+//typedef NDHttpRequest NDHttpResponse;
+
 
 typedef int(*http_reqeust_func)(NDHttpSession *pSession,const NDHttpRequest &resuest);
 

@@ -113,7 +113,7 @@ ND_SRV_API int nd_thsrv_end(nd_thsrvid_t  srv_id) ;		//terminal a service
 
 ND_SRV_API int nd_thsrv_suspend(nd_thsrvid_t  srv_id) ;		//suspend a service 
 ND_SRV_API int nd_thsrv_resume(nd_thsrvid_t  srv_id) ;		//resume a service 
-ND_SRV_API int nd_thsrv_suspendall() ;		//suspend all service 
+ND_SRV_API int nd_thsrv_suspendall() ;		//suspend all service ,except self
 ND_SRV_API int nd_thsrv_resumeall() ;		//suspend all service 
 
 ND_SRV_API int nd_thsrv_wait(nd_thsrvid_t  srv_id) ;		//wait a service exit

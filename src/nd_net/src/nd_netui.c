@@ -457,11 +457,11 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 	if (msg_buf->ndsys_msg == 0 && net_handle->save_send_stream) {
 		if ((flag & ESF_ENCRYPT)) {
 			msg_buf->encrypt = 1 ;
-			nd_netobj_send_stream_save(net_handle, msg_buf, (int) msg_buf->length ) ;
+			nd_netobj_send_stream_save(net_handle, msg_buf, (int)nd_pack_len(msg_buf));
 			msg_buf->encrypt = 0 ;
 		}
 		else {
-			nd_netobj_send_stream_save(net_handle, msg_buf, (int)msg_buf->length);
+			nd_netobj_send_stream_save(net_handle, msg_buf, (int)nd_pack_len(msg_buf));
 		}
 	}
 #endif 

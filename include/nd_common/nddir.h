@@ -71,4 +71,5 @@ ND_COMMON_API  const char * nd_relative_path(const char *fullPath,const char *wo
 //get extend name 
 ND_COMMON_API  const char * nd_file_ext_name(const char *fullPath);
 
+
 #endif

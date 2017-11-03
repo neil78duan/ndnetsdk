@@ -36,9 +36,10 @@ static const char* _read_replace_text(const char *src, char *outText)
 	}
 	
 	buf[0] = 0;
-	p = ndstr_nstr_ansi(p, buf, ';', sizeof(buf));
+	p = ndstr_nstr_ansi(p, buf, ';', sizeof(buf)-1);
 	if (*p != ';')	{
-		return NULL;
+		*outText = *src;
+		return src +1;
 	}
 	++p;
 
@@ -135,7 +136,7 @@ static const char *_xml_read_attrval(const char *xmlbuf, char *buf, size_t size)
 			++p;
 			break;
 		}
-		else if (*p == '&') {
+		else if (*p == '&' && (IS_LITTLE_LATIN(p[1]) || IS_BIG_LATIN(p[1]))) {
 			p = _read_replace_text(p, buf);
 			if (!p)	{
 				return NULL;
@@ -160,7 +161,7 @@ static const char *_xml_read_value(const char *xmlbuf, char *buf, size_t size)
 	const char *p = xmlbuf;
 
 	while (*p){
-		if (*p == '&'){
+		if (*p == '&' && (IS_LITTLE_LATIN(p[1]) || IS_BIG_LATIN(p[1]))){
 			p = _read_replace_text(p, buf);
 			++buf;
 			--size;
@@ -222,6 +223,68 @@ int xml_load_from_buf(const char *buf, size_t size, ndxml_root *xmlroot,const ch
 	return 0;
 }
 
+int ndxml_load_from_buf(const char *fileName, const char *buf, size_t size, ndxml_root *xmlroot, const char *toEncodeType)
+{
+	int codeType = -1;
+	int ret = 0;
+	
+	char *pAddr, *pErrorAddr = 0;
+	const char *pTextEncode = 0;
+	const char*pBuf = (char*)buf;
+	char *pconvertbuf = NULL;
+
+	//ndxml_root *xmlroot;
+	ndxml_initroot(xmlroot);
+	if (-1 == xml_parse_fileinfo(xmlroot, pBuf, &pAddr, &pErrorAddr)) {
+		ndxml_destroy(xmlroot);
+		return -1;
+	}
+
+	pTextEncode = ndxml_getattr_val(xmlroot, "encoding");
+	if (pTextEncode && *pTextEncode){
+		if (toEncodeType && toEncodeType[0]) {
+			int nTextType = nd_get_encode_val(pTextEncode);
+			int nNeedType = nd_get_encode_val(toEncodeType);
+
+			nd_code_convert_func func = nd_get_code_convert(nTextType, nNeedType);
+
+			if (func){
+				char *pconvertbuf = malloc(size * 2);
+				if (!pconvertbuf)	{
+					return -1;
+				}
+				if (func(pBuf, pconvertbuf, size * 2)) {					
+					pBuf = pconvertbuf;
+					size = strlen(pconvertbuf);
+				}
+				else {
+					free(pconvertbuf);
+					nd_logerror("convert text econde from %s to %s \n", pTextEncode, toEncodeType);
+					return -1;
+				}
+				ndxml_setattrval(xmlroot, "encoding", toEncodeType);
+			}
+			codeType = ndstr_set_code(nNeedType);
+		}
+		else {
+			codeType = xml_set_code_type(xmlroot);
+		}
+	}
+
+
+	if (-1 == xml_load_from_buf(pBuf, size, xmlroot, fileName)) {
+		ret = -1;
+	}
+
+	if (codeType != -1) {
+		ndstr_set_code(codeType);
+	}
+	if (pconvertbuf) {
+		free(pconvertbuf);
+	}
+
+	return ret;
+}
 int ndxml_load(const char *file,ndxml_root *xmlroot)
 {
 	return ndxml_load_ex(file, xmlroot, NULL);	
@@ -229,6 +292,18 @@ int ndxml_load(const char *file,ndxml_root *xmlroot)
 
 int ndxml_load_ex(const char *file, ndxml_root *xmlroot, const char*encodeType)
 {
+	size_t size = 0;
+	char*pBuf = nd_load_file(file, &size);
+	if (!pBuf){
+		nd_logerror("load file %s error\n", file);
+		return -1;
+	}
+	int ret = ndxml_load_from_buf(file, pBuf, size, xmlroot, encodeType);
+
+	nd_unload_file(pBuf);
+	return ret;
+
+	/*
 	int codeType = -1;
 	int ret = 0;
 	size_t size = 0;
@@ -252,18 +327,8 @@ int ndxml_load_ex(const char *file, ndxml_root *xmlroot, const char*encodeType)
 		if (encodeType && encodeType[0]) {
 			int nTextType = nd_get_encode_val(pTextEncode);
 			int nNeedType = nd_get_encode_val(encodeType);
-			//char *pconvertbuf;
-			//const char *encodeTextType = 0;
+
 			nd_code_convert_func func = nd_get_code_convert(nTextType, nNeedType);
-// 			typedef char*(*__convert_function)(const char *, char *, int);
-// 			__convert_function func = NULL;
-// 			//CONVERT CODE 
-// 			if (nNeedType == E_SRC_CODE_UTF_8 && nTextType != E_SRC_CODE_UTF_8)	{
-// 				func = nd_gbk_to_utf8;
-// 			}
-// 			else if (nNeedType != E_SRC_CODE_UTF_8 && nTextType == E_SRC_CODE_UTF_8)	{
-// 				func = nd_utf8_to_gbk;	
-// 			}
 
 			if (func){
 				char *pconvertbuf = malloc(size * 2);
@@ -302,30 +367,11 @@ int ndxml_load_ex(const char *file, ndxml_root *xmlroot, const char*encodeType)
 EXIT_ERROR :
 	nd_unload_file(pBuf);
 	return ret;
-
+	*/
 }
 
 void ndxml_destroy(ndxml_root *xmlroot)
 {
-// 	ndxml *sub_xml; 
-// 	struct list_head *pos = xmlroot->lst_sub.next;
-// 	while (pos != &xmlroot->lst_sub) {
-// 		sub_xml = list_entry(pos,struct tagxml, lst_self) ;
-// 		pos = pos->next ;
-// 		dealloc_xml(sub_xml) ;
-// 		
-// 	}
-// 
-// 
-// 	//dealloc attribute
-// 	pos = xmlroot->lst_attr.next;
-// 	while (pos != &xmlroot->lst_attr) {
-// 		struct ndxml_attr *attrnode;
-// 		attrnode = list_entry(pos, struct ndxml_attr, lst);
-// 		pos = pos->next;
-// 		dealloc_attrib_node(attrnode);
-// 	}
-
 
 	_release_xml(xmlroot);
 	ndxml_initroot(xmlroot) ;
@@ -877,7 +923,7 @@ char *ndxml_getval_buf(ndxml *node, char *buf, size_t size)
 int ndxml_getval_int(ndxml *node)
 {
 	if(node->value && node->value[0])
-		return ndstr_atoi_hex(node->value );
+		return (int)ndstr_atoi_hex(node->value );
 	else
 		return 0 ;
 }

@@ -77,8 +77,8 @@ enum ND_IOCTRL_CMD
 };
 
 
-#define ND_STREAM_MESSAGE_START 0x7f7e
-#define ND_STREAM_MESSAGE_END 0x7f7c
+#define ND_STREAM_MESSAGE_START 0x7f7f
+#define ND_STREAM_MESSAGE_END 0x7c7c
 
 #endif
  

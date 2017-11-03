@@ -12,6 +12,7 @@
 #include "ndapplib/nd_msgpacket.h"
 //#include "nd_net/nd_netlib.h"
 #include "nd_net/nd_netioctl.h"
+#include "nd_msg.h"
 
 #define CONNECT_INSTALL_MSG(connect, msgFunc, maxID, minID) \
 	(connect)->InstallMsgFunc(msgFunc, maxID, minID, #maxID"-"#minID) 
@@ -48,7 +49,7 @@ public :
 	void SetConnectTimeOut(int seconds) ;
 	int Ioctl(int cmd, void *val, int *size) ;
 
-	NDConnector(int maxmsg_num =ND_DFT_MAXMSG_NUM, int maxid_start=0) ;
+	NDConnector(int maxmsg_num = ND_MAIN_MSG_CAPACITY, int maxid_start = ND_MSG_BASE_ID);
 	void SetMsgNum(int maxmsg_num , int maxid_start=0) ;
 	virtual~NDConnector() ;
 
@@ -61,5 +62,30 @@ private:
 	data_in_entry m_old_in_func;
 };
 
+// safe connect , the data will be stored when send error 
+class NDSafeConnector: public NDConnector 
+{
+public:
+	NDSafeConnector(int maxmsg_num = ND_MAIN_MSG_CAPACITY, int maxid_start = ND_MSG_BASE_ID);
+	virtual ~NDSafeConnector ();
+
+
+	int SendSafe(NDSendMsg &msg, int flag = ESF_URGENCY);
+	int SendSafe(nd_usermsghdr_t *msghdr, int flag = ESF_URGENCY);
+
+	int TrytoResennd();
+private:
+	struct resend_data {
+		struct list_head list;
+		int flag;
+		nd_usermsghdr_t msg_hdr;
+		char data[1];
+	};
+
+	struct list_head m_undeliveried_list;
+};
+
+//////////////////////////////////////////////////////////////////////////
 NDConnector * htoConnector(nd_handle h);
+
 #endif

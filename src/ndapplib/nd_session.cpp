@@ -10,6 +10,7 @@
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_listener.h"
 #include "ndapplib/nd_datatransfer.h"
+#include "nd_msg.h"
 
 static  int _session_update(nd_handle h)
 {
@@ -197,12 +198,54 @@ int NDBaseSession::LoadBalance()
 
 //////////////////////////////////////////////////////////////////////////
 //class NDSession
+
+bool m_bRedirctLog;
+NDSession *NDSession::g_redirect_log_object=NULL;
+logfunc NDSession::g_redirectOrgFunc =NULL;
+
+static void redirect_log_entry(const char* text)
+{
+	if (NDSession::g_redirect_log_object)	{
+		NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_REDIRECT_SRV_LOG_OUTPUT);
+		omsg.Write(text);
+		NDSession::g_redirect_log_object->SendMsg(omsg);
+	}
+	else if (NDSession::g_redirectOrgFunc) {
+		NDSession::g_redirectOrgFunc(text);
+	}
+}
+
 NDSession::NDSession () 
 {
+	m_id = 0;
+	m_type = 0;
+	m_bRedirctLog = false;
 }
 
 NDSession::~NDSession() 
 {
+	if (m_bRedirctLog && g_redirect_log_object == this) {
+		nd_setlog_func(NDSession::g_redirectOrgFunc);
+		NDSession::g_redirectOrgFunc = 0;
+	}
+
+}
+
+
+bool NDSession::RedirectLogToMe()
+{
+	if (m_bRedirctLog)	{
+		return true;
+	}
+	m_bRedirctLog = true;
+	g_redirect_log_object = this;
+	if (!NDSession::g_redirectOrgFunc){
+		NDSession::g_redirectOrgFunc = nd_setlog_func(redirect_log_entry);
+	}
+	else {
+		nd_setlog_func(redirect_log_entry);
+	}
+	return true;
 }
 
 #if 0

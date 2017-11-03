@@ -3,21 +3,14 @@
  *
  * all right reserved by neil
  */
-// 
-// #include "nd_common/nd_common.h"
-// #include "nd_srvcore/nd_srvlib.h"
-// #include "nd_net/nd_netlib.h"
-// #include "nd_common/nd_alloc.h"
-// #include "nd_srvcore/nd_thpool.h"
+
 #include "nd_srvcore/nd_srvlib.h"
 
-static int thpool_main(struct thread_pool_info *listen_info);
-static int thpool_sub(struct thread_pool_info *listen_info);
-
 extern int destroy_udp_thpool(struct listen_contex *listen_info,int flag) ;
-
 extern int listen_thread_createex(struct thread_pool_info *ic);
 
+
+static int _delfrom_thread_pool(NDUINT16 sid, struct thread_pool_info * pthinfo) ;
 /* @thread_num 线程个数
  * @th_sessions 每个线程的连接数
  */
@@ -43,7 +36,7 @@ int create_listen_thread_pool(struct listen_contex *handle, int pre_thnum, int s
 		nd_thsrv_timer(handle->listen_id,(nd_timer_entry)update_connector_hub, handle,50, ETT_LOOP) ;
 	}
 	else {
-		nd_logwarn("not add update_connector_hub() ti timer") ;
+		//nd_logwarn("not add update_connector_hub() ti timer") ;
 	}
 	
 	do 	{
@@ -100,7 +93,7 @@ int listen_thread_create(struct thread_pool_info *ic,nd_threadsrv_entry th_func)
 		ic 
 	};
 
-	sprintf(subth_info.srv_name, "listen%d", ++index) ;
+	snprintf(subth_info.srv_name, sizeof(subth_info.srv_name), "listen%d", ++index);
 	ic->thid = nd_thsrv_createex(&subth_info,NDT_PRIORITY_HIGHT,1) ;
 
 	if(!ic->thid ) {
@@ -122,12 +115,6 @@ int nd_close_listen_thread(nd_listen_handle h,nd_thsrvid_t sid)
 	}
 	list_del_init(&piocp->list) ;
 	nd_thsrv_destroy(piocp->thid,0) ;
-#ifndef ND_UNIX
-	if (piocp->iopc_handle)	{
-		CloseHandle(piocp->iopc_handle);
-		piocp->iopc_handle = 0 ;
-	}
-#endif 
 	free(piocp);
 
 	return 0;
@@ -174,137 +161,9 @@ int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid)
 }
 
 
-//打开一个线程服务器
-nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h,int session_num) 
-{
-	struct listen_contex * lc =(struct listen_contex *) h ;
-	struct thread_pool_info  *piocp ;
 
-	if (nd_listen_get_threads(h) >= ND_MAX_THREAD_NUM ) {
-		nd_object_seterror(h, NDERR_LIMITED) ;
-		nd_assert(0) ;
-		return 0 ;
-	}
-#ifndef ND_UNIX
-	if (ND_LISTEN_OS_EXT==lc->io_mod && lc->listen_id ){
-		return lc->listen_id;
-	}
-#endif 
-	piocp =(struct thread_pool_info *) malloc(sizeof(*piocp) + sizeof(NDUINT16) * session_num ) ;
-	if(!piocp) {
-		return 0 ;
-	}
-	bzero(piocp, sizeof(*piocp)) ;
 
-	INIT_LIST_HEAD(&piocp->list) ;
-	piocp->max_sessions = session_num;
-	piocp->lh =(struct listen_contex *) h;
-	if (ND_LISTEN_OS_EXT==((struct listen_contex *)h)->io_mod ){
-#ifdef ND_UNIX
-		if (listen_thread_createex(piocp)!=0) {
-			free(piocp) ;
-			return 0 ;
-		}
-#endif
-	} 
-	else {
-		nd_threadsrv_entry th_func = (nd_threadsrv_entry)(((struct listen_contex *) h)->listen_id ?thpool_sub:thpool_main);
-		if (listen_thread_create(piocp,th_func)!=0) {
-			free(piocp) ;
-			return 0 ;
-		}
-	}
-	list_add_tail(&piocp->list, &piocp->lh->list_thread);
-
-	if (0==lc->listen_id){
-		lc->listen_id = piocp->thid ;
-	}
-	nd_thsrv_timer(piocp->thid,(nd_timer_entry)close_session_in_thread, piocp,0, ETT_DESTROY) ;
-	return piocp->thid;
-}
-//
-//static void  flush_all_session(struct cm_manager *pmanger,struct thread_pool_info *thpi)
-//{
-//	int i ;
-//	struct nd_client_map  *client;
-//	for (i=thpi->session_num-1; i>=0;i-- ) {
-//		NDUINT16 session_id = thpi->sid_buf[i];
-//		client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
-//		if (!client)
-//			continue ;
-//		if (TCPNODE_IS_OK(client)){
-//			_tcpnode_push_sendbuf(&client->connect_node,0);
-//		}
-//		pmanger->unlock(pmanger,session_id) ;
-//	}
-//}
-
-int close_session_in_thread(struct thread_pool_info *thpi)
-{
-	int i ,ret = 0;
-	struct nd_client_map  *client;
-	struct listen_contex *lc = (struct listen_contex *)(thpi->lh) ;
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc) ;	
-
-	for (i=thpi->session_num-1; i>=0; i--) {
-		NDUINT16 session_id = thpi->sid_buf[i];
-		client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
-		if (!client)
-			continue ;
-		nd_session_close((nd_handle)client,1) ;
-		pmanger->unlock(pmanger,session_id) ;
-		++ret;
-	}
-
-	return ret;
-}
-
-int update_session_in_thread(struct cm_manager *pmanger,struct thread_pool_info *thpi)
-{
-	int i ,ret , sleep=0;
-	struct nd_client_map  *client;
-	struct listen_contex *lc = (struct listen_contex *)(thpi->lh) ;
-	for (i=thpi->session_num-1; i>=0;i-- ) {
-		NDUINT16 session_id = thpi->sid_buf[i];
-		ret = 0;
-		client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
-		if (!client || !nd_handle_checkvalid((nd_handle)client,NDHANDLE_TCPNODE)) {
-			_delfrom_thread_pool(session_id, thpi) ; 
-			continue ;
-		}
-		if (0==tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout )){
-			++sleep ;
-		}
-		else  {
-			ret =nd_do_netmsg(client,&lc->tcp) ;
-			if(ret>0) {
-				++sleep  ;				
-			}
-			else if(-1==ret) {
-				//tcp_client_close(client,1) ;
-				nd_session_close((nd_handle)client,1) ;
-				++sleep ;
-			}
-		}
-		pmanger->unlock(pmanger,session_id) ;
-	}
-
-	//flush send buffer
-	for (i=thpi->session_num-1; i>=0;i-- ) {
-		NDUINT16 session_id = thpi->sid_buf[i];
-		client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
-		if (!client)
-			continue ;
-		if (nd_connector_valid((nd_netui_handle)client)){
-			_tcpnode_push_sendbuf(&client->connect_node,0);
-			client->connect_node.update_entry((nd_handle)client) ;
-		}
-		pmanger->unlock(pmanger,session_id) ;
-	}
-	return sleep;
-}
-
-int thpool_main(struct thread_pool_info *thip)
+int _nd_thpool_main(struct thread_pool_info *thip)
 {
 	ENTER_FUNC()
 	//NDUINT16 session_id = 0;
@@ -361,11 +220,6 @@ int thpool_main(struct thread_pool_info *thip)
 			sleep = 0;
 		}
 
-//		if (listen_info->connector_hub) {
-//			if (update_connector_hub((nd_listen_handle)listen_info) > 0 )	{
-//				sleep = 0 ;
-//			}
-//		}
 
 		if (listen_info->end_update){
 			listen_info->end_update((nd_handle)listen_info, context) ;
@@ -381,7 +235,7 @@ int thpool_main(struct thread_pool_info *thip)
 
 
 /* entry of  listen service */
-int thpool_sub(struct thread_pool_info *thip)
+int _nd_thpool_sub(struct thread_pool_info *thip)
 {
 	ENTER_FUNC()
 	struct cm_manager *pmanger  ;
@@ -426,74 +280,6 @@ int thpool_sub(struct thread_pool_info *thip)
 	return 0 ;
 }
 
-
-//把sessio添加到线程池中
-int addto_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo) 
-{
-	if (pthinfo->session_num >= pthinfo->max_sessions){
-		return-1;
-	}	
-	pthinfo->sid_buf[pthinfo->session_num++] = client->connect_node.session_id ;
-#ifdef ND_UNIX
-    if (pthinfo->lh->io_mod ==ND_LISTEN_OS_EXT) {
-        attach_to_listen(pthinfo,client) ;
-    }
-	
-#endif 
-	nd_logdebug("client %d add to %d thread server\n", nd_session_getid((nd_handle)client), nd_thread_self() ) ;
-	return 0 ;
-}
-
-int _delfrom_thread_pool(NDUINT16 sid, struct thread_pool_info * pthinfo) 
-{
-	int i ;
-	for(i=0; i<pthinfo->session_num; i++) {
-		if (pthinfo->sid_buf[i]== sid )	{
-			break ;
-		}
-	}
-	if (pthinfo->session_num == i){
-		//not find 
-		return -1 ;
-	}
-
-	for(; i<pthinfo->session_num-1; i++) {
-		pthinfo->sid_buf[i] = pthinfo->sid_buf[i+1] ;
-	}
-	--(pthinfo->session_num) ;
-
-	return 0 ;
-}
-int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo) 
-{
-    if(0==_delfrom_thread_pool(client->connect_node.session_id, pthinfo) ) {
-        
-#ifdef ND_UNIX
-        if (pthinfo->lh->io_mod ==ND_LISTEN_OS_EXT) {
-            deattach_from_listen(pthinfo,client) ;
-        }
-#endif
-        return 0 ;
-    }
-    /*
-	int i ;
-	for(i=0; i<pthinfo->session_num; i++) {
-		if (pthinfo->sid_buf[i]==client->connect_node.session_id )	{
-			break ;
-		}
-	}
-	if (pthinfo->session_num == i){
-		//not find 
-		return -1 ;
-	}
-
-	for(; i<pthinfo->session_num-1; i++) {
-		pthinfo->sid_buf[i] = pthinfo->sid_buf[i+1] ;
-	}
-	--(pthinfo->session_num) ;
-     */
-	return -1 ;
-}
 
 
 
@@ -553,3 +339,179 @@ int nd_fetch_sessions_in_thread(nd_listen_handle h, ndthread_t *threadid_buf, in
 	return  num ;
 	
 }
+
+//////////////////////////////////////////////////////////////////////////
+
+
+#if !defined(USE_NEW_MODE_LISTEN_THREAD)
+//打开一个线程服务器
+nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h, int session_num)
+{
+	struct listen_contex * lc = (struct listen_contex *) h;
+	struct thread_pool_info  *piocp;
+
+	if (nd_listen_get_threads(h) >= ND_MAX_THREAD_NUM) {
+		nd_object_seterror(h, NDERR_LIMITED);
+		nd_assert(0);
+		return 0;
+	}
+#ifndef ND_UNIX
+	if (ND_LISTEN_OS_EXT == lc->io_mod && lc->listen_id){
+		return lc->listen_id;
+	}
+#endif 
+	piocp = (struct thread_pool_info *) malloc(sizeof(*piocp) + sizeof(NDUINT16) * session_num);
+	if (!piocp) {
+		return 0;
+	}
+	bzero(piocp, sizeof(*piocp));
+
+	INIT_LIST_HEAD(&piocp->list);
+	piocp->max_sessions = session_num;
+	piocp->lh = (struct listen_contex *) h;
+	if (ND_LISTEN_OS_EXT == ((struct listen_contex *)h)->io_mod){
+#ifdef ND_UNIX
+		if (listen_thread_createex(piocp) != 0) {
+			free(piocp);
+			return 0;
+		}
+#endif
+	}
+	else {
+		nd_threadsrv_entry th_func = (nd_threadsrv_entry)(((struct listen_contex *) h)->listen_id ? _nd_thpool_sub : _nd_thpool_main);
+		if (listen_thread_create(piocp, th_func) != 0) {
+			free(piocp);
+			return 0;
+		}
+	}
+	list_add_tail(&piocp->list, &piocp->lh->list_thread);
+
+	if (0 == lc->listen_id){
+		lc->listen_id = piocp->thid;
+	}
+	nd_thsrv_timer(piocp->thid, (nd_timer_entry)close_session_in_thread, piocp, 0, ETT_DESTROY);
+	return piocp->thid;
+}
+
+
+int close_session_in_thread(struct thread_pool_info *thpi)
+{
+	int i, ret = 0;
+	struct nd_client_map  *client;
+	struct listen_contex *lc = (struct listen_contex *)(thpi->lh);
+	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc);
+
+	for (i = thpi->session_num - 1; i >= 0; i--) {
+		NDUINT16 session_id = thpi->sid_buf[i];
+		client = (struct nd_client_map*) pmanger->lock(pmanger, session_id);
+		if (!client)
+			continue;
+		nd_session_close((nd_handle)client, 1);
+		pmanger->unlock(pmanger, session_id);
+		++ret;
+	}
+
+	return ret;
+}
+
+int update_session_in_thread(struct cm_manager *pmanger, struct thread_pool_info *thpi)
+{
+	int i, ret, sleep = 0;
+	struct nd_client_map  *client;
+	struct listen_contex *lc = (struct listen_contex *)(thpi->lh);
+	for (i = thpi->session_num - 1; i >= 0; i--) {
+		NDUINT16 session_id = thpi->sid_buf[i];
+		ret = 0;
+		client = (struct nd_client_map*) pmanger->lock(pmanger, session_id);
+		if (!client || !nd_handle_checkvalid((nd_handle)client, NDHANDLE_TCPNODE)) {
+			_delfrom_thread_pool(session_id, thpi);
+			continue;
+		}
+		if (0 == tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout)){
+			++sleep;
+		}
+		else  {
+			ret = nd_do_netmsg(client, &lc->tcp);
+			if (ret > 0) {
+				++sleep;
+			}
+			else if (-1 == ret) {
+				//tcp_client_close(client,1) ;
+				nd_session_close((nd_handle)client, 1);
+				++sleep;
+			}
+		}
+		pmanger->unlock(pmanger, session_id);
+	}
+
+	//flush send buffer
+	for (i = thpi->session_num - 1; i >= 0; i--) {
+		NDUINT16 session_id = thpi->sid_buf[i];
+		client = (struct nd_client_map*) pmanger->lock(pmanger, session_id);
+		if (!client)
+			continue;
+		if (nd_connector_valid((nd_netui_handle)client)){
+			_tcpnode_push_sendbuf(&client->connect_node, 0);
+			client->connect_node.update_entry((nd_handle)client);
+		}
+		pmanger->unlock(pmanger, session_id);
+	}
+	return sleep;
+}
+
+//把sessio添加到线程池中
+int addto_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo)
+{
+	if (pthinfo->session_num >= pthinfo->max_sessions){
+		return-1;
+	}
+	pthinfo->sid_buf[pthinfo->session_num++] = client->connect_node.session_id;
+#ifdef ND_UNIX
+	if (pthinfo->lh->io_mod == ND_LISTEN_OS_EXT) {
+		attach_to_listen(pthinfo, client);
+	}
+
+#endif 
+	nd_logdebug("client %d add to %d thread server\n", nd_session_getid((nd_handle)client), nd_thread_self());
+	return 0;
+}
+
+int _delfrom_thread_pool(NDUINT16 sid, struct thread_pool_info * pthinfo)
+{
+	int i;
+	if (pthinfo->session_num == 1) {
+		pthinfo->session_num = 0;
+		return 0;
+	}
+
+	for (i = 0; i < pthinfo->session_num; i++) {
+		if (pthinfo->sid_buf[i] == sid)	{
+			break;
+		}
+	}
+	if (pthinfo->session_num == i){
+		//not find 
+		return -1;
+	}
+	--pthinfo->session_num;
+	pthinfo->sid_buf[i] = pthinfo->sid_buf[pthinfo->session_num];
+
+
+	return 0;
+}
+
+int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo)
+{
+	if (0 == _delfrom_thread_pool(client->connect_node.session_id, pthinfo)) {
+
+#ifdef ND_UNIX
+		if (pthinfo->lh->io_mod == ND_LISTEN_OS_EXT) {
+			deattach_from_listen(pthinfo, client);
+		}
+#endif
+		return 0;
+	}
+
+	return -1;
+}
+#endif 

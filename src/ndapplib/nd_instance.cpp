@@ -76,6 +76,8 @@ public:
 #endif
 __initdata__ NDStaticInitHelper _g_static_init_helper ;
 
+
+
 extern const char * __g_version_desc ;
 extern int __g_version_id ; 
 
@@ -185,6 +187,7 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 		strncpy(m_config.i_cfg.log_file, logfileName, sizeof(m_config.i_cfg.log_file)) ;
 	}
 	if (m_config.i_cfg.log_file[0]){
+		nd_set_logpath_without_date(m_config.i_cfg.log_filename_nodate);
 		set_log_file(m_config.i_cfg.log_file) ;
 		if (m_config.i_cfg.log_file_size > 0) {
 			nd_setlog_maxsize(m_config.i_cfg.log_file_size) ;
@@ -538,7 +541,7 @@ int NDInstanceBase::connectServer(const char *name,NDConnector *inconnect)
 {
 	connect_config *pcof = getConnectorInfo(name) ;
 	if (!pcof) {
-		return NULL;
+		return -1;
 	}
 	
 	
@@ -884,7 +887,7 @@ MSG_ENTRY_INSTANCE(nd_set_netmsg_log)
     ND_TRACE_FUNC() ;
     NDIStreamMsg inmsg(msg) ;
     NDOStreamMsg omsg(inmsg.MsgMaxid(),inmsg.MsgMinid()) ;
-    NDUINT16 maxID, minID ;
+    NDUINT8 maxID, minID ;
     NDUINT8 isOpen = 0 ;
     
     if (-1==inmsg.Read(maxID)) {
@@ -910,6 +913,39 @@ MSG_ENTRY_INSTANCE(nd_set_netmsg_log)
     
     ND_MSG_SEND(nethandle, omsg.GetMsgAddr(),  h_listen) ;
     return 0;
+}
+
+MSG_ENTRY_INSTANCE(nd_set_netmsg_print)
+{
+	ND_TRACE_FUNC();
+	NDIStreamMsg inmsg(msg);
+	NDOStreamMsg omsg(inmsg.MsgMaxid(), inmsg.MsgMinid());
+	NDUINT8 maxID, minID;
+	NDUINT8 isOpen = 0;
+
+	if (-1 == inmsg.Read(maxID)) {
+		return 0;
+	}
+	if (-1 == inmsg.Read(minID)) {
+		return 0;
+	}
+	if (-1 == inmsg.Read(isOpen)) {
+		return 0;
+	}
+	int ret = nd_message_set_print(h_listen, (ndmsgid_t)maxID, (ndmsgid_t)minID, (int)isOpen);
+	if (-1 == ret) {
+		isOpen = 0xff;
+	}
+	else {
+		isOpen = ret;
+	}
+
+	omsg.Write(maxID);
+	omsg.Write(minID);
+	omsg.Write(isOpen);
+
+	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
+	return 0;
 }
 
 

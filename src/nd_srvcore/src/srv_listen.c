@@ -34,6 +34,10 @@ void nd_listen_contex_init(nd_listen_handle handle)
 	handle->tcp.data_entry = (data_in_entry) nd_dft_packet_handler ;
 	handle->tcp.msg_entry =(net_msg_entry) nd_srv_translate_message ;
 
+
+#if !defined (USE_NEW_MODE_LISTEN_THREAD)
+	nd_node_preinit(&handle->tcp.conn_manager, nd_srvnode_create, nd_srvnode_destroy);
+#endif
 	nd_srv_set_cm_init(&handle->tcp,(cm_init )nd_tcpcm_init) ;
 	
 	INIT_LIST_HEAD(&handle->list_ext_ports) ;
@@ -113,12 +117,9 @@ int nd_listensrv_session_info(nd_listen_handle handle, int max_client,size_t ses
 	if(0==session_size) {
 		session_size = nd_getclient_hdr_size(handle->io_mod) ;
 	}
-#if !defined(ND_UNIX)
-	if(ND_LISTEN_OS_EXT==handle->io_mod )
-		return cm_listen(&handle->tcp.conn_manager,  max_client,(int) session_size) ;
-#endif
-	nd_nodemgr_set(nd_srvnode_create,nd_srvnode_destroy) ; 
-	return cm_listen(&handle->tcp.conn_manager,  max_client, (int)session_size) ;
+
+	return cm_listen(&handle->tcp.conn_manager, max_client, (int)session_size);
+
 }
 
 int nd_listensrv_set_update(nd_listen_handle h_listen,listen_thread_update pre_entry, listen_thread_update end_entry) 

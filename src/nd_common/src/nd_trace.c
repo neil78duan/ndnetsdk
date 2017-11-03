@@ -28,8 +28,19 @@ static NDUINT8 __close_screen_log = 0 ;
 static NDUINT8 __without_file_info = 0;
 static NDUINT8 __without_file_time = 0;
 static NDUINT8 __witout_date = 0;
+static NDUINT8 __log_path_without_date = 0;
+#ifdef ND_DEBUG
+static NDUINT8 _logoff_switch_bits = 0; //close debug and warning
+#else 
+static NDUINT8 _logoff_switch_bits = 2 + 4; //close debug and warning
+#endif 
 
-
+int nd_set_logpath_without_date(int without_date)
+{
+	int ret = __log_path_without_date;
+	__log_path_without_date = without_date;
+	return ret;
+}
 
 int nd_log_no_file(int without_file)
 {
@@ -63,6 +74,21 @@ void nd_log_close_screen(int flag)
 	__close_screen_log = flag ? 1 : 0 ;
 }
 
+
+void nd_log_open(edg_ID logType)
+{
+	_logoff_switch_bits &= ~(1 << (int)logType);
+}
+void nd_log_close(edg_ID logType)
+{
+	_logoff_switch_bits |= 1 << (int)logType;
+}
+
+int nd_log_check(edg_ID logType)
+{
+	return !( _logoff_switch_bits & (1 << (int)logType));
+}
+
 NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size)
 {
 	NDUINT32 oldval = __log_file_length ;
@@ -70,67 +96,133 @@ NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size)
 	return  oldval ;
 }
 
-void set_log_file(const char *file_name)
-{
-	strncpy(__log_filename, file_name,sizeof(__log_filename)) ;
-}
-char *get_log_file() 
-{
-	if(__log_filename[0]) 
-		return __log_filename ;
-	else 
-		return "ndlog.log" ;
-}
-
 void nd_output(const char *text)  
 {
 	fprintf(stdout,"%s", text) ;
 }
 
-
 #define ND_LOG_FILE get_log_file()
+
+
+static char  __log_ext[10] ;
+
+void set_log_file(const char *pathfile)
+{
+	//nd_fi
+#if defined(ND_LOG_PATH_WITH_DATE)
+
+	if (__log_path_without_date==0) {
+		const char *fileExt = nd_file_ext_name(pathfile);
+		if (fileExt){
+			char ch = 0;
+			char *tmp = fileExt - 1;
+			strncpy(__log_ext, fileExt, sizeof(__log_ext));
+
+			ch = *tmp;
+			*tmp = 0;
+			strncpy(__log_filename, pathfile, sizeof(__log_filename));
+			*tmp = ch;
+}
+		else {
+			strncpy(__log_filename, pathfile, sizeof(__log_filename));
+		}
+	}
+	else
+#endif 
+	{
+		strncpy(__log_filename, pathfile, sizeof(__log_filename));
+	}	
+}
+
+char *get_log_file()
+{
+
+#if defined(ND_LOG_PATH_WITH_DATE)
+	if (__log_path_without_date ) {
+		time_t now = time(NULL);
+		static time_t s_lastRePathTime = 0;
+		static ndatomic_t s_atomic_using;
+		static char s_cur_path[1024];
+
+
+		int  days = nd_time_day_interval(now, s_lastRePathTime);
+
+		if (days > 0){
+			if (nd_compare_swap(&s_atomic_using, 0, 1))	{
+				struct tm tm1;
+				//char myPath[1024];
+				//localtime_r(&now, &tm1);
+
+				if (__log_ext[0]){
+					snprintf(s_cur_path, sizeof(s_cur_path), "%s.%s.%s", __log_filename, nd_get_datestr(), __log_ext);
+				}
+				else {
+					snprintf(s_cur_path, sizeof(s_cur_path), "%s.%s", __log_filename, nd_get_datestr());
+				}
+				s_lastRePathTime = now;
+				nd_atomic_set(&s_atomic_using, 0);
+
+			}
+		}
+
+		if (s_cur_path[0])
+			return s_cur_path;
+		else
+			return "ndlog.log";
+	}
+	else 
+#endif 
+	{
+		if (__log_filename[0])
+			return __log_filename;
+		else
+			return "ndlog.log";
+	}
+	
+	
+}
+
+
 
 void nd_default_filelog(const char* text)
 {
-	int size =  0 ;
+	int size = 0;
 	const char *logfile_name = ND_LOG_FILE;
 	FILE *log_fp = fopen(logfile_name, "a");
-	if(!log_fp) {
-		return  ;
+	if (!log_fp) {
+		return;
 	}
-	size = fprintf(log_fp,"%s", text) ;
-	fclose(log_fp) ;
+	size = fprintf(log_fp, "%s", text);
+	fclose(log_fp);
 
-	if(size <= 0) {
-		return ;
+	if (size <= 0) {
+		return;
 	}
 
 
-	nd_atomic_add(&__log_write_len, size) ;
-	if ((NDUINT32)__log_write_len >= __log_file_length) {
-		char aimFile[1024] ;
-		int i =1 ;
-		char *p = aimFile ;
+	nd_atomic_add(&__log_write_len, size);
+	if ((NDUINT32)__log_write_len >= __log_file_length && __log_file_length!=0) {
+		char aimFile[1024];
+		int i = 1;
+		char *p = aimFile;
 
-		size = snprintf(p, sizeof(aimFile), "%s.", logfile_name) ;
-		p += size ;
+		size = snprintf(p, sizeof(aimFile), "%s.", logfile_name);
+		p += size;
 		do {
-			snprintf(p, sizeof(aimFile) - size, "%d", i) ;
-			++i ;
-		}while(nd_existfile(aimFile)) ;
-		nd_renfile(logfile_name,aimFile) ;
-		
-		nd_atomic_set(&__log_write_len, 0) ;
-	}
+			snprintf(p, sizeof(aimFile) - size, "%d", i);
+			++i;
+		} while (nd_existfile(aimFile));
+		nd_renfile(logfile_name, aimFile);
 
-	
+		nd_atomic_set(&__log_write_len, 0);
+	}
 }
 
 //ndchar_t *strtowcs(char *src, ndchar_t *desc,int len) ;
 
 static const char *_dg_msg_str[] = 
-{"Common message: " , ("Debug: "),("Warn : " ), 
-("Error : "),("Fatal error : ")} ;
+{"COMMON" , ("DEBUG"),("WARNING" ), 
+("ERROR"),("FATAL")} ;
 
 static __INLINE__ const char *log_level_str(int level)
 {
@@ -138,7 +230,7 @@ static __INLINE__ const char *log_level_str(int level)
 		return _dg_msg_str[level]  ;
 	}
 	else {
-		return " " ;
+		return "COMMON" ;
 	}
 }	
 
@@ -226,8 +318,16 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 	va_list arg;
 	int done;
 	const char *file = _getfilename(filePath) ;
+
+	if (!nd_log_check(level)){
+		return 0 ;
+	}
 	
 	size = sizeof(buf);
+
+	p += snprintf(p, size,"[%s] ", log_level_str(level)) ;
+	size = sizeof(buf) - (p - buf);
+
 #ifdef ND_LOG_WITH_ND_MARK
 	
 	strncpy(p, "[nd-log]  ",sizeof(buf)) ;
@@ -252,12 +352,10 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 
 #ifdef	ND_LOG_WITH_SOURCE
 	if (__without_file_info==0){
-		p += snprintf(p, size, " %s() [%d:%s] ", func, line, file);
+		p += snprintf(p, size, " %s() (%d:%s)", func, line, file);
 		size = sizeof(buf) - (p - buf);
 	}
 #endif
-	p += snprintf(p, size,"%s:", log_level_str(level)) ;
-	size = sizeof(buf) - (p - buf);
 
 	va_start (arg, stm);
 	done = vsnprintf (p, size,stm, arg);
@@ -265,7 +363,7 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 	va_end (arg);
 
 	nd_logtext(buf);
-	return sizeof(buf) - size ;
+	return (int)(sizeof(buf) - size) ;
 }
 
 #if defined(ND_FILE_TRACE) && defined(ND_SOURCE_TRACE)

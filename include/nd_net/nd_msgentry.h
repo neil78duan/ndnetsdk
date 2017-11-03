@@ -24,7 +24,7 @@ enum  privalige_level{
 #define SUB_MSG_NUM		64		//每一类消息可以有多少个子消息号
 #define MAX_MAIN_NUM	256		//最多可以拥有的消息类型
 #define MAX_SCRIPT_NAME 256		//脚本名字长度
-#define ND_DFT_MAXMSG_NUM 32	//默认主消息类型数量
+//#define ND_DFT_MAXMSG_NUM 32	//默认主消息类型数量
 
 typedef NDUINT8	ndmsgid_t ;		//消息编号
 
@@ -98,6 +98,10 @@ ND_NET_API void nd_msgtable_destroy(nd_handle  handle, int flag) ;
 //set this message is system message which only send by other thread( in order to simulate net message from other thread)
 ND_NET_API int nd_message_set_system(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int issystem) ; 
 ND_NET_API int nd_message_set_log(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int is_log) ;
+
+ND_NET_API int nd_message_set_print(nd_handle nethandle, ndmsgid_t maxId, ndmsgid_t minId, int is_print);
+ND_NET_API nd_usermsg_func nd_message_set_print_entry(nd_handle handle, nd_usermsg_func entry);
+
 
 /*在handle句柄上安装网络消息处理函数*/
 ND_NET_API int nd_msgentry_install(nd_handle  handle, nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid,int level, const char *name) ;
@@ -183,6 +187,8 @@ ND_NET_API void nd_connect_level_set(nd_handle  connector_handle,NDUINT32 level)
 
 // check message is log 
 ND_NET_API int nd_message_is_log(nd_handle nethandle, int maxId, int minId);
+
+
 
 #endif
 

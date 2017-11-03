@@ -126,7 +126,7 @@ int _nd_sem_open(ndsem_t *sem, unsigned int value)
 	//char sem_name[64] ;
 	ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
 	do {
-		snprintf(psem->_name, sizeof(psem->_name), "%s_sem_%d", nd_process_name(),  nd_atomic_dec( &_s_sem_index)) ;
+		snprintf(psem->_name, sizeof(psem->_name), "%s_sem_%d", nd_process_name(),  nd_atomic_inc( &_s_sem_index)) ;
 		
 		psem->_sem = sem_open( psem->_name, O_CREAT|O_EXCL, 0644, value );
 		if (psem->_sem== SEM_FAILED) {
@@ -340,7 +340,7 @@ int nd_threadsched(void)
 
 void nd_threadexit(int exitcode)
 {
-    void *param =  exitcode ;
+    void *param = (void*) exitcode ;
 	pthread_exit( param );
 }
 //µ»¥˝“ª∏ˆœﬂ≥ÃµƒΩ· ¯

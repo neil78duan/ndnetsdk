@@ -34,6 +34,9 @@
 CPPAPI void tryto_terminate(netObject netObj) ;
 CPPAPI int _big_data_recv_handler(NDIConn* pconn, nd_usermsgbuf_t *msg );
 
+//#define  WAITMSG_TIMEOUT 300000
+
+
 class NDConnector : public NDIConn 
 {
 public :		
@@ -222,7 +225,7 @@ int NDConnector::Create(const char *protocol_name)
 	}
 	int val = 1;
 	int size = sizeof(val);
-	nd_net_ioctl((nd_netui_handle)m_objhandle, NDIOCTL_LOG_RECV_MSG, &val, &size);
+	//nd_net_ioctl((nd_netui_handle)m_objhandle, NDIOCTL_LOG_RECV_MSG, &val, &size);
 	return 0 ;
 
 }

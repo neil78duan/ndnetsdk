@@ -60,7 +60,7 @@ int ndSendFormat(netObject netObj,int maxid, int minid,int argc, ...)
                 ARG_2_STREAM(arg, omsg, NDUINT64,NDUINT64);
                 break;
             case  ESTREAM_FLOAT:
-                ARG_2_STREAM(arg, omsg, float,float);
+                ARG_2_STREAM(arg, omsg, float,double);
                 break;
                 
             case  ESTREAM_TEXT:

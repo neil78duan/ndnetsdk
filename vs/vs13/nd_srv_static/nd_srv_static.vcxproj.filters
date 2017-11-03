@@ -360,6 +360,15 @@
     <ClInclude Include="..\..\..\include\ndapplib\httpParser.h">
       <Filter>include\ndapplib</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_common\_client_config.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_common\_server_config.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_netthread.h">
+      <Filter>include\srvcore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
@@ -622,6 +631,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\httpParser.cpp">
       <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_netthread.c">
+      <Filter>src\srvcoe</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

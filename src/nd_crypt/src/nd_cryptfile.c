@@ -309,3 +309,46 @@ int _ndc_fflush(NDC_FILE *pf, int is_end)
 
 	return 0;
 }
+
+
+void* ndc_load_file_ex(const char *file, size_t *size,const char *fileKey)
+{
+	size_t data_len, buf_size;
+	NDC_FILE *fp;
+	char *buf = NULL;
+
+	fp = ndc_fopen_r(file, fileKey);
+	if (!fp) {
+		//nd_logerror("open file %s : %s\n", file, nd_last_error());
+		return 0;
+	}
+	ndc_fseek(fp, 0, SEEK_END);
+	buf_size = ndc_ftell(fp);
+	ndc_fseek(fp, 0, SEEK_SET);
+
+	if (buf_size == 0) {
+		ndc_fclose(fp);
+		//nd_logmsg("load file %s is empty\n", file);
+		return NULL;
+	}
+	buf_size += 1;
+	buf = (char*)malloc(buf_size);
+
+	if (!buf){
+		ndc_fclose(fp);
+		return 0;
+	}
+	data_len = ndc_fread(buf, 1, buf_size, fp);
+	if (data_len == 0 || data_len >= buf_size) {
+		ndc_fclose(fp);
+		free(buf);
+		return 0;
+
+	}
+	buf[data_len] = 0;
+	ndc_fclose(fp);
+	if (size) {
+		*size = data_len;
+	}
+	return (void*)buf;
+}

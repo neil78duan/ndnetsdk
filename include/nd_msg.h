@@ -14,7 +14,7 @@
 #include "nd_net/nd_netlib.h"
 #endif
 
-#define ND_MAIN_MSG_CAPACITY 16
+#define ND_MAIN_MSG_CAPACITY 32
 #define ND_MSG_BASE_ID 0
 
 enum eNDMsgMainID{
@@ -24,9 +24,9 @@ enum eNDMsgMainID{
 };
 
 enum eNDMsgSys{
-    ND_MSG_SYS_GETVERSION,
+	ND_MSG_SYS_ECHO,
     ND_MSG_SYS_ERROR,
-    ND_MSG_SYS_ECHO,
+	ND_MSG_SYS_GETVERSION,
     ND_MSG_SYS_TIME,
     ND_MSG_SYS_BROADCAST,
 
@@ -60,6 +60,10 @@ enum eNDMsgSys{
 
 	ND_MSG_SYS_GET_MESSAGE_BUILD_TIME, //get message build time or version 
 	ND_MSG_SYS_GET_ERROR_DESC, // SEND, int32 errorid, recv { int32:errorId, string:errordesc}
+	ND_MSG_SYS_REDIRECT_SRV_LOG_OUTPUT, //server redirect send log to client
+	ND_MSG_SYS_OPEN_LOG, // let server open/close log format: {uint8:logtype, unit8:isOpen}
+	ND_MSG_SYS_SET_MSG_PRINT,// set message(maxid, minid) print
+	ND_MSG_SYS_CLOSE_MESSAGE_HANDLER,//  message(maxid, minid) print
     ND_MSG_SYS_NUMBER
 };
 

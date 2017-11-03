@@ -548,26 +548,43 @@ void* nd_connector_get_userdata(nd_netui_handle net_handle)
 	return net_handle->user_data ;
 }
 
+#include "nd_crypt/nd_crypt.h"
+
 int _log_net_stream(const char *fileName,   void *data, int size)
 {
-	FILE *fp = fopen(fileName, "a") ;
+
+	//int descLength;
+	nd_usermsghdr_t *pmsg = (nd_usermsghdr_t *)data;
+	char msg_desc[128];
+	FILE *fp = fopen(fileName, "ab+") ;
 	if (!fp) {
 		return -1 ;
 	}
+
+	fseek(fp, 0, SEEK_END);
+
+	NDUINT16 mark = ND_STREAM_MESSAGE_START;
 	NDUINT32 now = nd_time() ;
-	NDUINT16 mark = ND_STREAM_MESSAGE_START ;
-	fwrite(&mark, sizeof(mark), 1, fp) ;
+
+	fwrite(&mark, 1, sizeof(mark),  fp);
 	//write time
-	fwrite(&now, sizeof(now), 1, fp) ;
+	fwrite(&now, 1, sizeof(now), fp);
+
+	//write message descript
+	mark = snprintf(msg_desc, sizeof(msg_desc), "[%s msg(%d,%d) length=%d time=%d]", nd_get_datetimestr(),
+		pmsg->maxid, pmsg->minid, pmsg->packet_hdr.length, now);
+	fwrite(&mark, 1, sizeof(mark), fp);
+	fwrite(msg_desc, 1, mark, fp);
+
 	
 	//data size
 	mark = size ;
-	fwrite(&mark, sizeof(mark), 1, fp) ;
+	fwrite(&mark, 1, sizeof(mark), fp);
 	//WRITE data
-	fwrite(data, size, 1, fp) ;
+	fwrite(data, 1, size, fp);
 	
 	mark = ND_STREAM_MESSAGE_END ;
-	fwrite(&mark, sizeof(mark), 1, fp) ;
+	fwrite(&mark, 1, sizeof(mark), fp);
 	fflush(fp) ;
 	fclose(fp) ;
 	

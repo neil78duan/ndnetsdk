@@ -17,6 +17,7 @@ enum eThreadMsgID
 	E_THMSGID_SENDTO_CLIENT ,	//把消息发送给目标session
 	E_THMSGID_DELFROM_THREAD,	//把session从线程中删除
 	E_THMSGID_CLOSE_SESSION,	//关闭session
+	E_THMSGID_DELAY_CLOSE_RAND,	//等待随机的时间后关闭
 	E_THMSG_NUMBER
 };
 

@@ -12,6 +12,7 @@
 
 #include "ndapplib/applib.h"
 #include <vector>
+#include <map>
 
 //事务打开,保存,同步开关
 template<class TAfair>
@@ -64,13 +65,14 @@ public:
 	}
 	virtual ~NDAffairHelper() 
 	{
-		if (m_affair->GetAffairStat()){
+		if (m_affair && m_affair->GetAffairStat()){
 			m_affair->Commit() ;
 		}
 	}
 	void Rollback() 
 	{
 		m_affair->Rollback();
+		m_affair = NULL;
 	}
 private: 
 	TAfair *m_affair ;
@@ -210,15 +212,25 @@ public:
 
 		if (m_affair_stat && m_commitNtf)	{
 
+			typedef std::map<TIndex, TValue> changedOperates_map;
+			changedOperates_map changeAffair;
+
 			m_enable = 0 ;
 			for(int i=0; i<(int)m_buf.size(); i++) {
+				m_dataChanged = 1;
 				int op = m_buf[i].optype;
 				if (EAO_ADD==op)
 					op = EAO_DEL;
 				else if (op==EAO_DEL)
 					op = EAO_ADD;
+				else {
+					changeAffair[m_buf[i].first] = m_buf[i].second;
+					continue; 
+				}
 				AffairDo(m_buf[i].first, m_buf[i].second, op);
-				m_dataChanged = 1;
+			}
+			for (typename changedOperates_map::iterator it = changeAffair.begin(); it !=changeAffair.end(); ++it) {
+				AffairDo(it->first, it->second, EAO_MODIFIED);
 			}
 			m_enable = 1 ;
 		}
@@ -249,15 +261,15 @@ public:
 			m_enable = 1 ;
 		}
 		m_affair_stat = 0 ;
-		m_dataChanged = 0;
+		//m_dataChanged = 0;
 		//m_num = 0;
 		m_buf.clear() ;
 	}
-	virtual void Undo(TIndex &index,  TValue &old_val,int optype )
+	virtual void Undo(const TIndex &index, const  TValue &old_val, int optype)
 	{
 
 	}
-	virtual void AffairDo(TIndex &index, TValue &old_val, int optype)
+	virtual void AffairDo(const TIndex &index, const  TValue &old_val, int optype)
 	{
 
 	}
@@ -274,6 +286,7 @@ public:
 			AffairSet(index, old_val ,EAO_DEL) ;
 		}
 		else {
+			AffairDo(index, old_val, EAO_ADD);
 			m_dataChanged = 1;
 		}
 	}
@@ -283,6 +296,7 @@ public:
 			AffairSet(index, old_val ,EAO_ADD) ;
 		}
 		else {
+			AffairDo(index, old_val, EAO_DEL);
 			m_dataChanged = 1;
 		}
 	}
@@ -292,6 +306,7 @@ public:
 			AffairSet(index, old_val ,EAO_MODIFIED) ;
 		}
 		else {
+			AffairDo(index, old_val, EAO_MODIFIED);
 			m_dataChanged = 1;
 		}
 	}

@@ -97,7 +97,7 @@ int nd_udp_send(struct nd_udp_node*node,const char *data, size_t len)
 		}
 	}
 	if (!node->prox_info){
-		ret =  sendto(node->fd, data, (int)len,0,(LPSOCKADDR)&node->remote_addr, (int)sizeof(node->remote_addr)) ;
+		ret = (int) sendto(node->fd, data, (int)len,0,(LPSOCKADDR)&node->remote_addr, (int)sizeof(node->remote_addr)) ;
 	}
 	else {
 		struct udp_proxy_info *prox = node->prox_info ;
@@ -129,7 +129,7 @@ int nd_udp_sendto(struct nd_udp_node*node,const char *data, size_t len, SOCKADDR
 	int ret ;
 
 	if (!node->prox_info){
-		ret = sendto(node->fd, data, (int)len,0,(LPSOCKADDR)to_addr, (int)sizeof(*to_addr)) ;
+		ret = (int)sendto(node->fd, data, (int)len,0,(LPSOCKADDR)to_addr, (int)sizeof(*to_addr)) ;
 	}
 	else {
 		ret = nd_proxy_sendto(node->fd,(void*)data,len, to_addr,&node->prox_info->proxy_addr) ;
@@ -159,7 +159,7 @@ int nd_udp_sendtoex(struct nd_udp_node*node,const char *data, size_t len, char *
 			node->myerrno = NDERR_INVALID_INPUT;
 			return -1;
 		}
-		ret = sendto(node->fd, data, (int)len,0,(LPSOCKADDR)&to_addr, (int)sizeof(to_addr)) ;
+		ret = (int)sendto(node->fd, data, (int)len,0,(LPSOCKADDR)&to_addr, (int)sizeof(to_addr)) ;
 	}
 	else {
 		ret =  nd_proxy_sendtoex(node->fd,data,len, node->prox_info->remote_name,node->prox_info->remote_port,&node->prox_info->proxy_addr) ;
@@ -197,7 +197,7 @@ int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t o
 
 	//read data
 	sock_len = sizeof(SOCKADDR_IN) ;
-	readlen = recvfrom(node->fd,buf, (int)buf_size, 0, (LPSOCKADDR)&node->last_read, &sock_len )  ;
+	readlen = (int)recvfrom(node->fd,buf, (int)buf_size, 0, (LPSOCKADDR)&node->last_read, &sock_len )  ;
 	if(readlen <= 0 || readlen>=ND_UDP_PACKET_SIZE){
 		node->myerrno = NDERR_READ ;
 		return -1 ;

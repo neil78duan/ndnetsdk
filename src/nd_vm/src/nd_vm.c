@@ -115,7 +115,7 @@ int get_operand_num(vm_ins instruction)
 		return 0 ;
 	}
 	else if(EOP_POP==instruction || EOP_PUSH==instruction || 
-		EOP_LTZERO==instruction|| EOP_PROB==instruction || EOP_SQRT==instruction) {
+		EOP_LTZERO==instruction|| EOP_PROB==instruction || EOP_SQRT==instruction|| EOP_ROUND==instruction) {
 		return 1 ;
 	}
 	else {
@@ -421,7 +421,13 @@ int vm_run_insnode(struct vm_instruction_node *node,struct vm_cpu *vm)
 			break ;
 		}
 		break ;
+	case EOP_ROUND :
+	{
+		val2 = vm_getvalue(node->ds1, node->val1, vm);
+		vm->reg1 = (vm_value) ((int) val2);
 
+		break;
+	}
 	case EOP_SQRT:
 		{
 			//¿ª·½
@@ -582,6 +588,7 @@ int vm_echo_res(struct vm_instruction_node *node,struct vm_cpu *vm)
 	case EOP_LTZERO:
 	case EOP_PROB:
 	case EOP_SQRT:
+	case EOP_ROUND:
 		vm_print("\t REG1 =%f\n", vm->reg1) ;
 		break ;
 	case EOP_NOP:

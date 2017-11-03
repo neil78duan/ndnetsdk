@@ -4,18 +4,11 @@
  * 2007-10
  */
 //#define TEST_MYMM 1		//定义这个时,用系统的malloc代替我mempool
+// 
+// #ifdef ND_UNIX
+// #define USER_P_V_LOCKMSG		1		//使用条件变量来互斥消息
+// #endif 
 
-#ifdef ND_UNIX
-#define USER_P_V_LOCKMSG		1		//使用条件变量来互斥消息
-#endif 
-
-/*
- * 锟斤拷锟斤拷锟斤拷锟竭程凤拷锟斤拷,锟斤拷装锟斤拷锟竭程猴拷锟竭筹拷之锟斤拷锟酵ㄑ?
- * 锟斤拷每锟斤拷锟竭程筹拷为一锟斤拷锟竭程凤拷锟斤拷锟斤拷
- */
-// #include "nd_common/nd_common.h"
-// #include "nd_srvcore/nd_srvlib.h"
-// #include "nd_common/nd_alloc.h"
 #include "nd_srvcore/nd_srvlib.h"
 
 //message entry 
@@ -40,9 +33,6 @@ typedef struct nd_threadsrv_context{
 	nd_threadsrv_clean cleanup_entry;			//clean up when server is terminal
 	nd_mutex msg_lock ;
 	int send_message_retval ;			//等待对方处理消息后的返回值
-#ifdef USER_P_V_LOCKMSG
-	nd_cond	 msg_cond ;					//消息等待条件,只有消息线程能用
-#endif
 	struct list_head list;				//self list
 	struct list_head msg_list ;
 	struct list_head msg_entry_list;	//message handler entry
@@ -67,7 +57,6 @@ static struct nd_srv_entry
 {
 	int					status ;
 	ndatomic_t			__exit ;		//1 exit 
-	ndatomic_t			__suspend;
 	ndatomic_t			__err_code;		//host errorcode 
 	struct list_head	th_context_list ;
 }__s_entry;
@@ -89,7 +78,6 @@ static	void _init_entry_context()
 		return ;
 	INIT_LIST_HEAD(&(__s_entry.th_context_list)) ;
 	nd_atomic_set(&__s_entry.__exit, 0) ;
-	nd_atomic_set(&__s_entry.__suspend, 0); 
 
 	nd_atomic_set(&__s_entry.__err_code, 0);
 
@@ -143,68 +131,65 @@ int nd_thsrv_isexit(nd_handle h_srvth )
 
 }
 
-//专业消息处理线程函数
-static int _msg_th_func(nd_thsrv_context_t *contex)
-{
-	ENTER_FUNC()
-	int ret = 0;
-	struct nd_thread_msg *node ;
-	struct list_head *pos, *next;
-	struct list_head header ;
-	struct nd_srv_entry *srventry = get_srv_entry()  ;
+#define THSRV_ENTER_SUSPEND(_context, time_ms) \
+	do 	{								\
+		nd_atomic_set(&_context->in_suspend,1);	\
+		nd_sem_wait(_context->sem_suspend, time_ms);	\
+		nd_atomic_set(&_context->in_suspend, 0);	\
+	} while (0)
 
-	nd_mutex_lock(&contex->msg_lock) ;
-#ifdef USER_P_V_LOCKMSG
-		while(list_empty(&contex->msg_list) ) {
-			nd_cond_wait(&contex->msg_cond,&contex->msg_lock) ;
-			if(nd_atomic_read(&contex->__exit) || nd_atomic_read(&__s_entry.__exit)) {
-				nd_mutex_unlock(&contex->msg_lock) ;
-				LEAVE_FUNC();
-				return -1 ;
-			}
-		}
-#endif
-		if(list_empty(&contex->msg_list)) {
-			nd_mutex_unlock(&contex->msg_lock) ;
-			LEAVE_FUNC();
-			return 0 ;
-		}
-		list_add(&header, &contex->msg_list);
-		list_del_init(&contex->msg_list) ;
-	nd_mutex_unlock(&contex->msg_lock) ;
-	
-	if(contex->msg_entry ) {
-		pos = header.next ;
-		while(pos !=  &header){
-			int hr ;
-			next = pos->next ;
-			node = list_entry(pos, struct nd_thread_msg, list) ;
-			hr = contex->msg_entry(node) ;			
-			pos = next ;
-			
-#ifdef TEST_MYMM 
-			free(node) ;
-#else 
-			nd_pool_free(contex->allocator, node) ;
-#endif
-			if(-1==hr){
-				LEAVE_FUNC();
-				return -1 ;
-			}
-			++ret ;
-		}
-	}
-
-	
-	while(nd_atomic_read(&contex->is_suspend)>0 || nd_atomic_read(&srventry->__suspend) > 0) {
-		nd_atomic_set(&contex->in_suspend,1);
-		nd_sem_wait(contex->sem_suspend,-1) ;
-		nd_atomic_set(&contex->in_suspend,0) ;
-		++ret ;
-	}
-	LEAVE_FUNC();
-	return ret ;
-}
+// 专业消息处理线程函数
+// static int _msg_th_func(nd_thsrv_context_t *contex)
+// {
+// 	ENTER_FUNC()
+// 	int ret = 0;
+// 	struct nd_thread_msg *node ;
+// 	struct list_head *pos, *next;
+// 	struct list_head header ;
+// 	struct nd_srv_entry *srventry = get_srv_entry()  ;
+// 
+// 	nd_mutex_lock(&contex->msg_lock) ;
+// 		if(list_empty(&contex->msg_list)) {
+// 			nd_mutex_unlock(&contex->msg_lock) ;
+// 			LEAVE_FUNC();
+// 			return 0 ;
+// 		}
+// 		list_add(&header, &contex->msg_list);
+// 		list_del_init(&contex->msg_list) ;
+// 	nd_mutex_unlock(&contex->msg_lock) ;
+// 	
+// 	if(contex->msg_entry ) {
+// 		pos = header.next ;
+// 		while(pos !=  &header){
+// 			int hr ;
+// 			next = pos->next ;
+// 			node = list_entry(pos, struct nd_thread_msg, list) ;
+// 			hr = contex->msg_entry(node) ;			
+// 			pos = next ;
+// 			
+// #ifdef TEST_MYMM 
+// 			free(node) ;
+// #else 
+// 			nd_pool_free(contex->allocator, node) ;
+// #endif
+// 			if(-1==hr){
+// 				LEAVE_FUNC();
+// 				return -1 ;
+// 			}
+// 			++ret ;
+// 		}
+// 	}
+// 
+// 	
+// 	while(nd_atomic_read(&contex->is_suspend)>0 ) {
+// 		nd_atomic_set(&contex->in_suspend,1);
+// 		nd_sem_wait(contex->sem_suspend,-1) ;
+// 		nd_atomic_set(&contex->in_suspend,0) ;
+// 		++ret ;
+// 	}
+// 	LEAVE_FUNC();
+// 	return ret ;
+// }
 //received message function entry
 static int _msg_entry(nd_thsrv_context_t *contex)
 {
@@ -259,11 +244,11 @@ static int _msg_entry(nd_thsrv_context_t *contex)
 	}
 EXIT_MSG:
 	
-	while(nd_atomic_read(&contex->is_suspend)>0 ||  nd_atomic_read(&srventry->__suspend) > 0) {
-		nd_atomic_set(&contex->in_suspend,1) ;
-		nd_sem_wait(contex->sem_suspend,-1) ;
-		nd_atomic_set(&contex->in_suspend,0) ;
-		++ret ;
+	while(nd_atomic_read(&contex->is_suspend)>0 ) {
+		THSRV_ENTER_SUSPEND(contex, -1);
+// 		nd_atomic_set(&contex->in_suspend,1) ;
+// 		nd_sem_wait(contex->sem_suspend,-1) ;
+// 		nd_atomic_set(&contex->in_suspend,0) ;
 	}
 
 	LEAVE_FUNC();
@@ -339,7 +324,10 @@ static void *_srv_entry(void *p)
 	nd_assert(contex) ;
 	nd_sem_post(create_param->sem) ;
 
-	nd_sem_wait(contex->sem_suspend,-1) ;		//wait received run command
+	THSRV_ENTER_SUSPEND(contex, -1);
+// 	nd_atomic_set(&contex->in_suspend, 1);
+// 	nd_sem_wait(contex->sem_suspend,-1) ;		//wait received run command
+// 	nd_atomic_set(&contex->in_suspend, 0);
 
 	nd_log_screen("*** %s server start\n", contex->srv_name) ;
 	if(SUBSRV_RUNMOD_LOOP==contex->run_module) {
@@ -353,8 +341,9 @@ static void *_srv_entry(void *p)
 			if(contex->h_timer) {
 				nd_timer_update(contex->h_timer) ;
 			}
-			if(0==ret)
-				nd_sleep(10) ;
+			if (0 == ret) {
+				nd_sleep(20);
+			}
 		}	//end while
 		
 		
@@ -365,22 +354,17 @@ static void *_srv_entry(void *p)
 	else if(SUBSRV_MESSAGE==contex->run_module) {		
 		//专业的消息处理线程
 		while(0==nd_atomic_read(&contex->__exit) && 0==nd_atomic_read(&__s_entry.__exit)) {	
-			int hr = _msg_th_func(contex) ;
+			int hr = _msg_entry(contex);
 			if(contex->h_timer) {
 				nd_timer_update(contex->h_timer) ;
 			}
-#ifndef USER_P_V_LOCKMSG
 			if(-1== hr )
 				break ;
 			else if(0==hr) {
-				nd_atomic_inc(&contex->is_suspend) ;
-				nd_sem_wait(contex->sem_suspend,100) ;
+				THSRV_ENTER_SUSPEND(contex, 100);
 			}
-#endif
 		}
-#ifdef USER_P_V_LOCKMSG
-		nd_cond_destroy(&contex->msg_cond) ;
-#endif
+
 	}
 EXIT_SRV:
 	if(contex->cleanup_entry){
@@ -461,18 +445,6 @@ nd_thsrvid_t nd_thsrv_createex(struct nd_thsrv_createinfo* create_info,int prior
 	INIT_LIST_HEAD(&(contex->msg_entry_list)) ;
 	nd_mutex_init(&(contex->msg_lock)) ;
 
-#ifdef USER_P_V_LOCKMSG
-	if(SUBSRV_MESSAGE==create_info->run_module){
-		if(-1==nd_cond_init(&contex->msg_cond)  ) {
-			nd_logfatal("init cond error in message thread!\n") ;
-			return -1 ;
-		}
-		//contex->allocator = nd_pool_create(EMEMPOOL_UNLIMIT) ;
-	}
-	//else 
-#else 
-#endif
-	
 	contex->allocator = nd_pool_create(EMEMPOOL_UNLIMIT,create_info->srv_name) ;
 	if(NULL==contex->allocator) {
 		contex->allocator = nd_global_mmpool() ;
@@ -497,17 +469,51 @@ nd_log_screen("%s server create success id=%d!\n", contex->srv_name, (int) conte
 	return contex->thid ;
 }
 
+static int _thsrv_suspend(nd_thsrv_context_t *contex, int wait_success)
+{
+	nd_atomic_inc(&contex->is_suspend);
+	if (wait_success) {
+		do 	{
+			//nd_sleep(30);
+			nd_threadsched();
+			if (nd_atomic_read(&contex->is_suspend) <=0 ){
+				nd_atomic_inc(&contex->is_suspend);
+			}
+		} while (nd_atomic_read(&contex->in_suspend) == 0);
+
+	}
+
+	nd_logdebug("thread %s enter resume .....\n", contex->srv_name);
+	return 0;
+}
+
+static int _thsrv_resume(nd_thsrv_context_t *contex)
+{
+	ndatomic_t oldval = nd_atomic_read(&contex->is_suspend);
+	while (oldval > 0 )	{
+		if (nd_compare_swap(&contex->is_suspend, oldval, oldval - 1)) {
+			if (nd_atomic_read(&contex->in_suspend)){
+				nd_sem_post(contex->sem_suspend);
+			}
+
+			nd_logdebug("thread %s enter WAKE-UP\n", contex->srv_name);
+			return 0;
+		}
+		nd_threadsched();
+		oldval = nd_atomic_read(&contex->is_suspend);
+	}
+
+	return -1;
+}
+
+
 int nd_thsrv_suspend(nd_thsrvid_t  srv_id) 
 {
 	nd_thsrv_context_t *contex = (nd_thsrv_context_t *)nd_thsrv_gethandle(srv_id ) ;
 	if(!contex ){
 		return -1;
 	}
-	nd_atomic_inc(&contex->is_suspend) ;
-	do 	{
-		nd_sleep(20) ;
-	} while (nd_atomic_read(&contex->in_suspend)==0);
-	return 0 ;
+	return _thsrv_suspend(contex,1);
 }
 
 
@@ -525,7 +531,7 @@ int nd_thsrv_suspend_self(nd_handle handle)
 	nd_atomic_inc(&contex->is_suspend) ;
 
 	do{
-		nd_sem_wait(contex->sem_suspend,1000) ;
+		THSRV_ENTER_SUSPEND(contex, 1000);
 	}while(nd_atomic_read(&contex->is_suspend)>0)  ;
 
 	LEAVE_FUNC();
@@ -538,23 +544,30 @@ int nd_thsrv_resume(nd_thsrvid_t  srv_id)
 	if(!contex)
 		return -1;
 
-	if ((int)nd_atomic_read(&contex->is_suspend) <= 1){
-		nd_atomic_swap(&contex->is_suspend,0) ;
-	}
-	else {
-		nd_atomic_dec(&contex->is_suspend) ;
-	}
-	nd_sem_post(contex->sem_suspend) ;
+	return _thsrv_resume(contex);
+// 	if ((int)nd_atomic_read(&contex->is_suspend) <= 1){
+// 		nd_atomic_swap(&contex->is_suspend,0) ;
+// 	}
+// 	else {
+// 		nd_atomic_dec(&contex->is_suspend) ;
+// 	}
+// 	nd_sem_post(contex->sem_suspend) ;
 	return 0 ;
 }
 
 int nd_thsrv_suspendall()
 {
 	nd_thsrvid_t srvid = nd_thread_self() ;
-	struct list_head *pos, *next ;
+	//struct list_head *pos, *next ;
 	nd_thsrv_context_t *context ;
 	struct nd_srv_entry *srventry  = get_srv_entry()  ;
 
+	list_for_each_entry(context, &srventry->th_context_list, nd_thsrv_context_t, list)	{
+		if (!nd_thread_equal(context->thid, srvid)) {
+			_thsrv_suspend(context, 1);
+		}
+	}
+	/*
 	nd_atomic_set(&srventry->__suspend,1) ;
 
 	pos = srventry->th_context_list.next ;
@@ -569,33 +582,41 @@ int nd_thsrv_suspendall()
 		}
 		pos = next ;
 	}
+	*/
 	return 0 ;
 }
 
 int nd_thsrv_resumeall() 
 {
 	nd_thsrvid_t srvid = nd_thread_self() ;
-	struct list_head *pos, *next ;
+	//struct list_head *pos, *next ;
 	nd_thsrv_context_t *context ;
 	struct nd_srv_entry *srventry = get_srv_entry()  ;
 
-	nd_atomic_set(&srventry->__suspend,0) ;
-
-	pos = srventry->th_context_list.next ;
-	while(pos != &(srventry->th_context_list)) {
-		next = pos->next ;
-		context = list_entry(pos,nd_thsrv_context_t,list) ;
-		if(!nd_thread_equal(context->thid,srvid)) {
-			if ((int)nd_atomic_read(&context->is_suspend) <= 1){
-				nd_atomic_swap(&context->is_suspend,0) ;
-			}
-			else {
-				nd_atomic_dec(&context->is_suspend) ;
-			}
-			nd_sem_post(context->sem_suspend) ;
+	list_for_each_entry(context, &srventry->th_context_list, nd_thsrv_context_t, list)	{
+		if (!nd_thread_equal(context->thid, srvid)) {
+			//_thsrv_suspend(context, 1);
+			_thsrv_resume(context);
 		}
-		pos = next ;
 	}
+
+// 	nd_atomic_set(&srventry->__suspend,0) ;
+// 
+// 	pos = srventry->th_context_list.next ;
+// 	while(pos != &(srventry->th_context_list)) {
+// 		next = pos->next ;
+// 		context = list_entry(pos,nd_thsrv_context_t,list) ;
+// 		if(!nd_thread_equal(context->thid,srvid)) {
+// 			if ((int)nd_atomic_read(&context->is_suspend) <= 1){
+// 				nd_atomic_swap(&context->is_suspend,0) ;
+// 			}
+// 			else {
+// 				nd_atomic_dec(&context->is_suspend) ;
+// 			}
+// 			nd_sem_post(context->sem_suspend) ;
+// 		}
+// 		pos = next ;
+// 	}
 	return 0 ;
 }
 
@@ -607,18 +628,10 @@ int _destroy_service(nd_thsrv_context_t *contex, int wait)
 	struct list_head *pos;
 	struct nd_srv_entry *srventry = get_srv_entry()  ;
 
-	nd_atomic_set(&srventry->__suspend,0) ;
 	nd_assert(contex);
 
 	nd_atomic_swap(&contex->__exit,1);
-#ifdef USER_P_V_LOCKMSG
-	if(SUBSRV_MESSAGE==contex->run_module) {
-		nd_mutex_lock(&contex->msg_lock) ;
-			nd_cond_signal(&contex->msg_cond) ;
-		nd_mutex_unlock(&contex->msg_lock) ;
-	}
-	else 
-#endif 
+
 	{
 		while(nd_atomic_read(&contex->is_suspend)>0) {
 			nd_atomic_swap(&contex->is_suspend,0) ;
@@ -762,7 +775,7 @@ int nd_thsrv_sendex(nd_thsrvid_t srvid,NDUINT32 msgid,void *data, NDUINT32 data_
 	struct nd_thread_msg *msg_addr;	
 	struct nd_srv_entry *srventry  = get_srv_entry()  ;
 	nd_thsrv_context_t *contex =(nd_thsrv_context_t *) nd_thsrv_gethandle(srvid) ;
-	if(!contex || nd_atomic_read(&srventry->__suspend) ) {
+	if(!contex  ) {
 		LEAVE_FUNC();
 		return -1 ;
 	}
@@ -803,37 +816,17 @@ int nd_thsrv_sendex(nd_thsrvid_t srvid,NDUINT32 msgid,void *data, NDUINT32 data_
 		return ret ;
 	}
 
-#ifdef USER_P_V_LOCKMSG
-	if(SUBSRV_MESSAGE==contex->run_module) {
-		nd_mutex_lock(&contex->msg_lock) ;
-			list_add_tail(&msg_addr->list, &contex->msg_list);
-			nd_cond_signal(&contex->msg_cond) ;
-		nd_mutex_unlock(&contex->msg_lock) ;
-		goto EXIT_MSG ;
-		//LEAVE_FUNC();
-		//return 0 ;
-	}
-	else 
-#endif
 	{
 		nd_mutex_lock(&contex->msg_lock) ;
 			list_add_tail(&msg_addr->list, &contex->msg_list);
 		nd_mutex_unlock(&contex->msg_lock) ;
 		
-		if(nd_atomic_read(&contex->is_suspend)>0) {
+		if (nd_atomic_read(&contex->in_suspend) ) {
 			nd_atomic_swap(&contex->is_suspend,0) ;		//强制唤醒
 			nd_sem_post(contex->sem_suspend) ;
 		}
-		else 
-			nd_sem_post(contex->sem_suspend) ;
 
 	}
-#ifndef USER_P_V_LOCKMSG
-#else 
-
-EXIT_MSG:
-#endif
-
 	if (iswait){
 
 		nd_thsrv_context_t *self_contex =(nd_thsrv_context_t *) nd_thsrv_gethandle(0) ;
@@ -873,13 +866,7 @@ int nd_thsrv_msghandler(nd_handle srv_handle)
 		nd_timer_update(current_contex->h_timer) ;
 	}
 	ret = _msg_entry(current_contex) ;
-// 
-// 	srventry = get_srv_entry()  ;
-// 	while(nd_atomic_read(&current_contex->is_suspend)>0 || nd_atomic_read(&srventry->__suspend) > 0) {
-// 		nd_atomic_set(&current_contex->in_suspend,1);
-// 		nd_sem_wait(contex->sem_suspend,-1) ;
-// 		nd_atomic_set(&current_contex->in_suspend,0) ;
-// 	}
+
 	LEAVE_FUNC();
 	return ret ;
 }

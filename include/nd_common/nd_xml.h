@@ -87,7 +87,7 @@ ND_COMMON_API xml_errlog nd_setxml_log(xml_errlog logfunc) ;
 //从文件中加载一个xml列表
 ND_COMMON_API int ndxml_load(const char *file,ndxml_root *xmlroot) ;
 ND_COMMON_API int ndxml_load_ex(const char *file, ndxml_root *xmlroot,const char*encodeType);
-
+ND_COMMON_API int ndxml_load_from_buf(const char *fileName, const char *buf, size_t size, ndxml_root *xmlroot, const char *toEncodeType);
 //查找到一个xml接点
 ND_COMMON_API ndxml *ndxml_getnode(ndxml_root *xmlroot, const char *name) ;
 ND_COMMON_API ndxml *ndxml_getnodei(ndxml_root *xmlroot, int index) ;

@@ -63,9 +63,9 @@ ND_SRV_API int nd_session_flush_sendbuf(nd_handle session_handle, int flag)  ;
 
 //broadcast netmessage 
 // @send_sid session id of sender 
-ND_SRV_API int nd_session_broadcast(nd_handle listen_handle, nd_usermsghdr_t *msg) ;
+//ND_SRV_API int nd_session_broadcast(nd_handle listen_handle, nd_usermsghdr_t *msg) ;
 
-ND_SRV_API int nd_session_broadcast_ex(nd_handle listen_handle, nd_usermsghdr_t *msg, NDUINT16 except_id, NDUINT8 privage_level) ;
+//ND_SRV_API int nd_session_broadcast_ex(nd_handle listen_handle, nd_usermsghdr_t *msg, NDUINT16 except_id, NDUINT8 privage_level) ;
 
 #define nd_session_flush(session)		nd_session_flush_sendbuf((nd_handle)session,0)
 #define nd_session_flush_force(session)	nd_session_flush_sendbuf((nd_handle)session,1)

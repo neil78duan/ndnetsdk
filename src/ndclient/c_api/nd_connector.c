@@ -52,6 +52,19 @@ void ndDeinitNet()
 }
 
 
+static int _s_waitTimeOutValue = 30000;
+int ndSetTimeoutVal(int val)
+{
+	int ret = _s_waitTimeOutValue;
+	_s_waitTimeOutValue = val;
+	return ret;
+}
+
+int ndGetTimeoutVal()
+{
+	return _s_waitTimeOutValue;
+}
+
 netObject ndOpenConnect(const char *host, int port)
 {
     nd_handle handle = 0 ;

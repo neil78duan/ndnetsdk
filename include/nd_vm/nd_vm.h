@@ -73,6 +73,7 @@ enum e_vm_op
 	EOP_LTZERO,
 	EOP_PROB ,
 	EOP_SQRT ,
+	EOP_ROUND,
 	EOP_NUMBERS 
 };
 

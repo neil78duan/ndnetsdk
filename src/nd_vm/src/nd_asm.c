@@ -24,7 +24,8 @@ char *__op[] = {
 	"RAND",
 	"LTZERO",
 	"PROB" ,
-	"SQRT"
+	"SQRT",
+	"ROUND"
 };
 
 #define IS_COMMENT(a) (a)=='#' 
@@ -170,7 +171,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 		if(! ndstr_is_numerals(buf)) {
 			return -1 ;
 		}
-		mm_addr = ndstr_atoi_hex(buf);
+		mm_addr = (vm_adddress)ndstr_atoi_hex(buf);
 		*val =*((vm_value*) (&mm_addr) ); 
 	}
 	else if(IS_BIG_LATIN(*addr) || IS_LITTLE_LATIN(*addr)){
@@ -348,7 +349,7 @@ int vm_file_rcompile(/*struct vm_instruction_node *out_node,*/ FILE *infp, FILE 
 	
 	while (p <= (buf+n)) {
 		struct vm_instruction_node node = {0};
-		if(0==vm_instruction_2node(&node , &p , buf+n) ) {
+		if(0==vm_instruction_2node(&node ,(void**) &p , buf+n) ) {
 			vm_output_asm(&node, outfile, MEDIUM_FILE) ;
 		}
 	}

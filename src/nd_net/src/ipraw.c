@@ -171,7 +171,7 @@ int send_raw_udp(ndsocket_t fd, char *data, int len, SOCKADDR_IN *src, SOCKADDR_
 	packet_size = udp_packet_make((void*)buf, data, len, src, dest);
 	if(-1==packet_size)
 		return -1;
-	return sendto(fd,buf,(int) packet_size, 0,(SOCKADDR*)dest,(int)sizeof(*dest)) ;
+	return (int)sendto(fd,buf,(int) packet_size, 0,(SOCKADDR*)dest,(int)sizeof(*dest)) ;
 }
 
 
@@ -197,7 +197,7 @@ int send_icmp(ndsocket_t fd, char *data, int len, SOCKADDR_IN *dest,int seq_no, 
 
 	len +=  sizeof(icmp_hdr) ;
 	u_packet.icmp.icmp_checksum = nd_checksum((NDUINT16*)&u_packet, len) ;
-	return sendto(fd,(char*)&u_packet, len,0,(SOCKADDR*)dest,sizeof(*dest)) ;
+	return (int)sendto(fd,(char*)&u_packet, len,0,(SOCKADDR*)dest,sizeof(*dest)) ;
 }
 
 //发送标准的PING 包
@@ -242,7 +242,7 @@ int test_remote_host(char *host)
 				break;
 			}
 			sock_len = sizeof(from) ;
-			ret=recvfrom(raw_fd,recv_buf,RAW_SYSTEM_BUF,0,(struct sockaddr *) &from, &sock_len);
+			ret=(int)recvfrom(raw_fd,recv_buf,RAW_SYSTEM_BUF,0,(struct sockaddr *) &from, &sock_len);
 			if(ret >= (int)sizeof(icmp_hdr)) {
 				int icmp_len = 0 ;
 				ndtime_t timelast ;
@@ -279,7 +279,7 @@ EXIT_PING :
 //return 0 success
 int test_remote_tcp_port(char *host, short port)
 {
-	int ret ,i, sock_len;
+	int ret =0,i, sock_len;
 	int timeout ;
 	ndsocket_t raw_fd;
 	SOCKADDR_IN dest, from  ;
@@ -310,7 +310,7 @@ int test_remote_tcp_port(char *host, short port)
 
 	for (i=0; i<3; i++){
 		int start ;
-		ret =  sendto(raw_fd,(char*)&tcppacket,sizeof(tcppacket), 0, (SOCKADDR*)&dest,sizeof(dest)) ;
+		ret =  (int)sendto(raw_fd,(char*)&tcppacket,sizeof(tcppacket), 0, (SOCKADDR*)&dest,sizeof(dest)) ;
 		if(-1==ret) {
 			nd_showerror() ;
 			goto EXIT_PING ;
@@ -327,7 +327,7 @@ int test_remote_tcp_port(char *host, short port)
 			sock_len = sizeof(from) ;
 			if(nd_socket_wait_read(raw_fd, 1000) <=0)
 				continue ;
-			ret=recvfrom(raw_fd,recv_buf,RAW_SYSTEM_BUF,0,(struct sockaddr *) &from, &sock_len);
+			ret=(int)recvfrom(raw_fd,recv_buf,RAW_SYSTEM_BUF,0,(struct sockaddr *) &from, &sock_len);
 			nd_log_screen("reaceive data ret=%d\n" AND ret) ;
 			if(ret>=(int)((sizeof(tcp_hdr) + sizeof(ip_hdr)))) {
 				ip_hdr * ip = (ip_hdr*)recv_buf;

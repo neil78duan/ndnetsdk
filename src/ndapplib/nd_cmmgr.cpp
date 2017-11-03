@@ -77,16 +77,17 @@ const NDThreadSessionIterator& NDThreadSessionIterator::operator = (const NDThre
 }
 bool NDThreadSessionIterator::operator == (const NDThreadSessionIterator &r) 
 {
-	return first == r.first ;
+	return second == r.second ;
 }
 
 bool NDThreadSessionIterator::operator != (const NDThreadSessionIterator &r) 
 {
-	return first != r.first ;
+	return second != r.second;
 }
 
 NDThreadSessionIterator& NDThreadSessionIterator::operator ++ () 
 {
+#if !defined (USE_NEW_MODE_LISTEN_THREAD)
 	struct cm_manager * pcmmgr = nd_listensrv_get_cmmamager((nd_listen_handle)m_tpi->lh);
 	nd_assert(pcmmgr) ;
 	pcmmgr->unlock(pcmmgr,*first) ;
@@ -96,6 +97,24 @@ NDThreadSessionIterator& NDThreadSessionIterator::operator ++ ()
 		nd_assert(p) ;
 		second = GetSessionFromHandle((nd_netui_handle )p) ;
 	}
+#else 
+	nd_handle h = second->GetHandle();
+	if (!h)	{
+		return *this;
+	}
+	struct nd_client_map *client = (struct nd_client_map *) h;
+	struct list_head *pos = client->map_list.next;
+	if (pos == &m_tpi->sessions_list)	{
+		first = NULL;
+		second = NULL;
+	}
+	else {
+		client = list_entry(pos, struct nd_client_map, map_list);
+		second = GetSessionFromHandle((nd_netui_handle)client);
+		first = &client->connect_node.session_id;
+	}
+#endif
+
 	return *this;
 }
 
@@ -129,6 +148,8 @@ NDBaseSession *NDThreadSessionMgr::Search(OBJECTID_T sessionid)
 
 NDThreadSessionMgr::iterator NDThreadSessionMgr::begin() 
 {
+
+#if !defined (USE_NEW_MODE_LISTEN_THREAD)
 	NDBaseSession *ps = NULL;
 	NDUINT16 *p = m_tpi->sid_buf ;
 
@@ -141,9 +162,20 @@ NDThreadSessionMgr::iterator NDThreadSessionMgr::begin()
 	}
 	
 	return iterator(p,ps, m_tpi);
+#else 
+	struct list_head *pos = m_tpi->sessions_list.next;
+	if (pos == &m_tpi->sessions_list)	{
+		return iterator(NULL, NULL, m_tpi);
+	}
+	struct nd_client_map *client = list_entry(pos, struct nd_client_map, map_list);
+	
+	NDBaseSession *ps = (NDBaseSession*) GetSessionFromHandle((nd_netui_handle)client);
+	NDUINT16 *p = &client->connect_node.session_id ;
+	return iterator(p,ps,m_tpi);
+
+#endif
 }
 NDThreadSessionMgr::iterator NDThreadSessionMgr::end()
 {
-	NDUINT16 *p = &m_tpi->sid_buf[m_tpi->session_num] ;
-	return iterator(p,NULL, m_tpi);
+	return iterator(NULL, NULL, m_tpi);
 }

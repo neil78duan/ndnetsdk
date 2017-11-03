@@ -19,7 +19,9 @@ struct msg_entry_node
 	NDUINT32			sys_msg:1 ;	//是否是系统消息
     NDUINT32            is_log:1;   //log current message
 	NDUINT32			is_script : 1;// handle message with script
+	NDUINT32			is_print : 1;// print or log message
 	nd_usermsg_func		entry ;	//入口函数
+
 	//char* name;
 	char name[NET_MSG_NAME_SIZE];
 };
@@ -40,6 +42,7 @@ struct msgentry_root
 	void		*script_engine;
 	nd_msg_script_entry script_entry;
 	nd_usermsg_func		def_entry ;	//默认入口函数
+	nd_usermsg_func		print_entry;	//print message
 	struct sub_msgentry sub_buf[0] ;
 };
 
@@ -309,7 +312,7 @@ int nd_msgentry_script_install(nd_handle handle, const char*script, ndmsgid_t ma
 	ENTER_FUNC();
 	node = _nd_msgentry_get_node(handle, maxid, minid);
 	if (script && script[0] && node) {
-		int len = strlen(script) + 1;
+		int len = (int)strlen(script) + 1;
 		if (node->is_script && node->entry)	{
 			free(node->entry);
 		}
@@ -380,6 +383,12 @@ int nd_translate_message_ex(nd_netui_handle owner,  nd_packhdr_t *msg, nd_handle
 
 	nd_netmsg_ntoh(usermsg);
 	node = _nd_msgentry_get_node(owner, usermsg->maxid, usermsg->minid);
+#ifdef ND_TRACE_MESSAGE
+	if (node && node->is_print && root_entry->print_entry) {
+		root_entry->print_entry(owner, (nd_usermsgbuf_t*)msg, listen_handle);
+	}
+#endif
+
 	ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, caller, listen_handle);
 
 	LEAVE_FUNC();
@@ -408,6 +417,12 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 	nd_netmsg_ntoh(usermsg) ;
 	
 	node = _nd_msgentry_get_node(listen_handle, usermsg->maxid,  usermsg->minid) ;
+#ifdef ND_TRACE_MESSAGE
+	if (node && node->is_print && root_entry->print_entry) {
+		root_entry->print_entry(connect_handle, (nd_usermsgbuf_t*)msg, listen_handle);
+	}
+#endif
+
 	if (!node || (!node->entry && !root_entry->def_entry) ){
 		if (srv_node->unreg_msg_close) {
 			nd_object_seterror(connect_handle, NDERR_UNHANDLED_MSG) ; 
@@ -415,7 +430,7 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 		}
 		nd_logwarn("receive UNHANDLED message(%d , %d) \n", usermsg->maxid,  usermsg->minid) ;
 	}
-	else {		
+	else {	
 		if( nd_connect_level_get(connect_handle) < node->level ||  (node->sys_msg && !msg->ndsys_msg) ){			
 			if (srv_node->error_privilage_close) {
 				nd_object_seterror(connect_handle, NDERR_NO_PRIVILAGE) ;
@@ -426,10 +441,8 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 		}		
 		else {
 			ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, connect_handle, listen_handle);
-			//nd_usermsg_func func = node->entry ? node->entry : root_entry->def_entry ;
-			//ret = func(connect_handle,(nd_usermsgbuf_t*)usermsg,listen_handle) ; 
-			if (-1==ret) {
-				nd_object_seterror(connect_handle, NDERR_USER) ;
+			if (-1 == ret) {
+				nd_object_seterror(connect_handle, NDERR_USER);
 			}
 		}		
 	}
@@ -497,14 +510,72 @@ int nd_message_set_log(nd_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int i
     struct msg_entry_node * node ;
     
     int ret = -1;
-    node = _nd_msgentry_get_node(handle, maxid, minid) ;
-    if (node) {
-        ret = node->is_log ? 1 :0 ;
-        node->is_log = is_log ? 1 : 0 ;
-    }
-    
+	if (maxid == (ndmsgid_t)-1 && minid == (ndmsgid_t)-1) {
+		struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
+		if (root_entry) {
+			int i = 0;
+			for (i = 0; i < root_entry->main_num; i++)	{
+				int x = 0;
+				for (x = 0; x < SUB_MSG_NUM; x++)	{
+					root_entry->sub_buf[i].msg_buf[x].is_log = is_log ? 1 : 0;
+				}
+			}
+		}
+		ret = 0;
+	}
+	else {
+		node = _nd_msgentry_get_node(handle, maxid, minid);
+		if (node) {
+			ret = node->is_log ? 1 : 0;
+			node->is_log = is_log ? 1 : 0;
+		}
+	}
     LEAVE_FUNC();
     return ret ;
+}
+
+int nd_message_set_print(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid, int is_print)
+{
+
+	ENTER_FUNC();
+	struct msg_entry_node * node;
+	int ret = -1;
+	if (maxid == (ndmsgid_t)-1 && minid == (ndmsgid_t)-1) {
+		struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
+		if (root_entry) {
+			int i = 0;
+			for (i = 0; i < root_entry->main_num; i++)	{
+				int x = 0;
+				for (x = 0; x < SUB_MSG_NUM; x++)	{
+					root_entry->sub_buf[i].msg_buf[x].is_print = is_print ? 1 : 0;
+				}
+			}
+		}
+		ret = 0;
+	}
+	else {
+		node = _nd_msgentry_get_node(handle, maxid, minid);
+		if (node) {
+			ret = node->is_print ? 1 : 0;
+			node->is_print = is_print ? 1 : 0;
+		}
+	}
+
+
+	LEAVE_FUNC();
+	return ret;
+}
+nd_usermsg_func nd_message_set_print_entry(nd_handle handle, nd_usermsg_func entry)
+{
+	nd_usermsg_func ret = NULL;
+	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
+	if (!root_entry)	{
+		return NULL;
+	}
+	ret = root_entry->print_entry;
+	root_entry->print_entry = entry;
+
+	return ret;
 }
 
 int nd_message_set_system(nd_netui_handle handle,  ndmsgid_t maxid, ndmsgid_t minid,int issystem) 

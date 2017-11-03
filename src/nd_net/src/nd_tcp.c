@@ -124,6 +124,12 @@ int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node *node,stru
 	ENTER_FUNC()
 	nd_assert(node ) ;
 	nd_assert(host) ;
+
+	node->sys_error = 0;
+	node->last_push = nd_time();
+	ndlbuf_reset(&(node->recv_buffer));		/* buffer store data recv from net */
+	ndlbuf_reset(&(node->send_buffer));		/* buffer store data send from net */
+
 	if(proxy && proxy->proxy_type != ND_PROXY_NOPROXY ) {
 		node->fd = nd_proxy_connect(host, port, &(node->remote_addr), proxy,0)  ;
 	}
@@ -585,10 +591,10 @@ void _set_ndtcp_conn_dft_option(ndsocket_t sock_fd)
 	lin.l_linger = 2 ;
 
 	//set receive buffer
-	output_len = sizeof(sock_bufsize) ;
-	if(-1==setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)&sock_bufsize,output_len ) ) {
-		nd_logerror("set socket receive buffer error %s\n" AND nd_last_error() ) ;
-	}
+//	output_len = sizeof(sock_bufsize) ;
+//	if(-1==setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)&sock_bufsize,output_len ) ) {
+//		//nd_logerror("set socket receive buffer error %s\n" AND nd_last_error() ) ;
+//	}
 	
 	/*
 	new_bufsize = 0 ;
@@ -602,9 +608,9 @@ void _set_ndtcp_conn_dft_option(ndsocket_t sock_fd)
 	sock_bufsize = ND_DEFAULT_TCP_WINDOWS_BUF ;	
 	output_len = sizeof(sock_bufsize) ;
 	
-	if(-1==setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&sock_bufsize, sizeof(sock_bufsize)) ){
-		nd_logerror("set socket send buffer error %s\n" AND nd_last_error() ) ;
-	}
+//	if(-1==setsockopt(sock_fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)&sock_bufsize, sizeof(sock_bufsize)) ){
+//		//nd_logerror("set socket send buffer error %s\n" AND nd_last_error() ) ;
+//	}
 	
 	/*
 	new_bufsize = 0 ;

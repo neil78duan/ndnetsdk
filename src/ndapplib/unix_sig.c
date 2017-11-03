@@ -73,12 +73,15 @@ void _terminate_server(int signo)
 	nd_instance_exit(0) ;
 }
 
-static int _s_terminate_sigs[] = {SIGHUP,SIGINT,SIGQUIT,SIGTERM,SIGTSTP} ;
+//the signals list, when received program will terminate
+static int _s_terminate_sigs[] = {/*SIGHUP,*/SIGINT,SIGQUIT,SIGTERM,SIGTSTP} ;
 #define terminate_sigs_num  ND_ELEMENTS_NUM(_s_terminate_sigs)
 
-static int _s_ignore_sigs[] = {SIGALRM,SIGCHLD,SIGIO,SIGCONT,SIGPIPE,SIGVTALRM,SIGUSR1,SIGUSR2} ;
+// ignore signals list
+static int _s_ignore_sigs[] = {SIGHUP,SIGALRM,SIGCHLD,SIGIO,SIGCONT,SIGPIPE,SIGVTALRM,SIGUSR1,SIGUSR2} ;
 #define ignore_sigs_num      ND_ELEMENTS_NUM(_s_ignore_sigs)
 
+//install terminate signal handler and ignore some signals
 int nd_signals_init()
 {
     ENTER_FUNC()
@@ -125,6 +128,7 @@ int nd_signals_init()
     return  0;
 }
 
+//wait signal in main thread
 int nd_wait_terminate_signals()
 {
     ENTER_FUNC()
@@ -160,164 +164,5 @@ int nd_wait_terminate_signals()
     LEAVE_FUNC();
     return -1;
 }
-#if 0
-int nd_sig_handler_install(void)
-{
-    //ignore
-    return 0;
-}
-/* install signal handle function
- * because server program must backup user data
- * so it must know it's signal station.
- */
-int installed_sig_handle(void)
-{
-	ENTER_FUNC()
-	int i ;
-	sigset_t blockmask, oldmask  ;
-	struct sigaction sact ,oldact;
 
-	sigemptyset(&blockmask);
-	sigemptyset(&oldmask);
-
-	sigaddset(&blockmask, SIGINT);
-	sigaddset(&blockmask, SIGTERM);
-
-	sact.sa_handler = _terminate_server ;
-
-	sigemptyset(&sact.sa_mask );
-	sigaddset(&sact.sa_mask, SIGINT);
-
-	sigprocmask(SIG_BLOCK ,&blockmask, &oldmask );
-
-	for(i=SIGHUP; i<SIGCONT; i++){
-		if( (int)SIGKILL==i ||
-			(int)SIGALRM==i ||
-			(int)SIGPIPE==i )
-			continue ;
-		if(-1==sigaction(i, &sact, &oldact))	{
-			nd_logmsg("Installed %d signal function error!", i );
-			LEAVE_FUNC();
-			return -1 ;
-		}
-	}
-
-	sigprocmask(SIG_UNBLOCK ,&blockmask, NULL );
-	LEAVE_FUNC();
-	return 0 ;
-}
-
-
-int wait_signal_entry()
-{
-	ENTER_FUNC()
-	int i = 0 , intmask;
-	static int _inited=0;
-	static sigset_t blockmask ;
-
-	if(0==_inited) {
-		sigemptyset(&blockmask) ;
-
-		for(i=SIGHUP; i<32; i++)
-		{
-			/*if( (int)SIGALRM==i ||
-				(int)SIGCHLD==i ||
-				(int)SIGIOT==i  ||
-				(int)SIGPIPE==i ||
-				(int)SIGTRAP== i )
-				continue ;
-			*/
-			sigaddset(&blockmask,i) ;
-		}
-		/*sigaddset(&blockmask,SIGTTOU) ;
-		sigaddset(&blockmask,SIGTTIN) ;
-		sigaddset(&blockmask,SIGXCPU) ;
-		sigaddset(&blockmask,SIGXFSZ) ;
-		sigaddset(&blockmask,SIGPWR) ;
-		*/
-	}
-
-	sigwait(&blockmask, &intmask) ;
-	printf_dbg( "recv signal  %d \n",intmask);
-	if(0==intmask){
-		printf_dbg( "recvd a system signal %d\n" AND intmask);
-		LEAVE_FUNC();
-		return 0;
-	}
-	else if( (int)SIGALRM==intmask ||
-			(int)SIGCHLD==intmask ||
-			(int)SIGIOT==intmask  ||
-			(int)SIGPIPE==intmask ) {
-		printf_dbg( "recv signal but not handle %d \n" AND intmask);
-		LEAVE_FUNC();
-		return 0;
-	}
-	printf_dbg("received %d signed %s program would exit\n"  AND  intmask AND get_signal_desc(intmask));
-
-	LEAVE_FUNC();
-	return -1;
-}
-
-int block_signal(void)
-{
-	ENTER_FUNC()
-	int i ;
-	sigset_t blockmask ;
-
-	/*mask all signal */
-	sigemptyset(&blockmask);
-
-	for(i=SIGHUP; i<32; i++){
-		if(	(int)SIGALRM==i ||
-			(int)SIGPROF==i ||
-			(int)SIGFPE==i  ||
-			(int)SIGKILL==i )
-			continue ;
-		sigaddset(&blockmask,i) ;
-	}
-	sigprocmask(SIG_BLOCK ,&blockmask, NULL );
-
-	LEAVE_FUNC();
-	return 0;
-}
-
-int ignore_all_signal(void)
-{
-	int i ;
-
-	sigset_t blockmask ;
-
-	sigemptyset(&blockmask);
-
-	for(i=SIGHUP; i<32; i++){
-		//sigaddset(&blockmask,i) ;
-		signal(i,SIG_IGN) ;
-	}
-	signal(i,SIG_DFL) ;
-	//sigprocmask(SIG_BLOCK ,&blockmask, NULL );
-
-	return 0;
-}
-int unblock_signal(void)
-{
-	int i ;
-	sigset_t blockmask ;
-
-	/*mask all signal */
-	sigemptyset(&blockmask);
-
-	for(i=SIGHUP; i<32; i++){
-		if(	(int)SIGALRM==i ||
-			(int)SIGPROF==i ||
-			(int)SIGFPE==i  ||
-			(int)SIGKILL==i )
-			continue ;
-		sigaddset(&blockmask,i) ;
-	}
-	sigprocmask(SIG_UNBLOCK ,&blockmask, NULL );
-
-	return 0;
-}
-
-#endif // 0
 #endif

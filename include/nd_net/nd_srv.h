@@ -60,10 +60,10 @@ static __INLINE__ ndsocket_t nd_srv_getfd(nd_handle h_srv)
 	return ((struct nd_srv_node*)h_srv)->fd ;
 }
 
-ND_NET_API void nd_srv_set_allocator(struct nd_srv_node *node,nd_handle allocator,cm_alloc alloc,cm_dealloc dealloc);
+//ND_NET_API void nd_srv_set_allocator(struct nd_srv_node *node,nd_handle allocator,cm_alloc alloc,cm_dealloc dealloc);
 
-ND_NET_API void nd_srv_node_init(struct nd_srv_node *node);
-#define  nd_tcpsrv_node_init	nd_srv_node_init
+//ND_NET_API void nd_srv_node_init(struct nd_srv_node *node);
+//#define  nd_tcpsrv_node_init	nd_srv_node_init
 
 #define	nd_srv_open(port,   listen_num,node) nd_net_bind(port, listen_num, (nd_handle)node)
 
@@ -75,7 +75,7 @@ ND_NET_API void nd_srv_close(struct nd_srv_node *node) ; /* close net server*/
 
 
 //设定最大连接数
-ND_NET_API int cm_listen(struct cm_manager *root, int max_num, int client_size) ;
+ND_NET_API int cm_listen(struct cm_manager *root, int max_num, int client_size);
 ND_NET_API void cm_destroy(struct cm_manager *root) ;
 
 //得到最大连接数

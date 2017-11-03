@@ -47,7 +47,7 @@ void nd_instance_exit(int flag)
 
 int wait_key_esc()
 {
-    int ch;
+    //int ch;
     while( !nd_host_check_exit() ){
 		nd_sleep(200);
 //         if(kbhit()) {

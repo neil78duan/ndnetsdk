@@ -39,6 +39,8 @@ struct connect_config
 
 struct nd_db_config
 {
+	int port;
+	int special_read_port;
 	char db_host[ND_HOST_NAME_SIZE] ;
 	char db_database[64] ;
 	char db_user[32] ;
@@ -48,8 +50,9 @@ struct nd_db_config
 //实例配置信息
 struct instance_config
 {
-	int open_dump ;				//是否打开dump
-	int single_thread;			//是否使用单线程逻辑
+	NDUINT8 open_dump ;				//是否打开dump
+	NDUINT8 single_thread;			//是否使用单线程逻辑
+	NDUINT8 log_filename_nodate;
 	NDUINT32 log_file_size ;
 	char inet_ip[ND_IP_TEXT_SIZE];
 	char callstack_file[256] ;

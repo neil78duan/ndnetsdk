@@ -44,7 +44,7 @@ int epoll_main(struct thread_pool_info *thip)
 
 	nd_assert(thread_handle) ;
 	listen_fd = get_listen_fd(listen_info);
-	event_num = thip->max_sessions + 1;
+	event_num = nd_listensrv_capacity((nd_listen_handle)thip->lh);
 
 	ev_buf = (struct epoll_event*)malloc(event_num * sizeof(*ev_buf)) ;
 	if(!ev_buf){
@@ -139,8 +139,9 @@ int epoll_sub(struct thread_pool_info *thip)
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;
 
 	nd_assert(thread_handle) ;
-	event_num = thip->max_sessions + 1;
-
+	//event_num = thip->max_sessions + 1;
+	event_num = nd_listensrv_capacity((nd_listen_handle)thip->lh);
+	
 	ev_buf = (struct epoll_event*)malloc(event_num * sizeof(*ev_buf)) ;
 	if(!ev_buf){
 		nd_logerror("alloc memory ") ;
@@ -515,7 +516,9 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
 int listen_thread_createex(struct thread_pool_info *ic)
 {
     int epoll_fd;
-    epoll_fd = create_event_fd(ic->max_sessions) ;
+    epoll_fd = create_event_fd(nd_listensrv_capacity((nd_listen_handle)ic->lh)) ;
+	
+	
     if(epoll_fd<=0) {
         nd_showerror() ;
         return -1;
@@ -530,9 +533,10 @@ int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thp
 {
 	ENTER_FUNC() ;
 	int i ,sleep=0;
-	struct nd_client_map  *client;
 	
 	//flush send buffer
+#if !defined (USE_NEW_MODE_LISTEN_THREAD)
+	struct nd_client_map  *client;
 	for (i=thpi->session_num-1; i>=0;i-- ) {
 		NDUINT16 session_id = thpi->sid_buf[i];
 		client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
@@ -543,11 +547,26 @@ int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thp
 		}
 		else if (TCPNODE_IS_OK(client)){
 			if(_tcpnode_push_sendbuf(&client->connect_node,0) > 0)
-				++sleep ;			
+			++sleep ;
 			client->connect_node.update_entry((nd_handle)client) ;
 		}
 		pmanger->unlock(pmanger,session_id) ;
 	}
+#else
+	struct list_head *pos, *next;
+	list_for_each_safe(pos, next, &thpi->sessions_list) {
+		struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
+		if (0==tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout )){
+			++sleep ;
+		}
+		else if (TCPNODE_IS_OK(client)){
+			if(_tcpnode_push_sendbuf(&client->connect_node,0) > 0)
+			++sleep ;
+			client->connect_node.update_entry((nd_handle)client) ;
+		}
+		
+	}
+#endif
 	LEAVE_FUNC() ;
 	return sleep;
 }

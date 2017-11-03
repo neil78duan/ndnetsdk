@@ -35,7 +35,7 @@ int nd_socket_udp_write(ndsocket_t fd, const char* data, size_t data_len ,SOCKAD
 {
 	int ret = 0 ;
 	nd_assert(data && data_len > 0 && to_addr) ;
-	ret = sendto(fd, data,(int)  data_len,0,(LPSOCKADDR)to_addr, (int) sizeof(*to_addr)) ;
+	ret = (int)sendto(fd, data,(int)  data_len,0,(LPSOCKADDR)to_addr, (int) sizeof(*to_addr)) ;
 	return ret ;
 }
 /* read date from net
@@ -49,7 +49,7 @@ int nd_socket_udp_read(ndsocket_t fd ,char *buf, size_t size, SOCKADDR_IN* from_
 
 	nd_assert(buf && size > 0) ;
 
-	read_len  = recvfrom(fd, buf,(int)  size, 0, (LPSOCKADDR)from_addr, &sock_len )  ;
+	read_len  = (int)recvfrom(fd, buf,(int)  size, 0, (LPSOCKADDR)from_addr, &sock_len )  ;
 	return read_len  ;
 }
 
@@ -124,8 +124,8 @@ int nd_sock_cmp_ip(ndip_t src, ndip_t dest, ndip_t ipmask)
 	}
 	else {
 		int n;
-		unsigned char *srcip = (char*)&src ;
-		unsigned char *destip = (char*)&dest ;
+		unsigned char *srcip = (unsigned char*)&src ;
+		unsigned char *destip = (unsigned char*)&dest ;
 		for( n=0; n<4; n++) {
 			if (destip[n] != 0xff && srcip[n]!=0xff){
 				if (destip[n] != srcip[n]){

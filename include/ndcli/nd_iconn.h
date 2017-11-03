@@ -34,8 +34,10 @@ typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
 
 typedef int (*nd_bigdata_handler)(nd_handle nethandle,  NDUINT64 param , void *data, size_t datalen) ;
 
-#define  WAITMSG_TIMEOUT 300000
 
+ND_CONNCLI_API int ndGetTimeoutVal();
+
+#define  WAITMSG_TIMEOUT ndGetTimeoutVal()
 //net connector 
 class NDIConn
 {
@@ -83,6 +85,7 @@ ND_CONNCLI_API NDIConn * htoConnector(nd_handle h);
 
 ND_CONNCLI_API void* ndSetLogoutFunc(void *func);
 ND_CONNCLI_API void ndSetLogFile(const char *pathfile);
+ND_CONNCLI_API int ndSetTimeoutVal(int val);
 
 
 #endif

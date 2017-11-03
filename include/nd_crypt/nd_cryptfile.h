@@ -38,5 +38,6 @@ ND_CRYPT_API int ndc_fclose(NDC_FILE *pf) ;
 ND_CRYPT_API int ndc_fseek(NDC_FILE*pf, long offset, int flag) ;
 ND_CRYPT_API long ndc_ftell(NDC_FILE *pf) ;
 ND_CRYPT_API int ndc_fflush(NDC_FILE *pf) ;
+ND_CRYPT_API void* ndc_load_file_ex(const char *file, size_t *size, const char *fileKey);
 
 #endif

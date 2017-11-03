@@ -20,6 +20,7 @@ ND_COMMON_API void	 app_inst_set_hm(int _h, int _m);
 
 ND_COMMON_API int nd_time_day_interval(time_t end_tm, time_t start_tm);	//get interval of days
 ND_COMMON_API int nd_time_day_interval_ex(time_t end_tm, time_t start_tm, int time_zone);
+ND_COMMON_API time_t nd_time_getgm_from_offset(int secondIndexOfDay, time_t now, int timezone);
 
 ND_COMMON_API int nd_time_zone();
 ND_COMMON_API time_t  nd_time_from_str(const char *pInput, time_t* tim);
