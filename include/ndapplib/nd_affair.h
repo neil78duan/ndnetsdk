@@ -402,7 +402,7 @@ public:
 		return m_dataChanged ? true : false;
 	}
 	void SetDataChanged() {
-		m_dataChanged = true;
+		m_dataChanged = 1;
 	}
 	void ClearDataChange() {
 		m_dataChanged = 0;

@@ -195,6 +195,7 @@ public :
 
 	void Init(nd_usermsgbuf_t *pmsg);
 	int ToFile(const char *file)const;
+	int dumpText(char *buf, size_t size);
 
 protected:
 	int _ReadOrg(NDUINT32 &a);
@@ -203,6 +204,7 @@ protected:
 	int _ReadOrg(NDUINT64 &a);
 	int _ReadOrg(float &a);
 	int _ReadOrg(double &a);
+	int _dumpTobuf(char *buf, size_t size);
 
 #ifdef NET_STREAM_WITH_FORMAT_MARKER
 	int _ReadTypeSize(eNDnetStreamMarker &type, NDUINT8 &size);

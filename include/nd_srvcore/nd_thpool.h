@@ -54,7 +54,7 @@ int addto_thread_pool(struct nd_client_map *client, struct thread_pool_info * pt
 int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo);
 ND_SRV_API nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h, int session_num);
 ND_SRV_API int nd_fetch_sessions_in_thread(nd_listen_handle h, ndthread_t *threadid_buf, int *count_buf, int size);
-
+int listen_thread_create(struct thread_pool_info *ic, nd_threadsrv_entry th_func);
 
 
 void init_netthread_msg( nd_handle  thhandle);

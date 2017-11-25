@@ -201,18 +201,19 @@ int NDBaseSession::LoadBalance()
 
 bool m_bRedirctLog;
 NDSession *NDSession::g_redirect_log_object=NULL;
-logfunc NDSession::g_redirectOrgFunc =NULL;
+nd_log_entry NDSession::g_redirectOrgFunc = NULL;
 
-static void redirect_log_entry(const char* text)
+static int redirect_log_entry(const char* text)
 {
 	if (NDSession::g_redirect_log_object)	{
 		NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_REDIRECT_SRV_LOG_OUTPUT);
 		omsg.Write(text);
-		NDSession::g_redirect_log_object->SendMsg(omsg);
+		return NDSession::g_redirect_log_object->SendMsg(omsg);
 	}
 	else if (NDSession::g_redirectOrgFunc) {
-		NDSession::g_redirectOrgFunc(text);
+		return NDSession::g_redirectOrgFunc(text);
 	}
+	return 0;
 }
 
 NDSession::NDSession () 

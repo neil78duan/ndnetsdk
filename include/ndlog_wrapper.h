@@ -20,7 +20,7 @@ class NDLogWrapperBase
 public:
 	NDLogWrapperBase(pointer host)
 	{
-        m_oldLogFunction = nd_setlog_func((logfunc)NDLogWrapperBase< T>::log);
+		m_oldLogFunction = nd_setlog_func((nd_log_entry)NDLogWrapperBase< T>::log);
 		nd_log_no_file(1);
 		nd_log_no_date(1);
 		m_hostWindows = host;
@@ -45,16 +45,18 @@ public:
 		return done;
 	}
 
-	static void log(const char *text)
+	static int log(const char *text)
 	{
 		if (m_hostWindows)		{
 			m_hostWindows->WriteLog(text);
+			return (int)strlen(text);
 		}
+		return 0;
 	}
 
 private:
 	static pointer m_hostWindows;
-	logfunc m_oldLogFunction;
+	nd_log_entry m_oldLogFunction;
 };
 
 #define ND_LOG_WRAPPER_PRINT(_type) &(NDLogWrapperBase<_type>::print)

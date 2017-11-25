@@ -159,19 +159,20 @@ char *nd_get_callstack_desc(char *buf, size_t size)
 
 	self_id =nd_thread_self() ;
 	len = size ;
-	buf[0] = 0 ;
+	p = buf;
+
 	for(i=0; i<MAX_THREAD_NUM; i++, pcs++) {
 		if (pcs->th_id == self_id) {
-			p = buf ;
 			for(n=pcs->stack_point-1;n>=0 ; --n){				
 				if (0==pcs->names[n][0]){
 					break ;
 				}
 				else {
-					size_t ret = snprintf(p, size-(p-buf), "%s();", pcs->names[n]) ;
+					size_t ret = snprintf(p, len, "%s();", pcs->names[n]) ;
 					if(ret <=0 )
 						break ;
 					p += ret ;
+					len -= ret;
 					if (p>= buf + size)
 						break ;
 				}

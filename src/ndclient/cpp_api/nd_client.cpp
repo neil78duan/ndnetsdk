@@ -455,7 +455,7 @@ void DeinitNet()
 
 void* ndSetLogoutFunc(void *func)
 {
-	return (void*)nd_setlog_func((logfunc)func);
+	return (void*)nd_setlog_func((nd_log_entry)func);
 }
 void ndSetLogFile(const char *pathfile)
 {

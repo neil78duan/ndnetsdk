@@ -614,16 +614,136 @@ void NDIStreamMsg::Init(nd_usermsgbuf_t *pmsg)
 	
 }
 
+NDIStreamMsg::~NDIStreamMsg()
+{
+
+}
+
+
 int NDIStreamMsg::ToFile(const char *file)const
 {
 	return _write_file(file, recv_packet);
 }
 
-NDIStreamMsg::~NDIStreamMsg() 
-{
 
+int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
+{
+#define OUT_PUT_TYPE(_buf, _size, _type, _format,_func)  \
+	do 	{			\
+		_type val;	\
+		if (0 == _func(val)) {	\
+		int ret = snprintf(_buf, _size, #_type " : " #_format " \n", val);	\
+		_buf += ret;			\
+		_size -= ret;			\
+	}							\
+	else {		return -1;	}	\
+	} while (0)
+
+
+	char *p = buf;
+	size_t len = size;
+
+
+	eNDnetStreamMarker type = PeekDataType();
+	switch (type)
+	{
+	case ENDSTREAM_MARKER_UNDEFINE:
+		return -1;
+		break;
+	case ENDSTREAM_MARKER_INT8:
+		OUT_PUT_TYPE(p, len, NDUINT8, %d, Read);
+		break;
+	case ENDSTREAM_MARKER_INT16:
+		OUT_PUT_TYPE(p, len, NDUINT16, %d, Read);
+		break;
+	case ENDSTREAM_MARKER_INT32:
+		OUT_PUT_TYPE(p, len, NDUINT32, %d, Read);
+		break;
+	case ENDSTREAM_MARKER_INT64:
+		OUT_PUT_TYPE(p, len, NDUINT64, %lld, Read);
+		break;
+	case ENDSTREAM_MARKER_FLOAT:
+		OUT_PUT_TYPE(p, len, float, %f, Read);
+		break;
+	case ENDSTREAM_MARKER_DOUBLE:
+		OUT_PUT_TYPE(p, len, double, %f, Read);
+		break;
+	case ENDSTREAM_MARKER_TEXT:
+	{
+		int ret = snprintf(p, len, "text :[ ");
+		p += ret;
+		len -= ret;
+
+		ret = Read(p, len);
+		p += ret;
+		len -= ret;
+
+		ret = snprintf(p, len, "] \n");
+		p += ret;
+		len -= ret;
+
+	}
+		break;
+	case ENDSTREAM_MARKER_BIN:
+	{
+		int ret = 0;
+		int datalen = PeekBinSize();
+		ret = snprintf(p, len, "bin : [");
+		p += ret;
+		len -= ret;
+
+		if (datalen == 0)	{
+			ret = snprintf(p, len, "NULL] \n");
+			p += ret;
+			len -= ret;
+		}
+		else {
+			datalen += 8;
+			char *tmpbuf = (char*)malloc(datalen);
+			if (!tmpbuf)	{
+				return -1;
+			}
+			datalen = ReadBin(tmpbuf, datalen);
+			for (int i = 0; i < datalen; i++)	{
+				ret = snprintf(p, len, "0x%x, ", tmpbuf[i]);
+				p += ret;
+				len -= ret;
+			}
+			ret = snprintf(p, len, "] \n");
+			p += ret;
+			len -= ret;
+			free(tmpbuf);
+		}
+	}
+		break;
+	case ENDSTREAM_MARKER_IP32:
+		OUT_PUT_TYPE(p, len, ndip_t, %x, ReadIp);
+		break;
+	case ENDSTREAM_MARKER_IP64:
+		OUT_PUT_TYPE(p, len, ndip_v6_t, %llx, ReadIp);
+		break;
+	default:
+		return -1;
+		break;
+	}
+	return size - len;
 }
 
+int NDIStreamMsg::dumpText(char *buf, size_t size)
+{
+	size_t length = size;
+	char *p = buf;
+	while (LeftData() > 0)	{
+		int ret = _dumpTobuf(p, length);
+		if (ret <= 0 )	{
+			return size - length;
+		}
+		p += ret;
+		length -= ret;
+	}
+
+	return size - length;
+}
 
 #ifdef NET_STREAM_WITH_FORMAT_MARKER
 
@@ -1057,19 +1177,26 @@ size_t NDIStreamMsg::ReadBin (void *buf, size_t size_buf)
 }
 int NDIStreamMsg::PeekBinSize()
 {
-	char *curAddr = _op_addr ;
+	char *curAddr =  _op_addr;
+
 #ifdef NET_STREAM_WITH_FORMAT_MARKER
-	NDUINT8 size = *curAddr & 0xf;
-	curAddr++;
-	if (size == 0) {
+	eNDnetStreamMarker type;
+	NDUINT8 size;
+	m_bStruckEndMarker = false;
+	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+		_op_addr = curAddr;
+		return 0;
+	}
+	if (size == 0){
+		_op_addr = curAddr;
 		return 0;
 	}
 #endif 
+	NDUINT16 data_size = 0;
+	_ReadOrg(data_size);
 
-	if (_end >= curAddr + sizeof(NDUINT16)) {
-		 return nd_netstream_to_short(curAddr);
-	}
-	return -1;
+	_op_addr = curAddr;
+	return data_size;
 }
 
 

@@ -295,6 +295,36 @@ const char *ndstr_parse_word_n(const char *src, char *outstr, int n)
 	return *src?src:NULL ;
 }
 
+//return 0 nothing, -1 error ,else data size
+int ndstr_parse_variant_n(const char *src, char *outstr, int n)
+{
+	const char *p = src;
+	register unsigned char a;
+	
+	while (*src && n-- > 0) {
+		a = (unsigned char)*src;
+		
+		if(__s_code_type != E_SRC_CODE_ANSI && a > (unsigned char)0x80){
+			int ret = _read_word((unsigned char**)&outstr, (unsigned  char**)&src);
+			n -= ret - 1;
+		}
+		else if (IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a == '_' || a == '.'){
+			*outstr++ = *src++;
+		}
+		else{
+			if (p == src) {
+				return -1;
+			}
+			else {
+				break;
+			}
+		}
+	}
+	*outstr = 0;
+	return src - p;
+}
+
+
 const char *_ndstr_read_cmd(const char *src, char *outstr, int n, char endmark)
 {
 	register unsigned char a ;

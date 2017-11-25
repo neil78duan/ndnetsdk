@@ -72,7 +72,7 @@ int close_session_in_thread(struct nd_netth_context *thpi)
 
 int update_session_in_thread(struct cm_manager *pmanger, struct nd_netth_context *thpi)
 {
-	int i, ret, sleep = 0;
+	int  ret, sleep = 0;
 	struct list_head *pos, *next;
 	struct listen_contex *lc = (struct listen_contex *)(thpi->lh);
 

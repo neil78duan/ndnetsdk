@@ -304,13 +304,13 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		break;
 
 	case NDIOCTL_SYS_SET_LOG_FUNC:
-		nd_setlog_func((logfunc)val);
+		nd_setlog_func((nd_log_entry)val);
 		break;
 
 	case NDIOCTL_SYS_GET_LOG_FUNC:
 	{
-		logfunc oldval = nd_setlog_func((logfunc)0);
-		logfunc *retval = (logfunc *) val;
+		nd_log_entry oldval = nd_setlog_func((nd_log_entry)0);
+		nd_log_entry *retval = (nd_log_entry *)val;
 		*retval = oldval;
 		nd_setlog_func(oldval);
 	}

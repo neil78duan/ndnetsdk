@@ -33,16 +33,16 @@ NDAlarm::NDAlarm()
 	m_minute_index = 0;
 	m_tick_index = 0;
 
-	m_daily_hour = 0 ;
-	m_week_hour = 0 ;
-	m_week_day = 0 ;
-	m_daily_last_runday = 0xff;
-	m_week_last_runweek = 0 ;
-
-	//m_alarm_serial = 0 ;
-
-	m_daily_minute = 0 ;
-	m_week_minute = 0;
+// 	m_daily_hour = 0 ;
+// 	m_week_hour = 0 ;
+// 	m_week_day = 0 ;
+// 	m_daily_last_runday = 0xff;
+// 	m_week_last_runweek = 0 ;
+// 
+// 	//m_alarm_serial = 0 ;
+// 
+// 	m_daily_minute = 0 ;
+// 	m_week_minute = 0;
     
 
     INIT_LIST_HEAD(&sub_list) ;
@@ -61,17 +61,17 @@ int NDAlarm::Create()
 
 	app_inst_time(&now) ;
 	gtm = localtime( &now );
-	
-	if ((gtm->tm_hour > m_daily_hour) || (gtm->tm_hour == m_daily_hour&& gtm->tm_min >= m_daily_minute)) {		
-		m_daily_last_runday = gtm->tm_mday ;
-	}
-	if (m_week_day == gtm->tm_wday ){
-		NDUINT32 wkindex = (NDUINT32)(now / (60*60 * 24 *7)) ;
-		
-        if ((gtm->tm_hour > m_week_hour) || (gtm->tm_hour == m_week_hour&& gtm->tm_min >= m_week_minute)) {
-			m_week_last_runweek = wkindex;
-		}		
-	}	
+// 	
+// 	if ((gtm->tm_hour > m_daily_hour) || (gtm->tm_hour == m_daily_hour&& gtm->tm_min >= m_daily_minute)) {		
+// 		m_daily_last_runday = gtm->tm_mday ;
+// 	}
+// 	if (m_week_day == gtm->tm_wday ){
+// 		NDUINT32 wkindex = (NDUINT32)(now / (60*60 * 24 *7)) ;
+// 		
+//         if ((gtm->tm_hour > m_week_hour) || (gtm->tm_hour == m_week_hour&& gtm->tm_min >= m_week_minute)) {
+// 			m_week_last_runweek = wkindex;
+// 		}		
+// 	}	
 	return 0;
 }
 
@@ -165,11 +165,8 @@ int NDAlarm::tick(ndtime_t tminterval)
 			}
 
             m_tick_minute -= 1000*60 ;
-            update_alarm() ;
-
-
-        }
-        
+            //update_alarm() ;
+        }        
     }
     
     if (list_empty(&sub_list)) {
@@ -195,36 +192,36 @@ void NDAlarm::update_timer(ndtime_t tminterval)
         
     }
 }
-
-void NDAlarm::update_alarm()
-{
-	ND_TRACE_FUNC() ;
-	time_t now ;
-	struct tm *gtm ,tmnow;
-
-	app_inst_time(&now) ;
-	gtm = localtime( &now );
-	tmnow = *gtm;
-	gtm = &tmnow;
-	
-	if ( gtm->tm_mday!= m_daily_last_runday){
-		if ((gtm->tm_hour > m_daily_hour) || (gtm->tm_hour == m_daily_hour&& gtm->tm_min >= m_daily_minute)) {
-			UpdateDaily() ;
-			m_daily_last_runday = gtm->tm_mday ;
-		}
-	}
-	
-	NDUINT32 wkindex = (NDUINT32)(now / (60*60 * 24 *7)) ;
-	
-    if (m_week_day == gtm->tm_wday ){
-		if (m_week_last_runweek != wkindex){
-			if ((gtm->tm_hour > m_week_hour) || (gtm->tm_hour == m_week_hour&& gtm->tm_min >= m_week_minute)) {
-				UpdateWeek() ;
-				m_week_last_runweek = wkindex;
-			}			
-		}
-	}
-}
+// 
+// void NDAlarm::update_alarm()
+// {
+// 	ND_TRACE_FUNC() ;
+// 	time_t now ;
+// 	struct tm *gtm ,tmnow;
+// 
+// 	app_inst_time(&now) ;
+// 	gtm = localtime( &now );
+// 	tmnow = *gtm;
+// 	gtm = &tmnow;
+// 	
+// 	if ( gtm->tm_mday!= m_daily_last_runday){
+// 		if ((gtm->tm_hour > m_daily_hour) || (gtm->tm_hour == m_daily_hour&& gtm->tm_min >= m_daily_minute)) {
+// 			UpdateDaily() ;
+// 			m_daily_last_runday = gtm->tm_mday ;
+// 		}
+// 	}
+// 	
+// 	NDUINT32 wkindex = (NDUINT32)(now / (60*60 * 24 *7)) ;
+// 	
+//     if (m_week_day == gtm->tm_wday ){
+// 		if (m_week_last_runweek != wkindex){
+// 			if ((gtm->tm_hour > m_week_hour) || (gtm->tm_hour == m_week_hour&& gtm->tm_min >= m_week_minute)) {
+// 				UpdateWeek() ;
+// 				m_week_last_runweek = wkindex;
+// 			}			
+// 		}
+// 	}
+// }
 
 int NDAlarm::UpdateFrame(ndtime_t tminterval)
 {
@@ -246,68 +243,69 @@ int NDAlarm::UpdateHour()
 	return 0;
 }
 
-void NDAlarm::UpdateDaily()
+
+void NDAlarm::UpdateDaily(const char *eventName, void* p, int renewTimes)
 {
 
 }
-void NDAlarm::UpdateWeek()
+void NDAlarm::UpdateWeek(const char *eventName, void* p)
 {
 
 }
-
-void NDAlarm::SetDailyTime(int hour_index,int minute_index)
-{
-	ND_TRACE_FUNC() ;
-	m_daily_hour = (NDUINT8) hour_index ;
-	if (m_daily_hour > 23){
-		m_daily_hour = 23 ;
-	}
-
-	m_daily_minute = (NDUINT8) minute_index ;
-	if (m_daily_minute > 59){
-		m_daily_minute = 59 ;
-	}
-
-	time_t now ;
-	struct tm *gtm ;
-
-	app_inst_time(&now) ;
-	gtm = localtime( &now );
-	
-	if ((gtm->tm_hour > m_daily_hour) || (gtm->tm_hour == m_daily_hour&& gtm->tm_min > m_daily_minute)) {
-		m_daily_last_runday = gtm->tm_mday ;
-	}
-	
-}
-
-void NDAlarm::SetWeekTime(int day_index,int hour_index, int minute_index )
-{
-	ND_TRACE_FUNC() ;
-	m_week_day = day_index ;
-	if (m_week_day>6){
-		m_week_day = 6 ;
-	}
-	m_week_hour = hour_index ;
-	if (m_week_hour>23)	{
-		m_week_hour = 23 ;
-	}
-	m_week_minute = minute_index ;
-	if(m_week_minute > 59){
-		m_week_minute = 59 ;
-	}
-
-	time_t now ;
-	struct tm *gtm ;
-	app_inst_time(&now) ;
-	gtm = localtime( &now );
-
-	//每周定时器
-	if (m_week_day == gtm->tm_wday ){
-		//闹铃没有执行
-		if ((gtm->tm_hour > m_week_hour) || (gtm->tm_hour == m_week_hour&& gtm->tm_min > m_week_minute)) {
-			NDUINT32 wkindex = (NDUINT32)(now / (60*60 * 24 *7)) ;
-			m_week_last_runweek = wkindex;
-		}	
-	}	
-}
+// 
+// void NDAlarm::SetDailyTime(int hour_index,int minute_index)
+// {
+// 	ND_TRACE_FUNC() ;
+// 	m_daily_hour = (NDUINT8) hour_index ;
+// 	if (m_daily_hour > 23){
+// 		m_daily_hour = 23 ;
+// 	}
+// 
+// 	m_daily_minute = (NDUINT8) minute_index ;
+// 	if (m_daily_minute > 59){
+// 		m_daily_minute = 59 ;
+// 	}
+// 
+// 	time_t now ;
+// 	struct tm *gtm ;
+// 
+// 	app_inst_time(&now) ;
+// 	gtm = localtime( &now );
+// 	
+// 	if ((gtm->tm_hour > m_daily_hour) || (gtm->tm_hour == m_daily_hour&& gtm->tm_min > m_daily_minute)) {
+// 		m_daily_last_runday = gtm->tm_mday ;
+// 	}
+// 	
+// }
+// 
+// void NDAlarm::SetWeekTime(int day_index,int hour_index, int minute_index )
+// {
+// 	ND_TRACE_FUNC() ;
+// 	m_week_day = day_index ;
+// 	if (m_week_day>6){
+// 		m_week_day = 6 ;
+// 	}
+// 	m_week_hour = hour_index ;
+// 	if (m_week_hour>23)	{
+// 		m_week_hour = 23 ;
+// 	}
+// 	m_week_minute = minute_index ;
+// 	if(m_week_minute > 59){
+// 		m_week_minute = 59 ;
+// 	}
+// 
+// 	time_t now ;
+// 	struct tm *gtm ;
+// 	app_inst_time(&now) ;
+// 	gtm = localtime( &now );
+// 
+// 	//每周定时器
+// 	if (m_week_day == gtm->tm_wday ){
+// 		//闹铃没有执行
+// 		if ((gtm->tm_hour > m_week_hour) || (gtm->tm_hour == m_week_hour&& gtm->tm_min > m_week_minute)) {
+// 			NDUINT32 wkindex = (NDUINT32)(now / (60*60 * 24 *7)) ;
+// 			m_week_last_runweek = wkindex;
+// 		}	
+// 	}	
+// }
 

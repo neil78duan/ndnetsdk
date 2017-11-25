@@ -45,6 +45,9 @@ ND_COMMON_API const char *ndstr_read_numerals(const char *src, char *desc, int *
 ND_COMMON_API const char *ndstr_parse_word(const char *src, char *outstr);
 ND_COMMON_API const char *ndstr_parse_word_n(const char *src, char *outstr, int n);
 
+
+ND_COMMON_API int ndstr_parse_variant_n(const char *src, char *outstr, int n); //return 0 nothing, -1 error ,else data size
+
 //Parse string to command line , return number of commands-lines
 ND_COMMON_API int ndstr_parse_command(const char *input_text, char *argv[], int bufize, int number);
 

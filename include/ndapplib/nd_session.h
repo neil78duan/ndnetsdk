@@ -89,7 +89,7 @@ protected:
 	bool m_bRedirctLog;
 public:
 	static NDSession *g_redirect_log_object;
-	static logfunc g_redirectOrgFunc;
+	static nd_log_entry g_redirectOrgFunc;
 };
 
 #pragma  warning(pop)

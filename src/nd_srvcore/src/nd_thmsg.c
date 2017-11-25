@@ -15,8 +15,7 @@
 #define check_thread_switch(lc) do{} while(0) 
 #endif
 
-
-//Õ®π˝SESSIONid∞—œ˚œ¢∑¢ÀÕ∏¯øÕªß∂À
+// send message to client whatever the session is belone self-thread or other
 int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle,int encrypt) 
 {
 	int ret =0 ;
@@ -381,12 +380,12 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 		}
 	}
 	else {
-		nd_handle client;
 		int flag = iscrypt?  ESF_POST: (ESF_POST | ESF_ENCRYPT) ;
 
 		if(pthinfo){
 
 #if !defined (USE_NEW_MODE_LISTEN_THREAD)
+			nd_handle client;
 			int i;
 			for (i=pthinfo->session_num-1; i>=0;i-- ) {
 				NDUINT16 session_id = pthinfo->sid_buf[i];
@@ -402,7 +401,7 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 			struct list_head *pos, *next;
 			list_for_each_safe(pos, next, &pthinfo->sessions_list) {
 				struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);				
-				if (nd_connect_level_get(client) >= priv_level)	{
+				if (nd_connect_level_get((nd_handle)client) >= priv_level)	{
 					nd_sessionmsg_sendex((nd_handle)client, &net_msg->msg_hdr, flag);
 				}
 			}
@@ -470,7 +469,7 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 		struct list_head *pos, *next;
 		list_for_each_safe(pos, next, &pthinfo->sessions_list) {
 			struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
-			if (nd_connect_level_get(client) >= priv_level)	{
+			if (nd_connect_level_get((nd_handle)client) >= priv_level)	{
 				client->connect_node.msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
 			}
 		}
@@ -508,7 +507,7 @@ static void _walk_all_session(struct node_root *pmanger, void *node_addr, void *
 	struct nd_client_map  *client = (struct nd_client_map  *)node_addr;
 	nd_listen_handle listen_info = (nd_listen_handle)param;
 
-	NDUINT16 session_id = nd_session_getid(client);
+	NDUINT16 session_id = nd_session_getid((nd_handle)client);
 
 	client = pmanger->lock(pmanger, session_id);
 	if (client) {
@@ -528,7 +527,6 @@ static void _walk_all_session(struct node_root *pmanger, void *node_addr, void *
 int nd_rand_delay_cloase_all(nd_handle listen_info)
 {
 	int ret = 0;
-	struct nd_client_map  *client;
 	struct nd_srv_node *srv_root = (struct nd_srv_node *)listen_info;
 	struct cm_manager *pmanger = &srv_root->conn_manager;
 	
@@ -540,7 +538,6 @@ int nd_rand_delay_cloase_all(nd_handle listen_info)
 static int delay_rand_close_handler(nd_thsrv_msg *msg)
 {
 	NDUINT16 interval = rand();
-	nd_netui_handle client;
 	struct thread_pool_info *pthinfo = (struct thread_pool_info *) msg->th_userdata;
 
 	struct listen_contex *lc = (struct listen_contex *)pthinfo->lh;

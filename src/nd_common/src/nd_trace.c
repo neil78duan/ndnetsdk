@@ -20,7 +20,7 @@
 #include "nd_common/nd_time.h"
 
 static char __log_filename[256] ;
-static logfunc __log_func =NULL;
+static nd_log_entry __log_func = NULL;
 static ndatomic_t __log_write_len = 0 ;
 static NDUINT32 __log_file_length = -1 ;
 static NDUINT8 __close_screen_log = 0 ;
@@ -63,9 +63,9 @@ int nd_log_no_date(int without_date)
 
 	
 }
-logfunc nd_setlog_func(logfunc f)
+nd_log_entry nd_setlog_func(nd_log_entry f)
 {
-	logfunc ret = __log_func;
+	nd_log_entry ret = __log_func;
 	__log_func = f ;
 	return ret;
 }
@@ -96,9 +96,9 @@ NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size)
 	return  oldval ;
 }
 
-void nd_output(const char *text)  
+int nd_output(const char *text)  
 {
-	fprintf(stdout,"%s", text) ;
+	return fprintf(stdout,"%s", text) ;
 }
 
 #define ND_LOG_FILE get_log_file()
@@ -184,19 +184,19 @@ char *get_log_file()
 
 
 
-void nd_default_filelog(const char* text)
+int nd_default_filelog(const char* text)
 {
 	int size = 0;
 	const char *logfile_name = ND_LOG_FILE;
 	FILE *log_fp = fopen(logfile_name, "a");
 	if (!log_fp) {
-		return;
+		return 0;
 	}
 	size = fprintf(log_fp, "%s", text);
 	fclose(log_fp);
 
 	if (size <= 0) {
-		return;
+		return 0;
 	}
 
 
@@ -216,6 +216,7 @@ void nd_default_filelog(const char* text)
 
 		nd_atomic_set(&__log_write_len, 0);
 	}
+	return size;
 }
 
 //ndchar_t *strtowcs(char *src, ndchar_t *desc,int len) ;
@@ -299,11 +300,11 @@ int nd_logtext(const char *buf)
 #endif
 
 	if (__log_func)	{
-		__log_func(buf);
+		ret =__log_func(buf);
 	}
 	else {
 #ifdef ND_OUT_LOG_2FILE
-		nd_default_filelog(buf);
+		ret = nd_default_filelog(buf);
 #endif
 	}
 	

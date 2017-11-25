@@ -1216,6 +1216,7 @@ static const char* parse_marked(const char *xmlbuf, int size, const char **error
 //从内存块中解析出一个XML节点
 ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const char **error_addr)
 {
+	int ret = 0;
 	ndxml *xmlnode =NULL ;
 	const char *paddr ;//, *error_addr =NULL;
 	char buf[1024] ;
@@ -1255,14 +1256,25 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 		*parse_end = NULL ;
 		return NULL ;
 	}
-	paddr = ndstr_parse_word(paddr, buf) ;		//xml node name
-	strncpy(xmlnode->name, buf, MAX_XMLNAME_SIZE) ;
+	//paddr = ndstr_parse_word(paddr, buf) ;		//xml node name
+	//strncpy(xmlnode->name, buf, MAX_XMLNAME_SIZE) ;
+	ret = ndstr_parse_variant_n(paddr, xmlnode->name,  MAX_XMLNAME_SIZE);
+	if (ret <= 0)	{
+		dealloc_xml(xmlnode);
+		*parse_end = NULL;
+		return NULL;
+	}
+	else {
+		paddr += ret;
+	}
 
-	paddr = ndstr_first_valid(paddr) ;
 	//read attribe
 	while(*paddr) {
 		struct ndxml_attr *attrib_node ;
 		char attr_name[MAX_XMLNAME_SIZE] ;
+
+		paddr = ndstr_first_valid(paddr);
+
 		//if(*((short int*)paddr)==XML_H_END ) {
 		if (_is_mark_end(paddr)) {
 			//这个xml节点结束了,应该返回了
@@ -1275,12 +1287,18 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 			break ;
 		}
 		//read attrib name 
+		
 		*error_addr = paddr;
-		paddr = ndstr_parse_word(paddr, attr_name) ;
-		if (!paddr)	{
+		//paddr = ndstr_parse_word(paddr, attr_name) ;
+
+		ret = ndstr_parse_variant_n(paddr, attr_name, MAX_XMLNAME_SIZE);
+		if (ret <= 0)	{
 			dealloc_xml(xmlnode);
 			*parse_end = NULL;
 			return NULL;
+		}
+		else {
+			paddr += ret;
 		}
 
 
@@ -1318,7 +1336,7 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 			list_add_tail(&attrib_node->lst, &xmlnode->lst_attr) ;
 			(xmlnode->attr_num)++ ;
 		}
-		paddr = ndstr_first_valid(paddr) ;
+		//paddr = ndstr_first_valid(paddr) ;
 	}
 	
 	//read value and sub-xmlnode

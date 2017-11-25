@@ -64,6 +64,7 @@ enum eNDMsgSys{
 	ND_MSG_SYS_OPEN_LOG, // let server open/close log format: {uint8:logtype, unit8:isOpen}
 	ND_MSG_SYS_SET_MSG_PRINT,// set message(maxid, minid) print
 	ND_MSG_SYS_CLOSE_MESSAGE_HANDLER,//  message(maxid, minid) print
+	ND_MSG_SYS_GET_APPLICATION_NET_PROCOCOL_VERSION , // get application net prococol communation version
     ND_MSG_SYS_NUMBER
 };
 

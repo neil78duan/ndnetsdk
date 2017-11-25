@@ -10,7 +10,7 @@
 #include "nd_common/list.h"
 #define MAX_XMLNAME_SIZE 64
 
-typedef void (*xml_errlog) (const char *errdesc) ;		//错误描述函数
+typedef int (*xml_errlog) (const char *errdesc) ;		//错误描述函数
 //typedef struct tagxml ndxml ;
 typedef struct tagxml ndxml_root;
 //xml 节点,可以单独操作

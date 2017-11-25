@@ -34,23 +34,24 @@ typedef enum _error_ID{
 	ND_FATAL_ERR 			//ÑÏÖØ´íÎó
 }edg_ID ;
 
-typedef void (*logfunc)(const char* text) ;
-ND_COMMON_API logfunc nd_setlog_func(logfunc f);
+typedef int (*nd_log_entry)(const char* text) ;
+
+ND_COMMON_API nd_log_entry nd_setlog_func(nd_log_entry f);
 ND_COMMON_API int nd_log_no_file(int without_file);
 ND_COMMON_API int nd_log_no_time(int without_time);
 ND_COMMON_API int nd_log_no_date(int without_date);
 ND_COMMON_API void nd_log_close_screen(int flag);
 ND_COMMON_API void set_log_file(const char *file_name)  ;
 #define nd_log_set_file set_log_file
-ND_COMMON_API void nd_output(const char *text)  ;	//screen output
-ND_COMMON_API void nd_default_filelog(const char* text) ; //default log function , write to *.log file
+ND_COMMON_API int nd_output(const char *text)  ;	//screen output
+ND_COMMON_API int nd_default_filelog(const char* text) ; //default log function , write to *.log file
 ND_COMMON_API NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size); // set log file size , if write-len > size , generate a *.log.1 ...
 ND_COMMON_API int nd_set_logpath_without_date(int without_date); //set log files with data 
 
 
 //log file operate
 
-ND_COMMON_API int nd_logtext(const char *text);
+ND_COMMON_API int nd_logtext(const char *text);//nd module call this function when write log
 ND_COMMON_API int _logmsg_screen(const char *filePath, int line, const char *stm, ...) ;
 ND_COMMON_API int _logmsg(const char *func, const char *file, int line, int level, const char *stm, ...) ;
 
