@@ -29,6 +29,7 @@ struct msg_entry_node
 /*主消息结果*/
 struct sub_msgentry 
 {
+	NDUINT32 is_close : 1;
 	struct msg_entry_node   msg_buf[SUB_MSG_NUM] ;
 };
 
@@ -207,6 +208,31 @@ static struct msg_entry_node *_nd_msgentry_get_node(nd_netui_handle handle, ndms
 	return  NULL ;
 }
 
+static struct msg_entry_node *_nd_msgentry_get_node_run(nd_netui_handle handle, ndmsgid_t maxid, ndmsgid_t minid)
+{
+	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
+	
+	if (minid >= SUB_MSG_NUM){
+		nd_logerror("MIN MESSAGE ERROR input %d  limited %d\n"AND minid AND SUB_MSG_NUM);
+		return NULL;
+	}
+
+	if (root_entry) {
+		ndmsgid_t main_index = (ndmsgid_t)(maxid - root_entry->msgid_base);
+		if (main_index >= root_entry->main_num) {
+			nd_logerror("MAIN MESSAGE ERROR input %d  limited %d\n"AND main_index AND root_entry->main_num);
+			return NULL;
+		}
+		else if (root_entry->sub_buf[main_index].is_close) {
+			nd_logerror("MAIN MESSAGE %d DISABLE  \n"  AND root_entry->main_num);
+			return NULL;
+		}
+		
+		return  &(root_entry->sub_buf[main_index].msg_buf[minid]);
+	}
+	return  NULL;
+}
+
 nd_usermsg_func nd_msgentry_get_func(nd_netui_handle handle, ndmsgid_t maxid, ndmsgid_t minid)
 {
 	struct msg_entry_node * node ;
@@ -382,7 +408,7 @@ int nd_translate_message_ex(nd_netui_handle owner,  nd_packhdr_t *msg, nd_handle
 	struct msg_entry_node * node;
 
 	nd_netmsg_ntoh(usermsg);
-	node = _nd_msgentry_get_node(owner, usermsg->maxid, usermsg->minid);
+	node = _nd_msgentry_get_node_run(owner, usermsg->maxid, usermsg->minid);
 #ifdef ND_TRACE_MESSAGE
 	if (node && node->is_print && root_entry->print_entry) {
 		root_entry->print_entry(owner, (nd_usermsgbuf_t*)msg, listen_handle);
@@ -416,7 +442,7 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 	
 	nd_netmsg_ntoh(usermsg) ;
 	
-	node = _nd_msgentry_get_node(listen_handle, usermsg->maxid,  usermsg->minid) ;
+	node = _nd_msgentry_get_node_run(listen_handle, usermsg->maxid, usermsg->minid);
 #ifdef ND_TRACE_MESSAGE
 	if (node && node->is_print && root_entry->print_entry) {
 		root_entry->print_entry(connect_handle, (nd_usermsgbuf_t*)msg, listen_handle);
@@ -478,6 +504,29 @@ int nd_message_is_log(nd_handle nethandle, int maxId, int minId)
 NDUINT32 nd_connect_level_get(nd_netui_handle handle) 
 {
 	return handle->level ;
+}
+
+
+// close/disable a group message handler by maxId
+int nd_message_disable_group(nd_handle nethandle, int maxId, int disable )
+{
+	int ret = 0;
+	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(nethandle);
+
+	if (root_entry) {
+		ndmsgid_t main_index = (ndmsgid_t)(maxId - root_entry->msgid_base);
+		if (main_index >= root_entry->main_num) {
+			nd_logerror("MAIN MESSAGE ERROR input %d  limited %d\n"AND main_index AND root_entry->main_num);
+			return -1;
+		}
+		ret = root_entry->sub_buf[main_index].is_close;
+		root_entry->sub_buf[main_index].is_close = disable;
+		return ret;
+	}
+	else {
+		return -1;
+	}
+
 }
 
 //权限等级

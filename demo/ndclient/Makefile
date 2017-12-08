@@ -8,7 +8,7 @@ PROJS  = $(WORKDIR)/client_test
 OBJS   := connector.o
 SRC := connector.cpp
 
-CFLAGS += -I$(TOPDIR)/include
+CFLAGS += -I$(TOPDIR)/include -DND_CLIENT_ONLY
 
 MYLIBS := $(LIBOUTPUT)/lib$(CLIENT_LIB).a
 LFLAGS += -L$(LIBOUTPUT) -l$(CLIENT_LIB)

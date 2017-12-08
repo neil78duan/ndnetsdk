@@ -83,5 +83,6 @@ ErrorElement(ERR_NETMSG_FORMAT, "消息格式不匹配"),
 ErrorElement(ERR_FUNCTION_CLOSED, "该功能暂时关闭"),
 ErrorElement(ERR_SELECT_SERVER_GROUP, "无权选择该组服务器"),
 ErrorElement(ERR_ACCESS_DATA_NOT_EXIST, "数据不存在"),
+ErrorElement(ERR_TASK_ALREADY_DONE, "目标已经达成"),
 
 ErrorElement(ERR_UNKNOWN, "unknowwing error"),

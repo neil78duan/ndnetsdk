@@ -79,30 +79,30 @@ const char *nd_get_datetimestr_ex(time_t in_tm, char *timebuf, int size)
 	return (const char *)timebuf;
 }
 
-time_t nd_time_getgm_from_offset(int secondIndexOfDay, time_t now, int timezone)
+time_t nd_time_getgm_from_offset(int secondIndexOfDay, time_t now, int tm_zone)
 {
 	now /= (3600 * 24);
 	now *= (3600 * 24);
 
 	now += secondIndexOfDay; 
-	now -= timezone * 3600;
+	now -= tm_zone * 3600;
 	return now;
 }
 
 int nd_time_day_interval(time_t end_tm, time_t start_tm)
 {
-	NDINT64 timezone = nd_time_zone();
-	return nd_time_day_interval_ex(end_tm, start_tm, (int)timezone);
+	NDINT64 tm_zone = nd_time_zone();
+	return nd_time_day_interval_ex(end_tm, start_tm, (int)tm_zone);
 }
 
-int nd_time_day_interval_ex(time_t end_tm, time_t start_tm, int timezone)
+int nd_time_day_interval_ex(time_t end_tm, time_t start_tm, int tm_zone)
 {
 
 	NDINT64 start64 = (NDINT64)start_tm;
 	NDINT64 end64 = (NDINT64)end_tm;
 
-	start64 += timezone * 3600;
-	end64 += timezone * 3600;
+	start64 += tm_zone * 3600;
+	end64 += tm_zone * 3600;
 
 	NDINT64 start = (int)(start64 / (3600 * 24));
 	NDINT64 end = (int)(end64 / (3600 * 24));
@@ -110,9 +110,9 @@ int nd_time_day_interval_ex(time_t end_tm, time_t start_tm, int timezone)
 }
 
 //get week index from time_t =0 (1970.1.1 GMT)
-int nd_time_week_index(time_t now, int time_zone)
+int nd_time_week_index(time_t now, int tm_zone)
 {
-	NDINT64 tm64 = now + (time_t)time_zone * 3600; //move to local time
+	NDINT64 tm64 = now + (time_t)tm_zone * 3600; //move to local time
 	tm64 -= 3600 * 24 * 3;	// time_t(0) is thursday
 	if (tm64 < 0 )	{
 		tm64 = 0;
@@ -170,7 +170,7 @@ int nd_time_clock_to_seconds(const char *timetext)
 }
 
 //get time_t from text-clock "9:30:10" GT
-time_t nd_time_from_clock(const char *timetext, time_t cur_time, int timezone)
+time_t nd_time_from_clock(const char *timetext, time_t cur_time, int tm_zone)
 {
 	int hour = 0, minute = 0, second = 0;
 
@@ -211,11 +211,11 @@ time_t nd_time_from_clock(const char *timetext, time_t cur_time, int timezone)
 
 	time_t now = cur_time; //get the current day
 	struct  tm loca_tm;
-	if (timezone == 0xff) {
+	if (tm_zone == 0xff) {
 		localtime_r(&now, &loca_tm);
 	}
 	else {
-		now += timezone * 3600;
+		now += tm_zone * 3600;
 		gmtime_r(&now, &loca_tm);
 	}
 
@@ -226,13 +226,13 @@ time_t nd_time_from_clock(const char *timetext, time_t cur_time, int timezone)
 
 }
 
-time_t nd_time_from_week(int week_day, int secondIndexOfDay, time_t cur_time, int timezone)
+time_t nd_time_from_week(int week_day, int secondIndexOfDay, time_t cur_time, int tm_zone)
 {
 	struct  tm gm_tm = { 0 };
 	time_t stamp;
 	
 	cur_time -= cur_time % (3600 * 24);
-	stamp = cur_time + timezone * 3600;
+	stamp = cur_time + tm_zone * 3600;
 
 	gmtime_r(&stamp, &gm_tm);
 	cur_time -= gm_tm.tm_wday * 24 * 3600;
@@ -240,31 +240,31 @@ time_t nd_time_from_week(int week_day, int secondIndexOfDay, time_t cur_time, in
 	return cur_time;
 }
 
-time_t nd_time_from_week_clock(int week_day, const char *timetext, time_t cur_time, int timezone)
+time_t nd_time_from_week_clock(int week_day, const char *timetext, time_t cur_time, int tm_zone)
 {
 	int secondIndex = nd_time_clock_to_seconds(timetext);
 	if (secondIndex == -1){
 		return 0;
 	}
-	return nd_time_from_week(week_day, secondIndex, cur_time, timezone);
+	return nd_time_from_week(week_day, secondIndex, cur_time, tm_zone);
 }
 
 //get second index from 00:00:00 (local time)
 int nd_time_second_index_day(time_t timest)
 {
-	NDINT64 timezone = nd_time_zone();
+	NDINT64 tm_zone = nd_time_zone();
 	NDINT64 start64 = (NDINT64)timest;
 
-	start64 += timezone * 3600;
+	start64 += tm_zone * 3600;
 
 	return (int)(start64 % (3600 * 24));
 }
 int nd_time_day_index_second(time_t timest)
 {
-	NDINT64 timezone = nd_time_zone();
+	NDINT64 tm_zone = nd_time_zone();
 	NDINT64 start64 = (NDINT64)timest;
 
-	start64 += timezone * 3600;
+	start64 += tm_zone * 3600;
 
 	return (int)(start64 / (3600 * 24));
 }

@@ -189,6 +189,8 @@ ND_NET_API void nd_connect_level_set(nd_handle  connector_handle,NDUINT32 level)
 ND_NET_API int nd_message_is_log(nd_handle nethandle, int maxId, int minId);
 
 
+// close/disable a group message handler by maxId
+ND_NET_API int nd_message_disable_group(nd_handle nethandle, int maxId, int disable);
 
 #endif
 

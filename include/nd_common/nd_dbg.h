@@ -193,6 +193,10 @@ CPPAPI void nd_sourcelog_dump() ;
 #define nd_sourcelog_dump()	  (void)0
 #define nd_sourcelog_init()	  (void)0
 
+
+static __INLINE__ int _source_log(void *p ,const char *operate,const char *msg,const char *file, int line) {return 0;}
+static __INLINE__  int _source_release(void *source) {return 0;}
+
 #endif 
 
 

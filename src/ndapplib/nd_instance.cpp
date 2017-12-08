@@ -280,6 +280,8 @@ int NDInstanceBase::Open(int session_size )
 	OnInitilize() ;
 
 	pListen->SetAccept(0) ;
+
+	nd_logmsg("(-: (-:  %s start SUCCESS current TIMEZONE = %d :-)  :-) \n PROGRAM RUNNING .....\n", nd_process_name(), nd_time_zone());
 	return ret;
 }
 
