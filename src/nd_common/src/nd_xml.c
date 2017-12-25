@@ -1165,6 +1165,20 @@ int ndxml_delsubnodei(ndxml *parent, int index)
 	dealloc_xml(node);
 	return 0 ;
 }
+
+int ndxml_del_all_children(ndxml *parent)
+{
+	int ret = parent->sub_num;
+	ndxml *sub_xml;
+	struct list_head *pos, *next;
+	list_for_each_safe(pos, next, &parent->lst_sub) {
+		sub_xml = list_entry(pos, struct tagxml, lst_self);
+		list_del(&sub_xml->lst_self);
+		dealloc_xml(sub_xml);
+	}
+	parent->sub_num = 0 ;
+	return ret;
+}
 //////////////////////////////////////////////////////////////////////////
 //È¥µô×¢ÊÍ
 static const char* parse_marked(const char *xmlbuf, int size, const char **error_addr) 

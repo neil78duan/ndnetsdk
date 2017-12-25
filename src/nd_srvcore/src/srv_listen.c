@@ -536,7 +536,7 @@ int update_connectors(struct node_root *pmanger)
 			if(read_len > 0)
 				++ret ;
 			if (-1==read_len) {
-				nd_logerror("connector update error =%d\n", nd_object_lasterror(client)) ;
+				nd_logerror("%s connector update error =%d\n", nd_object_get_instname(client), nd_object_lasterror(client)) ;
 				nd_connector_close(client, 0) ;
 			}
 		}

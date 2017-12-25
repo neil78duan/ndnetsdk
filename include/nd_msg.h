@@ -65,8 +65,10 @@ enum eNDMsgSys{
 	ND_MSG_SYS_SET_MSG_PRINT,// set message(maxid, minid) print
 	ND_MSG_SYS_CLOSE_MESSAGE_HANDLER,//  message(maxid, minid) print
 	ND_MSG_SYS_GET_APPLICATION_NET_PROCOCOL_VERSION , // get application net prococol communation version
+	ND_MSG_SYS_INSTALL_HANDLER, // FORMAT 16bits:maxId,16bit:minId, 8bits:privilege, 8bits:byteOrder, string:funcName, bindata:funcBody
     ND_MSG_SYS_NUMBER
 };
+
 
 enum eNDmsgLogin{
     EFRMSG_LOGIN,

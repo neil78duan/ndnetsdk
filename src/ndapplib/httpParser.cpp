@@ -62,13 +62,19 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 	int len, bodySize;
 	char *p;
 	char buf[0x10000];
-	char formBuf[4096]; 
+	char bodyBuf[4096];
+	char *formBuf = bodyBuf;
 
-	formBuf[0] = 0;
+	bodyBuf[0] = 0;
 	buf[0] = 0;
 
-	bodySize = (int)reques->RequestValueTobuf(formBuf, sizeof(formBuf) );
-
+	
+	bodySize = (int)reques->RequestValueTobuf(bodyBuf, sizeof(bodyBuf));
+	if (bodySize == 0 && reques->m_body.size() > 0 && NDHttpRequest::E_ACTION_POST){
+		bodySize = reques->m_body.size();
+		formBuf = (char*) reques->m_body.c_str();
+	}
+	
 	p = buf;
 
 	if (NDHttpRequest::E_ACTION_POST == reques->getAction()) {

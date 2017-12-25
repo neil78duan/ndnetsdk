@@ -308,7 +308,7 @@ int ndstr_parse_variant_n(const char *src, char *outstr, int n)
 			int ret = _read_word((unsigned char**)&outstr, (unsigned  char**)&src);
 			n -= ret - 1;
 		}
-		else if (IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a == '_' || a == '.'){
+		else if (IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a == '_' || a == '.' || a=='$'){
 			*outstr++ = *src++;
 		}
 		else{

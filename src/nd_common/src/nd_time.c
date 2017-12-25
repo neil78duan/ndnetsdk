@@ -135,8 +135,12 @@ int nd_time_zone()
 int nd_time_clock_to_seconds(const char *timetext)
 {
 	int hour = 0, minute = 0, second = 0;
-
 	char *p = (char*)timetext;
+
+	if (!timetext)	{
+		return -1;
+	}
+
 	hour = (int)strtol(p, &p, 0);
 	if (hour <0 || hour>23) {
 		return -1;

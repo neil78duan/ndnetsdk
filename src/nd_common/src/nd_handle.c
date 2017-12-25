@@ -86,7 +86,7 @@ nd_handle _object_create(const char *name)
 			INIT_LIST_HEAD(&ao->alloced_obj.__release_cb_hdr) ;
 			
 			nd_reg_handle((nd_handle)&ao->alloced_obj) ;
-
+			nd_object_set_instname((nd_handle)&(ao->alloced_obj), name);
 			
 			nd_logmsg(" create %s object success ! \n", name) ;
 			return &(ao->alloced_obj) ;

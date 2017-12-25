@@ -177,6 +177,7 @@ ND_COMMON_API int ndxml_delattribi(ndxml *parent, int index) ;
 //删除一个子节点
 ND_COMMON_API int ndxml_delsubnode(ndxml *parent, const char *name);
 ND_COMMON_API int ndxml_delsubnodei(ndxml *parent, int index) ;
+ND_COMMON_API int ndxml_del_all_children(ndxml *parent);
 
 ND_COMMON_API int ndxml_output(ndxml *node, FILE *pf);
 
