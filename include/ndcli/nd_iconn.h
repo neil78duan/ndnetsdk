@@ -56,6 +56,7 @@ public :
 	virtual int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100) = 0;
 	virtual int Update(ndtime_t wait_time) = 0;
     virtual void InstallMsgFunc(nd_iconn_func, ndmsgid_t maxid, ndmsgid_t minid,const char *name=NULL) = 0;
+	virtual int CallMsgHandle(nd_usermsgbuf_t *msgbuf) = 0 ;
     virtual void SetDftMsgHandler(nd_iconn_func) = 0;
 	virtual void SetMsgNum(int maxmsg_num , int maxid_start)  = 0;
 	virtual int Reconnect(ndip_t IP, int port,nd_proxy_info *proxy=NULL) = 0 ;//connect to another host

@@ -79,15 +79,6 @@ const char *nd_get_datetimestr_ex(time_t in_tm, char *timebuf, int size)
 	return (const char *)timebuf;
 }
 
-time_t nd_time_getgm_from_offset(int secondIndexOfDay, time_t now, int tm_zone)
-{
-	now /= (3600 * 24);
-	now *= (3600 * 24);
-
-	now += secondIndexOfDay; 
-	now -= tm_zone * 3600;
-	return now;
-}
 
 int nd_time_day_interval(time_t end_tm, time_t start_tm)
 {
@@ -173,75 +164,95 @@ int nd_time_clock_to_seconds(const char *timetext)
 	return hour * 3600 + minute * 60 + second;
 }
 
+time_t nd_time_getgm_from_offset(int secondIndexOfDay, time_t now, int tm_zone)
+{
+	if (tm_zone == 0xff){
+		tm_zone = nd_time_zone();
+	}
+	now += tm_zone * 3600;
+
+	now /= (3600 * 24);
+	now *= (3600 * 24);
+
+	now += secondIndexOfDay - tm_zone * 3600;
+	
+	return now;
+}
 //get time_t from text-clock "9:30:10" GT
 time_t nd_time_from_clock(const char *timetext, time_t cur_time, int tm_zone)
 {
-	int hour = 0, minute = 0, second = 0;
-
-	char *p = (char*)timetext;
-	if (!p || !*p) {
+	int secondIndex = nd_time_clock_to_seconds(timetext);
+	if (secondIndex == -1){
 		return 0;
 	}
-	hour = (int)strtol(p, &p, 0);
-	if (hour <0 || hour>23) {
-		return 0;
-	}
-
-	if (p && *p) {
-		while (*p && !IS_NUMERALS(*p)) {
-			++p;
-		}
-		if (*p) {
-			minute = (int)strtol(p, &p, 0);
-			if (minute <0 || minute >= 60) {
-				return 0;
-			}
-		}
-
-
-	}
-	if (p && *p) {
-		while (*p && !IS_NUMERALS(*p)) {
-			++p;
-		}
-		if (*p) {
-			second = (int)strtol(p, &p, 0);
-			if (second <0 || second >= 60) {
-				return 0;
-			}
-		}
-	}
-
-
-	time_t now = cur_time; //get the current day
-	struct  tm loca_tm;
-	if (tm_zone == 0xff) {
-		localtime_r(&now, &loca_tm);
-	}
-	else {
-		now += tm_zone * 3600;
-		gmtime_r(&now, &loca_tm);
-	}
-
-	loca_tm.tm_sec = second;
-	loca_tm.tm_hour = hour;
-	loca_tm.tm_min = minute;
-	return mktime(&loca_tm);
+	return nd_time_getgm_from_offset(secondIndex, cur_time, tm_zone);
+// 	int hour = 0, minute = 0, second = 0;
+// 
+// 	char *p = (char*)timetext;
+// 	if (!p || !*p) {
+// 		return 0;
+// 	}
+// 	hour = (int)strtol(p, &p, 0);
+// 	if (hour <0 || hour>23) {
+// 		return 0;
+// 	}
+// 
+// 	if (p && *p) {
+// 		while (*p && !IS_NUMERALS(*p)) {
+// 			++p;
+// 		}
+// 		if (*p) {
+// 			minute = (int)strtol(p, &p, 0);
+// 			if (minute <0 || minute >= 60) {
+// 				return 0;
+// 			}
+// 		}
+// 
+// 
+// 	}
+// 	if (p && *p) {
+// 		while (*p && !IS_NUMERALS(*p)) {
+// 			++p;
+// 		}
+// 		if (*p) {
+// 			second = (int)strtol(p, &p, 0);
+// 			if (second <0 || second >= 60) {
+// 				return 0;
+// 			}
+// 		}
+// 	}
+// 
+// 
+// 	time_t now = cur_time; //get the current day
+// 	struct  tm loca_tm;
+// 	if (tm_zone == 0xff) {
+// 		localtime_r(&now, &loca_tm);
+// 	}
+// 	else {
+// 		now += tm_zone * 3600;
+// 		gmtime_r(&now, &loca_tm);
+// 	}
+// 
+// 	loca_tm.tm_sec = second;
+// 	loca_tm.tm_hour = hour;
+// 	loca_tm.tm_min = minute;
+// 	return mktime(&loca_tm);
 
 }
 
 time_t nd_time_from_week(int week_day, int secondIndexOfDay, time_t cur_time, int tm_zone)
 {
 	struct  tm gm_tm = { 0 };
-	time_t stamp;
+	time_t stamp = cur_time;
 	
-	cur_time -= cur_time % (3600 * 24);
-	stamp = cur_time + tm_zone * 3600;
-
+	//get day offset 
+	stamp += tm_zone * 3600;
+	stamp -= stamp % (3600 * 24);	
 	gmtime_r(&stamp, &gm_tm);
-	cur_time -= gm_tm.tm_wday * 24 * 3600;
-	cur_time += secondIndexOfDay + week_day * 24 * 3600;
-	return cur_time;
+
+	cur_time += (week_day - gm_tm.tm_wday) * 24 * 3600;
+
+	return nd_time_getgm_from_offset(secondIndexOfDay, cur_time, tm_zone);
 }
 
 time_t nd_time_from_week_clock(int week_day, const char *timetext, time_t cur_time, int tm_zone)

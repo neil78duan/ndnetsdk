@@ -66,6 +66,10 @@ enum eNDMsgSys{
 	ND_MSG_SYS_CLOSE_MESSAGE_HANDLER,//  message(maxid, minid) print
 	ND_MSG_SYS_GET_APPLICATION_NET_PROCOCOL_VERSION , // get application net prococol communation version
 	ND_MSG_SYS_INSTALL_HANDLER, // FORMAT 16bits:maxId,16bit:minId, 8bits:privilege, 8bits:byteOrder, string:funcName, bindata:funcBody
+
+	ND_MSG_SYS_REQ_OTHER_STORE_FILE,		//GM request other player handl in client, format 32bit:roleId,string:fileName, bindata:filedata
+	ND_MSG_SYS_REQ_OTHER_INSTALL_HANDLER, //GM request other player handl in client, FORMAT 32bit:roleId,16bits:maxId,16bit:minId,  8bits:byteOrder, string:funcName, bindata:funcBody
+
     ND_MSG_SYS_NUMBER
 };
 
