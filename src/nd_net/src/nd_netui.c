@@ -453,7 +453,7 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 		return -1;
 	}
 
-#ifdef ND_TRACE_MESSAGE
+//#ifdef ND_TRACE_MESSAGE
 	if (msg_buf->ndsys_msg == 0 && net_handle->save_send_stream) {
 		if ((flag & ESF_ENCRYPT)) {
 			msg_buf->encrypt = 1 ;
@@ -464,7 +464,7 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 			nd_netobj_send_stream_save(net_handle, msg_buf, (int)nd_pack_len(msg_buf));
 		}
 	}
-#endif 
+//#endif 
 
     msg_buf->version = NDNETMSG_VERSION ;
 	if((flag & ESF_ENCRYPT) && !msg_buf->encrypt) {
@@ -486,13 +486,10 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
     
 #ifdef ND_TRACE_MESSAGE
 	if (ret > 0 && msg_buf->ndsys_msg==0) {
-		if (net_handle->is_log_send) {
-			nd_logmsg("send message (0x%x,0x%x) data-lenght=%d\n", maxId,minId, msgLen);
+		if (net_handle->is_log_send || nd_message_is_log(net_handle, maxId, minId)) {
+			nd_logmsg("TRACE Message SEND (%d,%d) data-lenght=%d SUCCESS!!\n", maxId,minId, msgLen);
 		}
 
-		if (nd_message_is_log(net_handle, maxId,minId)) {
-			nd_logmsg("send message (0x%x,0x%x) data-lenght=%d\n", maxId, minId, msgLen);
-		}
 	}
 #endif
 	

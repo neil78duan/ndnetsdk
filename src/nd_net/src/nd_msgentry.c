@@ -240,12 +240,30 @@ nd_usermsg_func nd_msgentry_get_func(nd_netui_handle handle, ndmsgid_t maxid, nd
 	
 	node = _nd_msgentry_get_node(handle,   maxid,  minid) ;
 	LEAVE_FUNC();
+	if (!node)	{
+		return NULL;
+	}
 	if (node->is_script)	{
 		return NULL;
 	}
 	
-	return node ? node->entry : NULL;
+	return  node->entry ;
 }
+
+int nd_msgentry_is_handled(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid)
+{
+	struct msg_entry_node * node;
+	ENTER_FUNC();
+
+	node = _nd_msgentry_get_node(handle, maxid, minid);
+	LEAVE_FUNC();
+	if (!node)	{
+		return 0;
+	}
+	
+	return  node->entry ? 1:0;
+}
+
 
 const char * nd_msgentry_get_name(nd_netui_handle handle, ndmsgid_t maxid, ndmsgid_t minid)
 {
@@ -475,7 +493,8 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 
 #if defined(ND_TRACE_MESSAGE)
     if (node && node->is_log) {
-        nd_logmsg("recvived message(%d, %d)\n", usermsg->maxid,  usermsg->minid) ;
+        nd_logmsg("TRACE Message RECV(%d, %d) length=%d %s\n", usermsg->maxid,  usermsg->minid, 
+			usermsg->packet_hdr.length, ret==-1?"FAILED":"SUCCESS") ;
     }
 #endif
 		

@@ -35,7 +35,7 @@ static NDUINT8 __log_path_without_date = 0;
 #ifdef ND_DEBUG
 static NDUINT8 _logoff_switch_bits = 0; //close debug and warning
 #else 
-static NDUINT8 _logoff_switch_bits = 2 + 4; //close debug and warning
+static NDUINT8 _logoff_switch_bits = 2 ; //close debug and warning
 #endif 
 
 int nd_set_logpath_without_date(int without_date)

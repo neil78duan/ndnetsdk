@@ -61,6 +61,8 @@ public :
 	int Update(ndtime_t wait_time);
 	void InstallMsgFunc(nd_iconn_func, ndmsgid_t maxid, ndmsgid_t minid,const char *name=NULL);
 	int CallMsgHandle(nd_usermsgbuf_t *msgbuf);
+
+	bool TestMsgIsHandle(ndmsgid_t maxid, ndmsgid_t minid);
     void SetDftMsgHandler(nd_iconn_func func);
     
 	NDConnector(int maxmsg_num =ND_MAIN_MSG_CAPACITY, int maxid_start=ND_MSG_BASE_ID) ;
@@ -357,7 +359,12 @@ RE_WAIT:
 
 int NDConnector::CallMsgHandle(nd_usermsgbuf_t *msgbuf)
 {
-	return nd_translate_message_ex(m_objhandle, (nd_packhdr_t*)&msgbuf, NULL, (nd_handle)this);
+	return nd_translate_message_ex(m_objhandle, (nd_packhdr_t*)msgbuf, NULL, (nd_handle)this);
+}
+
+bool NDConnector::TestMsgIsHandle(ndmsgid_t maxid, ndmsgid_t minid)
+{
+	return nd_msgentry_is_handled(m_objhandle,maxid, minid)? true : false;
 }
 
 int NDConnector::WaitMsg(nd_usermsgbuf_t*msgbuf, ndtime_t wait_time)

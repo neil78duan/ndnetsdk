@@ -77,6 +77,7 @@ struct nd_name_sem
 	sem_t *_sem ;
 	char _name[ND_SEM_NAME_SIZE] ;
 };
+
 typedef struct nd_name_sem *ndsem_t ;
 
 ND_COMMON_API int _nd_sem_open(ndsem_t *sem,  unsigned int value) ;

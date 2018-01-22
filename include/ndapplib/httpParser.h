@@ -96,6 +96,7 @@ public:
 
 	int dump();
 	virtual void Reset();
+	int _postBodyToJson();
 protected:
 
 	typedef std::vector<httpHeaderNode>HttpHeader_t;
@@ -103,7 +104,6 @@ protected:
 	virtual int ParseProtocol();
 	virtual void onParseEnd();
 	int _parsePathInfo(const char *path);
-	int _postBodyToJson();
 
 	
 public:

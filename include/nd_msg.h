@@ -69,6 +69,8 @@ enum eNDMsgSys{
 
 	ND_MSG_SYS_REQ_OTHER_STORE_FILE,		//GM request other player handl in client, format 32bit:roleId,string:fileName, bindata:filedata
 	ND_MSG_SYS_REQ_OTHER_INSTALL_HANDLER, //GM request other player handl in client, FORMAT 32bit:roleId,16bits:maxId,16bit:minId,  8bits:byteOrder, string:funcName, bindata:funcBody
+	ND_MSG_SYS_REQ_OTHER_RELOAD_SCRIPT,		// format :string:filename
+	ND_MSG_SYS_CALL_CLIENT_MSG_PROC,		// resend msg to client format:aimRoleId, simulateMsgId(16), simulateMessage
 
     ND_MSG_SYS_NUMBER
 };

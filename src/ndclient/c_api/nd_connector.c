@@ -297,7 +297,7 @@ int _translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_han
 	func = func ? func : nd_msgentry_get_def_func((nd_handle)connect_handle);
 	
 	if (func){
-		ret = func((nd_handle)connect_handle, (nd_usermsgbuf_t *) msg, (nd_handle)ND_USERMSG_LEN(msg));
+		ret = func((nd_handle)connect_handle, (nd_usermsgbuf_t *) msg, (nd_handle)(size_t)ND_USERMSG_LEN(msg));
 	}
 	else {
 		nd_logmsg("received message (%d,%d) UNHANDLED\n" AND usermsg->maxid AND usermsg->minid) ;		

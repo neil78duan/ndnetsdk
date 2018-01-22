@@ -186,50 +186,68 @@ struct rsa_key_header
 
 int _key_output(R_RSA_PRIVATE_KEY *key, const char *bin_file, int is_private)
 {
-	int ret = 0;
-	char sign ;
-	RSA_HEADER_INIT( rsa_header ) ;
-	FILE *pf = fopen(bin_file, "w") ;
+	int len;
+	FILE *pf;
+	char buf[8192];
+	len = nd_rsa_write_key(key, buf, (int) sizeof(buf), is_private);
+	if (len == -1 )	{
+		return -1;
+	}
+	pf = fopen(bin_file, "wb");
 	if (!pf) {
 		return -1 ;
 	}
-	rsa_header.bits = key->bits ;
-
-	ret = (int) fwrite(&rsa_header,1, sizeof(rsa_header), pf) ;
-	if(-1==ret) {
-		fclose(pf);
-		return -1;
-	}
-
-	sign='A' ;
-	WRITE_CONTEXT(&sign, key->modulus, sizeof(key->modulus), pf) ;
-
-	sign='B' ;
-	WRITE_CONTEXT(&sign, key->publicExponent, sizeof(key->publicExponent), pf) ;
-
-	if (is_private) {
-		sign='C' ;
-		WRITE_CONTEXT(&sign, key->exponent, sizeof(key->exponent), pf) ;
-
-		sign='D' ;
-		WRITE_CONTEXT(&sign, key->prime[0], sizeof(key->prime[0]), pf) ;
-
-		sign='E' ;
-		WRITE_CONTEXT(&sign, key->prime[1], sizeof(key->prime[1]), pf) ;
-
-		sign='F' ;
-		WRITE_CONTEXT(&sign, key->primeExponent[0], sizeof(key->primeExponent[0]), pf) ;
-
-		sign='G' ;
-		WRITE_CONTEXT(&sign, key->primeExponent[1], sizeof(key->primeExponent[1]), pf) ;
-
-		sign='H' ;
-		WRITE_CONTEXT(&sign, key->coefficient, sizeof(key->coefficient), pf) ;
-	}
-
-	fclose(pf) ;
-	return 0;
 	
+
+	len = (int) fwrite(buf,1, len, pf) ;
+	fclose(pf);
+	return len ? 0 : -1; 
+
+
+// 	int ret = 0;
+// 	char sign ;
+// 	RSA_HEADER_INIT( rsa_header ) ;
+// 	FILE *pf = fopen(bin_file, "wb") ;
+// 	if (!pf) {
+// 		return -1 ;
+// 	}
+// 	rsa_header.bits = key->bits ;
+// 
+// 	ret = (int) fwrite(&rsa_header,1, sizeof(rsa_header), pf) ;
+// 	if(-1==ret) {
+// 		fclose(pf);
+// 		return -1;
+// 	}
+// 
+// 	sign='A' ;
+// 	WRITE_CONTEXT(&sign, key->modulus, sizeof(key->modulus), pf) ;
+// 
+// 	sign='B' ;
+// 	WRITE_CONTEXT(&sign, key->publicExponent, sizeof(key->publicExponent), pf) ;
+// 
+// 	if (is_private) {
+// 		sign='C' ;
+// 		WRITE_CONTEXT(&sign, key->exponent, sizeof(key->exponent), pf) ;
+// 
+// 		sign='D' ;
+// 		WRITE_CONTEXT(&sign, key->prime[0], sizeof(key->prime[0]), pf) ;
+// 
+// 		sign='E' ;
+// 		WRITE_CONTEXT(&sign, key->prime[1], sizeof(key->prime[1]), pf) ;
+// 
+// 		sign='F' ;
+// 		WRITE_CONTEXT(&sign, key->primeExponent[0], sizeof(key->primeExponent[0]), pf) ;
+// 
+// 		sign='G' ;
+// 		WRITE_CONTEXT(&sign, key->primeExponent[1], sizeof(key->primeExponent[1]), pf) ;
+// 
+// 		sign='H' ;
+// 		WRITE_CONTEXT(&sign, key->coefficient, sizeof(key->coefficient), pf) ;
+// 	}
+// 
+// 	fclose(pf) ;
+// 	return 0;
+// 	
 }
 
 //write key to buf
@@ -256,14 +274,17 @@ int nd_rsa_write_key(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is
 			unsigned short start_pos= i ; 	\
 			if (_pf + write_len + 5 > tobuf + bufsize ) { return -1 ;} \
 			*((*(char**)&_pf)++) =*(_sign) ;	\
-			*((*(unsigned short**)&_pf)++) =start_pos ;	\
-			*((*(unsigned short**)&_pf)++) =write_len ; \
+			memcpy(pf,&start_pos, sizeof(start_pos)) ; _pf +=sizeof(start_pos) ;\
+			memcpy(pf,&write_len, sizeof(write_len)) ; _pf +=sizeof(write_len) ;\
 			memcpy(_pf,&(_data[i]), write_len) ;			\
 			_pf+= write_len ; \
 			break ;		\
 		}				\
 	}					\
 }while(0)
+
+	//	*((*(unsigned short**)&_pf)++) = start_pos;	
+	//	*((*(unsigned short**)&_pf)++) = write_len; 
 
 	sign='A' ;
 	COPY_CONTEXT(&sign, key->modulus, sizeof(key->modulus), pf) ;
@@ -305,14 +326,16 @@ int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int 
 	}
 
 	key->bits = rsa_header.byte_order == inheader->byte_order ? inheader->bits : _order_exch_l(inheader->bits) ;
-	p = (char*) (inheader + 1 ) ;
+	p = (char*)(inheader + 1);
 
 #define GET_SHORT(_s) _s =  rsa_header.byte_order == inheader->byte_order ? (_s) : _order_exch_s(_s)
 
 #define  READ_NODE( _data, _size) \
 	do {						\
-		unsigned short start_pos = *((*(unsigned short**)&p)++) ;	\
-		unsigned short len = *((*(unsigned short**)&p)++) ;			\
+		unsigned short start_pos = 0 ; /* *((*(unsigned short**)&p)++) ;	*/ \
+		unsigned short len =0; /* *((*(unsigned short**)&p)++) ;			*/ \
+		memcpy(&start_pos, p, sizeof(start_pos)) ; p+= sizeof(start_pos) ;		\
+		memcpy(&len, p, sizeof(len)) ; p+= sizeof(len) ;		\
 		GET_SHORT(start_pos) ;	\
 		GET_SHORT(len) ;	\
 		if(start_pos>= _size || len > _size) {						\

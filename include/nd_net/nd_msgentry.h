@@ -117,6 +117,8 @@ ND_NET_API int nd_msgentry_def_handler(nd_handle handle, nd_usermsg_func func)  
 
 ND_NET_API nd_usermsg_func nd_msgentry_get_func(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid);
 ND_NET_API nd_usermsg_func nd_msgentry_get_def_func(nd_handle handle) ;
+ND_NET_API int nd_msgentry_is_handled(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid);
+
 ND_NET_API const char * nd_msgentry_get_name(nd_handle handle, ndmsgid_t maxid, ndmsgid_t minid) ;
 ND_NET_API NDUINT32 nd_msgentry_get_id(nd_handle handle, const char *msgname);
 

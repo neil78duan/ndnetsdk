@@ -122,6 +122,31 @@ void nd_init_daemon(void)
 
 int _nd_sem_open(ndsem_t *sem, unsigned int value)
 {
+#if defined(__ND_IOS__)
+	ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
+	psem->_sem = sem_open("/s", O_CREAT, 0644, 1);
+	if (psem->_sem== SEM_FAILED) {
+		if (errno != EEXIST) {
+			nd_logerror("sem_open(%s) : %s\n",psem->_name, nd_last_error()) ;
+			free(psem) ;
+			return -1 ;
+		}
+	}
+	*sem = psem ;
+#elif defined(__ND_ANDROID__)
+	ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
+	psem->_sem =(sem_t*) malloc(sizeof(sem_t)) ;
+	if( sem_init(psem->_sem, O_CREAT, value) ){
+		nd_logerror("sem_open(%s) : %s\n",psem->_name, nd_last_error()) ;
+		free(psem->_sem) ;
+		free(psem) ;
+		return -1;
+	}
+	
+	*sem = psem ;
+#else
+	
+	
 	static ndatomic_t _s_sem_index = 0 ;
 	//char sem_name[64] ;
 	ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
@@ -141,6 +166,8 @@ int _nd_sem_open(ndsem_t *sem, unsigned int value)
 		
 	}while (psem->_sem==SEM_FAILED && errno==EEXIST) ;
 	*sem = psem ;
+#endif
+	
 	return 0;
 }
 
@@ -149,7 +176,19 @@ ndsem_t _nd_sem_open_ex(const char *name, unsigned int value,int flag)
 	
 	ndsem_t  psem =  NULL ;
 	
+#if defined(__ND_IOS__)
+	sem_t *mysem = sem_open("/s", O_CREAT, 0644, value);
+#elif defined(__ND_ANDROID__)
+	sem_t *mysem =(sem_t*) malloc(sizeof(sem_t)) ;
+	if( sem_init(mysem, O_CREAT|O_EXCL, value) ){
+		nd_logerror("sem_open(%s) : %s\n",psem->_name, nd_last_error()) ;
+		free(psem) ;
+		return NULL;
+	}
+	
+#else
 	sem_t *mysem = sem_open( name, flag/*O_CREAT|O_EXCL*/, 0644, value );
+#endif
 	
 	if (mysem == SEM_FAILED) {
 		nd_logerror("sem_open(%s) : %s\n",name, nd_last_error()) ;
@@ -172,7 +211,14 @@ ndsem_t _nd_sem_open_ex(const char *name, unsigned int value,int flag)
 int _nd_sem_close(ndsem_t sem)
 {
 	sem_close(sem->_sem) ;
+#if  defined(__ND_IOS__)
+#elif defined(__ND_ANDROID__)
+	if (sem && sem->_sem) {
+		free(sem->_sem) ;
+	}
+#else
 	sem_unlink(sem->_name) ;
+#endif
 	free(sem) ;
 	return  0;
 }
@@ -477,7 +523,7 @@ int enable_core_dump(void)
 #define GET_RLIMIT_INFO(_name,_buf, size)  do {\
 	struct rlimit   limit = {0};	\
 	if( getrlimit(_name, &limit) == 0 && size > 0) {\
-		int _len = snprintf(_buf, size, "%s:cur=%llu max=%llu\n",  #_name, limit.rlim_cur, limit.rlim_max) ; 	\
+		int _len = snprintf(_buf, size, "%s:cur=%llu max=%llu\n",  #_name, (NDUINT64)limit.rlim_cur, (NDUINT64)limit.rlim_max) ; 	\
 		size -= _len ;				\
 		_buf += _len ;				\
 	} \

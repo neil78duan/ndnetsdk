@@ -70,7 +70,7 @@ static int on_accept_entry(nd_handle nethandle, SOCKADDR_IN *addr, nd_handle h_l
 		pListener->m_max_onlines = __current_num ;
 	}
 
-	nd_logdebug(("Connect from [%s:%d]\t connection_num=%d free=%d active=%d\n") AND
+	nd_logmsg(("Connect from [%s:%d]\t connection_num=%d free=%d active=%d\n") AND
 		pszTemp AND htons(addr->sin_port) AND __current_num AND
 		pListener->GetAllocatorFreenum() AND cm_iterator.GetActiveNum() );
 	
@@ -97,7 +97,7 @@ static  void on_close_entry(nd_handle nethandle, nd_handle h_listen)
 	//newSession = NDGetSession(nethandle);
 	newSession->OnClose() ;
 
-	nd_logdebug(("net CLOSED error =%s\tconnect_num=%d free=%d active=%d \n") AND 
+	nd_logmsg(("net CLOSED error =%s\tconnect_num=%d free=%d active=%d \n") AND 
 		nd_object_errordesc((nd_handle)nethandle) AND  __current_num AND 
 		pListener->GetAllocatorFreenum() AND cm_iterator.GetActiveNum()-1 );
 	

@@ -238,7 +238,7 @@ int test_remote_host(char *host)
 		start = nd_time() ;
 		while (1) {
 			if((nd_time()-start)>=1000 * 5){
-				nd_logmsg("test host % time out.\n" AND host);
+				nd_logmsg("test host %s time out.\n" AND host);
 				break;
 			}
 			sock_len = sizeof(from) ;

@@ -1589,7 +1589,7 @@ typedef struct nd_mm_pool *nd_handle ;
 	nd_mutex lock ;
 };
 
-nd_handle __pool_create(size_t size,char *name,struct nd_mm_pool *pool )
+nd_handle __pool_create(size_t size,const char *name,struct nd_mm_pool *pool )
 {
 	memset(pool, 0, sizeof(*pool) ) ;
 	pool->type = NDHANDLE_MMPOOL;

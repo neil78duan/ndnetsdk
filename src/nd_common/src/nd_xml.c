@@ -188,7 +188,7 @@ void dealloc_attrib_node(struct ndxml_attr *pnode);
 int xml_write(ndxml *xmlnode, FILE *fp , int deep) ;
 ndxml *_create_xmlnode(const char *name, const char *value)  ;
 
-static void _errlog (const char *errdesc) ;
+static int _errlog (const char *errdesc) ;
 static void show_xmlerror(const char *file, const char *error_addr, const char *xmlbuf, size_t size) ;
 
 static int xml_parse_fileinfo(ndxml_root *xmlroot, char *start, char **endaddr, char **erraddr);
@@ -229,8 +229,8 @@ int ndxml_load_from_buf(const char *fileName, const char *buf, size_t size, ndxm
 	int ret = 0;
 	
 	char *pAddr, *pErrorAddr = 0;
-	const char *pTextEncode = 0;
-	const char*pBuf = (char*)buf;
+	char *pTextEncode = 0;
+	char*pBuf = (char*)buf;
 	char *pconvertbuf = NULL;
 
 	//ndxml_root *xmlroot;
@@ -240,7 +240,7 @@ int ndxml_load_from_buf(const char *fileName, const char *buf, size_t size, ndxm
 		return -1;
 	}
 
-	pTextEncode = ndxml_getattr_val(xmlroot, "encoding");
+	pTextEncode = (char*) ndxml_getattr_val(xmlroot, "encoding");
 	if (pTextEncode && *pTextEncode){
 		if (toEncodeType && toEncodeType[0]) {
 			int nTextType = nd_get_encode_val(pTextEncode);
@@ -253,7 +253,7 @@ int ndxml_load_from_buf(const char *fileName, const char *buf, size_t size, ndxm
 				if (!pconvertbuf)	{
 					return -1;
 				}
-				if (func(pBuf, pconvertbuf, size * 2)) {					
+				if (func(pBuf, pconvertbuf, (int)size * 2)) {
 					pBuf = pconvertbuf;
 					size = strlen(pconvertbuf);
 				}
@@ -781,8 +781,8 @@ ndxml* ndxml_little_brother(ndxml *node)
 
 ndxml *ndxml_from_text(const char *text)
 {
-	char *pend, *perraddr;
-	return parse_xmlbuf(text, strlen(text), &pend, &perraddr);
+	const char *pend, *perraddr;
+	return parse_xmlbuf(text, (int)strlen(text), &pend, &perraddr);
 }
 
 int ndxml_delnode(ndxml_root *xmlroot,const  char *name)
@@ -1365,7 +1365,7 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 		while (*paddr)	{
 			char *parsed ;
 			int  left_size = (int) (size -( paddr - xmlbuf) );
-			ndxml *new_xml = parse_xmlbuf(paddr, left_size, &parsed, error_addr) ;
+			ndxml *new_xml = parse_xmlbuf(paddr, left_size, (const char**)&parsed, error_addr) ;
 			if(new_xml) {
 				list_add_tail(&new_xml->lst_self, &xmlnode->lst_sub);
 				new_xml->parent = xmlnode;
@@ -1720,9 +1720,9 @@ int xml_tobuf(ndxml *xmlnode, char *buf, size_t size)
 	return (int) (p-buf);
 }
 
-void _errlog (const char *errdesc)
+int _errlog (const char *errdesc)
 {
-	fprintf(stderr,"%s", errdesc) ;	
+	return fprintf(stderr,"%s", errdesc) ;
 }
 
 int ndxml_output(ndxml *node, FILE *pf)

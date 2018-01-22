@@ -82,7 +82,7 @@ static __INLINE__ int _read_word(unsigned  char** dest, unsigned char **src)
 }
 int ndstr_read_utf8char(char **src, char** dest)
 {
-	return _read_word(dest,src) ;
+	return _read_word((unsigned  char**)dest,(unsigned  char**)src) ;
 }
 
 /* 去掉字符串开头部分无用的字符（不可打印的字符）*/
