@@ -196,12 +196,12 @@ int TestRsa(R_RSA_PRIVATE_KEY *priv_key)
 		return -1;
 	}
 
-	if(-1==nd_rsa_privkey_output(&rsa_contex.privateKey, "./private_key.bin") )  {
+	if(-1==nd_rsa_privkey_output(&rsa_contex.privateKey, "./private_key.bin",0,NULL) )  {
 		printf("out put private key bin error \n") ;
 		exit(1) ;
 	}
 
-	if(-1==nd_rsa_pubkey_output(&rsa_contex.publicKey, "./public_key.bin") )  {
+	if(-1==nd_rsa_pubkey_output(&rsa_contex.publicKey, "./public_key.bin",0,NULL) )  {
 		printf("out put private key bin error \n") ;
 		exit(1) ;
 	}

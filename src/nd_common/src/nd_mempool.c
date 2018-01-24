@@ -1085,7 +1085,10 @@ void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 		nd_assert(0) ;
 		return ;
 	}
-
+	
+	if(	__mem_root.init ==0 )
+		return  ;
+	
 	__real_p = (struct __alloc_header*)((char *)__p -(long)__extra_before);
 
 	__real_n= __real_p->_M_size + __extra_before + __extra_after;

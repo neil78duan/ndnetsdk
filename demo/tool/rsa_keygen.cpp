@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 	char *_pub_file = NULL;
 	char *_pri_file = NULL;
 	char md5text[33] ;
+	time_t tmout_stamp = time(NULL) + 365 * 24 *3600 ;
 	R_RANDOM_STRUCT _rand_contex = {0};
 	ND_RSA_CONTEX rsa_contex ={0};
 	RSA_HANDLE _h_rsa = &rsa_contex ;
@@ -89,12 +90,12 @@ int main(int argc, char *argv[])
 		exit(1) ;
 	}
 
-	if(-1==nd_rsa_privkey_output(&_h_rsa->privateKey, OUTPUT_PRIV_KEY) )  {
+	if(-1==nd_rsa_privkey_output(&_h_rsa->privateKey, OUTPUT_PRIV_KEY,tmout_stamp,(void*)"key is time out") )  {
 		printf("out put private key bin error \n") ;
 		exit(1) ;
 	}
 
-	if(-1==nd_rsa_pubkey_output(&_h_rsa->publicKey, OUTPUT_PUB_KEY) )  {
+	if(-1==nd_rsa_pubkey_output(&_h_rsa->publicKey, OUTPUT_PUB_KEY,tmout_stamp,(void*)"key is time out") )  {
 		printf("out put public key bin error \n") ;
 		exit(1) ;
 	}

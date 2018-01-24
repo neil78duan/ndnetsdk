@@ -135,10 +135,10 @@ ND_CRYPT_API int rsa_priv_decrypt(char *outbuf, int *outlen, char *inbuf, int in
 ND_CRYPT_API int rsa_get_crypt_len(R_RSA_PUBLIC_KEY *key);
 
 
-ND_CRYPT_API int nd_rsa_privkey_output(R_RSA_PRIVATE_KEY *priv_key, const char *bin_file) ;
+ND_CRYPT_API int nd_rsa_privkey_output(R_RSA_PRIVATE_KEY *priv_key, const char *bin_file,unsigned long long param,void*tip) ;
 ND_CRYPT_API int nd_rsa_privkey_input(R_RSA_PRIVATE_KEY *priv_key, const char *bin_file) ;
 
-ND_CRYPT_API int nd_rsa_pubkey_output(R_RSA_PUBLIC_KEY *pub_key, const char *bin_file) ;
+ND_CRYPT_API int nd_rsa_pubkey_output(R_RSA_PUBLIC_KEY *pub_key, const char *bin_file,unsigned long long param,void*tip) ;
 ND_CRYPT_API int nd_rsa_pubkey_input(R_RSA_PUBLIC_KEY *pub_key, const char *bin_file) ;
 
 ND_CRYPT_API int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int is_private) ;

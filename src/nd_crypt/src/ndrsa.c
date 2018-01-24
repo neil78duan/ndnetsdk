@@ -4,7 +4,7 @@
  * 2008-8
  */
  
-//#include "nd_common/nd_common.h"
+#include "nd_common/nd_common.h"
 #include "nd_crypt/rsah/global.h"
 #include "nd_crypt/rsah/rsaref.h"
 #include "nd_crypt/rsah/rsa.h"
@@ -184,74 +184,8 @@ struct rsa_key_header
 (((unsigned int)(_a) & (unsigned int)0xff000000) >> 24) ))
 
 
-int _key_output(R_RSA_PRIVATE_KEY *key, const char *bin_file, int is_private)
-{
-	int len;
-	FILE *pf;
-	char buf[8192];
-	len = nd_rsa_write_key(key, buf, (int) sizeof(buf), is_private);
-	if (len == -1 )	{
-		return -1;
-	}
-	pf = fopen(bin_file, "wb");
-	if (!pf) {
-		return -1 ;
-	}
-	
-
-	len = (int) fwrite(buf,1, len, pf) ;
-	fclose(pf);
-	return len ? 0 : -1; 
-
-
-// 	int ret = 0;
-// 	char sign ;
-// 	RSA_HEADER_INIT( rsa_header ) ;
-// 	FILE *pf = fopen(bin_file, "wb") ;
-// 	if (!pf) {
-// 		return -1 ;
-// 	}
-// 	rsa_header.bits = key->bits ;
-// 
-// 	ret = (int) fwrite(&rsa_header,1, sizeof(rsa_header), pf) ;
-// 	if(-1==ret) {
-// 		fclose(pf);
-// 		return -1;
-// 	}
-// 
-// 	sign='A' ;
-// 	WRITE_CONTEXT(&sign, key->modulus, sizeof(key->modulus), pf) ;
-// 
-// 	sign='B' ;
-// 	WRITE_CONTEXT(&sign, key->publicExponent, sizeof(key->publicExponent), pf) ;
-// 
-// 	if (is_private) {
-// 		sign='C' ;
-// 		WRITE_CONTEXT(&sign, key->exponent, sizeof(key->exponent), pf) ;
-// 
-// 		sign='D' ;
-// 		WRITE_CONTEXT(&sign, key->prime[0], sizeof(key->prime[0]), pf) ;
-// 
-// 		sign='E' ;
-// 		WRITE_CONTEXT(&sign, key->prime[1], sizeof(key->prime[1]), pf) ;
-// 
-// 		sign='F' ;
-// 		WRITE_CONTEXT(&sign, key->primeExponent[0], sizeof(key->primeExponent[0]), pf) ;
-// 
-// 		sign='G' ;
-// 		WRITE_CONTEXT(&sign, key->primeExponent[1], sizeof(key->primeExponent[1]), pf) ;
-// 
-// 		sign='H' ;
-// 		WRITE_CONTEXT(&sign, key->coefficient, sizeof(key->coefficient), pf) ;
-// 	}
-// 
-// 	fclose(pf) ;
-// 	return 0;
-// 	
-}
-
 //write key to buf
-int nd_rsa_write_key(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is_private)
+static int nd_rsa_write_key_ex(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is_private, unsigned long long param,void *paramText)
 {
 	char sign ;
 	char *pf = tobuf ;
@@ -274,17 +208,34 @@ int nd_rsa_write_key(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is
 			unsigned short start_pos= i ; 	\
 			if (_pf + write_len + 5 > tobuf + bufsize ) { return -1 ;} \
 			*((*(char**)&_pf)++) =*(_sign) ;	\
-			memcpy(pf,&start_pos, sizeof(start_pos)) ; _pf +=sizeof(start_pos) ;\
-			memcpy(pf,&write_len, sizeof(write_len)) ; _pf +=sizeof(write_len) ;\
+			memcpy(_pf,&start_pos, sizeof(start_pos)) ; _pf +=sizeof(start_pos) ;\
+			memcpy(_pf,&write_len, sizeof(write_len)) ; _pf +=sizeof(write_len) ;\
 			memcpy(_pf,&(_data[i]), write_len) ;			\
 			_pf+= write_len ; \
 			break ;		\
 		}				\
 	}					\
-}while(0)
+	}while(0)
 
 	//	*((*(unsigned short**)&_pf)++) = start_pos;	
-	//	*((*(unsigned short**)&_pf)++) = write_len; 
+	//	*((*(unsigned short**)&_pf)++) = write_len;
+
+	if(param) {
+		NDUINT32 val ;
+		char *offset  ;
+		*((*(char**)&pf)++) ='T' ;
+		val = ND_LODWORD(param) ;
+		memcpy(pf,&val, sizeof(val)) ; pf +=sizeof(val) ;
+		val = ND_HIDWORD(param) ;
+		memcpy(pf,&val, sizeof(val)) ; pf +=sizeof(val) ;
+		offset = pf ; pf += sizeof(val) ;
+		*((*(char**)&pf)++) ='Q' ;
+		val = snprintf(pf, bufsize - (pf - tobuf), " %s!  ",(const char*)paramText) ;
+		val += 1 ;
+		pf += val ;
+		val += 1 ;
+		memcpy(offset,&val, sizeof(val)) ;
+	}
 
 	sign='A' ;
 	COPY_CONTEXT(&sign, key->modulus, sizeof(key->modulus), pf) ;
@@ -312,13 +263,37 @@ int nd_rsa_write_key(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is
 		COPY_CONTEXT(&sign, key->coefficient, sizeof(key->coefficient), pf) ;
 	}
 
-	return pf-tobuf;
+	return (int)(pf-tobuf);
+}
+int nd_rsa_write_key(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is_private)
+{
+	return nd_rsa_write_key_ex(key, tobuf, bufsize,  is_private,0,NULL) ;
+}
+static int _key_output(R_RSA_PRIVATE_KEY *key, const char *bin_file, int is_private,unsigned long long param,void*pTips)
+{
+	int len;
+	FILE *pf;
+	char buf[8192];
+	len = nd_rsa_write_key_ex(key, buf, (int) sizeof(buf), is_private,param,pTips);
+	if (len == -1 )	{
+		return -1;
+	}
+	pf = fopen(bin_file, "wb");
+	if (!pf) {
+		return -1 ;
+	}
+	
+	
+	len = (int) fwrite(buf,1, len, pf) ;
+	fclose(pf);
+	return len ? 0 : -1;
+	
 }
 
 int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int is_private)
 {
 	int ret = 0;
-	char *p ;
+	const char *p ;
 	RSA_HEADER_INIT( rsa_header ) ;
 	struct rsa_key_header *inheader = (struct rsa_key_header *) buf ;
 	if (*(int*)rsa_header.sign != *(int*)inheader->sign ) {
@@ -329,7 +304,8 @@ int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int 
 	p = (char*)(inheader + 1);
 
 #define GET_SHORT(_s) _s =  rsa_header.byte_order == inheader->byte_order ? (_s) : _order_exch_s(_s)
-
+#define GET_LONG(_s) _s =  rsa_header.byte_order == inheader->byte_order ? (_s) : _order_exch_l(_s)
+	
 #define  READ_NODE( _data, _size) \
 	do {						\
 		unsigned short start_pos = 0 ; /* *((*(unsigned short**)&p)++) ;	*/ \
@@ -392,7 +368,25 @@ int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int 
 				}
 				READ_NODE(key->coefficient,sizeof(key->coefficient)) ;
 				break;
-
+			case 'T':
+			{
+				NDUINT32 lowT, hiT ;
+				NDUINT32 offset ;
+				memcpy(&lowT, p, sizeof(lowT)) ; p+= sizeof(lowT) ;
+				memcpy(&hiT, p, sizeof(hiT)) ; p+= sizeof(hiT) ;
+				memcpy(&offset, p, sizeof(offset)) ; p+= sizeof(offset) ;
+				GET_LONG(lowT) ;GET_LONG(hiT) ;GET_LONG(offset) ;
+				if( ND_MAKE_QWORD(hiT, lowT) > time(0) ) {
+					p+= offset ;
+				}
+			}
+				break ;
+			case 'Q':
+			{
+				nd_logmsg("%s\n", p) ;
+				p= buf + bufsize ;
+				return -1 ;
+			}
 			default:
 				break;
 		}
@@ -409,10 +403,9 @@ int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int 
 }
 
 
-int nd_rsa_privkey_output(R_RSA_PRIVATE_KEY *key, const char *bin_file)
+int nd_rsa_privkey_output(R_RSA_PRIVATE_KEY *key, const char *bin_file,unsigned long long param,void*tip)
 {
-	return _key_output(key, bin_file, 1) ;
-
+	return _key_output(key, bin_file, 1,param,tip) ;
 }
 
 
@@ -422,16 +415,16 @@ int nd_rsa_privkey_input(R_RSA_PRIVATE_KEY *priv_key, const char *bin_file)
 	size_t size = 0 ;
 	void *data =nd_load_file (bin_file, &size) ;
 	if (data) {
-		ret =  nd_rsa_read_key(priv_key , (const char *)data, size, 1) ;
+		ret =  nd_rsa_read_key(priv_key , (const char *)data,(int) size, 1) ;
 		nd_unload_file(data) ;
 	}
 	return  ret ;
 
 }
 
-int nd_rsa_pubkey_output(R_RSA_PUBLIC_KEY *key, const char *bin_file)
+int nd_rsa_pubkey_output(R_RSA_PUBLIC_KEY *key, const char *bin_file,unsigned long long param,void*tip)
 {
-	return _key_output((R_RSA_PRIVATE_KEY*)key, bin_file, 0) ;
+	return _key_output((R_RSA_PRIVATE_KEY*)key, bin_file, 0,param,tip) ;
 
 }
 int nd_rsa_pubkey_input(R_RSA_PUBLIC_KEY *priv_key, const char *bin_file)
@@ -440,7 +433,7 @@ int nd_rsa_pubkey_input(R_RSA_PUBLIC_KEY *priv_key, const char *bin_file)
 	size_t size = 0 ;
 	void *data =nd_load_file (bin_file, &size) ;
 	if (data) {
-		ret =  nd_rsa_read_key((R_RSA_PRIVATE_KEY*)priv_key , (const char *)data, size, 0) ;
+		ret =  nd_rsa_read_key((R_RSA_PRIVATE_KEY*)priv_key , (const char *)data, (int)size, 0) ;
 		nd_unload_file(data) ;
 	}
 	return  ret;
