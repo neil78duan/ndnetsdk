@@ -58,11 +58,11 @@
 
 
 #define ND_PLATFORM "ARM"
-// 
-// #define ND_OPEN_LOG_COMMON 	1
-// #define ND_OPEN_LOG_ERROR	1
-// #define ND_OPEN_LOG_FATAL	1
-// #define ND_OUT_LOG_2CTRL	1
+ #define ND_OPEN_LOG_DEBUG	1
+ #define ND_OPEN_LOG_COMMON 	1
+ #define ND_OPEN_LOG_ERROR	1
+ #define ND_OPEN_LOG_FATAL	1
+ #define ND_OUT_LOG_2CTRL	1
 // #define ND_LOG_WITH_SOURCE	1
 // #define ND_LOG_WITH_TIME	1
 // #define ND_LOG_WITH_DATE	1

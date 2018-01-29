@@ -374,7 +374,7 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 		int flag = iscrypt?  (ESF_NORMAL | ESF_ENCRYPT) : ESF_NORMAL;
 		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
 		
-		if(client) {
+		if (client && nd_connector_valid((nd_netui_handle)client)) {
 			nd_sessionmsg_sendex((nd_handle)client,&net_msg->msg_hdr,flag) ;
 			pmanger->unlock(pmanger,session_id);			
 		}
@@ -401,7 +401,7 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 			struct list_head *pos, *next;
 			list_for_each_safe(pos, next, &pthinfo->sessions_list) {
 				struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);				
-				if (nd_connect_level_get((nd_handle)client) >= priv_level)	{
+				if (nd_connect_level_get((nd_handle)client) >= priv_level && nd_connector_valid((nd_netui_handle)client))	{
 					nd_sessionmsg_sendex((nd_handle)client, &net_msg->msg_hdr, flag);
 				}
 			}
@@ -447,7 +447,7 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 	
 	if(session_id) {
 		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
-		if (client ) {
+		if (client && nd_connector_valid((nd_netui_handle)client) ) {
 			client->msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
 			pmanger->unlock(pmanger, session_id);
 		}
@@ -469,7 +469,7 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 		struct list_head *pos, *next;
 		list_for_each_safe(pos, next, &pthinfo->sessions_list) {
 			struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
-			if (nd_connect_level_get((nd_handle)client) >= priv_level)	{
+			if (nd_connect_level_get((nd_handle)client) >= priv_level && nd_connector_valid((nd_netui_handle)client))	{
 				client->connect_node.msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
 			}
 		}

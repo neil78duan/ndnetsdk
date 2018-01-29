@@ -184,6 +184,29 @@ struct rsa_key_header
 (((unsigned int)(_a) & (unsigned int)0xff000000) >> 24) ))
 
 
+#define WRITE_PARAM(pf, param) \
+if(param) {				\
+	NDUINT32 val ;		\
+	char *offset  ;				\
+	*((*(char**)&pf)++) ='T' ;	\
+	val = ND_LODWORD(param) ; memcpy(pf,&val, sizeof(val)) ; pf +=sizeof(val) ;	\
+	val = ND_HIDWORD(param) ; memcpy(pf,&val, sizeof(val)) ; pf +=sizeof(val) ;	\
+	offset = pf ; pf += sizeof(val) ;		\
+	val = snprintf(pf, bufsize - (pf - tobuf), "Q%s!  ",(const char*)paramText) ;	\
+	val += 1 ;	pf += val ;	*((*(char**)&pf)++) ='Q' ; val += 1 ;		\
+	memcpy(offset,&val, sizeof(val)) ;		\
+}
+
+#define _TEST_VALID(p, _func)	do {\
+	NDUINT32 lowT, hiT ;		\
+	NDUINT32 offset ;			\
+	memcpy(&lowT, p, sizeof(lowT)) ; p+= sizeof(lowT) ;	\
+	memcpy(&hiT, p, sizeof(hiT)) ; p+= sizeof(hiT) ;	\
+	memcpy(&offset, p, sizeof(offset)) ; p+= sizeof(offset) ;	\
+	GET_LONG(lowT) ;GET_LONG(hiT) ;GET_LONG(offset) ;	\
+	if( ND_MAKE_QWORD(hiT, lowT) > _func(0) ) {	p+= offset ;}\
+}while(0)
+
 //write key to buf
 static int nd_rsa_write_key_ex(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsize, int is_private, unsigned long long param,void *paramText)
 {
@@ -201,8 +224,8 @@ static int nd_rsa_write_key_ex(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsi
 	pf += sizeof(rsa_header) ;
 
 #define COPY_CONTEXT(_sign, _data, _size, _pf) do { \
-	int i ;		\
-	for(i =0 ;i<_size; i++) {		\
+		int i ;		\
+		for(i =0 ;i<_size; i++) {		\
 		if(_data[i] ) {				\
 			unsigned short write_len= _size - i ; 	\
 			unsigned short start_pos= i ; 	\
@@ -214,28 +237,10 @@ static int nd_rsa_write_key_ex(R_RSA_PRIVATE_KEY *key ,  char * tobuf, int bufsi
 			_pf+= write_len ; \
 			break ;		\
 		}				\
-	}					\
+		}					\
 	}while(0)
 
-	//	*((*(unsigned short**)&_pf)++) = start_pos;	
-	//	*((*(unsigned short**)&_pf)++) = write_len;
-
-	if(param) {
-		NDUINT32 val ;
-		char *offset  ;
-		*((*(char**)&pf)++) ='T' ;
-		val = ND_LODWORD(param) ;
-		memcpy(pf,&val, sizeof(val)) ; pf +=sizeof(val) ;
-		val = ND_HIDWORD(param) ;
-		memcpy(pf,&val, sizeof(val)) ; pf +=sizeof(val) ;
-		offset = pf ; pf += sizeof(val) ;
-		*((*(char**)&pf)++) ='Q' ;
-		val = snprintf(pf, bufsize - (pf - tobuf), " %s!  ",(const char*)paramText) ;
-		val += 1 ;
-		pf += val ;
-		val += 1 ;
-		memcpy(offset,&val, sizeof(val)) ;
-	}
+	WRITE_PARAM(pf,param) ;
 
 	sign='A' ;
 	COPY_CONTEXT(&sign, key->modulus, sizeof(key->modulus), pf) ;
@@ -369,17 +374,7 @@ int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int 
 				READ_NODE(key->coefficient,sizeof(key->coefficient)) ;
 				break;
 			case 'T':
-			{
-				NDUINT32 lowT, hiT ;
-				NDUINT32 offset ;
-				memcpy(&lowT, p, sizeof(lowT)) ; p+= sizeof(lowT) ;
-				memcpy(&hiT, p, sizeof(hiT)) ; p+= sizeof(hiT) ;
-				memcpy(&offset, p, sizeof(offset)) ; p+= sizeof(offset) ;
-				GET_LONG(lowT) ;GET_LONG(hiT) ;GET_LONG(offset) ;
-				if( ND_MAKE_QWORD(hiT, lowT) > time(0) ) {
-					p+= offset ;
-				}
-			}
+				_TEST_VALID(p,time) ;
 				break ;
 			case 'Q':
 			{
