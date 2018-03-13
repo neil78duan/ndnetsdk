@@ -228,15 +228,16 @@ int ndWaitMsg(netObject netObj, char *buf, int bufsize, int timeOutMS)
 
 int ndSendAndWaitMessage(nd_handle nethandle, nd_usermsgbuf_t *sendBuf, nd_usermsgbuf_t* recvBuf, ndmsgid_t waitMaxid, ndmsgid_t waitMinid, int sendFlag, int timeout)
 {
+	int ret = 0;
+	ndtime_t start_tm = nd_time();
 	if (nd_connector_send(nethandle, (nd_packhdr_t*)sendBuf, sendFlag) <= 0) {
 		nd_object_seterror(nethandle, NDERR_WRITE);
 		nd_logerror("send data error: NDERR_WRITE\n");
 		return -1;
 	}
-	ndtime_t start_tm = nd_time();
 RE_RECV:
-
-	if (-1 == nd_connector_waitmsg(nethandle, (nd_packetbuf_t *)recvBuf, timeout)) {
+	ret = nd_connector_waitmsg(nethandle, (nd_packetbuf_t *)recvBuf, timeout);
+	if (ret <= 0 ) {
 		//nd_object_seterror(nethandle, NDERR_TIMEOUT);
 		nd_logerror("wait message timeout\n");
 		return -1;
@@ -246,6 +247,12 @@ RE_RECV:
 			nd_logerror("receive system mesaage and handler error \n");
 			return -1;
 		}
+		if ((nd_time() - start_tm) >= timeout) {
+			nd_object_seterror(nethandle, NDERR_TIMEOUT);
+			nd_logerror("wait message(%d,%d) timeout\n", waitMaxid, waitMinid);
+			return -1;
+		}
+		goto RE_RECV;
 	}
 	else if (nd_checkErrorMsg(nethandle, (struct ndMsgData*)recvBuf)) {
 		nd_logerror("receive error message \n");
@@ -260,7 +267,7 @@ RE_RECV:
 		if (((nd_netui_handle)nethandle)->msg_handle) {
 			//int ret = nd_translate_message(nethandle, (nd_packhdr_t*)recvBuf, NULL);
 			int ret = _packet_handler((nd_netui_handle)nethandle, &recvBuf->msg_hdr.packet_hdr, NULL);
-			if (ret == -1){
+			if (ret == -1 && NDERR_UNHANDLED_MSG != nd_object_lasterror(nethandle) ){
 				nd_logerror("wait message(%d,%d) error ,recvd(%d,%d)\n", waitMaxid, waitMinid, ND_USERMSG_MAXID(recvBuf), ND_USERMSG_MINID(recvBuf));
 				return ret;
 			}

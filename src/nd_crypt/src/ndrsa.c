@@ -392,7 +392,7 @@ int nd_rsa_read_key(R_RSA_PRIVATE_KEY *key , const char * buf, int bufsize, int 
 		return  ret==8 ? 0 : -1 ;
 	}
 	else {
-		return ret == 2 ? 0: -1 ;
+		return ret ==2 ? 0: -1 ;
 	}
 
 }

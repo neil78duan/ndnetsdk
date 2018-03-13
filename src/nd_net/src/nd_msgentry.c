@@ -394,7 +394,8 @@ static int _call_message_func(struct msgentry_root *root,struct msg_entry_node *
 		}
 		else{
 			nd_logmsg("received message (%d,%d) UNHANDLED\n" AND msg->msg_hdr.maxid AND msg->msg_hdr.minid);
-
+			ret = -1;
+			nd_object_seterror(conn, NDERR_UNHANDLED_MSG);
 		}
 	}
 	else {
@@ -486,7 +487,9 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 		else {
 			ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, connect_handle, listen_handle);
 			if (-1 == ret) {
-				nd_object_seterror(connect_handle, NDERR_USER);
+				if (nd_object_lasterror(connect_handle) == 0) {
+					nd_object_seterror(connect_handle, NDERR_USER);
+				}
 			}
 		}		
 	}

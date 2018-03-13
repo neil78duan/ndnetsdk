@@ -36,6 +36,16 @@ NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener)
 	}
 	return NULL ;
 }
+static  int _check_session_valid(nd_handle session)
+{
+	NDObject *pobj = (NDObject *)nd_session_getdata((nd_netui_handle)session);
+	if (pobj){
+		if (dynamic_cast<NDBaseSession*>(pobj)) {
+			return 1;
+		}
+	}
+	return 0;	
+}
 
 static int on_accept_entry(nd_handle nethandle, SOCKADDR_IN *addr, nd_handle h_listen) 
 {
@@ -194,6 +204,7 @@ int NDListener::Create(const char *listen_name, int session_num, size_t session_
 	}
 
 	nd_listensrv_set_entry(listen_handle,(accept_callback)on_accept_entry,(deaccept_callback)on_close_entry) ;
+	nd_listensrv_set_valid_func(listen_handle, _check_session_valid);
 	
 	OnCreate() ;
 	

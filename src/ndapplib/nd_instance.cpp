@@ -196,8 +196,16 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 	}
 
 	if (m_config.i_cfg.callstack_file[0]){
-		if(CALLSTACK_INIT(m_config.i_cfg.callstack_file)==-1) {
-			nd_logfatal("create map file %s error!\n" AND m_config.i_cfg.callstack_file) ;
+		struct tm *gtm, tm1;
+
+		time_t t = time(NULL);
+		gtm = localtime_r(&t, &tm1);
+		char callFile[1024];
+		snprintf(callFile, sizeof(callFile), "%s.%d.%d.%d.%d",
+			m_config.i_cfg.callstack_file, gtm->tm_mon, gtm->tm_mday,gtm->tm_hour,gtm->tm_min);
+		
+		if (CALLSTACK_INIT(callFile) == -1) {
+			nd_logfatal("create map file %s error!\n" AND callFile);
 			return -1 ;
 		}
 	}

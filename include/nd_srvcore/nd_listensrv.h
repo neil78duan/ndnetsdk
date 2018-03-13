@@ -33,6 +33,9 @@ enum ND_LISTEN_MOD{
 
 typedef int (*listen_thread_update)(nd_handle h_listen, nd_handle th_handle) ;
 
+typedef int(*session_valid_func)(nd_handle session);
+
+
 //listen more than one port
 struct listen_port_node
 {
@@ -59,6 +62,7 @@ struct listen_contex
 	struct list_head list_thread;				//list of thread
 	listen_thread_update pre_update ;
 	listen_thread_update end_update ;
+	session_valid_func check_valid_func;		//check session is valid
 	struct list_head list_ext_ports ;
 } ;
 
@@ -97,7 +101,7 @@ static __INLINE__ void nd_listensrv_set_accept(nd_listen_handle handle, int bClo
 	((struct listen_contex *)handle)->close_accept = bClosed ;
 }
 
-
+ND_SRV_API session_valid_func nd_listensrv_set_valid_func(nd_listen_handle h_listen, session_valid_func func);
 
 ND_SRV_API int nd_listensrv_freenum(nd_listen_handle handle) ;
 

@@ -122,6 +122,13 @@ int nd_listensrv_session_info(nd_listen_handle handle, int max_client,size_t ses
 
 }
 
+session_valid_func nd_listensrv_set_valid_func(nd_listen_handle h_listen, session_valid_func func)
+{
+	session_valid_func ret = h_listen->check_valid_func;
+	h_listen->check_valid_func = func;
+	return ret;
+}
+
 int nd_listensrv_set_update(nd_listen_handle h_listen,listen_thread_update pre_entry, listen_thread_update end_entry) 
 {
 	h_listen->pre_update = pre_entry ;

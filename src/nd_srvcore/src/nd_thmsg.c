@@ -15,6 +15,25 @@
 #define check_thread_switch(lc) do{} while(0) 
 #endif
 
+static int _check_session_valid_async(nd_handle session, NDUINT16 sid, struct listen_contex *lc)
+{
+	if (!nd_connector_valid(session)) {
+		return 0;
+	}
+	if (nd_session_getid(session) != sid)	{
+		return 0;
+	}
+	if (nd_connect_level_get(session) == EPL_NONE){
+		return 0;
+	}
+	if (lc->check_valid_func){
+		if (lc->check_valid_func(session) ==0)	{
+			return 0;
+		}
+	}
+	return 1;
+}
+
 // send message to client whatever the session is belone self-thread or other
 int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle,int encrypt) 
 {
@@ -40,7 +59,9 @@ int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle list
 		nd_handle client = (nd_handle) pmanger->lock(pmanger,sessionid) ;
 		if(!client) 
 			return -1 ;
-		ret = nd_sessionmsg_sendex(client,data, flag) ;
+		if (_check_session_valid_async(client,sessionid,listen_handle) ) {
+			ret = nd_sessionmsg_sendex(client, data, flag);
+		}
 		pmanger->unlock(pmanger,sessionid);
 	}
 	else {
@@ -135,8 +156,10 @@ int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_
 		
 	if(thid == nd_thread_self() ) {
 		nd_netui_handle  client = (nd_netui_handle) pmanger->lock(pmanger,sessionid) ;
-		if(client) {			
-			ret = client->msg_entry((nd_handle)client,(nd_packhdr_t *) data, listen_handle) ; 
+		if(client) {
+			if (_check_session_valid_async(client, sessionid, listen_handle)){
+				ret = client->msg_entry((nd_handle)client, (nd_packhdr_t *)data, listen_handle);
+			}
 			pmanger->unlock(pmanger,sessionid);
 		}		
 	}
@@ -335,7 +358,9 @@ int session_close_handler(nd_thsrv_msg *msg)
 	if(!client) {
 		return 0 ;
 	}
-	nd_session_close((nd_handle)client,0) ;
+	if (nd_session_getid(client) == sessionid) {
+		nd_session_close((nd_handle)client, 0);
+	}
 	pmanger->unlock(pmanger,sessionid);
 	return 0;
 }
@@ -372,10 +397,11 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 	
 	if (session_id){
 		int flag = iscrypt?  (ESF_NORMAL | ESF_ENCRYPT) : ESF_NORMAL;
-		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
-		
-		if (client && nd_connector_valid((nd_netui_handle)client)) {
-			nd_sessionmsg_sendex((nd_handle)client,&net_msg->msg_hdr,flag) ;
+		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;		
+		if (client ) {
+			if (_check_session_valid_async(client, session_id, lc)) {
+				nd_sessionmsg_sendex((nd_handle)client, &net_msg->msg_hdr, flag);
+			}
 			pmanger->unlock(pmanger,session_id);			
 		}
 	}
@@ -447,8 +473,10 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 	
 	if(session_id) {
 		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
-		if (client && nd_connector_valid((nd_netui_handle)client) ) {
-			client->msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
+		if (client ) {
+			if (_check_session_valid_async(client, session_id, lc)) {
+				client->msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
+			}
 			pmanger->unlock(pmanger, session_id);
 		}
 	}
