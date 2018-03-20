@@ -13,9 +13,14 @@ enum END_ERROR_TYPE
 #define ErrorElement(_errId, _err_description) ND##_errId 
 	NDERR_SUCCESS  = 0 ,	//ÕýÈ·
 #include "_nderr.h"
-	
+	NDERR_SYS_MAX_NUMBER 
 #undef ErrorElement 
 };
+
+static int nd_error_max_sys_number()
+{
+	return NDERR_SYS_MAX_NUMBER;
+}
 
 
 #define NDERR_USERDEFINE 1024 

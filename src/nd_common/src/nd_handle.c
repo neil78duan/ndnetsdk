@@ -268,6 +268,17 @@ const char *nd_error_desc(int in_err)
 	
 }
 
+
+static int _S_max_user_define_error_id = NDERR_USERDEFINE;
+int nd_error_get_user_number()
+{
+	return _S_max_user_define_error_id;
+}
+void nd_error_set_user_number(int max_user_number)
+{
+	_S_max_user_define_error_id = max_user_number;
+}
+
 const char *nd_object_errordesc(nd_handle h)
 {
 	return nd_error_desc(h->myerrno);
