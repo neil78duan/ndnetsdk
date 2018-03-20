@@ -167,8 +167,10 @@ ND_COMMON_API int nd_handle_checkvalid(nd_handle hobj, NDUINT16 objtype);
 
 ND_COMMON_API const char *nd_error_desc(int errcode);
 
-ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
+ND_COMMON_API int nd_error_get_user_number();
+ND_COMMON_API void nd_error_set_user_number(int max_user_number);
 
+ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
 
 ////////////////
 // user resource manager 
