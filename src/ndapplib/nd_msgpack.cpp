@@ -290,7 +290,7 @@ int NDOStreamMsg::Write(NDUINT8 a)
 
 int NDOStreamMsg::SetStructEnd()
 {
-	return _WriteOrg((NDUINT8)0xff);
+	return _WriteOrg((NDUINT8)NET_STREAM_STRUCT_END_MARK);
 }
 
 #endif
@@ -332,7 +332,14 @@ int NDOStreamMsg::WriteIp(ndip_v6_t a)
 }
 
 
-
+int NDOStreamMsg::Write(int a)
+{
+	return Write((NDUINT32)a);
+}
+int NDOStreamMsg::Write(short a)
+{
+	return Write((NDUINT16)a);
+}
 int NDOStreamMsg::Write(const char *text)
 {
 	return Write((const NDUINT8 *)text);
@@ -531,6 +538,12 @@ int NDOStreamMsg::_writeMarker(eNDnetStreamMarker marker, size_t sizebytes)
 }
 
 
+void NDOStreamMsg::SkipStructEndMark()
+{
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	_writeMarker(ENDSTREAM_CMD_SKIP_STRUCT_MARK, 0);
+#endif 
+}
 
 void NDOStreamMsg::SetID(int maxid, int minid) 
 {
@@ -931,6 +944,10 @@ BEGIN_READ_MARKER:
 		m_bStruckEndMarker = true;
 		return 0;
 	}
+	else if (marker == ENDSTREAM_CMD_SKIP_STRUCT_MARK) {
+		m_bSkipEndMarker = true;
+		goto BEGIN_READ_MARKER;
+	}
 	type = (eNDnetStreamMarker)((marker & 0xf0) >> 4);
 	size = marker & 0xf;
 	return 0;
@@ -1103,6 +1120,16 @@ int NDIStreamMsg::_ReadOrg(double &a)
 	return -1;
 }
 
+
+int NDIStreamMsg::Read(int &a)
+{
+	return Read((NDUINT32&)a);
+}
+
+int NDIStreamMsg::Read(short &a)
+{
+	return Read((NDUINT16&)a);
+}
 
 size_t NDIStreamMsg::Read (NDUINT8 *a, size_t size_buf) 
 {

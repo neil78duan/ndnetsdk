@@ -71,7 +71,7 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 	
 	bodySize = (int)reques->RequestValueTobuf(bodyBuf, sizeof(bodyBuf));
 	if (bodySize == 0 && reques->m_body.size() > 0 && NDHttpRequest::E_ACTION_POST){
-		bodySize = reques->m_body.size();
+		bodySize = (int) reques->m_body.size();
 		formBuf = (char*) reques->m_body.c_str();
 	}
 	

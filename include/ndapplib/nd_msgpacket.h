@@ -29,6 +29,7 @@ enum eNDnetStreamMarker
 	ENDSTREAM_MARKER_BIN,
 	ENDSTREAM_MARKER_IP32,
 	ENDSTREAM_MARKER_IP64,
+	ENDSTREAM_CMD_SKIP_STRUCT_MARK,
 
 };
 class ND_CONNCLI_CLASS NDSendMsg
@@ -77,7 +78,7 @@ public :
 	int Write(NDUINT8 ) ;
 	int Write(float) ;
 	int Write(double);
-	int SetStructEnd() ;
+	int SetStructEnd() ;	
 #else
 
 	int WriteForce(NDUINT32 a){return _WriteOrg(a) ;}
@@ -91,7 +92,8 @@ public :
 	inline int Write(double  a) {return _WriteOrg(a) ;}
 	int SetStructEnd(){return 0 ;}
 #endif
-
+	int Write(int);
+	int Write(short);
 	int Write(const NDUINT8 *text);
 	int Write(const char *text);
 	int WriteBin(void *data, size_t size) ;	
@@ -100,6 +102,7 @@ public :
 	int WriteIp(ndip_t ) ;
 	int WriteIp(ndip_v6_t ) ;
 
+	void SkipStructEndMark();
 	void SetID(int maxid, int minid) ;
 	friend class NDIStreamMsg ;
 	void *GetWriteAddr();// {return (void*)_op_addr; }
@@ -153,10 +156,9 @@ public :
 	int Read(float &a);
 	int Read(double &a);
 	void BeginReadStruct(){ m_bStruckEndMarker = false; }
-	bool CheckStructEnd() { return m_bStruckEndMarker; }
+	bool CheckStructEnd() { return m_bStruckEndMarker || LeftData() == 0; }
 	bool TrytoMoveStructEnd();
 	bool SetSkipMarker(bool bSkip) ;
-	bool CheckReachedEnd()	{return (m_bStruckEndMarker || LeftData()==0 );}
 	
 #else 
 
@@ -171,8 +173,11 @@ public :
 	bool CheckStructEnd() {return false;}
 	bool TrytoMoveStructEnd(){return true;}
 	bool SetSkipMarker(bool bSkip) {return true;}
-	bool CheckReachedEnd()	{return  LeftData()==0;}
 #endif 
+
+	int Read(int &a);
+	int Read(short &a);
+	bool CheckReachedEnd() { return  LeftData() == 0; }
 
 	size_t Read(NDUINT8 *buf, size_t size) ;
 	size_t Read(char *buf, size_t size) {return	 Read((NDUINT8 *)buf, size) ;}
