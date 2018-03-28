@@ -53,10 +53,10 @@ char* nd_full_path(const char*in_path, const char *in_file, char *outbuf, size_t
 			snprintf(outbuf, size, "%s%s", in_path, in_file);
 		}
 		else {
-#ifdef _MSC_VER
-			snprintf(outbuf, size, "%s\\%s", in_path, in_file);
-#else 
+#if  defined(ND_UNIX) 
 			snprintf(outbuf, size, "%s/%s", in_path, in_file);
+#else 
+			snprintf(outbuf, size, "%s\\%s", in_path, in_file);
 #endif
 		}
 	}
@@ -341,7 +341,13 @@ const char * nd_getpath(const char *filenamePath, char *pathbuf, size_t size)
 	return NULL;
 }
 
-#ifdef WIN32
+#if  defined(ND_UNIX) 
+static __INLINE__ int __is_equal_char(char a, char b)
+{
+	return (a == b);
+}
+
+#else
 static int __is_equal_char(char a, char b)
 {
 	if (IS_BIG_LATIN(a)) {
@@ -361,12 +367,6 @@ static int __is_equal_char(char a, char b)
 		return 1;
 	}
 	return 0;
-}
-
-#else
-static __INLINE__ int __is_equal_char(char a, char b)
-{
-	return (a == b);
 }
 
 #endif
@@ -437,6 +437,34 @@ _EXIT:
 		*p= 0;
 	}
 	return buf;
+}
+
+const char * nd_absolute_path(const char *relative_path, char *outbuf, size_t bufsize)
+{
+	char tmp_buf[ND_FILE_PATH_SIZE];
+	const char *wdir = nd_getcwd();
+	
+	strncpy(tmp_buf, wdir, sizeof(tmp_buf));
+	if (-1 == nd_chdir(relative_path)) {
+		return NULL;
+	}
+
+	wdir = nd_getcwd();
+	strncpy(outbuf, wdir, bufsize) ;
+	nd_chdir(tmp_buf);
+	return outbuf;
+}
+
+const char * nd_absolute_filename(const char *relative_file, char *outbuf, size_t bufsize)
+{
+	char tmp_buf[ND_FILE_PATH_SIZE];
+	if (!nd_getpath(relative_file, tmp_buf,sizeof(tmp_buf)) ) {
+		return NULL;
+	}
+	if (!nd_absolute_path(tmp_buf, tmp_buf, sizeof(tmp_buf))) {
+		return NULL;
+	}
+	return nd_full_path(tmp_buf, nd_filename(relative_file), outbuf, bufsize);
 }
 
 //get extend name 
