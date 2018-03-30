@@ -530,14 +530,12 @@ static int _delay_close_timer(void *param)
 	nd_session_closeex(session_id, (nd_handle)pthinfo->lh);
 	return 0;
 }
-static void _walk_all_session(struct node_root *pmanger, void *node_addr, void *param)
+static void _walk_all_session(struct node_root *pmanger, NDUINT16 session_id, void *param)
 {
-	struct nd_client_map  *client = (struct nd_client_map  *)node_addr;
 	nd_listen_handle listen_info = (nd_listen_handle)param;
 
-	NDUINT16 session_id = nd_session_getid((nd_handle)client);
+	struct nd_client_map *client = pmanger->lock(pmanger, session_id);
 
-	client = pmanger->lock(pmanger, session_id);
 	if (client) {
 		NDUINT16 interval = rand();
 		pmanger->unlock(pmanger, session_id);

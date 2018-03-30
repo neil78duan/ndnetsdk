@@ -245,7 +245,7 @@ void _nd_node_walk_node(struct node_root *root, node_walk_callback cb_entry, voi
 
 		if (nd_atomic_read(&(node->used)) > 0) {
 			--num;
-			cb_entry(root,node->node_addr, param); //unlock only read
+			cb_entry(root,i+root->base_id, param); //unlock only read
 		}
 	}
 }

@@ -20,7 +20,7 @@ typedef void (*node_dealloc)(void *node_addr,nd_handle alloctor) ;		//从分配器上
 typedef int (*node_freenum)(struct node_root *root) ;											//空闲节点个数
 typedef int (*node_capacity)(struct node_root *root) ;											//容量
 
-typedef void(*node_walk_callback)(struct node_root *root,void *node_addr, void *param);
+typedef void(*node_walk_callback)(struct node_root *root, NDUINT16 node_id, void *param);
 typedef NDUINT16 (*node_accept)(struct node_root *root, void *node_addr);
 typedef int (*node_deaccept)(struct node_root *root, NDUINT16 node_id);	//返回0成功，－1失败如果没有返回成功，很可能是引用计数不为0
 typedef int (*node_inc_ref)(struct node_root *root, NDUINT16 node_id);	//增加引用次数 返回0成功，－1失败
