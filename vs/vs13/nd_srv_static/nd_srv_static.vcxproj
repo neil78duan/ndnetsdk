@@ -198,6 +198,7 @@
     <ClInclude Include="..\..\..\include\ndstl\nd_text.h" />
     <ClInclude Include="..\..\..\include\ndstl\nd_utility.h" />
     <ClInclude Include="..\..\..\include\ndstl\nd_vector.h" />
+    <ClInclude Include="..\..\..\include\nd_common\cJSON.h" />
     <ClInclude Include="..\..\..\include\nd_common\list.h" />
     <ClInclude Include="..\..\..\include\nd_common\ndchar.h" />
     <ClInclude Include="..\..\..\include\nd_common\nddir.h" />
@@ -292,6 +293,7 @@
     <ClCompile Include="..\..\..\src\ndapplib\unix_sig.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\callstack.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\cJSON.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\common.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nddir.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_cmdline.c" />

@@ -145,6 +145,7 @@
     <ClCompile Include="..\..\..\src\ndclient\c_api\nd_exch_key.cpp" />
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\callstack.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\cJSON.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\common.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nddir.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_cmdline.c" />
