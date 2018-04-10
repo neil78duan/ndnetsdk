@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <Group
+      location = "container:"
+      name = "root">
+      <Group
+         location = "group:../cfg"
+         name = "cfg">
+         <FileRef
+            location = "group:cli_config.xml">
+         </FileRef>
+         <FileRef
+            location = "group:config.xml">
+         </FileRef>
+         <FileRef
+            location = "group:runconfig.xml">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:../config.sh">
+      </FileRef>
+      <Group
+         location = "group:../demo"
+         name = "demo">
+         <FileRef
+            location = "group:Makefile">
+         </FileRef>
+         <FileRef
+            location = "group:nd_lib_include.make">
+         </FileRef>
+         <Group
+            location = "group:ndclient"
+            name = "ndclient">
+            <FileRef
+               location = "group:client_udt.c">
+            </FileRef>
+            <FileRef
+               location = "group:conn_test.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:connector.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:connector.o">
+            </FileRef>
+            <FileRef
+               location = "group:Makefile">
+            </FileRef>
+            <FileRef
+               location = "group:max_connect.c">
+            </FileRef>
+            <FileRef
+               location = "group:new_sendfile.c">
+            </FileRef>
+            <FileRef
+               location = "group:send_file.c">
+            </FileRef>
+            <FileRef
+               location = "group:test_app.c">
+            </FileRef>
+            <FileRef
+               location = "group:test_cli_netio.c">
+            </FileRef>
+            <FileRef
+               location = "group:test_client.c">
+            </FileRef>
+            <FileRef
+               location = "group:test_raw.c">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:srvDemo"
+            name = "srvDemo">
+            <FileRef
+               location = "group:main.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:main.o">
+            </FileRef>
+            <FileRef
+               location = "group:Makefile">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:test"
+            name = "test">
+            <FileRef
+               location = "group:alloc.c">
+            </FileRef>
+            <FileRef
+               location = "group:alloc.o">
+            </FileRef>
+            <FileRef
+               location = "group:atomic.c">
+            </FileRef>
+            <FileRef
+               location = "group:atomic.o">
+            </FileRef>
+            <FileRef
+               location = "group:buffer.c">
+            </FileRef>
+            <FileRef
+               location = "group:buffer.o">
+            </FileRef>
+            <FileRef
+               location = "group:checksum.c">
+            </FileRef>
+            <FileRef
+               location = "group:checksum.o">
+            </FileRef>
+            <FileRef
+               location = "group:crypt.c">
+            </FileRef>
+            <FileRef
+               location = "group:crypt.o">
+            </FileRef>
+            <FileRef
+               location = "group:maintest.c">
+            </FileRef>
+            <FileRef
+               location = "group:maintest.o">
+            </FileRef>
+            <FileRef
+               location = "group:Makefile">
+            </FileRef>
+            <FileRef
+               location = "group:mutex.c">
+            </FileRef>
+            <FileRef
+               location = "group:mutex.o">
+            </FileRef>
+            <FileRef
+               location = "group:test_udp.c">
+            </FileRef>
+            <FileRef
+               location = "group:test_udp.o">
+            </FileRef>
+            <FileRef
+               location = "group:test_xml.c">
+            </FileRef>
+            <FileRef
+               location = "group:test_xml.o">
+            </FileRef>
+            <FileRef
+               location = "group:thmsg.c">
+            </FileRef>
+            <FileRef
+               location = "group:thmsg.o">
+            </FileRef>
+            <FileRef
+               location = "group:thsrv.c">
+            </FileRef>
+            <FileRef
+               location = "group:thsrv.o">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:test_srv"
+            name = "test_srv">
+            <FileRef
+               location = "group:mainserver.c">
+            </FileRef>
+            <FileRef
+               location = "group:Makefile">
+            </FileRef>
+            <FileRef
+               location = "group:srv_test.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:test_listen.c">
+            </FileRef>
+            <FileRef
+               location = "group:test_netio.c">
+            </FileRef>
+            <FileRef
+               location = "group:test_service.c">
+            </FileRef>
+            <FileRef
+               location = "group:test_udt.c">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:tool"
+            name = "tool">
+            <FileRef
+               location = "group:Makefile">
+            </FileRef>
+            <FileRef
+               location = "group:monitor.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:monitor.o">
+            </FileRef>
+            <FileRef
+               location = "group:ndxml_set.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:ndxml_set.o">
+            </FileRef>
+            <FileRef
+               location = "group:proxy_srv.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:rsa_keygen.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:rsa_keygen.o">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:vs10"
+            name = "vs10">
+            <FileRef
+               location = "group:_build.bat">
+            </FileRef>
+            <FileRef
+               location = "group:build_clean.bat">
+            </FileRef>
+            <FileRef
+               location = "group:build_debug.bat">
+            </FileRef>
+            <FileRef
+               location = "group:build_release.bat">
+            </FileRef>
+            <Group
+               location = "group:ndclient"
+               name = "ndclient">
+               <FileRef
+                  location = "group:ndclient.vcxproj">
+               </FileRef>
+               <FileRef
+                  location = "group:ndclient.vcxproj.user">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:proxy"
+               name = "proxy">
+               <FileRef
+                  location = "group:proxy.vcxproj">
+               </FileRef>
+               <FileRef
+                  location = "group:proxy.vcxproj.user">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:test"
+               name = "test">
+               <FileRef
+                  location = "group:test.vcxproj">
+               </FileRef>
+               <FileRef
+                  location = "group:test.vcxproj.user">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:test_srv"
+               name = "test_srv">
+               <FileRef
+                  location = "group:test_srv.vcxproj">
+               </FileRef>
+               <FileRef
+                  location = "group:test_srv.vcxproj.user">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:tool"
+               name = "tool">
+               <FileRef
+                  location = "group:tool.vcxproj">
+               </FileRef>
+               <FileRef
+                  location = "group:tool.vcxproj.user">
+               </FileRef>
+            </Group>
+            <FileRef
+               location = "group:vs10.sln">
+            </FileRef>
+         </Group>
+      </Group>
+      <FileRef
+         location = "group:../Makefile">
+      </FileRef>
+      <FileRef
+         location = "group:../README.md">
+      </FileRef>
+   </Group>
+   <Group
+      location = "container:"
+      name = "libs">
+      <FileRef
+         location = "group:ndcommon_mac/ndcommon_mac.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:ndMacStatic/ndMacStatic.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:ndclient_mac/ndclient_mac.xcodeproj">
+      </FileRef>
+   </Group>
+</Workspace>
