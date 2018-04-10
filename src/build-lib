@@ -21,10 +21,10 @@ OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_srvcore/obj/,$(obj1) )
 
 obj1 = $(shell ls $(TOPDIR)/src/nd_vm/obj | grep '\.o\>')
 OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_vm/obj/,$(obj1) )
-OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_vm/obj/,$(obj1) )
+OBJ_COMMON += $(addprefix $(TOPDIR)/src/nd_vm/obj/,$(obj1) )
 
 obj1 = $(shell ls $(TOPDIR)/src/ndapplib/obj | grep '\.o\>')
-OBJ_COMMON += $(addprefix $(TOPDIR)/src/ndapplib/obj/,$(obj1) )
+OBJS_SRV += $(addprefix $(TOPDIR)/src/ndapplib/obj/,$(obj1) )
 
 obj1 = $(shell ls $(TOPDIR)/src/ndclient/obj | grep '\.o\>')
 OBJ_CLIENT += $(addprefix $(TOPDIR)/src/ndclient/obj/,$(obj1) )
@@ -45,7 +45,7 @@ PROJ_COMMON = $(LIBOUTPUT)/lib$(COMMON_LIB).a
 ##############################################################
 
 
-all: $(PROJ_SRV) $(PROJ_CLIENT)
+all: $(PROJ_SRV) $(PROJ_CLIENT) $(PROJ_COMMON)
 	
 $(PROJ_SRV): $(OBJS_SRV)
 	$(AR) $(PROJ_SRV)  $(OBJS_SRV) $(LibFLAGS)
