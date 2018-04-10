@@ -59,10 +59,12 @@ ifeq ($(DEBUG),y)
 
     CLIENT_LIB := ndclient_$(AIM_NAME)_d
     SRV_LIB := ndsdk_$(AIM_NAME)_d
+	COMMON_LIB := ndcommon_$(AIM_NAME)_d
 else
     CFLAGS += -DNDEBUG
     CLIENT_LIB := ndclient_$(AIM_NAME)
     SRV_LIB := ndsdk_$(AIM_NAME)
+	COMMON_LIB := ndcommon_$(AIM_NAME)
 endif
 
 PLATFORM_BITS =  $(shell  getconf LONG_BIT )

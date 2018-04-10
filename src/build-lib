@@ -5,6 +5,7 @@ include $(NDHOME)/src/Rules.make
 obj1 = $(shell ls $(TOPDIR)/src/nd_common/obj | grep '\.o\>')
 OBJS_SRV := $(addprefix $(TOPDIR)/src/nd_common/obj/,$(obj1) )
 OBJ_CLIENT := $(addprefix $(TOPDIR)/src/nd_common/obj/,$(obj1) )
+OBJ_COMMON := $(addprefix $(TOPDIR)/src/nd_common/obj/,$(obj1) )
 
 obj1 = $(shell ls $(TOPDIR)/src/nd_net/obj | grep '\.o\>')
 OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_net/obj/,$(obj1) )
@@ -13,15 +14,17 @@ OBJ_CLIENT += $(addprefix $(TOPDIR)/src/nd_net/obj/,$(obj1) )
 obj1 = $(shell ls $(TOPDIR)/src/nd_crypt/obj | grep '\.o\>')
 OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_crypt/obj/,$(obj1) )
 OBJ_CLIENT += $(addprefix $(TOPDIR)/src/nd_crypt/obj/,$(obj1) )
+OBJ_COMMON += $(addprefix $(TOPDIR)/src/nd_crypt/obj/,$(obj1) )
 
 obj1 = $(shell ls $(TOPDIR)/src/nd_srvcore/obj | grep '\.o\>')
 OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_srvcore/obj/,$(obj1) )
 
 obj1 = $(shell ls $(TOPDIR)/src/nd_vm/obj | grep '\.o\>')
 OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_vm/obj/,$(obj1) )
+OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_vm/obj/,$(obj1) )
 
 obj1 = $(shell ls $(TOPDIR)/src/ndapplib/obj | grep '\.o\>')
-OBJS_SRV += $(addprefix $(TOPDIR)/src/ndapplib/obj/,$(obj1) )
+OBJ_COMMON += $(addprefix $(TOPDIR)/src/ndapplib/obj/,$(obj1) )
 
 obj1 = $(shell ls $(TOPDIR)/src/ndclient/obj | grep '\.o\>')
 OBJ_CLIENT += $(addprefix $(TOPDIR)/src/ndclient/obj/,$(obj1) )
@@ -33,6 +36,7 @@ OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_datatransfer.o
 
 PROJ_CLIENT = $(LIBOUTPUT)/lib$(CLIENT_LIB).a
 PROJ_SRV = $(LIBOUTPUT)/lib$(SRV_LIB).a
+PROJ_COMMON = $(LIBOUTPUT)/lib$(COMMON_LIB).a
 
 ######################
 
@@ -49,8 +53,11 @@ $(PROJ_SRV): $(OBJS_SRV)
 $(PROJ_CLIENT): $(OBJ_CLIENT)
 	$(AR) $(PROJ_CLIENT)  $(OBJ_CLIENT) $(LibFLAGS)
 
+$(PROJ_COMMON): $(OBJ_COMMON)
+	$(AR) $(PROJ_COMMON)  $(OBJ_COMMON) $(LibFLAGS)
+	
 clean:
-	rm -f $(PROJ_SRV) $(PROJ_CLIENT)
+	rm -f $(PROJ_SRV) $(PROJ_CLIENT) $(PROJ_COMMON)
 	
 
 ###############create dependence file #############

@@ -192,9 +192,6 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_time.h">
       <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_common\cJSON.h">
-      <Filter>include\common</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp">

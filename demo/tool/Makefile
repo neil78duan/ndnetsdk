@@ -5,8 +5,8 @@
 
 include $(NDHOME)/src/Rules.make
 
-MYLIBS := $(LIBOUTPUT)/lib$(SRV_LIB).a
-LFLAGS += -L$(LIBOUTPUT) -l$(SRV_LIB)
+MYLIBS := $(LIBOUTPUT)/lib$(COMMON_LIB).a
+LFLAGS += -L$(LIBOUTPUT) -l$(COMMON_LIB)
 
 PROJ1  = $(WORKDIR)/rsa_keygen
 PROJ2  = $(WORKDIR)/monitor
