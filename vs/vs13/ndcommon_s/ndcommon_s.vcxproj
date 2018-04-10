@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\nd_common\cJSON.h" />
     <ClInclude Include="..\..\..\include\nd_common\list.h" />
     <ClInclude Include="..\..\..\include\nd_common\ndchar.h" />
     <ClInclude Include="..\..\..\include\nd_common\nddir.h" />
@@ -182,7 +183,9 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_unix.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_win.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_xml.h" />
+    <ClInclude Include="..\..\..\include\nd_common\_client_config.h" />
     <ClInclude Include="..\..\..\include\nd_common\_nderr.h" />
+    <ClInclude Include="..\..\..\include\nd_common\_server_config.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_crypt.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_cryptfile.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_pubkey.h" />

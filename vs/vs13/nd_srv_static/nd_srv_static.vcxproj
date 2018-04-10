@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\..\include\ndapplib\nd_connector.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_containerXL.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_datatransfer.h" />
+    <ClInclude Include="..\..\..\include\ndapplib\nd_httpListener.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_instance.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_listener.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_lockhelper.h" />
@@ -279,6 +280,7 @@
     <ClCompile Include="..\..\..\src\ndapplib\nd_cmmgr.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_httpListener.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_instance.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_listener.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp" />

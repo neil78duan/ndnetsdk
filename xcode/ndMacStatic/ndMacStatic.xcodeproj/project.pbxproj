@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		071156BF1AD415BB003B3B46 /* session.c in Sources */ = {isa = PBXBuildFile; fileRef = 071156BE1AD415BB003B3B46 /* session.c */; };
+		0723FADB207C943700F3426C /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 0723FADA207C943700F3426C /* cJSON.c */; };
 		073590D61F5808CB0049C454 /* _client_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 073590D41F5808CB0049C454 /* _client_config.h */; };
 		073590D71F5808CB0049C454 /* _server_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 073590D51F5808CB0049C454 /* _server_config.h */; };
 		0739F41E1A676B1C00520AE2 /* nd_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0739F41D1A676B1C00520AE2 /* nd_version.cpp */; };
@@ -201,6 +202,7 @@
 
 /* Begin PBXFileReference section */
 		071156BE1AD415BB003B3B46 /* session.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = session.c; sourceTree = "<group>"; };
+		0723FADA207C943700F3426C /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cJSON.c; sourceTree = "<group>"; };
 		073129B01B57613B00D3F203 /* nd_netbyte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_netbyte.h; sourceTree = "<group>"; };
 		073590D41F5808CB0049C454 /* _client_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _client_config.h; sourceTree = "<group>"; };
 		073590D51F5808CB0049C454 /* _server_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _server_config.h; sourceTree = "<group>"; };
@@ -466,6 +468,7 @@
 		07EBCEB619A8DFCD00802576 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				0723FADA207C943700F3426C /* cJSON.c */,
 				074D84FB1D6C25D200201121 /* nd_time.c */,
 				07CFB03E1B1308EE0061C219 /* nd_iconv.c */,
 				07EBCEB719A8DFCD00802576 /* bintree.c */,
@@ -996,6 +999,7 @@
 				07EBCFA919A8DFCD00802576 /* nd_vmmain.c in Sources */,
 				07EBCFAF19A8DFCD00802576 /* nd_instance.cpp in Sources */,
 				07EBCF8419A8DFCD00802576 /* nd_msgentry.c in Sources */,
+				0723FADB207C943700F3426C /* cJSON.c in Sources */,
 				07EBCF7419A8DFCD00802576 /* nn.c in Sources */,
 				07EBCFB719A8DFCD00802576 /* nd_stlalloc.cpp in Sources */,
 				07EBCF8C19A8DFCD00802576 /* proxy_cli.c in Sources */,

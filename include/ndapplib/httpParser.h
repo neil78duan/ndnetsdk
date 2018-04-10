@@ -151,46 +151,13 @@ public:
 	nd_handle getHandle(){ return m_conn; }
 protected:
 
-	//NDIConn *m_conn ;
 	bool m_bLongConnection;
 	int m_port;
 	nd_handle m_conn;
 	std::string m_host;
 	std::string m_lastRequestPath;
-	//NDHttpRequest *m_recvRequest;
 	NDHttpResponse m_response;
 };
-
-
-class NDHttpSession;
-//typedef NDHttpRequest NDHttpResponse;
-
-
-typedef int(*http_reqeust_func)(NDHttpSession *pSession,const NDHttpRequest &resuest);
-
-class NDHttpSession : public NDBaseSession
-{
-public:
-	NDHttpSession();
-	virtual~NDHttpSession();
-
-	int SendResponse(NDHttpResponse &response, const char *errorDesc);
-
-	void OnCreate();
-	int onDataRecv(char *buf, int size);
-
-	static bool installRequest(const char *pathName, http_reqeust_func func);
-
-private:
-
-	int sendErrorResponse(int errorCdoe);
-	int onRequest(const char *path, const NDHttpRequest &request);
-	NDHttpRequest m_request;
-
-	typedef std::map<std::string, http_reqeust_func> requestEntry_map;
-
-	static requestEntry_map m_request_entry;
-
-};
+int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc);
 
 #endif /* defined(__roborts__httpParser__) */

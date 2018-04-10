@@ -113,7 +113,7 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 	return nd_connector_raw_write(h, buf, p - buf);
 }
 
-static int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc)
+int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc)
 {
 	int bodySize = reques->getBodySize();;
 	int len;
@@ -975,93 +975,5 @@ void HttpConnector::onResponse(NDHttpResponse *response)
 
 	response->dump();
 }
-
-//////////////////////////////////////////////////////////////////////////
-
-static int _session_data_handler(nd_handle sessionHandler, void *data, size_t len, nd_handle listen_h)
-{
-	NDHttpSession *pSession = (NDHttpSession*) NDGetSession(sessionHandler);
-	if (!pSession){
-		return -1;
-	}
-	return pSession->onDataRecv((char*)data, len);
-}
-
-static int testRequest1(NDHttpSession *pSession, const NDHttpRequest &resuest);
-static int testRequest2(NDHttpSession *pSession, const NDHttpRequest &resuest);
-
-NDHttpSession::requestEntry_map NDHttpSession::m_request_entry;
-
-bool NDHttpSession::installRequest(const char *pathName, http_reqeust_func func)
-{
-	if (!pathName || !*pathName)	{
-		return false;
-	}
-	m_request_entry[pathName] = func;
-	return true;
-}
-
-
-NDHttpSession::NDHttpSession()
-{
-	//installRequest("test1", testRequest1);
-	//installRequest("test2", testRequest2);
-}
-
-NDHttpSession ::~NDHttpSession()
-{
-}
-
-
-int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
-{
-	return _sendHttpResponse(GetHandle(),&response, errorDesc);
-}
-
-
-int NDHttpSession::sendErrorResponse(int errorCdoe)
-{
-	int len;
-	char *p;
-	char buf[0x10000];
-
-	p = buf;
-
-	len = snprintf(p, sizeof(buf), "HTTP/1.1 %d error%d \r\n", errorCdoe, errorCdoe);
-	p += len;
-
-
-	return nd_connector_raw_write(GetHandle(), buf, p - buf);
-}
-
-void NDHttpSession::OnCreate()
-{
-	nd_hook_data(GetHandle(), _session_data_handler);
-}
-
-int NDHttpSession::onDataRecv(char *buf, int size)
-{
-	ndprintf("%s\n", buf);
-	m_request.InData(buf, size);
-
-	if (m_request.CheckRecvOk()){
-		m_request.dump();
-		onRequest(m_request.getPath(), m_request);
-		m_request.Reset();
-	}
-	return size;
-}
-
-
-int NDHttpSession::onRequest(const char *path, const NDHttpRequest &request)
-{
-	requestEntry_map::iterator it =m_request_entry.find(path);
-	if (it == m_request_entry.end()  || !it->second)	{
-		return 404;
-	}
-
-	return it->second(this, request);
-}
-
 
 

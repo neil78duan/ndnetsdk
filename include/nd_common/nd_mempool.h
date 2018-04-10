@@ -51,17 +51,13 @@ ND_COMMON_API nd_handle nd_global_mmpool() ;
 ND_COMMON_API void* nd_pool_realloc(nd_handle pool ,void *oldaddr, size_t newsize) ;
 
 
-#if  defined(ND_SOURCE_TRACE) && defined(ND_UNUSE_STDC_ALLOC)
+#if  defined(ND_SOURCE_TRACE) 
 ND_COMMON_API void nd_mmpool_dump() ;
 #else 
 #define nd_mmpool_dump()		// 
 #endif 
 
 #ifdef ND_MEM_CHECK
-
-//带有日志跟踪的分配函数
-//ND_COMMON_API void *nd_pool_alloc_trace(nd_handle pool , size_t size, char *file, int line);
-//ND_COMMON_API void nd_pool_free_trace(nd_handle pool , void *p);
 
 typedef void *(*nd_alloc_func)(nd_handle _pool,size_t __s) ;		//定义内存申请函数指针
 typedef void (*nd_free_func)(nd_handle _pool,void *__p) ;			//定义内存释放函数指针
