@@ -36,12 +36,16 @@ public:
 	bool isLongConnect();
 	void InData(const char *data, int size);
 
-	int getStatus(){ return m_status; }
+	int getStatus()const{ return m_status; }
 	void setStatus(int stat) { m_status = stat; }
 
-	const char *getBody() { return m_body.c_str(); }
-	int getBodySize() { return (int)m_body.size(); }
-	const char *getHeader(const char *);	
+	const char *getBody()const { return m_body.c_str(); }
+	int getBodySize() const{ return (int)m_body.size(); }
+	const char *getHeader(const char *);
+	int getHeaderSize() const {	return (int)m_header.size();	}
+	const char* getHeaderVal(int index)const;
+	const char* getHeaderName(int index)const;
+
 	bool addHeader(const char *name, const char *value);
 
 
@@ -99,7 +103,6 @@ public:
 	int _postBodyToJson();
 protected:
 
-	typedef std::vector<httpHeaderNode>HttpHeader_t;
 
 	virtual int ParseProtocol();
 	virtual void onParseEnd();
@@ -108,10 +111,12 @@ protected:
 	
 public:
 
+	typedef std::vector<httpHeaderNode>HttpHeader_t;
 	//HttpHeader_t m_header;
 	HttpHeader_t m_requestForms;
 	std::string m_path;
 	//std::string m_body;
+	void *m_userData;
 };
 
 

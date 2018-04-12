@@ -97,7 +97,7 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 		bodySize = 0;
 	}
 	
-	len = reques->HeaderToBuf(p, sizeof(buf) - (p - buf));
+	len =(int) reques->HeaderToBuf(p, sizeof(buf) - (p - buf));
 	p += len; 
 
 	len = snprintf(p, sizeof(buf) - (p - buf), "Content-Type:application/x-www-form-urlencoded;charset=utf-8\r\n"
@@ -126,7 +126,7 @@ int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc
 	len = snprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", reques->getStatus(), errorDesc);
 	p += len;
 
-	len = reques->HeaderToBuf(p, sizeof(buf) -(p - buf));
+	len =(int) reques->HeaderToBuf(p, sizeof(buf) -(p - buf));
 	p += len;
 
 	len = snprintf(p, sizeof(buf) - (p - buf),"Server:userDefine\r\nContent-Length:%d\r\nConnection: Keep-Alive\r\n\r\n", bodySize);
@@ -234,6 +234,22 @@ const char *NDHttpParser::getHeader(const char *name)
 	}
 	return NULL;
 }
+
+const char* NDHttpParser::getHeaderVal(int index)const
+{
+	if (index < m_header.size()) {
+		return m_header[index].value.c_str();
+	}
+	return NULL;
+}
+const char* NDHttpParser::getHeaderName(int index)const
+{
+	if (index < m_header.size()) {
+		return m_header[index].name.c_str();
+	}
+	return NULL;
+}
+
 bool NDHttpParser::addHeader(const char *name, const char *value)
 {
 	_adNode(name, value, m_header);
@@ -462,7 +478,7 @@ size_t NDHttpParser::HeaderToBuf(char *buf, size_t size)
 ////////////////////
 //http parser
 
-NDHttpRequest::NDHttpRequest() :NDHttpParser()
+NDHttpRequest::NDHttpRequest() :NDHttpParser(), m_userData(0)
 {
 }
 NDHttpRequest:: ~NDHttpRequest()
@@ -539,7 +555,7 @@ int NDHttpRequest::_parsePathInfo(const char *path)
 
 	} while (p && *p);
 
-	return p - path ;
+	return (int)(p - path );
 }
 
 
@@ -579,6 +595,7 @@ void NDHttpRequest::Reset()
 	NDHttpParser::Reset();
 	m_path.clear();
 	m_requestForms.clear();
+	m_userData = NULL;
 }
 
 // 
@@ -802,7 +819,7 @@ int NDHttpRequest::_postBodyToJson()
 		} while (p && *p);
 
 	}
-	return m_body.size() ;
+	return (int)m_body.size() ;
 }
 
 //////////////////////////////////////////////////////////////////////////
