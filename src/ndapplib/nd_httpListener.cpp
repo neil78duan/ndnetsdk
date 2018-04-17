@@ -95,7 +95,7 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 	int len;
 	char *p;
 	char buf[0x10000];
-
+	
 	p = buf;
 
 	if (desc && *desc) {
@@ -105,6 +105,18 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 		len = snprintf(p, sizeof(buf), "HTTP/1.1 %d errorCode=%d \r\n", errorCdoe, errorCdoe);
 	}
 	p += len;
+
+	if (desc && *desc) {
+		len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:%d\r\nConnection: close\r\n\r\n", strlen(desc));
+		p += len;  
+		len = snprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", desc);
+	}
+	else {
+		len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:0\r\nConnection: close\r\n\r\n" );
+	}
+	p += len;
+
+
 	return nd_connector_raw_write(GetHandle(), buf, p - buf);
 }
 

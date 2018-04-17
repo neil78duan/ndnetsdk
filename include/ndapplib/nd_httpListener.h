@@ -49,6 +49,15 @@ struct ndHttpHandler
 	}
 };
 
+
+template<class keyT> struct httpStringComp
+{
+	bool operator()(const keyT &l, const keyT &r) const
+	{
+		return ndstricmp(l.c_str(), r.c_str()) < 0;
+	}
+};
+
 class NDHttpListener : public NDSafeListener
 {
 public:
@@ -61,7 +70,7 @@ public:
 	int onRequest(const char *reqPath, NDHttpSession *session, const NDHttpRequest &request);
 protected:
 	virtual int onRequestScript(const char* script, NDHttpSession *session, const NDHttpRequest &request);
-	typedef std::map<std::string, ndHttpHandler> requestEntry_map;
+	typedef std::map<std::string, ndHttpHandler, httpStringComp<std::string> > requestEntry_map;
 	requestEntry_map m_entrys;
 };
 

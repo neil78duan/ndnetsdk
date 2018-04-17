@@ -21,6 +21,8 @@
 		07631C7F1A539BEB00C82B5A /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */; };
 		07631C821A539E7500C82B5A /* nd_datatransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = 07631C811A539E7500C82B5A /* nd_datatransfer.h */; };
 		07647B501A3FDBBE00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B4F1A3FDBBE00A96620 /* nd_cmdline.c */; };
+		078966C7207F068900A38013 /* nd_httpListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 078966C6207F068900A38013 /* nd_httpListener.cpp */; };
+		078966C9207F069800A38013 /* nd_httpListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 078966C8207F069800A38013 /* nd_httpListener.h */; };
 		078A99491FA9E3390025C271 /* nd_netthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 078A99481FA9E3390025C271 /* nd_netthread.c */; };
 		079390C11FAAB4A100EC7438 /* nd_netthread.h in Headers */ = {isa = PBXBuildFile; fileRef = 079390C01FAAB4A100EC7438 /* nd_netthread.h */; };
 		07BBB3F51AC6839F0099A4EC /* nd_epoll.c in Sources */ = {isa = PBXBuildFile; fileRef = 07BBB3F41AC6839F0099A4EC /* nd_epoll.c */; };
@@ -218,6 +220,8 @@
 		07647B4E1A3FD77C00A96620 /* nd_cmdline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_cmdline.h; sourceTree = "<group>"; };
 		07647B4F1A3FDBBE00A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_cmdline.c; sourceTree = "<group>"; };
 		07647B641A4419B300A96620 /* _nderr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
+		078966C6207F068900A38013 /* nd_httpListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_httpListener.cpp; sourceTree = "<group>"; };
+		078966C8207F069800A38013 /* nd_httpListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_httpListener.h; sourceTree = "<group>"; };
 		078A99481FA9E3390025C271 /* nd_netthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_netthread.c; sourceTree = "<group>"; };
 		079390C01FAAB4A100EC7438 /* nd_netthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_netthread.h; sourceTree = "<group>"; };
 		07BBB3F41AC6839F0099A4EC /* nd_epoll.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_epoll.c; sourceTree = "<group>"; };
@@ -631,6 +635,7 @@
 		07EBCF1019A8DFCD00802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				078966C6207F068900A38013 /* nd_httpListener.cpp */,
 				0760D30C1B26CAE5005F076C /* httpParser.cpp */,
 				07D47C5219D9695A00D08BB6 /* nd_alarms.cpp */,
 				07EBCF1119A8DFCD00802576 /* Makefile */,
@@ -775,6 +780,7 @@
 		07EBD01119A8E01500802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				078966C8207F069800A38013 /* nd_httpListener.h */,
 				073DB4311B67162E00A93310 /* ndsingleton.h */,
 				0760D30E1B26CAF5005F076C /* httpParser.h */,
 				07631C811A539E7500C82B5A /* nd_datatransfer.h */,
@@ -886,6 +892,7 @@
 				07EBD06A19A8E01500802576 /* nd_cmmgr.h in Headers */,
 				07EBD03A19A8E01500802576 /* nd_static_alloc.h in Headers */,
 				0760D30F1B26CAF5005F076C /* httpParser.h in Headers */,
+				078966C9207F069800A38013 /* nd_httpListener.h in Headers */,
 				07EBD07819A8E01500802576 /* nd_rbtree.h in Headers */,
 				07EBD02D19A8E01500802576 /* nd_alloc.h in Headers */,
 				07EBD04D19A8E01500802576 /* rsa.h in Headers */,
@@ -1056,6 +1063,7 @@
 				07EBCF6A19A8DFCD00802576 /* nd_xml.c in Sources */,
 				07EBCF8F19A8DFCD00802576 /* udt_socket.c in Sources */,
 				07EBCF9A19A8DFCD00802576 /* thread_srv.c in Sources */,
+				078966C7207F068900A38013 /* nd_httpListener.cpp in Sources */,
 				07EBCF8119A8DFCD00802576 /* tea.c in Sources */,
 				07EBCF6B19A8DFCD00802576 /* nddir.c in Sources */,
 				07EBCFB119A8DFCD00802576 /* nd_msgpack.cpp in Sources */,
