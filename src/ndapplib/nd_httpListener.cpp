@@ -107,7 +107,7 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 	p += len;
 
 	if (desc && *desc) {
-		len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:%d\r\nConnection: close\r\n\r\n", strlen(desc));
+		len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:%d\r\nConnection: close\r\n\r\n", (int)strlen(desc));
 		p += len;  
 		len = snprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", desc);
 	}
