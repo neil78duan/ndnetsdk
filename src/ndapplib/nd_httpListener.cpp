@@ -75,13 +75,14 @@ static int _session_data_handler(nd_handle sessionHandler, void *data, size_t le
 }
 
 
-NDHttpSession::NDHttpSession()
+NDHttpSession::NDHttpSession() : m_bLongConnect(false)
 {
 }
 
 NDHttpSession ::~NDHttpSession()
 {
 }
+
 
 
 int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
@@ -131,10 +132,25 @@ int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 	m_request.InData(buf, size);
 
 	if (m_request.CheckRecvOk()) {
+		setLongConnect();
 		m_request.dump();
 		m_request.m_userData = pListener;
 		pListener->onRequest(m_request.getPath(), this, m_request);
 		m_request.Reset();
+		if (!m_bLongConnect) {
+			return -1; //CLOSE after on request
+		}
 	}
 	return size;
+}
+
+void NDHttpSession::setLongConnect()
+{
+	const char *connSt = m_request.getHeader("Connection");
+	if (connSt) {
+		if (0 == ndstricmp(connSt, "Keep-Alive")) {
+			m_bLongConnect = true;
+		}
+	}
+
 }
