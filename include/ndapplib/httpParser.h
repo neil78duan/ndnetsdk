@@ -55,6 +55,10 @@ public:
 	eAction getAction() { return m_action; }
 	void setAction(NDHttpParser::eAction act) { m_action = act; }
 
+	static std::string textToURLcode(const char *text,bool isLittle= false);
+
+	static std::string URLcodeTotext(const char *urlCode);
+
 	typedef std::vector<httpHeaderNode>HttpHeader_t;
 
 protected:
@@ -101,9 +105,8 @@ public:
 	int dump();
 	virtual void Reset();
 	int _postBodyToJson();
+
 protected:
-
-
 	virtual int ParseProtocol();
 	virtual void onParseEnd();
 	int _parsePathInfo(const char *path);

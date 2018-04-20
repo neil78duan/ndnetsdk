@@ -132,7 +132,8 @@ int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 	m_request.InData(buf, size);
 
 	if (m_request.CheckRecvOk()) {
-		setLongConnect();
+		//setLongConnect();
+		m_bLongConnect = m_request.isLongConnect();
 		m_request.dump();
 		m_request.m_userData = pListener;
 		pListener->onRequest(m_request.getPath(), this, m_request);
@@ -143,14 +144,14 @@ int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 	}
 	return size;
 }
-
-void NDHttpSession::setLongConnect()
-{
-	const char *connSt = m_request.getHeader("Connection");
-	if (connSt) {
-		if (0 == ndstricmp(connSt, "Keep-Alive")) {
-			m_bLongConnect = true;
-		}
-	}
-
-}
+// 
+// void NDHttpSession::setLongConnect()
+// {
+// 	const char *connSt = m_request.getHeader("Connection");
+// 	if (connSt) {
+// 		if (0 == ndstricmp(connSt, "Keep-Alive")) {
+// 			m_bLongConnect = true;
+// 		}
+// 	}
+// 
+// }

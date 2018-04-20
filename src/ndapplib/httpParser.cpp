@@ -140,6 +140,76 @@ int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc
 	return nd_connector_raw_write(h, buf, p - buf);
 }
 
+
+static unsigned char bits4ToHex(unsigned char x)
+{
+	return  x > 9 ? x + 55 : x + 48;
+}
+
+static unsigned char bits4ToHexLittle(unsigned char x)
+{
+	return  x > 9 ? x + 87 : x + 48;
+}
+
+static unsigned char FromHexChar(unsigned char x)
+{
+	unsigned char y;
+	if (x >= 'A' && x <= 'Z') y = x - 'A' + 10;
+	else if (x >= 'a' && x <= 'z') y = x - 'a' + 10;
+	else if (x >= '0' && x <= '9') y = x - '0';
+	else {}
+	return y;
+}
+
+
+std::string NDHttpParser::textToURLcode(const char *text, bool isLittle )
+{
+	std::string strTemp = "";
+	while (*text) {
+		unsigned char chr1 = *text++;
+		if (isalnum(chr1) || (chr1 == '-') || (chr1 == '_') ||(chr1 == '.') || (chr1 == '~')) {
+			strTemp += chr1;
+		}
+		else if (chr1 == ' ') {
+			strTemp += "+";
+		}
+		else {
+			strTemp += '%';
+			unsigned char t1 = isLittle? bits4ToHexLittle(chr1 >> 4): bits4ToHex(chr1 >> 4);
+			strTemp += t1;
+			unsigned char t2 = isLittle ? bits4ToHexLittle(chr1 % 16) :  bits4ToHex(chr1 % 16);
+			strTemp += t2;
+		}
+	}	
+	return strTemp;
+}
+std::string NDHttpParser::URLcodeTotext(const char *urlCode)
+{
+	std::string strTemp = "";
+	while (*urlCode) {
+		unsigned char chr1 = *urlCode++;
+		if (chr1 == '%') {
+			char hiBits4 = *urlCode++;
+			if (!hiBits4) {
+				break;
+			}
+			char loBits4 = *urlCode++;
+			if (!loBits4) {
+				break;
+			}
+			unsigned char val = FromHexChar(hiBits4) << 4 | FromHexChar(loBits4);
+			strTemp += val;
+		}
+		else if (chr1 == '+') {
+			strTemp += " ";
+		}
+		else {
+			strTemp += chr1;
+		}
+	}
+	return strTemp;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 NDHttpParser::NDHttpParser()
@@ -634,9 +704,10 @@ int NDHttpRequest::ParseProtocol()
 		buf[0] = 0;
 		p = (char*)ndstr_nstr_ansi(p, buf, ' ', sizeof(buf));
 		if (buf[0]) {
-			httpHeaderNode node1 = { "PATH", buf };
+			std::string myFullPath = URLcodeTotext(buf);
+			httpHeaderNode node1 = { "PATH", myFullPath.c_str() };
 			m_header.push_back(node1);
-			_parsePathInfo(buf);
+			_parsePathInfo(myFullPath.c_str());
 		}
 	}
 
@@ -938,7 +1009,8 @@ void HttpConnector::Destroy()
 int HttpConnector::SendRequest(NDHttpRequest &request, const char *host, int port, const char *path)
 {
 	m_lastRequestPath = path;
-	return _sendHttpRequest(m_conn, &request, path, host, port,m_bLongConnection);
+	std::string pathUrl = NDHttpParser::textToURLcode(path);
+	return _sendHttpRequest(m_conn, &request, pathUrl.c_str(), host, port,m_bLongConnection);
 }
 
 int HttpConnector::Recv(char *buf, int size, int timeout)

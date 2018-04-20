@@ -87,7 +87,7 @@ public:
 	int onDataRecv(char *buf, int size, NDHttpListener *pListener);
 	
 private:
-	void setLongConnect();
+	//void setLongConnect();
 	NDHttpRequest m_request;
 	bool m_bLongConnect;
 

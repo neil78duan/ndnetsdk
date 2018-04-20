@@ -527,21 +527,33 @@ int ndstricmp(const char *src, const char *desc)
 {
 	int ret ;
 	do {
-		ret = *src - *desc ;
-		if(ret){
-			char a ;
-			if(IS_BIG_LATIN(*src)) {
-				a= BIG_2_LITTLE(*src) ;
-			}
-			else if(IS_LITTLE_LATIN(*src)) {
-				a=LITTLE_2_BIG(*src) ;
-			}
-			else {
-				return ret ;
-			}
-			if(a!=*desc)
-				return ret ;
+		char a = *src;
+		char b = *desc;
+		if (IS_LITTLE_LATIN(a)) {
+			a = LITTLE_2_BIG(a);
 		}
+
+		if (IS_LITTLE_LATIN(b)) {
+			b = LITTLE_2_BIG(b);
+		}
+		ret = a - b;
+		if (ret)
+			break;
+// 		ret = *src - *desc ;
+// 		if(ret){
+// 			char a ;
+// 			if(IS_BIG_LATIN(*src)) {
+// 				a= BIG_2_LITTLE(*src) ;
+// 			}
+// 			else if(IS_LITTLE_LATIN(*src)) {
+// 				a=LITTLE_2_BIG(*src) ;
+// 			}
+// 			else {
+// 				return ret ;
+// 			}
+// 			if(a!=*desc)
+// 				return ret ;
+// 		}
 		desc++ ;
 	}while (*src++) ;
 	return ret ;
