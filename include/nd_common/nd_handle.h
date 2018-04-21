@@ -10,6 +10,7 @@
 #define _ND_HANDLE_H_
 
 #include "nd_comcfg.h"
+#include "nd_comdef.h"
 #include "list.h"
 #include "nd_os.h"
 #include "nd_bintree.h"
@@ -156,6 +157,7 @@ static __INLINE__ void nd_object_seterror(nd_handle h, NDUINT32 errcode)
 	((struct tag_nd_handle*)h)->myerrno =(NDUINT16) errcode;
 }
 
+ND_COMMON_API int nd_object_get_type(nd_handle h);
 ND_COMMON_API const char *nd_object_errordesc(nd_handle h) ;
 ND_COMMON_API int nd_object_check_error(nd_handle h) ;//检测句柄是否出错无效
 ND_COMMON_API int nd_tryto_clear_err(nd_handle h) ;

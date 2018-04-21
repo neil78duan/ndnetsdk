@@ -141,7 +141,10 @@ static __INLINE__ void nd_net_connbuf_init(nd_netui_handle node)
 	ndlbuf_init(&node->recv_buffer, ND_NETBUF_SIZE) ;
 	ndlbuf_init(&node->send_buffer, ND_NETBUF_SIZE) ;
 }
-
+static __INLINE__ int nd_netobj_is_session(nd_handle node)
+{
+	return( (nd_netui_handle)node)->is_session;
+}
 
 int net_init_sendlock(nd_netui_handle socket_node);
 void net_release_sendlock(nd_netui_handle  socket_node);

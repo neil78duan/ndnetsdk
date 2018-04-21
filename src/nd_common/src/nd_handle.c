@@ -284,6 +284,11 @@ const char *nd_object_errordesc(nd_handle h)
 	return nd_error_desc(h->myerrno);
 }
 
+int nd_object_get_type(nd_handle h)
+{
+	return (h->type);
+}
+
 int nd_object_check_error(nd_handle h) 
 {
 	if (h->myerrno ==NDERR_SUCCESS ||

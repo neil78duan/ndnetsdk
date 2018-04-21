@@ -11,10 +11,28 @@
 #include "ndapplib/nd_listener.h"
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_cmmgr.h"
+#include "ndapplib/nd_connector.h"
 //#include "pg_config.h"
 
 static ndatomic_t __current_num = 0 ;
 
+
+NDObject *NDObject::FromHandle(nd_handle h)
+{
+	int type = nd_object_get_type(h);
+	if (type == NDHANDLE_TCPNODE || type == NDHANDLE_UDPNODE) {
+		if (nd_netobj_is_session(h)) {
+			return NDGetSession(h);
+		}
+		else {
+			return htoConnector(h);
+		}
+	}
+	else if (type == NDHANDLE_LISTEN) {
+		return NDGetListener(h);
+	}
+	return NULL;
+}
 
 //通过监听句柄得到NDListener类
 NDListener *NDGetListener(nd_handle h_listen) 

@@ -87,7 +87,11 @@ NDHttpSession ::~NDHttpSession()
 
 int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 {
-	return _sendHttpResponse(GetHandle(), &response, errorDesc);
+	int ret = _sendHttpResponse(GetHandle(), &response, errorDesc);
+	if (!m_bLongConnect) {
+		this->Close(0);
+	}
+	return ret;
 }
 
 
@@ -118,7 +122,11 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 	p += len;
 
 
-	return nd_connector_raw_write(GetHandle(), buf, p - buf);
+	int ret = nd_connector_raw_write(GetHandle(), buf, p - buf);
+	if (!m_bLongConnect) {
+		this->Close(0);
+	}
+	return ret;
 }
 
 void NDHttpSession::OnCreate()
@@ -138,9 +146,9 @@ int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 		m_request.m_userData = pListener;
 		pListener->onRequest(m_request.getPath(), this, m_request);
 		m_request.Reset();
-		if (!m_bLongConnect) {
-			return -1; //CLOSE after on request
-		}
+		//if (!m_bLongConnect) {
+		//	return -1; //CLOSE after on request
+		//}
 	}
 	return size;
 }

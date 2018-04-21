@@ -126,7 +126,10 @@ int NDObject::SetMmpool(nd_handle pool)
     }
 }
 
-
+void *NDObject::getScriptEngine()
+{
+	return NULL;
+}
 
 int NDObject::Create(char *name)
 {

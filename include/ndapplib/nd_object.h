@@ -52,12 +52,15 @@ public :
     
     virtual nd_handle GetMmpool() ;
     virtual int SetMmpool(nd_handle pool) ;
+	virtual void *getScriptEngine();
 	
 	void SetUserObj(NDObject *obj) {m_userData = obj ;}
 	NDObject *GetUserObj() {return m_userData ;}
 
 	const char *getName();
 	void setName(const char *name);
+
+	static NDObject * FromHandle(nd_handle h);
 
 protected:
     NDUINT8 m_bPoolOwner ;
