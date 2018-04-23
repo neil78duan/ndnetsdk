@@ -38,7 +38,7 @@ public :
 	virtual int LastError() ;
 	virtual void SetLastError(NDUINT32 errcode) ;
 
-	virtual int Create(char *name) ;
+	virtual int Create(const char *name) ;
 	virtual void Destroy(int flag=0) ;
 	virtual void OnCreate() ;			//call on create
 	virtual void OnDestroy() ;

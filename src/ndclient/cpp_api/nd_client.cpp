@@ -37,9 +37,28 @@ CPPAPI int _big_data_recv_handler(NDIConn* pconn, nd_usermsgbuf_t *msg );
 //#define  WAITMSG_TIMEOUT 300000
 
 
+NDObject * NDObject::FromHandle(nd_handle h)
+{
+	return htoConnector(h);
+}
+
+
 class NDConnector : public NDIConn 
 {
 public :		
+	virtual void OnCreate() { return; }
+	virtual void OnDestroy() {}
+	
+	virtual nd_handle GetMmpool() {
+		return nd_global_mmpool();
+	}
+	virtual int SetMmpool(nd_handle pool) {
+		return 0;
+	}
+	virtual void *getScriptEngine();
+	virtual const char *getName();
+	virtual void setName(const char *name);
+
 	void Destroy(int flag = 0);
 	int Create(const char *protocol_name=NULL) ;
 	int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL);
@@ -122,6 +141,28 @@ int NDConnector::LastError()
 	else 
 		return nd_object_lasterror(m_objhandle) ;
 
+}
+
+void *NDConnector::getScriptEngine()
+{
+	if (m_objhandle) {
+		return nd_message_get_script_engine(m_objhandle);
+	}
+	return NULL;
+}
+const char *NDConnector::getName()
+{
+	if (m_objhandle) {
+		return nd_object_get_instname(m_objhandle);
+	}
+	return NULL;
+
+}
+void NDConnector::setName(const char *name)
+{
+	if (m_objhandle) {
+		nd_object_set_instname(m_objhandle,name);
+	}
 }
 
 int NDConnector::ioctl(int cmd, void *val, int *size)
@@ -229,6 +270,7 @@ int NDConnector::Create(const char *protocol_name)
 	int val = 1;
 	int size = sizeof(val);
 	//nd_net_ioctl((nd_netui_handle)m_objhandle, NDIOCTL_LOG_RECV_MSG, &val, &size);
+	OnCreate();
 	return 0 ;
 
 }
@@ -239,6 +281,7 @@ void NDConnector::Destroy(int flag)
 		nd_msgtable_destroy(m_objhandle, 0);
 		nd_object_destroy(m_objhandle, 0) ;
 		m_objhandle = 0 ;
+		OnDestroy();
 	}
 }
 
@@ -503,58 +546,3 @@ int _big_data_recv_handler(NDIConn* pconn, nd_usermsgbuf_t *msg )
 
 
 
-/*
-
-struct sub_msgentry
-{
-    struct msg_entry_node   msg_buf[SUB_MSG_NUM] ;
-};
-
-
-
-int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
-{
-	ENTER_FUNC()
-	int ret = 0 ;
-	int data_len = nd_pack_len(msg);
-	struct msgentry_root *root_entry= NULL;
-	nd_usermsg_func  func = NULL ;
-	nd_usermsghdr_t *usermsg =  (nd_usermsghdr_t *) msg ;
-
-	nd_assert(msg) ;
-	nd_assert(connect_handle) ;
-
-	root_entry =(struct msgentry_root *)nd_get_msg_hadle(connect_handle);
-
-	if(root_entry) {
-		ndmsgid_t main_index , minid;
-		nd_netmsg_ntoh(usermsg) ;
-		main_index = usermsg->maxid - root_entry->msgid_base;
-		minid = usermsg->minid ;
-		if(main_index >= root_entry->main_num || minid>=SUB_MSG_NUM){
-			nd_object_seterror((nd_handle)connect_handle, NDERR_INVALID_INPUT) ;
-			LEAVE_FUNC();
-			return -1 ;
-		}
-
-		func = root_entry->sub_buf[main_index].msg_buf[minid].entry ;
-        if(!func && root_entry->def_entry){
-            func = root_entry->def_entry ;
-        }
-        
-		if(func) {
-			NDIConn *pc = htoConnector((nd_handle)connect_handle);
-            nd_iconn_func handler = (nd_iconn_func) func ;
-			ret = handler(pc, (nd_usermsgbuf_t*)usermsg) ;
-		}
-	}
-
-	if(-1==ret) {
-		nd_object_seterror((nd_handle)connect_handle, NDERR_USER) ;
-		LEAVE_FUNC();
-		return -1 ;
-	}
-	LEAVE_FUNC();
-	return  data_len ;
-}
-*/

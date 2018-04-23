@@ -48,7 +48,7 @@ struct msgentry_root
 };
 
 
-int srv_default_handler(nd_handle session_handle , nd_usermsgbuf_t *msg);
+//int srv_default_handler(nd_handle session_handle , nd_usermsgbuf_t *msg);
 int connector_default_handler(nd_handle session_handle , nd_usermsgbuf_t *msg,nd_handle hlisten);
 int connector_default_handler1(NDUINT16 session_id , nd_usermsgbuf_t *msg,nd_handle hlisten);
 
@@ -383,6 +383,14 @@ int nd_message_set_script_engine(nd_handle handle, void *script_engine, nd_msg_s
 		return 0;
 	}
 	return -1;
+}
+void* nd_message_get_script_engine(nd_handle handle)
+{
+	struct msgentry_root *root_entry = (struct msgentry_root *) nd_get_msg_hadle(handle);
+	if (root_entry) {
+		return root_entry->script_engine;
+	}
+	return NULL;
 }
 
 static int _call_message_func(struct msgentry_root *root,struct msg_entry_node * node, nd_usermsgbuf_t*msg, nd_netui_handle conn, nd_handle lh)

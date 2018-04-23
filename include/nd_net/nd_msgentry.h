@@ -111,6 +111,8 @@ ND_NET_API int nd_msgentry_script_install(nd_handle handle, const char*script, n
 /* set script engine */
 ND_NET_API int nd_message_set_script_engine(nd_handle handle, void *script_engine, nd_msg_script_entry entry);
 
+/* get script engine */
+ND_NET_API void* nd_message_get_script_engine(nd_handle handle);
 
 /* 设置默认消息处理函数*/
 ND_NET_API int nd_msgentry_def_handler(nd_handle handle, nd_usermsg_func func)  ;

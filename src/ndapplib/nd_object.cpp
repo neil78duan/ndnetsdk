@@ -131,7 +131,7 @@ void *NDObject::getScriptEngine()
 	return NULL;
 }
 
-int NDObject::Create(char *name)
+int NDObject::Create(const char *name)
 {
 	return 0 ;
 }
