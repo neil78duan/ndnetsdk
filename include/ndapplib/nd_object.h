@@ -8,6 +8,7 @@
 #define _NDOBJECT_H_
 
 //#include <stdexcept>
+#include "ndapplib/nd_iBaseObj.h"
 #include "nd_common/nd_common.h"
 #include "ndstl/nd_utility.h"
 #include "ndstl/nd_new.h"
@@ -19,7 +20,7 @@ using namespace std ;
 #pragma  warning (disable : 4290 )
 #pragma  warning (disable : 4291 )
 
-class NDObject 
+class NDObject : public NDIBaseObj 
 {
 protected :
 	NDObject();
@@ -54,8 +55,8 @@ public :
     virtual int SetMmpool(nd_handle pool) ;
 	virtual void *getScriptEngine();
 	
-	void SetUserObj(NDObject *obj) {m_userData = obj ;}
-	NDObject *GetUserObj() {return m_userData ;}
+	//void SetUserObj(NDObject *obj) {m_userData = obj ;}
+	//NDObject *GetUserObj() {return m_userData ;}
 
 	const char *getName();
 	void setName(const char *name);
@@ -67,7 +68,7 @@ protected:
     nd_handle m_pool ;
     
     nd_handle m_objhandle ;
-	NDObject *m_userData ;
+	//NDObject *m_userData ;
 };
 
 typedef void (NDObject::*NDObjectFunc)();

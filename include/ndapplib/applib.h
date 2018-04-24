@@ -37,6 +37,7 @@
 
 
 #include "ndapplib/ndsingleton.h"
+#include "ndapplib/nd_iBaseObj.h"
 //#include "pg_config.h"
 
 typedef int (*exit_app_func)(int flag) ;

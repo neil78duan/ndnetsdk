@@ -46,7 +46,7 @@ NDObject * NDObject::FromHandle(nd_handle h)
 class NDConnector : public NDIConn 
 {
 public :		
-	virtual void OnCreate() { return; }
+	/*virtual void OnCreate() { return; }
 	virtual void OnDestroy() {}
 	
 	virtual nd_handle GetMmpool() {
@@ -54,7 +54,8 @@ public :
 	}
 	virtual int SetMmpool(nd_handle pool) {
 		return 0;
-	}
+	}*/
+
 	virtual void *getScriptEngine();
 	virtual const char *getName();
 	virtual void setName(const char *name);
@@ -270,7 +271,6 @@ int NDConnector::Create(const char *protocol_name)
 	int val = 1;
 	int size = sizeof(val);
 	//nd_net_ioctl((nd_netui_handle)m_objhandle, NDIOCTL_LOG_RECV_MSG, &val, &size);
-	OnCreate();
 	return 0 ;
 
 }
@@ -281,7 +281,6 @@ void NDConnector::Destroy(int flag)
 		nd_msgtable_destroy(m_objhandle, 0);
 		nd_object_destroy(m_objhandle, 0) ;
 		m_objhandle = 0 ;
-		OnDestroy();
 	}
 }
 

@@ -61,7 +61,7 @@ void NDObject::operator delete[](void *p) throw()
 }
 #endif 
 
-NDObject::NDObject() :m_objhandle(NULL),m_userData(NULL)
+NDObject::NDObject() :m_objhandle(NULL)//,m_userData(NULL)
 {
     m_bPoolOwner = NULL;
     m_pool = 0;

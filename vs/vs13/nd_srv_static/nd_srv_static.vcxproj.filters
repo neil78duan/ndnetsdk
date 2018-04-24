@@ -375,6 +375,9 @@
     <ClInclude Include="..\..\..\include\ndapplib\nd_httpListener.h">
       <Filter>include\ndapplib</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_iBaseObj.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">

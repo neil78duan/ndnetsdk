@@ -177,6 +177,7 @@
     <ClInclude Include="..\..\..\include\ndapplib\nd_containerXL.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_datatransfer.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_httpListener.h" />
+    <ClInclude Include="..\..\..\include\ndapplib\nd_iBaseObj.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_instance.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_listener.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_lockhelper.h" />

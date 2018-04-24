@@ -16,6 +16,7 @@
 #include "nd_net/nd_netlib.h"
 #include "nd_crypt/nd_crypt.h"
 #include "ndapplib/nd_msgpacket.h"
+#include "ndapplib/nd_iBaseObj.h"
 #endif 
 #include "ndcli/nd_api_c.h"
 
@@ -38,25 +39,11 @@ typedef int (*nd_bigdata_handler)(nd_handle nethandle,  NDUINT64 param , void *d
 ND_CONNCLI_API int ndGetTimeoutVal();
 
 #define  WAITMSG_TIMEOUT ndGetTimeoutVal()
-class NDObject
+
+
+class NDObject: public NDIBaseObj
 {
-public:
-	virtual int Create(const char *name) =0;
-	virtual void Destroy(int flag = 0) =0;
-	virtual void OnCreate() =0;			//call on create
-	virtual void OnDestroy() =0;
-
-	virtual nd_handle GetHandle() =0;
-	virtual int LastError() = 0;
-	virtual void SetLastError(NDUINT32 errcode) = 0;
-	
-	virtual nd_handle GetMmpool() = 0;
-	virtual int SetMmpool(nd_handle pool) = 0;
-	virtual void *getScriptEngine() = 0;
-	
-	virtual const char *getName() =0;
-	virtual void setName(const char *name) =0;
-
+public:	
 	static NDObject * FromHandle(nd_handle h);
 protected:
 	NDObject() {}
@@ -66,9 +53,13 @@ protected:
 class NDIConn : public NDObject
 {
 public:
-// 	virtual int LastError() = 0;
-// 	virtual void SetLastError(NDUINT32 errcode) = 0;
-// 	virtual nd_handle GetHandle() = 0;
+	virtual void *getScriptEngine() = 0;
+	virtual const char *getName() = 0;
+	virtual void setName(const char *name) = 0;
+
+	virtual int LastError() = 0;
+	virtual void SetLastError(NDUINT32 errcode) = 0;
+	virtual nd_handle GetHandle() = 0;
 
 	virtual int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
 	virtual int Open(ndip_t ip, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
@@ -98,7 +89,7 @@ public:
 	virtual int ioctl(int cmd, void *val, int *size) = 0;
 	virtual void SetBigDataHandler(nd_bigdata_handler entry) = 0 ;
 	virtual int GetStatus() = 0;
-	
+
 protected:
 	NDIConn() {} 
 	virtual~NDIConn() {}

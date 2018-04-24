@@ -21,7 +21,7 @@ public:
 		if (!_addr)
 		{
 			_addr = new T;
-			if (0 != _addr->Init()) {
+			if (0 != _addr->Create(NULL)) {
 				_addr->Destroy();
 				delete _addr;
 				_addr = 0;
