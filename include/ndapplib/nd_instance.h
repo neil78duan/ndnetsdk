@@ -61,6 +61,8 @@ public :
 	bool CheckNormalExit() {return m_bNormalExit==0 ? true : false ;}
 	void SetExitCode(int exitcode = 0) {m_bNormalExit = exitcode ;}
 	void trytoDaemon() ;
+
+	const char *Getcfgfile() { return config_file; }
 protected :
 	
 	int connectServer(const char *name,NDConnector *inconnect);
@@ -132,7 +134,6 @@ public:
 		} 
 	}
 
-	const char *Getcfgfile() {return config_file ;}
 };
 
 typedef nd_instance<NDSession, NDListener> NDInstance ;

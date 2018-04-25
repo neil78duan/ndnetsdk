@@ -44,6 +44,15 @@ ND_CONNCLI_API int ndGetTimeoutVal();
 class NDObject: public NDIBaseObj
 {
 public:	
+
+	virtual void *getScriptEngine() = 0;
+	virtual int LastError() = 0;
+	virtual void SetLastError(NDUINT32 errcode) = 0;
+	virtual nd_handle GetHandle() = 0;
+
+	virtual const char *getName() = 0;
+	virtual void setName(const char *name) = 0;
+
 	static NDObject * FromHandle(nd_handle h);
 protected:
 	NDObject() {}
@@ -53,14 +62,6 @@ protected:
 class NDIConn : public NDObject
 {
 public:
-	virtual void *getScriptEngine() = 0;
-	virtual const char *getName() = 0;
-	virtual void setName(const char *name) = 0;
-
-	virtual int LastError() = 0;
-	virtual void SetLastError(NDUINT32 errcode) = 0;
-	virtual nd_handle GetHandle() = 0;
-
 	virtual int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
 	virtual int Open(ndip_t ip, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
 	virtual int Close(int force=0) = 0;
