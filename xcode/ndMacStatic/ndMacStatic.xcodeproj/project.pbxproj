@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07108C9A20905CFE0028321B /* nd_iBaseObj.h in Headers */ = {isa = PBXBuildFile; fileRef = 07108C9920905CFE0028321B /* nd_iBaseObj.h */; };
 		071156BF1AD415BB003B3B46 /* session.c in Sources */ = {isa = PBXBuildFile; fileRef = 071156BE1AD415BB003B3B46 /* session.c */; };
 		0723FADB207C943700F3426C /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 0723FADA207C943700F3426C /* cJSON.c */; };
 		073590D61F5808CB0049C454 /* _client_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 073590D41F5808CB0049C454 /* _client_config.h */; };
@@ -203,6 +204,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		07108C9920905CFE0028321B /* nd_iBaseObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iBaseObj.h; sourceTree = "<group>"; };
 		071156BE1AD415BB003B3B46 /* session.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = session.c; sourceTree = "<group>"; };
 		0723FADA207C943700F3426C /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cJSON.c; sourceTree = "<group>"; };
 		073129B01B57613B00D3F203 /* nd_netbyte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_netbyte.h; sourceTree = "<group>"; };
@@ -780,6 +782,7 @@
 		07EBD01119A8E01500802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				07108C9920905CFE0028321B /* nd_iBaseObj.h */,
 				078966C8207F069800A38013 /* nd_httpListener.h */,
 				073DB4311B67162E00A93310 /* ndsingleton.h */,
 				0760D30E1B26CAF5005F076C /* httpParser.h */,
@@ -905,6 +908,7 @@
 				07EBD04C19A8E01500802576 /* r_random.h in Headers */,
 				07EBD07619A8E01500802576 /* nd_array.h in Headers */,
 				07EBD05D19A8E01500802576 /* nd_udp.h in Headers */,
+				07108C9A20905CFE0028321B /* nd_iBaseObj.h in Headers */,
 				07EBD04A19A8E01500802576 /* nn.h in Headers */,
 				07EBD06D19A8E01500802576 /* nd_instance.h in Headers */,
 				07EBD04919A8E01500802576 /* md5.h in Headers */,
