@@ -140,7 +140,7 @@ MSG_ENTRY_DECLARE(nd_get_server_rlimit) ;
 MSG_ENTRY_DECLARE(nd_set_netmsg_log);
 MSG_ENTRY_DECLARE(nd_set_netmsg_print);
 
-
+MSG_ENTRY_DECLARE(nd_quicken_inst_time);
 MSG_ENTRY_DECLARE(nd_get_sys_time);
 MSG_ENTRY_DECLARE(nd_get_game_time);
 MSG_ENTRY_DECLARE(app_statics_begin);

@@ -879,6 +879,22 @@ MSG_ENTRY_INSTANCE(nd_get_game_time)
 
 	return 0;
 }
+
+MSG_ENTRY_INSTANCE(nd_quicken_inst_time)
+{
+	NDUINT32 hh =0, mm =0;
+	NDIStreamMsg inmsg(msg);
+
+	inmsg.Read(hh);
+	inmsg.Read(mm);
+	time_t tm1 = app_inst_time(NULL);
+	app_inst_set_hm(hh,mm);
+	time_t tm2 = app_inst_time(NULL);
+	char buf1[64], buf2[64];
+	nd_logmsg("change time from %s to %s\n", nd_get_datetimestr_ex(tm1, buf1, 64), nd_get_datetimestr_ex(tm2, buf2, 64));
+	return 0;
+}
+
 MSG_ENTRY_INSTANCE(nd_get_server_rlimit)
 {
 	ND_TRACE_FUNC() ;
