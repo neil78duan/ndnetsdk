@@ -12,24 +12,29 @@
 
 NDConnector * htoConnector(nd_handle h)
 {
-	//return (NDConnector*) (((nd_netui_handle)h)->user_data  );
 	return static_cast<NDConnector*>(((nd_netui_handle)h)->user_data  );
 }
 
-static int data_in_ofconnect(nd_handle h,void *data , size_t len,nd_handle listen_h)
+NDObject * htoNDObject(nd_handle h)
 {
-	NDConnector *pconn = htoConnector(h) ;
-	if (pconn){
-		return pconn->_data_func(data,len) ;
-	}
-	return 0;
+	return static_cast<NDObject*>(((nd_netui_handle)h)->user_data);
 }
+
+// 
+// static int data_in_ofconnect(nd_handle h,void *data , size_t len,nd_handle listen_h)
+// {
+// 	NDConnector *pconn = htoConnector(h) ;
+// 	if (pconn){
+// 		return pconn->_data_func(data,len) ;
+// 	}
+// 	return 0;
+// }
 
 NDConnector::NDConnector(int maxmsg_num, int maxid_start) : NDObject() 
 {
 	msg_kinds = maxmsg_num;
 	msg_base = maxid_start;
-	m_old_in_func = 0;
+	//m_old_in_func = 0;
 	m_open = 0 ;
 }
 
@@ -44,21 +49,21 @@ void NDConnector::SetMsgNum(int maxmsg_num , int maxid_start)
 	msg_kinds = maxmsg_num;
 	msg_base = maxid_start;
 }
-
-int NDConnector::_data_func(void *data, size_t size) 
-{
-	ND_TRACE_FUNC();
-	if (!data || 0==size){
-		//OnClose() ;
-	}
-	else if (m_old_in_func && m_old_in_func != data_in_ofconnect) {
-		return m_old_in_func(m_objhandle,data,size,NULL) ;
-	}
-	else {
-		((struct netui_info*)m_objhandle)->data_entry(m_objhandle, data, size, NULL);
-	}
-	return 0;
-}
+// 
+// int NDConnector::_data_func(void *data, size_t size) 
+// {
+// 	ND_TRACE_FUNC();
+// 	if (!data || 0==size){
+// 		//OnClose() ;
+// 	}
+// 	else if (m_old_in_func && m_old_in_func != data_in_ofconnect) {
+// 		return m_old_in_func(m_objhandle,data,size,NULL) ;
+// 	}
+// 	else {
+// 		((struct netui_info*)m_objhandle)->data_entry(m_objhandle, data, size, NULL);
+// 	}
+// 	return 0;
+// }
 
 int NDConnector::Open(const char *host, int port, const char *protocol_name,nd_proxy_info *proxy)
 {
@@ -117,8 +122,9 @@ int NDConnector::Create(const char *protocol_name)
 	}
 
 	((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
-	m_old_in_func = ((nd_netui_handle)m_objhandle)->data_entry;
-	((nd_netui_handle)m_objhandle)->data_entry = data_in_ofconnect;
+	
+	//m_old_in_func = ((nd_netui_handle)m_objhandle)->data_entry;
+	//((nd_netui_handle)m_objhandle)->data_entry = data_in_ofconnect;
 
 	//set message handle	
 	if (msg_kinds > 0){

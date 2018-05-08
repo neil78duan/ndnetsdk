@@ -53,13 +53,13 @@ public :
 	void SetMsgNum(int maxmsg_num , int maxid_start=0) ;
 	virtual~NDConnector() ;
 
-	int _data_func(void *data, size_t size) ;
+	//int _data_func(void *data, size_t size) ;
 private:
 	int m_open ;
 	//nd_handle m_objhandle ;
 	int msg_kinds ;
 	int msg_base ;
-	data_in_entry m_old_in_func;
+	//data_in_entry m_old_in_func;
 };
 
 // safe connect , the data will be stored when send error 
@@ -87,5 +87,6 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 NDConnector * htoConnector(nd_handle h);
+NDObject * htoNDObject(nd_handle h);
 
 #endif

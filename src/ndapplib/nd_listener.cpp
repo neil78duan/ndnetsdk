@@ -25,7 +25,7 @@ NDObject *NDObject::FromHandle(nd_handle h)
 			return NDGetSession(h);
 		}
 		else {
-			return htoConnector(h);
+			return htoNDObject(h);
 		}
 	}
 	else if (type == NDHANDLE_LISTEN) {
@@ -146,7 +146,8 @@ static int on_connector_closed(nd_handle connector, int flag)
 {
 	ND_TRACE_FUNC();
 	nd_assert(connector) ;
-	NDConnector *pconn = htoConnector(connector);
+	//NDConnector *pconn = htoConnector(connector);
+	NDObject *pconn = NDObject::FromHandle(connector);
 	if(pconn) 
 		pconn->OnClose() ;
 	return 0 ;
@@ -331,7 +332,7 @@ void NDListener::InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t
 	::nd_msgentry_install(m_objhandle, func,  maxid,  minid, level,msgname) ;
 }
 
-int NDListener::Attach(NDConnector &conn, nd_thsrvid_t thid )
+int NDListener::Attach(NDObject &conn, nd_thsrvid_t thid )
 {
 	ND_TRACE_FUNC();
 	if (m_objhandle) {
@@ -343,7 +344,7 @@ int NDListener::Attach(NDConnector &conn, nd_thsrvid_t thid )
 	}
 	return -1 ;
 }
-int NDListener::Deattach(NDConnector &conn,nd_thsrvid_t thid)
+int NDListener::Deattach(NDObject &conn,nd_thsrvid_t thid)
 {
 	ND_TRACE_FUNC();
 	if (m_objhandle) {

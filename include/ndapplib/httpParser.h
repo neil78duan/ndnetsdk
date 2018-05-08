@@ -140,16 +140,19 @@ protected:
 
 };
 
-class HttpConnector
+class HttpConnector : public NDObject
 {
 public:
 	HttpConnector(bool bLongConnect=false);
 	virtual ~HttpConnector();
-	int Create(const char *host, int port);
-	int Close();
-	void Destroy();
+
+	int Create(const char *instantName);
+	int Open(const char *host, int port);
+	int Close(int flag = 0);
+	void Destroy(int flag = 0);
 	int SendRequest(NDHttpRequest &request, const char *host, int port, const char *path);
 
+	int onDataRecv(char *buf, int size);
 	int Recv(char *buf, int size, int timeout);
 	int Update(int timeout);
 	void setLongConnect(bool bLongConnect){ m_bLongConnection = bLongConnect; }

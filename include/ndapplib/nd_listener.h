@@ -48,8 +48,8 @@ public:
 	NDBaseSession *GetSession(NDUINT16 sessionId);
 	
 
-	int Attach(NDConnector &conn, nd_thsrvid_t thid = 0);
-	int Deattach(NDConnector &conn,nd_thsrvid_t thid = 0);
+	int Attach(NDObject &conn, nd_thsrvid_t thid = 0);
+	int Deattach(NDObject &conn,nd_thsrvid_t thid = 0);
 	
 	int AttachPort(int port, ndip_t bindIP=0) ;
 

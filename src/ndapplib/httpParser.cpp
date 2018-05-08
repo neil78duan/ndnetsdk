@@ -944,6 +944,16 @@ int NDHttpResponse::ParseProtocol()
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+static int _http_connector_data_handler(nd_handle sessionHandler, void *data, size_t len, nd_handle )
+{
+	HttpConnector *pConn = dynamic_cast<HttpConnector *> (NDObject::FromHandle(sessionHandler));
+	if (!pConn) {
+		return -1;
+	}
+	return pConn->onDataRecv((char*)data, len);
+}
+
 HttpConnector::HttpConnector(bool bLongConnect) :m_conn(0), m_port(0), m_bLongConnection(bLongConnect)
 {
 	
@@ -954,22 +964,34 @@ HttpConnector:: ~HttpConnector()
 	Destroy() ;
 }
 
-int HttpConnector::Create(const char *host, int port)
+int HttpConnector::Create(const char *instantName)
 {
 	if (m_conn) {
-		nd_object_destroy(m_conn, 0) ;
+		nd_object_destroy(m_conn, 0);
 		//DestroyConnectorObj(m_conn) ;
-		m_conn = 0 ;
+		m_conn = 0;
 	}
-	
-	m_conn = nd_object_create("tcp-connector"  ) ;
-	
-	if(!m_conn){
-		nd_logerror((char*)"connect error :%s!" , nd_last_error()) ;
+
+	m_conn = nd_object_create("tcp-connector");
+
+	if (!m_conn) {
+		nd_logerror((char*)"connect error :%s!", nd_last_error());
 		return -1;
 	}
-	((nd_netui_handle)m_conn)->user_data =(void*) this ;
-	
+	((nd_netui_handle)m_conn)->user_data = (void*)this;
+	if (instantName && *instantName) {
+		nd_object_set_instname(m_conn, instantName);
+	}
+	return 0;
+}
+
+int HttpConnector::Open(const char *host, int port)
+{
+	if (!m_conn) {
+		if (-1 == Create(NULL)) {
+			return -1;
+		}
+	}
 	int ret = nd_connector_open(m_conn,host, port, NULL);
 	
 	if(ret == 0 ) {
@@ -981,28 +1003,29 @@ int HttpConnector::Create(const char *host, int port)
 		m_conn = 0 ;
 		return -1;
 	}
+	nd_hook_data(m_conn, _http_connector_data_handler);
 	
 	return 0 ;
 	
 }
 
-int HttpConnector::Close()
+int HttpConnector::Close(int flag)
 {
 	if (m_conn)	{
-		nd_connector_close(m_conn, 0);
+		nd_connector_close(m_conn, flag);
 	}
+	OnClose();
 	return 0;
 }
 
-void HttpConnector::Destroy()
+void HttpConnector::Destroy(int flag)
 {
-	
 	if (m_conn) {
-		nd_object_destroy(m_conn, 0) ;
+		nd_object_destroy(m_conn, flag) ;
 		//DestroyConnectorObj(m_conn) ;
 		m_conn = 0 ;
 	}
-
+	OnDestroy();
 }
 
 
@@ -1016,6 +1039,20 @@ int HttpConnector::SendRequest(NDHttpRequest &request, const char *host, int por
 int HttpConnector::Recv(char *buf, int size, int timeout)
 {
 	return  nd_connector_raw_waitdata( m_conn,  buf, size, timeout) ;
+}
+
+
+int HttpConnector::onDataRecv(char *buf, int size)
+{
+	nd_log_screen("%s\n", buf);
+	m_response.InData(buf, size);
+
+	if (m_response.CheckRecvOk()) {
+		onResponse(&m_response);
+		m_response.Reset();
+		return 0;
+	}
+	return size;
 }
 
 int HttpConnector::Update(int timeout)
@@ -1033,15 +1070,19 @@ int HttpConnector::Update(int timeout)
 		buf[size] = 0;
 
 		nd_log_screen( "%s\n", buf);
-		m_response.InData(buf, size);
-		
-		if (m_response.CheckRecvOk()){
-			onResponse(&m_response);
-			m_response.Reset();
-			//if (!m_bLongConnection)	{
-			//	Close();
-			//}
+		if (0 == onDataRecv(buf,size)) {
+			break; 
 		}
+// 		m_response.InData(buf, size);
+// 		
+// 		if (m_response.CheckRecvOk()){
+// 			onResponse(&m_response);
+// 			m_response.Reset();
+// 			//if (!m_bLongConnection)	{
+// 			//	Close();
+// 			//}
+// 			break;
+// 		}
 
 	}while (lefttime > 0);
 	
