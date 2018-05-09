@@ -21,7 +21,6 @@ enum eNDMsgMainID{
     ND_MAIN_ID_SYS,
     ND_MAIN_ID_LOGIN,
     ND_MAIN_ID_NUMBER,
-	ND_GM_ID = 18,
 };
 
 enum eNDMsgSys{

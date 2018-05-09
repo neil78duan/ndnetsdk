@@ -100,6 +100,7 @@ public:
 	const char *getPath() { return m_path.c_str(); }
 	const char* getRequestVal(const char *name); //get header value
 	bool addRequestFormVal(const char *name, const char *value);
+	void setBody(const char*body) { m_body = body; }
 	size_t RequestValueTobuf(char *buf, size_t size);
 
 	int dump();
@@ -107,6 +108,8 @@ public:
 	int _postBodyToJson();
 
 protected:
+	int _parseMultipart(const char *pHeaderText);
+	int _parse_x_form();
 	virtual int ParseProtocol();
 	virtual void onParseEnd();
 	int _parsePathInfo(const char *path);
@@ -159,12 +162,12 @@ public:
 	bool CheckValid();
 	virtual void onResponse(NDHttpResponse *response);
 	void setLast(const char *path){ m_lastRequestPath = path; }
-	nd_handle getHandle(){ return m_conn; }
+	//nd_handle getHandle(){ return m_conn; }
 protected:
-
+	void setResponseSuccess() { m_responseOk = true; }
+	bool m_responseOk;
 	bool m_bLongConnection;
 	int m_port;
-	nd_handle m_conn;
 	std::string m_host;
 	std::string m_lastRequestPath;
 	NDHttpResponse m_response;

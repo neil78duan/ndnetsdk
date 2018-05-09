@@ -67,6 +67,9 @@ int NDHttpListener::onRequestScript(const char* script, NDHttpSession *session, 
 
 static int _session_data_handler(nd_handle sessionHandler, void *data, size_t len, nd_handle listen_h)
 {
+	if (!data || len == 0) {
+		return 0;
+	}
 	NDHttpSession *pSession = (NDHttpSession*)NDGetSession(sessionHandler);
 	if (!pSession) {
 		return -1;

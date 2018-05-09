@@ -807,90 +807,105 @@ size_t NDHttpRequest::RequestValueTobuf(char *buf, size_t size)
 
 int NDHttpRequest::_postBodyToJson()
 {
-
-	char val[1024];
-	char buf[1024];
-
 	std::string *pContent = _getHeader("Content-Type");
 	if (!pContent || pContent->size() == 0)	{
 		return 0;
 	}
 	const char *content_text = pContent->c_str();
 	const char *pHeaderText = ndstristr(content_text, "multipart/form-data");
-	if (!pHeaderText || !*pHeaderText)	{
-		return 0;
+	if (pHeaderText )	{
+		return _parseMultipart(pHeaderText += 19);
 	}
-	pHeaderText += 19;
 
+	pHeaderText = ndstristr(content_text, "application/x-www-form-urlencoded");
+	if (pHeaderText) {
+		return _parse_x_form();
+	}
+	return -1;
+}
+
+
+int NDHttpRequest::_parseMultipart(const char *pHeaderText)
+{
 	pHeaderText = ndstristr(pHeaderText, "boundary=");
 
-	if (pHeaderText && *pHeaderText){
-		pHeaderText += 9;
-		std::string WebKitFormName = pHeaderText;
+	if (!pHeaderText ) {
+		return -1;
+	}
 
-		const char *p = m_body.c_str();
+	char val[1024];
+	char buf[1024];
+	pHeaderText += 9;
+	std::string WebKitFormName = pHeaderText;
+
+	const char *p = m_body.c_str();
+	p = ndstr_first_valid(p);
+
+	while (p && *p) {
+		buf[0] = 0;
+		val[0] = 0;
+		p = ndstristr(p, WebKitFormName.c_str());
+		if (!p || !*p) {
+			break;
+		}
+
+		p += WebKitFormName.size();
+		p = ndstristr(p, "name=\"");
+		if (!p) {
+			break;
+		}
+		p += 6;
+
+		p = ndstr_nstr_ansi(p, buf, '\"', sizeof(buf));
+		if (!p || *p != '\"') {
+			break;
+		}
+		++p;
 		p = ndstr_first_valid(p);
+		if (!p) {
+			break;
+		}
+		p = ndstr_nstr_end(p, val, '\r', sizeof(val));
 
-		while (p && *p)	{
-			buf[0] = 0;
-			val[0] = 0;
-			p = ndstristr(p, WebKitFormName.c_str());
-			if (!p || !*p){
-				break;
-			}
 
-			p += WebKitFormName.size();
-			p = ndstristr(p, "name=\"");
-			if (!p){
-				break;
-			}
-			p += 6;
-
-			p = ndstr_nstr_ansi(p, buf, '\"', sizeof(buf));
-			if (!p || *p != '\"') {
-				break;
-			}
-			++p;
-			p = ndstr_first_valid(p);
-			if (!p){
-				break;
-			}
-			p = ndstr_nstr_end(p,val, '\r',sizeof(val));
-			
-
-			if (buf[0] && val[0]) 	{
-				httpHeaderNode node = { buf, val };
-				m_requestForms.push_back(node);
-			}
+		if (buf[0] && val[0]) {
+			httpHeaderNode node = { buf, val };
+			m_requestForms.push_back(node);
 		}
 	}
-	else {
+	return (int)m_body.size();
+}
 
-		const char *p = m_body.c_str();
-		p = ndstr_first_valid(p);
+int NDHttpRequest::_parse_x_form()
+{
 
-		do 	{
-			val[0] = 0;
-			buf[0] = 0;
-			p = ndstr_nstr_ansi(p, buf, '=', sizeof(buf));
-			if (!p || !*p || *p != '=')	{
-				return 0;
-			}
+	char val[1024];
+	char buf[1024];
+
+	const char *p = m_body.c_str();
+	p = ndstr_first_valid(p);
+
+	do {
+		val[0] = 0;
+		buf[0] = 0;
+		p = ndstr_nstr_ansi(p, buf, '=', sizeof(buf));
+		if (!p || !*p || *p != '=') {
+			return 0;
+		}
+		++p;
+		p = ndstr_nstr_ansi(p, val, '&', sizeof(val));
+		if (p && *p == '&') {
 			++p;
-			p = ndstr_nstr_ansi(p, val, '&', sizeof(val));
-			if (p && *p == '&')	{
-				++p;
-			}
+		}
 
-			if (buf[0]) 	{
-				httpHeaderNode node = { buf, val };
-				m_requestForms.push_back(node);
-			}
+		if (buf[0]) {
+			httpHeaderNode node = { buf, val };
+			m_requestForms.push_back(node);
+		}
 
-		} while (p && *p);
+	} while (p && *p);
 
-	}
-	return (int)m_body.size() ;
+	return (int)m_body.size();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -947,6 +962,10 @@ int NDHttpResponse::ParseProtocol()
 
 static int _http_connector_data_handler(nd_handle sessionHandler, void *data, size_t len, nd_handle )
 {
+	if (!data || len == 0) {
+		return 0;
+	}
+
 	HttpConnector *pConn = dynamic_cast<HttpConnector *> (NDObject::FromHandle(sessionHandler));
 	if (!pConn) {
 		return -1;
@@ -954,7 +973,7 @@ static int _http_connector_data_handler(nd_handle sessionHandler, void *data, si
 	return pConn->onDataRecv((char*)data, len);
 }
 
-HttpConnector::HttpConnector(bool bLongConnect) :m_conn(0), m_port(0), m_bLongConnection(bLongConnect)
+HttpConnector::HttpConnector(bool bLongConnect) : m_port(0), m_bLongConnection(bLongConnect), m_responseOk(false)
 {
 	
 }
@@ -966,44 +985,44 @@ HttpConnector:: ~HttpConnector()
 
 int HttpConnector::Create(const char *instantName)
 {
-	if (m_conn) {
-		nd_object_destroy(m_conn, 0);
-		//DestroyConnectorObj(m_conn) ;
-		m_conn = 0;
+	if (m_objhandle) {
+		nd_object_destroy(m_objhandle, 0);
+		//DestroyConnectorObj(m_objhandle) ;
+		m_objhandle = 0;
 	}
 
-	m_conn = nd_object_create("tcp-connector");
+	m_objhandle = nd_object_create("tcp-connector");
 
-	if (!m_conn) {
+	if (!m_objhandle) {
 		nd_logerror((char*)"connect error :%s!", nd_last_error());
 		return -1;
 	}
-	((nd_netui_handle)m_conn)->user_data = (void*)this;
+	((nd_netui_handle)m_objhandle)->user_data = (void*)this;
 	if (instantName && *instantName) {
-		nd_object_set_instname(m_conn, instantName);
+		nd_object_set_instname(m_objhandle, instantName);
 	}
 	return 0;
 }
 
 int HttpConnector::Open(const char *host, int port)
 {
-	if (!m_conn) {
+	if (!m_objhandle) {
 		if (-1 == Create(NULL)) {
 			return -1;
 		}
 	}
-	int ret = nd_connector_open(m_conn,host, port, NULL);
+	int ret = nd_connector_open(m_objhandle,host, port, NULL);
 	
 	if(ret == 0 ) {
 		m_host = host ;
 		m_port = port ;
 	}
 	else {
-		nd_object_destroy(m_conn, 0) ;
-		m_conn = 0 ;
+		nd_object_destroy(m_objhandle, 0) ;
+		m_objhandle = 0 ;
 		return -1;
 	}
-	nd_hook_data(m_conn, _http_connector_data_handler);
+	nd_hook_data(m_objhandle, _http_connector_data_handler);
 	
 	return 0 ;
 	
@@ -1011,8 +1030,8 @@ int HttpConnector::Open(const char *host, int port)
 
 int HttpConnector::Close(int flag)
 {
-	if (m_conn)	{
-		nd_connector_close(m_conn, flag);
+	if (m_objhandle)	{
+		nd_connector_close(m_objhandle, flag);
 	}
 	OnClose();
 	return 0;
@@ -1020,10 +1039,10 @@ int HttpConnector::Close(int flag)
 
 void HttpConnector::Destroy(int flag)
 {
-	if (m_conn) {
-		nd_object_destroy(m_conn, flag) ;
-		//DestroyConnectorObj(m_conn) ;
-		m_conn = 0 ;
+	if (m_objhandle) {
+		nd_object_destroy(m_objhandle, flag) ;
+		//DestroyConnectorObj(m_objhandle) ;
+		m_objhandle = 0 ;
 	}
 	OnDestroy();
 }
@@ -1033,24 +1052,31 @@ int HttpConnector::SendRequest(NDHttpRequest &request, const char *host, int por
 {
 	m_lastRequestPath = path;
 	std::string pathUrl = NDHttpParser::textToURLcode(path);
-	return _sendHttpRequest(m_conn, &request, pathUrl.c_str(), host, port,m_bLongConnection);
+	return _sendHttpRequest(m_objhandle, &request, pathUrl.c_str(), host, port,m_bLongConnection);
 }
 
 int HttpConnector::Recv(char *buf, int size, int timeout)
 {
-	return  nd_connector_raw_waitdata( m_conn,  buf, size, timeout) ;
+	return  nd_connector_raw_waitdata( m_objhandle,  buf, size, timeout) ;
 }
 
 
 int HttpConnector::onDataRecv(char *buf, int size)
 {
+#ifdef ND_DEBUG
+	char reserved = buf[size];
+	buf[size] = 0;
 	nd_log_screen("%s\n", buf);
+	buf[size] = reserved;
+#endif
 	m_response.InData(buf, size);
 
 	if (m_response.CheckRecvOk()) {
 		onResponse(&m_response);
-		m_response.Reset();
-		return 0;
+		if (m_responseOk) {
+			m_response.Reset();
+			return -1;
+		}
 	}
 	return size;
 }
@@ -1070,8 +1096,8 @@ int HttpConnector::Update(int timeout)
 		buf[size] = 0;
 
 		nd_log_screen( "%s\n", buf);
-		if (0 == onDataRecv(buf,size)) {
-			break; 
+		if (-1 == onDataRecv(buf,size)) {
+			return -1;
 		}
 // 		m_response.InData(buf, size);
 // 		
@@ -1092,8 +1118,8 @@ int HttpConnector::Update(int timeout)
 bool HttpConnector::CheckValid()
 {
 	
-	if (m_conn) {
-		return nd_connector_valid((nd_netui_handle)m_conn) ? true: false ;
+	if (m_objhandle) {
+		return nd_connector_valid((nd_netui_handle)m_objhandle) ? true: false ;
 	}
 	return false;
 }
@@ -1104,6 +1130,7 @@ void HttpConnector::onResponse(NDHttpResponse *response)
 	nd_logdebug("on response success \n");
 
 	response->dump();
+	m_responseOk = true;
 }
 
 

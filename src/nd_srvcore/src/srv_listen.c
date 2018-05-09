@@ -544,7 +544,11 @@ int update_connectors(struct node_root *pmanger)
 				++ret ;
 			if (-1==read_len) {
 				nd_logerror("%s connector update error =%d\n", nd_object_get_instname(client), nd_object_lasterror(client)) ;
+				pmanger->deaccept(pmanger, ((nd_netui_handle)client)->session_id);
+				((nd_netui_handle)client)->session_id = 0;
+
 				nd_connector_close(client, 0) ;
+
 			}
 		}
 	}
