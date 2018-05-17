@@ -955,6 +955,10 @@ BEGIN_READ_MARKER:
 
 bool NDIStreamMsg::TrytoMoveStructEnd()
 {
+	if (m_bStruckEndMarker || m_bSkipEndMarker) {
+		return true;
+	}
+
 	char *orgAddr = _op_addr;
 	do 	{
 		eNDnetStreamMarker type;
