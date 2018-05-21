@@ -545,6 +545,16 @@ void NDOStreamMsg::SkipStructEndMark()
 #endif 
 }
 
+
+void NDOStreamMsg::EnableStructEndMark()
+{
+#ifdef NET_STREAM_WITH_FORMAT_MARKER
+	_writeMarker(ENDSTREAM_CMD_ENABLE_STRUCT_MARK, 0);
+#endif 
+}
+
+
+
 void NDOStreamMsg::SetID(int maxid, int minid) 
 {
 	_packet->msg_hdr.maxid = (ndmsgid_t)maxid ;
@@ -589,6 +599,7 @@ NDIStreamMsg::NDIStreamMsg() : NDRecvMsg(0)
 #ifdef NET_STREAM_WITH_FORMAT_MARKER
 	m_bStruckEndMarker = false;
 	m_bSkipEndMarker = false ;
+	m_bSkipEndAllStream = false;
 #endif
 	_op_addr = NULL ;
 	_end = NULL;
@@ -613,6 +624,7 @@ void NDIStreamMsg::Init(nd_usermsgbuf_t *pmsg)
 #ifdef NET_STREAM_WITH_FORMAT_MARKER
 	m_bStruckEndMarker = false;
 	m_bSkipEndMarker = false ;
+	m_bSkipEndAllStream = false;
 #endif
 	recv_packet = pmsg ;
 	if(pmsg) {
@@ -938,24 +950,32 @@ BEGIN_READ_MARKER:
 		return -1;
 	}
 	if (marker == NET_STREAM_STRUCT_END_MARK) {
-		if (m_bSkipEndMarker) {
+		if (m_bSkipEndMarker || m_bSkipEndAllStream) {
 			goto BEGIN_READ_MARKER ;
 		}
 		m_bStruckEndMarker = true;
 		return 0;
 	}
-	else if (marker == ENDSTREAM_CMD_SKIP_STRUCT_MARK) {
+	
+	type = (eNDnetStreamMarker)((marker & 0xf0) >> 4);
+	size = marker & 0xf;
+	
+	if (type == ENDSTREAM_CMD_SKIP_STRUCT_MARK) {
 		m_bSkipEndMarker = true;
 		goto BEGIN_READ_MARKER;
 	}
-	type = (eNDnetStreamMarker)((marker & 0xf0) >> 4);
-	size = marker & 0xf;
+	else if (type == ENDSTREAM_CMD_ENABLE_STRUCT_MARK) {
+		m_bSkipEndMarker = false;
+		goto BEGIN_READ_MARKER;
+	}
+
+
 	return 0;
 }
 
 bool NDIStreamMsg::TrytoMoveStructEnd()
 {
-	if (m_bStruckEndMarker || m_bSkipEndMarker) {
+	if (m_bStruckEndMarker || m_bSkipEndMarker || m_bSkipEndAllStream) {
 		return true;
 	}
 
@@ -1021,8 +1041,8 @@ bool NDIStreamMsg::TrytoMoveStructEnd()
 
 bool NDIStreamMsg::SetSkipMarker(bool bSkip)
 {
-	bool ret = m_bSkipEndMarker ;
-	m_bSkipEndMarker = bSkip ;
+	bool ret = m_bSkipEndAllStream;
+	m_bSkipEndAllStream = bSkip ;
 	return ret ;
 }
 

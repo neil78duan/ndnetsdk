@@ -30,6 +30,8 @@ enum eNDnetStreamMarker
 	ENDSTREAM_MARKER_IP32,
 	ENDSTREAM_MARKER_IP64,
 	ENDSTREAM_CMD_SKIP_STRUCT_MARK,
+	ENDSTREAM_CMD_ENABLE_STRUCT_MARK,
+
 
 };
 class ND_CONNCLI_CLASS NDSendMsg
@@ -103,6 +105,7 @@ public :
 	int WriteIp(ndip_v6_t ) ;
 
 	void SkipStructEndMark();
+	void EnableStructEndMark();
 	void SetID(int maxid, int minid) ;
 	friend class NDIStreamMsg ;
 	void *GetWriteAddr();// {return (void*)_op_addr; }
@@ -215,6 +218,7 @@ protected:
 	int _ReadTypeSize(eNDnetStreamMarker &type, NDUINT8 &size);
 	bool m_bStruckEndMarker;
 	bool m_bSkipEndMarker ;
+	bool m_bSkipEndAllStream;
 #endif 
 private:
 	NDIStreamMsg() ;
