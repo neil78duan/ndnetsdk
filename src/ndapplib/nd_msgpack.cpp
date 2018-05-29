@@ -135,19 +135,13 @@ int NDOStreamMsg::FromFile(const char *file)
 //}
 void *NDOStreamMsg::GetWriteAddr()
 {
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	return (void*)(_op_addr+1); 
-#else 
-	return (void*)_op_addr; 
-#endif
 }
 size_t NDOStreamMsg::GetFreeLen()
 {
 	return _end - _op_addr ;
 }
 
-
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 
 int NDOStreamMsg::WriteForce(NDUINT32 a)
 {
@@ -293,16 +287,12 @@ int NDOStreamMsg::SetStructEnd()
 	return _WriteOrg((NDUINT8)NET_STREAM_STRUCT_END_MARK);
 }
 
-#endif
-
 
 int NDOStreamMsg::WriteIp(ndip_t a)
 {
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	if (-1 == _writeMarker(ENDSTREAM_MARKER_IP32, 4)) {
 		return -1;
 	}
-#endif 
 
 	if (_op_addr + sizeof(a) <= _end) {
 		memcpy(_op_addr, &a, sizeof(a));
@@ -316,11 +306,9 @@ int NDOStreamMsg::WriteIp(ndip_t a)
 int NDOStreamMsg::WriteIp(ndip_v6_t a)
 {
 
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	if (-1 == _writeMarker(ENDSTREAM_MARKER_IP64, 8)) {
 		return -1;
 	}
-#endif 
 
 	if (_op_addr + sizeof(a) <= _end) {
 		memcpy(_op_addr, &a, sizeof(a));
@@ -355,22 +343,17 @@ int NDOStreamMsg::Write(const NDUINT8 *text)
 
 	if (!text || text[0] == 0) {
 
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 		if (-1 == _writeMarker(ENDSTREAM_MARKER_TEXT, 0)) {
 			return -1;
 		}
-#else
-		_WriteOrg((NDUINT16)0);
-#endif
 		return 0;
 	}
 	else {
 
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 		if (-1 == _writeMarker(ENDSTREAM_MARKER_TEXT, 1)) {
 			return -1;
 		}
-#endif 
+
 		n = strlen((const char*)text);
 		free_size = (_end - _op_addr);
 		if (n + 3 <= free_size) {
@@ -391,7 +374,6 @@ int NDOStreamMsg::WriteBin(void *data, size_t size)
 		return -1;
 	}
 
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	if (size ==0){
 		if (-1 == _writeMarker(ENDSTREAM_MARKER_BIN, 0)) {
 			return -1;
@@ -403,7 +385,6 @@ int NDOStreamMsg::WriteBin(void *data, size_t size)
 			return -1;
 		}
 	}
-#endif 
 
 	size_t free_size = _end - _op_addr;
 	if (size + 2 <= free_size) {
@@ -540,17 +521,13 @@ int NDOStreamMsg::_writeMarker(eNDnetStreamMarker marker, size_t sizebytes)
 
 void NDOStreamMsg::SkipStructEndMark()
 {
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	_writeMarker(ENDSTREAM_CMD_SKIP_STRUCT_MARK, 0);
-#endif 
 }
 
 
 void NDOStreamMsg::EnableStructEndMark()
 {
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	_writeMarker(ENDSTREAM_CMD_ENABLE_STRUCT_MARK, 0);
-#endif 
 }
 
 
@@ -596,11 +573,9 @@ size_t NDRecvMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(recv_packet); }
 
 NDIStreamMsg::NDIStreamMsg() : NDRecvMsg(0)
 {
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	m_bStruckEndMarker = false;
 	m_bSkipEndMarker = false ;
 	m_bSkipEndAllStream = false;
-#endif
 	_op_addr = NULL ;
 	_end = NULL;
 }
@@ -621,11 +596,9 @@ NDIStreamMsg::NDIStreamMsg(nd_usermsgbuf_t *pmsg) : NDRecvMsg(pmsg)
 
 void NDIStreamMsg::Init(nd_usermsgbuf_t *pmsg)
 {
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	m_bStruckEndMarker = false;
 	m_bSkipEndMarker = false ;
 	m_bSkipEndAllStream = false;
-#endif
 	recv_packet = pmsg ;
 	if(pmsg) {
 		_op_addr = ND_USERMSG_DATA(pmsg) ;//pmsg->data ;
@@ -699,7 +672,7 @@ int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
 		p += ret;
 		len -= ret;
 
-		ret = Read(p, len);
+		ret = (int) Read(p, len);
 		p += ret;
 		len -= ret;
 
@@ -728,7 +701,7 @@ int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
 			if (!tmpbuf)	{
 				return -1;
 			}
-			datalen = ReadBin(tmpbuf, datalen);
+			datalen =(int) ReadBin(tmpbuf, datalen);
 			for (int i = 0; i < datalen; i++)	{
 				ret = snprintf(p, len, "0x%x, ", tmpbuf[i]);
 				p += ret;
@@ -751,7 +724,7 @@ int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
 		return -1;
 		break;
 	}
-	return size - len;
+	return (int)(size - len);
 }
 
 int NDIStreamMsg::dumpText(char *buf, size_t size)
@@ -761,16 +734,15 @@ int NDIStreamMsg::dumpText(char *buf, size_t size)
 	while (LeftData() > 0)	{
 		int ret = _dumpTobuf(p, length);
 		if (ret <= 0 )	{
-			return size - length;
+			return (int)(size - length);
 		}
 		p += ret;
 		length -= ret;
 	}
 
-	return size - length;
+	return (int) (size - length);
 }
 
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 
 
 int NDIStreamMsg::Read(NDUINT32 &a)
@@ -1046,7 +1018,6 @@ bool NDIStreamMsg::SetSkipMarker(bool bSkip)
 	return ret ;
 }
 
-#endif 
 
 int NDIStreamMsg::_ReadOrg(NDUINT32 &a)
 {
@@ -1157,7 +1128,6 @@ int NDIStreamMsg::Read(short &a)
 
 size_t NDIStreamMsg::Read (NDUINT8 *a, size_t size_buf) 
 {
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	eNDnetStreamMarker type;
 	NDUINT8 size;
 	m_bStruckEndMarker = false;
@@ -1171,7 +1141,6 @@ size_t NDIStreamMsg::Read (NDUINT8 *a, size_t size_buf)
 		a[0] = 0;
 		return 0;
 	}
-#endif 
 
 	NDUINT16 data_size ;
 	
@@ -1194,8 +1163,6 @@ size_t NDIStreamMsg::Read (NDUINT8 *a, size_t size_buf)
 
 size_t NDIStreamMsg::ReadBin (void *buf, size_t size_buf) 
 {
-
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	eNDnetStreamMarker type;
 	NDUINT8 size;
 	m_bStruckEndMarker = false;
@@ -1208,8 +1175,6 @@ size_t NDIStreamMsg::ReadBin (void *buf, size_t size_buf)
 	if (size ==0){
 		return 0;
 	}
-#endif 
-
 
 	NDUINT16 data_size ;
 
@@ -1230,7 +1195,6 @@ int NDIStreamMsg::PeekBinSize()
 {
 	char *curAddr =  _op_addr;
 
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	eNDnetStreamMarker type;
 	NDUINT8 size;
 	m_bStruckEndMarker = false;
@@ -1242,7 +1206,6 @@ int NDIStreamMsg::PeekBinSize()
 		_op_addr = curAddr;
 		return 0;
 	}
-#endif 
 	NDUINT16 data_size = 0;
 	_ReadOrg(data_size);
 
@@ -1289,8 +1252,6 @@ int NDIStreamMsg::Read(NDOStreamMsg &omsg)
 
 int NDIStreamMsg::ReadIp(ndip_t &a)
 {
-
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	eNDnetStreamMarker type;
 	NDUINT8 size;
 	m_bStruckEndMarker = false;
@@ -1300,8 +1261,6 @@ int NDIStreamMsg::ReadIp(ndip_t &a)
 	if (type != ENDSTREAM_MARKER_IP32)	{
 		return -1;
 	}
-#endif 
-
 
 	if(_end >= _op_addr + sizeof(a) ) {		
 		memcpy(&a, _op_addr, sizeof(a)) ;
@@ -1313,8 +1272,6 @@ int NDIStreamMsg::ReadIp(ndip_t &a)
 }
 int NDIStreamMsg::ReadIp(ndip_v6_t &a )
 {
-
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	eNDnetStreamMarker type;
 	NDUINT8 size;
 	m_bStruckEndMarker = false;
@@ -1324,7 +1281,7 @@ int NDIStreamMsg::ReadIp(ndip_v6_t &a )
 	if (type != ENDSTREAM_MARKER_IP64)	{
 		return -1;
 	}
-#endif 
+
 	if(_end >= _op_addr + sizeof(a) ) {
 		
 		memcpy(&a, _op_addr, sizeof(a)) ;

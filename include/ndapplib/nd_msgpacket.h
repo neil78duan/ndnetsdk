@@ -58,7 +58,6 @@ protected:
 };
 
 class NDIStreamMsg;
-// ‰≥ˆ¡˜ Ω–≠“È∞¸
 class ND_CONNCLI_CLASS NDOStreamMsg :public NDSendMsg
 {
 public :
@@ -71,7 +70,6 @@ public :
 	void Init(NDUINT16 msgID);	
 	virtual ~NDOStreamMsg() ;
 
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	int WriteForce(NDUINT32);
 	int WriteForce(NDUINT16);
 	int Write(NDUINT32 ) ;
@@ -81,19 +79,7 @@ public :
 	int Write(float) ;
 	int Write(double);
 	int SetStructEnd() ;	
-#else
 
-	int WriteForce(NDUINT32 a){return _WriteOrg(a) ;}
-	int WriteForce(NDUINT16 a){return _WriteOrg(a) ;}
-
-	inline int Write(NDUINT32 a) {return _WriteOrg(a) ;}
-	inline int Write(NDUINT16 a) {return _WriteOrg(a) ;}
-	inline int Write(NDUINT64  a) {return _WriteOrg(a) ;}
-	inline int Write(NDUINT8  a) {return _WriteOrg(a) ;}
-	inline int Write(float  a) {return _WriteOrg(a) ;}
-	inline int Write(double  a) {return _WriteOrg(a) ;}
-	int SetStructEnd(){return 0 ;}
-#endif
 	int Write(int);
 	int Write(short);
 	int Write(const NDUINT8 *text);
@@ -146,12 +132,11 @@ public:
 protected:
 	nd_usermsgbuf_t  *recv_packet ;
 };
-// ‰»Î¡˜ Ω–≠“È∞¸
+
 class ND_CONNCLI_CLASS NDIStreamMsg : public NDRecvMsg
 {
 public :
 
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	int Read(NDUINT32 &a);
 	int Read(NDUINT16 &a);
 	int Read(NDUINT8 &a);
@@ -163,21 +148,6 @@ public :
 	bool TrytoMoveStructEnd();
 	bool SetSkipMarker(bool bSkip) ;
 	
-#else 
-
-	int Read(NDUINT32 &a) {return _ReadOrg(a);}
-	int Read(NDUINT16 &a){return _ReadOrg(a);}
-	int Read(NDUINT8 &a){return _ReadOrg(a);}
-	int Read(NDUINT64 &a){return _ReadOrg(a);}
-	int Read(float &a){return _ReadOrg(a);}
-	int Read(double &a){return _ReadOrg(a);}
-
-	void BeginReadStruct() {}
-	bool CheckStructEnd() {return false;}
-	bool TrytoMoveStructEnd(){return true;}
-	bool SetSkipMarker(bool bSkip) {return true;}
-#endif 
-
 	int Read(int &a);
 	int Read(short &a);
 	bool CheckReachedEnd() { return  LeftData() == 0; }
@@ -214,12 +184,11 @@ protected:
 	int _ReadOrg(double &a);
 	int _dumpTobuf(char *buf, size_t size);
 
-#ifdef NET_STREAM_WITH_FORMAT_MARKER
 	int _ReadTypeSize(eNDnetStreamMarker &type, NDUINT8 &size);
 	bool m_bStruckEndMarker;
 	bool m_bSkipEndMarker ;
 	bool m_bSkipEndAllStream;
-#endif 
+
 private:
 	NDIStreamMsg() ;
 	char *_op_addr ;
