@@ -11,6 +11,10 @@
 #include "nd_net/nd_netlib.h"
 //#include "nd_common/nd_common.h"
 
+#if !defined(ND_UNIX)
+#include <winsock2.h>  
+#include <Ws2tcpip.h>  
+#endif
 
 extern int set_raw_sockopt(ndsocket_t fd) ;
 //send data from socket
@@ -223,56 +227,6 @@ OPEN_ERROR:
 	return -1;
 }
 
-ndsocket_t nd_socket_connect(const char *host_name, short port,int sock_type, SOCKADDR_IN *out_addr)
-{
-    struct addrinfo hints;
-    struct addrinfo *result, *rp;
-    int sfd = -1, s;
-    char port_buf[20] ;
-    //struct sockaddr_storage peer_addr;
-    //socklen_t peer_addr_len;
-    snprintf(port_buf,sizeof(port_buf), "%d", port) ;
-
-    memset(&hints, 0, sizeof(struct addrinfo));
-    hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
-    hints.ai_socktype = sock_type; /* Datagram socket */
-    hints.ai_flags = 0;    /* For wildcard IP address */
-    hints.ai_protocol = 0;          /* Any protocol */
-
-    s = getaddrinfo(host_name, port_buf, &hints, &result);
-    if (s != 0) {
-       nd_logfatal( "getaddrinfo: %s\n" AND gai_strerror(s));
-       return -1;
-    }
-
-    /* getaddrinfo() returns a list of address structures.
-      Try each address until we successfully bind(2).
-      If socket(2) (or bind(2)) fails, we (close the socket
-      and) try the next address. */
-
-    for (rp = result; rp != NULL; rp = rp->ai_next) {
-        sfd = socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
-        if (sfd == -1)
-            continue;
-
-        if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1) {
-            if(out_addr && rp->ai_addrlen <=sizeof(SOCKADDR_IN)) {
-                memcpy(out_addr, &rp->ai_addr, rp->ai_addrlen) ;
-            }
-            break;                  /* Success */
-        }
-        close(sfd);
-    }
-
-    if (sfd == -1) {               /* No address succeeded */
-        nd_logfatal( "create socket and bind error\n");
-        return -1;
-    }
-
-
-    return sfd ;
-
-}
 #else
 
 /* create a socket and bind
@@ -288,7 +242,7 @@ ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int
 	ndsocket_t listen_fd  ;					/* listen and connect fd */
 	int re_usr_addr = 1 ;
 
-
+	int procotolVer = AF_INET;
 	if (type==SOCK_DGRAM && tmp_port==0) {
 		ndsocket_t tmp_fd = nd_socket_connect("127.0.0.1", 0, type, NULL) ;
 		if(tmp_fd <= 0) {
@@ -302,13 +256,13 @@ ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int
 	}
 
 	/* zero all socket slot */
-	listen_fd = (ndsocket_t ) socket(AF_INET, type, protocol) ;
+	listen_fd = (ndsocket_t ) socket(procotolVer, type, protocol) ;
 	if(-1 == listen_fd){
 		return -1;
 	}
 	if(type != SOCK_RAW && INADDR_NONE!= bindip){
 		SOCKADDR_IN serv_addr  ;		/* socket address */
-		serv_addr.sin_family = AF_INET ;
+		serv_addr.sin_family = procotolVer;
 		if(bindip)
 			serv_addr.sin_addr.s_addr = htonl(bindip) ;
 		else
@@ -349,7 +303,7 @@ ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int
 			goto OPEN_ERROR ;
 		if(bindip &&  INADDR_NONE!= bindip) {
 			SOCKADDR_IN serv_addr  ;		/* socket address */
-			serv_addr.sin_family = AF_INET ;
+			serv_addr.sin_family = procotolVer;
 			serv_addr.sin_addr.s_addr = htonl(bindip) ;
 			serv_addr.sin_port = 0 ;
 			if(-1==bind (listen_fd, (struct sockaddr*)&serv_addr, sizeof(serv_addr))){
@@ -372,37 +326,120 @@ OPEN_ERROR:
  * @out put address of remote host
  * return -1 on error else return socket fd
  */
-ndsocket_t nd_socket_connect(const char *host_name, short port,int sock_type, SOCKADDR_IN *out_addr)
-{
-	ENTER_FUNC()
-	ndsocket_t conn_sock ;
-	SOCKADDR_IN their_addr = {0} ;
-	if(-1==get_sockaddr_in(host_name, port, &their_addr) ) {
-		nd_logerror("get_sockaddr_in(%s, %d) error: %s\n",host_name, port, nd_last_error()) ;
-		LEAVE_FUNC() ;
-		return -1 ;
-	}
-	conn_sock = (ndsocket_t ) socket (AF_INET, sock_type, 0);
-	if(-1==conn_sock) {
-		nd_logerror("socket(AF_INET, %d) error: %s\n",sock_type, nd_last_error()) ;
-		LEAVE_FUNC() ;
-		return -1;
-	}
-	if(-1==connect(conn_sock,(LPSOCKADDR)&their_addr, sizeof(struct sockaddr)) ) {
-        nd_logerror("connect to %s:%d error %s\n", host_name, port, nd_last_error()) ;
-		LEAVE_FUNC() ;
-		return -1 ;
-	}
-
-	if(out_addr)
-		memcpy((void*)out_addr, (void*)&their_addr, sizeof(their_addr)) ;
-
-	LEAVE_FUNC() ;
-	return conn_sock;
-}
+// ndsocket_t nd_socket_connect(const char *host_name, short port,int sock_type, SOCKADDR_IN *out_addr)
+// {
+// 	ENTER_FUNC()
+// 	ndsocket_t conn_sock ;
+// 	SOCKADDR_IN their_addr = {0} ;
+// 	if(-1==get_sockaddr_in(host_name, port, &their_addr) ) {
+// 		nd_logerror("get_sockaddr_in(%s, %d) error: %s\n",host_name, port, nd_last_error()) ;
+// 		LEAVE_FUNC() ;
+// 		return -1 ;
+// 	}
+// 	conn_sock = (ndsocket_t ) socket (AF_INET, sock_type, 0);
+// 	if(-1==conn_sock) {
+// 		nd_logerror("socket(AF_INET, %d) error: %s\n",sock_type, nd_last_error()) ;
+// 		LEAVE_FUNC() ;
+// 		return -1;
+// 	}
+// 	if(-1==connect(conn_sock,(LPSOCKADDR)&their_addr, sizeof(struct sockaddr)) ) {
+//         nd_logerror("connect to %s:%d error %s\n", host_name, port, nd_last_error()) ;
+// 		LEAVE_FUNC() ;
+// 		return -1 ;
+// 	}
+// 
+// 	if(out_addr)
+// 		memcpy((void*)out_addr, (void*)&their_addr, sizeof(their_addr)) ;
+// 
+// 	LEAVE_FUNC() ;
+// 	return conn_sock;
+// }
 #endif // __LINUX__
 
 
+ndsocket_t nd_socket_connect(const char *host_name, short port, int sock_type, SOCKADDR_IN *out_addr)
+{
+	struct addrinfo hints;
+	struct addrinfo *result, *rp;
+	int sfd = -1, s;
+	char port_buf[20];
+	//struct sockaddr_storage peer_addr;
+	//socklen_t peer_addr_len;
+	snprintf(port_buf, sizeof(port_buf), "%d", port);
+
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
+	hints.ai_socktype = sock_type; /* Datagram socket */
+	hints.ai_flags = 0;    /* For wildcard IP address */
+	hints.ai_protocol = 0;          /* Any protocol */
+
+	s = getaddrinfo(host_name, port_buf, &hints, &result);
+	if (s != 0) {
+		//nd_logfatal("getaddrinfo: %s\n" AND gai_strerror(s));
+		nd_logerror("getaddrinfo: %s\n", nd_last_error()) ;
+		return -1;
+	}
+
+	/* getaddrinfo() returns a list of address structures.
+	Try each address until we successfully bind(2).
+	If socket(2) (or bind(2)) fails, we (close the socket
+	and) try the next address. */
+
+	for (rp = result; rp != NULL; rp = rp->ai_next) {
+		if (AF_INET6 == rp->ai_addr->sa_family)	{
+			char buf[128] = { 0 };
+			struct sockaddr_in6 svraddr = { 0 };
+			struct sockaddr_in *sa = (struct sockaddr_in*)rp->ai_addr;
+			inet_ntop(AF_INET6, &sa->sin_addr, buf, sizeof(buf));
+
+			sfd = socket(rp->ai_family, rp->ai_socktype, 0);
+			if (sfd == -1)
+				continue;
+
+			svraddr.sin6_family = AF_INET6;
+			svraddr.sin6_port = htons(port);
+			if (inet_pton(AF_INET6, buf, &svraddr.sin6_addr) < 0){
+				continue;
+			}
+			if (connect(sfd, &svraddr, sizeof(svraddr) ) != -1) {
+				if (out_addr ) {
+					*out_addr = *(SOCKADDR_IN*)&svraddr;
+				}
+				break;                 
+			}
+			else {
+				nd_logerror("connect: %s\n", nd_last_error());
+			}
+			nd_socket_close(sfd);
+			sfd = -1;
+
+		}
+		else if (AF_INET == rp->ai_addr->sa_family){
+			
+			sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+			if (sfd == -1)
+				continue;
+
+			if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1) {
+				if (out_addr && rp->ai_addrlen <= sizeof(SOCKADDR_IN)) {
+					memcpy(out_addr, rp->ai_addr, rp->ai_addrlen);
+				}
+				break;                  /* Success */
+			}
+			nd_socket_close(sfd);
+			sfd = -1;
+		}
+	}
+
+	if (sfd == -1) {               /* No address succeeded */
+		nd_logfatal("create socket and bind error\n");
+		return -1;
+	}
+
+
+	return sfd;
+
+}
 
 //从ip地址int 到字符串形式
 char *nd_inet_ntoa (unsigned int in, char *buffer)
