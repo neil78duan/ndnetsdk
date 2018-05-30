@@ -45,7 +45,7 @@ enum eNDMsgSys{
 	
 	ND_MSG_SYS_GET_RLIMIT ,
     
-    ND_MSG_SYS_SET_MSGLOG ,
+    ND_MSG_SYS_SET_MSGLOG , // set message(maxid, minid) logged when recv
 	ND_MSG_SYS_GAME_TIME ,
 	ND_MSG_SYS_RELOAD_DATA,
 	ND_MSG_SYS_SHUTDOW_NTF, //close server ntf
@@ -62,8 +62,8 @@ enum eNDMsgSys{
 	ND_MSG_SYS_GET_ERROR_DESC, // SEND, int32 errorid, recv { int32:errorId, string:errordesc}
 	ND_MSG_SYS_REDIRECT_SRV_LOG_OUTPUT, //server redirect send log to client
 	ND_MSG_SYS_OPEN_LOG, // let server open/close log format: {uint8:logtype, unit8:isOpen}
-	ND_MSG_SYS_SET_MSG_PRINT,// set message(maxid, minid) print
-	ND_MSG_SYS_CLOSE_MESSAGE_HANDLER,//  message(maxid, minid) print
+	ND_MSG_SYS_SET_MSG_PRINT,// set message(maxid, minid) print print format and data
+	ND_MSG_SYS_CLOSE_MESSAGE_HANDLER,//  message(maxid, minid) 
 	ND_MSG_SYS_GET_APPLICATION_NET_PROCOCOL_VERSION , // get application net prococol communation version
 	ND_MSG_SYS_INSTALL_HANDLER, // FORMAT 16bits:maxId,16bit:minId, 8bits:privilege, 8bits:byteOrder, string:funcName, bindata:funcBody
 

@@ -185,6 +185,7 @@
     <ClInclude Include="..\..\..\include\ndapplib\nd_object.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_objmgr.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_session.h" />
+    <ClInclude Include="..\..\..\include\ndapplib\nd_sysmsg.h" />
     <ClInclude Include="..\..\..\include\ndapplib\readcfg.h" />
     <ClInclude Include="..\..\..\include\ndlib.h" />
     <ClInclude Include="..\..\..\include\ndlog_wrapper.h" />
@@ -291,6 +292,7 @@
     <ClCompile Include="..\..\..\src\ndapplib\nd_privkey.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_session.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_stlalloc.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_sysmsg.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_version.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\readcfg.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\unix_sig.c" />

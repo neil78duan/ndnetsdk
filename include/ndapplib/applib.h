@@ -130,22 +130,5 @@ CPPAPI R_RSA_PRIVATE_KEY *nd_get_privatekey(void) ;
 		obj = 0 ;					\
 	}
 
-MSG_ENTRY_DECLARE(nd_transfer_to_msgproc) ;
-MSG_ENTRY_DECLARE(nd_transfer_to_client);
-
-MSG_ENTRY_DECLARE(nd_get_message_name_handler) ;
-MSG_ENTRY_DECLARE(nd_get_app_ver_handler) ;
-
-MSG_ENTRY_DECLARE(nd_get_server_rlimit) ;
-MSG_ENTRY_DECLARE(nd_set_netmsg_log);
-MSG_ENTRY_DECLARE(nd_set_netmsg_print);
-
-MSG_ENTRY_DECLARE(nd_quicken_inst_time);
-MSG_ENTRY_DECLARE(nd_get_sys_time);
-MSG_ENTRY_DECLARE(nd_get_game_time);
-MSG_ENTRY_DECLARE(app_statics_begin);
-MSG_ENTRY_DECLARE(app_statics_end);
-
-MSG_ENTRY_DECLARE(default_close_handler);
-
+#include "ndapplib/nd_sysmsg.h"
 #endif
