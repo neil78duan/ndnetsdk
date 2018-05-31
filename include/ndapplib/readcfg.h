@@ -10,19 +10,20 @@
 
 #define ND_HOST_NAME_SIZE 256 
 //#define ND_FILE_PATH_SIZE 256
-#define ND_IP_TEXT_SIZE 20
+#define ND_IP_TEXT_SIZE 64
 #define ND_CONNECT_OTHER_HOSTR_NUM 8
 #define ND_DOMAIN_SIZE 64
 struct listen_config
 {
 	int port ;
+	int is_ipv6;
 	int max_connect ;
 	int connected_tmout ; //connect timeout (s)
     int empty_close_tmout;
     int closed_unknown ;
     int cloase_unauthorize ;
 	int thread_pool_num;
-	char bind_ip[32] ;
+	char bind_ip[ND_IP_TEXT_SIZE] ;
 	char listen_name[32] ;
 };
 

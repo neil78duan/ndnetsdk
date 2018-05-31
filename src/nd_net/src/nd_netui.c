@@ -158,7 +158,7 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 	}
 	//////////////////////////////////////////////////////////////////////////	
 	if (node->user_def_data_hook){	
-		int data_len = ndlbuf_datalen(&(node->recv_buffer));
+		int data_len = (int)ndlbuf_datalen(&(node->recv_buffer));
 		ret = node->data_entry(node, ndlbuf_data(&(node->recv_buffer)), data_len, node->srv_root) ;
 		if(ret > 0 ){
 			ndlbuf_sub_data(&(node->recv_buffer),ret) ;

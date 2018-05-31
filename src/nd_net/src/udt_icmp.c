@@ -38,7 +38,7 @@ nd_udt_node* udt_icmp_connect(nd_udt_node *socket_node,const char *host, short p
 		return 0;
 	}
 
-	if(-1==nd_net_bind(0,0,(nd_handle) socket_node) ) {
+	if(-1==nd_net_bind(0,port,10,(nd_handle)socket_node) ) {
 		return NULL ;
 	}
 
@@ -46,9 +46,9 @@ nd_udt_node* udt_icmp_connect(nd_udt_node *socket_node,const char *host, short p
 	if(-1==set_raw_iphdr(socket_node->fd,1) ) 
 		return NULL;
 
-	if(-1==nd_net_ipbind((nd_handle)socket_node,nd_get_ip()) ){
-		return NULL;
-	}
+// 	if(-1==nd_net_ipbind((nd_handle)socket_node,nd_get_ip()) ){
+// 		return NULL;
+// 	}
 	socket_node->port = socket_node->fd & 0xffff; 
 
 	raw_set_recvall(socket_node->fd) ;

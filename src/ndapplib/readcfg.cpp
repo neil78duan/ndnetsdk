@@ -38,6 +38,7 @@ int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg)
 	XML_READ_SUB_INT(xmlroot,"port",lcfg->port) ;
 	lcfg->port += base_port ;
 
+	XML_READ_SUB_INT(xmlroot, "is_ipv6", lcfg->is_ipv6);
 	//read ip
 	XML_READ_SUB_BUF(xmlroot,"bindip",lcfg->bind_ip) ;
 

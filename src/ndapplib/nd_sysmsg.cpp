@@ -123,6 +123,7 @@ MSG_ENTRY_INSTANCE(nd_get_app_ver_handler)
 
 MSG_ENTRY_INSTANCE(nd_get_sys_time)
 {
+	ND_TRACE_FUNC();
 	NDIStreamMsg inmsg(msg);
 	NDOStreamMsg omsg(inmsg.MsgMaxid(), inmsg.MsgMinid());
 	NDUINT64 tm1 = (NDUINT64)time(NULL);
@@ -134,6 +135,7 @@ MSG_ENTRY_INSTANCE(nd_get_sys_time)
 }
 MSG_ENTRY_INSTANCE(nd_get_game_time)
 {
+	ND_TRACE_FUNC();
 	NDIStreamMsg inmsg(msg);
 	NDOStreamMsg omsg(inmsg.MsgMaxid(), inmsg.MsgMinid());
 	NDUINT64 tm1 = (NDUINT64)app_inst_time(NULL);
@@ -146,6 +148,7 @@ MSG_ENTRY_INSTANCE(nd_get_game_time)
 
 MSG_ENTRY_INSTANCE(nd_quicken_inst_time)
 {
+	ND_TRACE_FUNC();
 	NDUINT32 hh = 0, mm = 0;
 	NDIStreamMsg inmsg(msg);
 
@@ -263,6 +266,7 @@ MSG_ENTRY_INSTANCE(default_close_handler)
 
 MSG_ENTRY_INSTANCE(nd_redirect_msglog_to_me)
 {
+	ND_TRACE_FUNC();
 	NDSession *psession = dynamic_cast<NDSession*>(NDGetSession(nethandle ));
 	if (psession) {
 		psession->RedirectLogToMe();
@@ -298,6 +302,7 @@ MSG_ENTRY_INSTANCE(nd_open_log_handler)
 
 MSG_ENTRY_INSTANCE(error_ack_message)
 {
+	ND_TRACE_FUNC();
 	NDOStreamMsg omsg(ND_MAIN_ID_SYS,ND_MSG_SYS_ERROR);
 	omsg.Write((NDUINT32)NDERR_FUNCTION_CLOSED);
 	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);

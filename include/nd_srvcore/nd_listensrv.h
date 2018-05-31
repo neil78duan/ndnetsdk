@@ -73,7 +73,7 @@ struct listen_contex
 #endif
 
 /*打开网络,并且启动监听线程*/
-ND_SRV_API int nd_listensrv_open(int port, nd_listen_handle handle,ndip_t bindip,int thread_num) ;
+ND_SRV_API int nd_listensrv_open(int is_ipv6, int port, nd_listen_handle handle,int thread_num, const char* bindip) ;
 /*关闭网络关闭监听线程*/
 ND_SRV_API int nd_listensrv_close(nd_listen_handle handle, int force) ;
 ND_SRV_API int nd_listensrv_checkvalid(nd_listen_handle handle) ;

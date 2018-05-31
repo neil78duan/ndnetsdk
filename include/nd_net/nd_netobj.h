@@ -22,8 +22,8 @@
 	NDUINT8				error_privilage_close:1; /* close on privilage error */		\
 	NDUINT8				unreg_msg_close:1; /* close recv unhandler message */		\
 	NDUINT8				user_define_packet:1; /* user define packet*/ \
-	ndip_t				bindip;				\
-	int					sys_error
+	int					sys_error;			\
+	char				bindip[64]
 
 struct nd_netsocket
 {
@@ -58,7 +58,7 @@ typedef int (*net_update_entry)(nd_handle h) ;
 
 typedef int (*net_writable_callback) (nd_handle h,nd_userdata_t param) ; //when socket can be writable call 
 
-typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
+typedef size_t(*net_get_packet_size)(nd_handle  handle, void *data);
 
 
 #define  ND_CONNECTOR_BASE \
@@ -90,7 +90,10 @@ typedef size_t (*net_get_packet_size)(nd_handle  handle, void *data) ;
 	nd_userdata_t		writable_param ;	\
 	net_writable_callback writable_callback; \
 	nd_cryptkey			crypt_key ;		\
-	struct sockaddr_in 	remote_addr ;	\
+union {									\
+	struct sockaddr_in 	remote_addr;	\
+	struct sockaddr_in6 remote_addr6;	\
+};										\
 	ndtime_t			last_push ;		\
 	ndtime_t			disconn_timeout;\
 	ndatomic_t			send_pack_times,recv_pack_times;\
@@ -185,11 +188,11 @@ ND_NET_API int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbu
 */
 ND_NET_API int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf) ;
 
-ND_NET_API int nd_net_bind(int port, int listen_nums,nd_handle net_handle) ;
+ND_NET_API int nd_net_bind(int isipv6, int port, int listen_nums,nd_handle net_handle) ;
 
 ND_NET_API int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN *to) ;
 //绑定到指定的IP
-ND_NET_API int nd_net_ipbind(nd_handle net_handle, ndip_t ip) ;
+ND_NET_API int nd_net_ipbind(nd_handle net_handle, const char* ip) ;
 ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
 
 

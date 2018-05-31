@@ -263,7 +263,9 @@ int NDInstanceBase::Open(int session_size )
 	OnListenerCreate() ;
 	
 	pListen->SetAccept(1) ;
-	int ret = pListen->Open(m_config.l_cfg.port,m_config.l_cfg.thread_pool_num) ;
+	struct listen_config &pCfg = m_config.l_cfg;
+
+	int ret = pListen->Open(pCfg.port,pCfg.thread_pool_num, pCfg.bind_ip, pCfg.is_ipv6) ;
     if (ret != 0) {
         return  -1 ;
     }

@@ -262,11 +262,11 @@ void NDListener::Destroy(int flag)
 
 }
 
-int NDListener::Open(int port,int thread_num)
+int NDListener::Open(int port, int thNum, const char *bindIp , int isIpv6)
 {
 	ND_TRACE_FUNC();
 	nd_assert(m_objhandle) ;
-	if(-1==nd_listensrv_open(port,   m_objhandle, 0, thread_num)  ) {
+	if(-1==nd_listensrv_open(isIpv6, port, m_objhandle, thNum,bindIp)  ) {
 		nd_logfatal((char*)"open port!\n") ;
 		return -1 ;
 	}	

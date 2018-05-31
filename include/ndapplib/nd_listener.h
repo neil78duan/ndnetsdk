@@ -32,7 +32,7 @@ class NDListener : public NDObject
 {
 public:
 	int Close(int force=0);
-	int Open(int port,int thread_num=0);
+	int Open(int port,int thNum =0, const char *bindIp=NULL, int isIpv6=0);
 	virtual int Create(const char *listen_name,int session_num, size_t session_size);
 	void Destroy(int flag) ;
 	

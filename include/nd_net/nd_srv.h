@@ -65,7 +65,7 @@ static __INLINE__ ndsocket_t nd_srv_getfd(nd_handle h_srv)
 //ND_NET_API void nd_srv_node_init(struct nd_srv_node *node);
 //#define  nd_tcpsrv_node_init	nd_srv_node_init
 
-#define	nd_srv_open(port,   listen_num,node) nd_net_bind(port, listen_num, (nd_handle)node)
+#define	nd_srv_open(isipV6,port, listen_num,node) nd_net_bind(isipV6,port, listen_num, (nd_handle)node)
 
 ND_NET_API void nd_srv_close(struct nd_srv_node *node) ; /* close net server*/
 

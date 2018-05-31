@@ -52,28 +52,28 @@ void net_release_sendlock(nd_netui_handle  socket_node)
 }
 
 //绑定到指定的IP
-int nd_net_ipbind(nd_handle net_handle, ndip_t ip) 
+int nd_net_ipbind(nd_handle net_handle, const char* ip) 
 {
-	struct nd_netsocket *node =(struct nd_netsocket *)net_handle ;
-	node->bindip = ip ;
-	if(node->fd) {
-		SOCKADDR_IN self ;
-		self.sin_family = AF_INET;
-		if (node->sock_type==SOCK_RAW)
-			self.sin_port = 0;
-		else 
-			self.sin_port = node->port;
-		self.sin_addr.s_addr = ip ;
-		if(-1==bind(node->fd, (SOCKADDR *)&self, sizeof(self) ) ) {
-			nd_showerror();
-	 		return -1 ;
-	 	}
-	}
-	return 0;
+// 	struct nd_netsocket *node =(struct nd_netsocket *)net_handle ;
+// 	strncpy(node->bindip, ip,sizeof(node->bindip));
+// 	if(node->fd) {
+// 		SOCKADDR_IN self ;
+// 		self.sin_family = AF_INET;
+// 		if (node->sock_type==SOCK_RAW)
+// 			self.sin_port = 0;
+// 		else 
+// 			self.sin_port = node->port;
+// 		self.sin_addr.s_addr = ip ;
+// 		if(-1==bind(node->fd, (SOCKADDR *)&self, sizeof(self) ) ) {
+// 			nd_showerror();
+// 	 		return -1 ;
+// 	 	}
+// 	}
+	return -1;
 		
 }
 
-int nd_net_bind(int port, int listen_nums,nd_handle net_handle) 
+int nd_net_bind(int isipv6, int port, int listen_nums,nd_handle net_handle)
 {
 	ndsocket_t fd;
 	struct nd_netsocket *node = (struct nd_netsocket *)net_handle ;
@@ -81,8 +81,15 @@ int nd_net_bind(int port, int listen_nums,nd_handle net_handle)
 
 	nd_assert(node) ;
 	node->myerrno = NDERR_SUCCESS ;
-
-	fd = nd_socket_openport(port,node->sock_type, node->sock_protocol, node->bindip, listen_nums) ;
+	if (node->bindip[0]) {
+		fd = nd_socket_openport(port, node->sock_type, node->sock_protocol, listen_nums, node->bindip);
+	}
+	else if (isipv6) {
+		fd = nd_socket_openport_v6(port, node->sock_type, node->sock_protocol, listen_nums);
+	} 
+	else {
+		fd = nd_socket_openport_v4(port, node->sock_type, node->sock_protocol, listen_nums);
+	}
 	
 	if(-1==fd){
 		nd_logfatal("open port %s" AND nd_last_error()) ;

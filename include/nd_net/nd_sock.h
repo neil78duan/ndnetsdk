@@ -22,6 +22,7 @@
 	#endif
 	#define nd_socket_last_error		WSAGetLastError		
 	typedef char* sock_opval_t ;
+	#include <Ws2tcpip.h>  
 #else 
 	#include <sys/socket.h>
 	#include <netinet/in.h>
@@ -69,7 +70,9 @@ ND_NET_API int get_sockaddr_in(const char *host_name, short port, SOCKADDR_IN* s
  * @out_addr out put address of the socket
  * return -1 error else return socket
  */
-ND_NET_API ndsocket_t nd_socket_openport(int port, int type,int protocol,ndip_t bindip, int listen_nums) ;
+ND_NET_API ndsocket_t nd_socket_openport(int port, int type, int protocol, int listen_nums, const char*bindip);
+ND_NET_API ndsocket_t nd_socket_openport_v6(int port, int type,int protocol, int listen_nums);
+ND_NET_API ndsocket_t nd_socket_openport_v4(int port, int type, int protocol, int listen_nums);
 /* connect to server
  * @out put address of remote host
  * return -1 on error else return socket fd
