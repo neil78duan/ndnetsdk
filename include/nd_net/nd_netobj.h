@@ -62,7 +62,7 @@ typedef size_t(*net_get_packet_size)(nd_handle  handle, void *data);
 
 
 #define  ND_CONNECTOR_BASE \
-	NDUINT8		level ;			\
+	NDUINT8		level:6 ;			\
 	NDUINT8		read_again:1;	\
 	NDUINT8		is_crypt_packet:1;\
 	NDUINT8		is_session:1;	\
@@ -71,6 +71,7 @@ typedef size_t(*net_get_packet_size)(nd_handle  handle, void *data);
 	NDUINT8 	save_send_stream:1;\
 	NDUINT8 	save_recv_stream:1;\
 	NDUINT8 	user_def_data_hook:1;\
+	NDUINT8 	is_ipv6:1;\
 	NDUINT16	session_id;		\
 	ndtime_t	start_time ;	\
 	ndtime_t	last_recv ;		\
@@ -198,4 +199,13 @@ ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf
 
 ND_NET_API int nd_netobj_recv_stream_save(nd_netui_handle net_handle, void *data, int size );
 ND_NET_API int nd_netobj_send_stream_save(nd_netui_handle net_handle, void *data, int size );
+
+static __INLINE__ int nd_netobj_is_ipv6(nd_netui_handle net_handle) 
+{
+	return net_handle->is_ipv6;
+}
+static void nd_netobj_set_ipv6(nd_netui_handle net_handle)
+{
+	net_handle->is_ipv6 = 1;
+}
 #endif

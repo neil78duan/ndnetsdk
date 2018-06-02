@@ -70,8 +70,9 @@ static int on_accept_entry(nd_handle nethandle, SOCKADDR_IN *addr, nd_handle h_l
 	ND_TRACE_FUNC();
 	NDListener *pListener ;
 	NDBaseSession *newSession = NULL;
-	char buf[32] ;
-	char  *pszTemp = nd_inet_ntoa( addr->sin_addr.s_addr ,buf);
+	char buf[64] ;
+	//char  *pszTemp = ND_INET_NTOA( addr->sin_addr.s_addr ,buf);
+	const char  *pszTemp= inet_ntop(addr->sin_family, &addr->sin_addr, buf, sizeof(buf));
 
 	pListener =NDGetListener( h_listen)  ;
 	//pListener =(NDListener *) (((struct listen_contex *)h_listen)->user_data)  ;
@@ -354,7 +355,7 @@ int NDListener::Deattach(NDObject &conn,nd_thsrvid_t thid)
 }
 
 
-int NDListener::AttachPort(int port, ndip_t bindIP)
+int NDListener::AttachPort(int port, const char* bindIP)
 {
 	if(-1==nd_listensrv_add_port((nd_listen_handle) m_objhandle, port, bindIP) ) {
 		return -1 ;
@@ -404,11 +405,18 @@ void NDSafeListener::Destroy(int flag)
 int NDSafeListener::OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr)
 {
 	if (m_inst){
-		if(!m_inst->CheckReliableHost(addr->sin_addr.s_addr) ) {
-			char  peer_buf[40];
-			nd_logwarn("[IP FORBID ] closed connection from %s unreliabled ip\n", nd_inet_ntoa(addr->sin_addr.s_addr, peer_buf));
-			return -1 ;
+		ndip_t peerIp = ND_IP_INIT;
+		if (0 == nd_sockadd_to_ndip(addr, &peerIp)) {
+			if (!m_inst->CheckReliableHost(peerIp)) {
+				char  peer_buf[64];
+				nd_logwarn("[IP FORBID ] closed connection from %s unreliabled ip\n", ND_INET_NTOA(peerIp, peer_buf));
+				return -1;
+			}
 		}
+		else {
+			return -1;
+		}
+		
 	}
 	return 0 ;
 }

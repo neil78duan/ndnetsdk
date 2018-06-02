@@ -131,22 +131,27 @@ int read_iplist(ndxml *xmlnode, ndip_t *ipbuf, int num )
 {
 	int real_num = 0;
 	for (int i=0; i<ndxml_getsub_num(xmlnode) && real_num<num; i++){
-		ndip_t ip =0;
+		ndip_t ip = ND_IP_INIT;
 		ndxml *xmlip = ndxml_refsubi(xmlnode,i) ;
 		const char *p = ndxml_getval(xmlip) ;
 		if (p) {
 			if (0 == ndstricmp(p, "localhost")) {
-				ip = 0x0100007f;
+				ip.ip = 0x0100007f;
 			}
-			else if(0!=ndstr_get_ip(p, &ip) ) {
-				ip =nd_inet_aton(p) ;
+			else {
+				if (strchr(p,':')) {
+					ip = nd_inet_aton(p);
+				}
+				else {
+					if (0 != ndstr_get_ip(p, &ip.ip)) {
+						ip = nd_inet_aton(p);
+					}
+				}
 			}
-			if (ip){
-				ipbuf[real_num++] = ip ;
-			}
+			ipbuf[real_num++] = ip;
 		}
 	}
-	return 0;
+	return real_num;
 
 }
 
@@ -183,16 +188,20 @@ int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg)
 	scfg->reliable_num = 0;
 	xml_listen = ndxml_refsub(xml_sub,"reliable_host") ;
 	if (xml_listen){
-		read_iplist(xml_listen, scfg->reliable_hosts, MAX_RELIABLE_HOST ) ;
-		for(int i=0; i<MAX_RELIABLE_HOST; i++) {
+		int count = read_iplist(xml_listen, scfg->reliable_hosts, MAX_RELIABLE_HOST ) ;
+		for(int i=0; i<count; i++) {
+			if (scfg->reliable_hosts[i].sin_family == AF_INET6) {
+				scfg->reliable_num++;
+				continue;
+			}
 			union {
-				ndip_t ip ;
+				NDUINT32 ip ;
 				NDUINT8 buf[4] ;
 			}readip,ipmask;
 
-			readip.ip = scfg->reliable_hosts[i] ;
+			readip.ip = scfg->reliable_hosts[i].ip ;
 			if (readip.ip ==0){
-				break ;
+				continue ;
 			}
 			ipmask.ip = 0xffffffff;
 			for (int x=0; x<4; x++)	{

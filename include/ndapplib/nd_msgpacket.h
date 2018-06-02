@@ -27,8 +27,8 @@ enum eNDnetStreamMarker
 	ENDSTREAM_MARKER_DOUBLE,
 	ENDSTREAM_MARKER_TEXT,
 	ENDSTREAM_MARKER_BIN,
-	ENDSTREAM_MARKER_IP32,
-	ENDSTREAM_MARKER_IP64,
+	ENDSTREAM_MARKER_IP,
+	ENDSTREAM_MARKER_IP6,
 	ENDSTREAM_CMD_SKIP_STRUCT_MARK,
 	ENDSTREAM_CMD_ENABLE_STRUCT_MARK,
 
@@ -87,8 +87,7 @@ public :
 	int WriteBin(void *data, size_t size) ;	
 	int WriteStream(char *stream_buf, size_t dataLen);
 	
-	int WriteIp(ndip_t ) ;
-	int WriteIp(ndip_v6_t ) ;
+	int WriteIp(ndip_t& ) ;
 
 	void SkipStructEndMark();
 	void EnableStructEndMark();
@@ -161,7 +160,6 @@ public :
 	int Read(NDOStreamMsg &omsg) ;
 	
 	int ReadIp(ndip_t &a) ;
-	int ReadIp(ndip_v6_t &a ) ;
 	
 	//read all left data to stream_buf
 	size_t ReadLeftStream(char *stream_buf, size_t buf_size) ;

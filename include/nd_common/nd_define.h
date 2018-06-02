@@ -63,8 +63,18 @@ typedef unsigned short		WORD ;
 #endif
 
 
-typedef NDUINT32 ndip_t ;
-typedef NDUINT64 ndip_v6_t ;
+//typedef NDUINT32 ndip_t ;
+//typedef NDUINT64 ndip_v6_t ;
+typedef struct _ipdata {
+	int sin_family;
+	union {
+		NDUINT32 ip;
+		char ip6[16];
+		NDUINT64 netIp[2];
+	};
+}ndip_t;
+
+#define ND_IP_INIT {AF_INET}
 
 typedef unsigned short ndport_t ;
 

@@ -124,7 +124,7 @@ static int _raw_send(nd_udt_node *node, char *data, int len, SOCKADDR_IN *dest)
 	if(s_pid==0)
 		s_pid = htons((NDUINT16) nd_processid() );
 	self.sin_family = AF_INET ;
-	self.sin_addr.s_addr = node->bindip ;
+	//self.sin_addr.s_addr = node->bindip ;
 
 	icmp_info.receive_id = *(u_16*)(dest->sin_zero);
 	icmp_info.receive_port = dest->sin_port;
@@ -191,7 +191,7 @@ RE_READ:
 		}
 
 		//check ipaddress and 'ICMP PORT'
-		if(ip->ip_dst != destip || icmp->receive_port != destport) {
+		if(ip->ip_dst != destip.ip || icmp->receive_port != destport) {
 			goto RE_READ;
 		}
 
@@ -227,8 +227,9 @@ RE_READ:
 int udt_icmp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t outval) 
 {
 	int ret;
+	ndip_t mysefIp = ND_IP_INIT;
 RE_READ:
-	ret = icmp_socket_read((struct nd_netsocket*)node , buf,  buf_size, &node->last_read, node->bindip,node->port) ;
+	ret = icmp_socket_read((struct nd_netsocket*)node , buf,  buf_size, &node->last_read, mysefIp,node->port) ;
 	if(ret<=0) {
 		if((int)outval > 0 ) {
 			ndtime_t start = nd_time() ;

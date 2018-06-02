@@ -293,6 +293,7 @@ int read_datagram(struct nd_netsocket *node, char *buf, size_t buf_size, SOCKADD
 	if(node->sock_type == SOCK_DGRAM)
 		return (int)recvfrom(node->fd, buf, buf_size, 0, (LPSOCKADDR)addr, &sock_len )  ;
 	else {
-		return (int)icmp_socket_read((struct nd_netsocket*)node , buf, buf_size, addr, node->bindip,node->port) ;
+		ndip_t myip =ND_IP_INIT;
+		return (int)icmp_socket_read((struct nd_netsocket*)node , buf, buf_size, addr,myip ,node->port) ;
 	}
 }

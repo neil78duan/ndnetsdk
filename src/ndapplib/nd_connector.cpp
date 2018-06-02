@@ -95,7 +95,8 @@ int NDConnector::Close(int force)
 {
 	ND_TRACE_FUNC();
 	if(m_objhandle && m_open ) {
-		nd_logwarn("connector %s closed eror = %d \n", nd_inet_ntoa(GetPeerip(), NULL), LastError() ) ;
+		char iptext[64];
+		nd_logwarn("connector %s closed eror = %d \n", ND_INET_NTOA(GetPeerip(), iptext), LastError() ) ;
 		int ret =  nd_connector_close(m_objhandle, force) ;
 		if(ret==0) 
 			OnClose() ;
@@ -278,11 +279,12 @@ int NDConnector::CheckValid()
 
 ndip_t NDConnector::Getip() 
 {
+	ndip_t ret = ND_IP_INIT;
 	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
 	if (fd){
-		return nd_sock_getip(fd) ;
+		ret = nd_sock_getip(fd) ;
 	}
-	return 0 ;
+	return ret;
 }
 
 ndport_t NDConnector::GetPort() 
@@ -296,11 +298,12 @@ ndport_t NDConnector::GetPort()
 
 ndip_t NDConnector::GetPeerip() 
 {
+	ndip_t ret = ND_IP_INIT;
 	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
 	if (fd){
-		return nd_sock_getpeerip(fd) ;
+		ret = nd_sock_getpeerip(fd) ;
 	}
-	return 0 ;
+	return ret;
 
 }
 ndport_t NDConnector::GetPeerPort() 

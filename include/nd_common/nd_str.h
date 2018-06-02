@@ -51,7 +51,8 @@ ND_COMMON_API int ndstr_parse_variant_n(const char *src, char *outstr, int n); /
 //Parse string to command line , return number of commands-lines
 ND_COMMON_API int ndstr_parse_command(const char *input_text, char *argv[], int bufize, int number);
 
-ND_COMMON_API int ndstr_get_ip(const char *src, ndip_t *ip);
+ND_COMMON_API int ndstr_get_ip(const char *src, NDUINT32 *ip);
+ND_COMMON_API int ndstr_get_ip6(const char *src, ndip_t *ip);
 
 //分解可显示的字符床
 ND_COMMON_API const  char *ndstr_parse_string(const char *src, char *outstr);

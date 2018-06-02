@@ -260,9 +260,6 @@ int test_remote_host(char *host)
 				timelast = nd_time() - icmp->icmp_timestamp ;
 				icmp_len = ret - ip->ip_hl *4 - sizeof(icmp_hdr) ;
 
-				nd_log_screen("%d Reply from %s len=%d time=%d ttl=%d\n" AND 
-					icmp->icmp_sequence AND nd_inet_ntoa(from.sin_addr.s_addr,NULL) AND
-					icmp_len AND timelast AND ip->ip_ttl ) ;
 				ret = timelast ;
 
 				goto EXIT_PING ;
@@ -304,7 +301,7 @@ int test_remote_tcp_port(char *host, short port)
 	get_sockaddr_in(host, port, &dest) ;
 	from.sin_family = AF_INET ;
 	from.sin_port = htons(65534) ;
-	from.sin_addr.s_addr = nd_get_ip() ;
+	from.sin_addr.s_addr = nd_get_ip().ip ;
 
 	syn_packet_make(&tcppacket,  &from, &dest);
 

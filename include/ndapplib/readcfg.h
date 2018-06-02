@@ -74,7 +74,7 @@ struct server_config
 	struct instance_config i_cfg ;
 
 	ndip_t reliable_hosts[MAX_RELIABLE_HOST] ;
-	ndip_t reliable_ipmask[MAX_RELIABLE_HOST] ;
+	NDUINT32 reliable_ipmask[MAX_RELIABLE_HOST] ;
 };
 // 
 // struct connect_in_server

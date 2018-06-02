@@ -34,8 +34,13 @@ int nd_socket_tcp_read(ndsocket_t fd, void *buf, size_t buflen)
 int nd_socket_udp_write(ndsocket_t fd, const char* data, size_t data_len ,SOCKADDR_IN* to_addr)
 {
 	int ret = 0 ;
+	int sock_len = sizeof(struct sockaddr_in);
+	if (to_addr->sin_family == AF_INET6) {
+		sock_len = sizeof(struct sockaddr_in6);
+	}
 	nd_assert(data && data_len > 0 && to_addr) ;
-	ret = (int)sendto(fd, data,(int)  data_len,0,(LPSOCKADDR)to_addr, (int) sizeof(*to_addr)) ;
+	
+	ret = (int)sendto(fd, data,(int)  data_len,0,(LPSOCKADDR)to_addr, sock_len) ;
 	return ret ;
 }
 /* read date from net
@@ -45,11 +50,17 @@ int nd_socket_udp_write(ndsocket_t fd, const char* data, size_t data_len ,SOCKAD
  */
 int nd_socket_udp_read(ndsocket_t fd ,char *buf, size_t size, SOCKADDR_IN* from_addr)
 {
-	int read_len,sock_len = sizeof(SOCKADDR_IN) ;
+	int read_len;
+	
+	int sock_len = sizeof(struct sockaddr_in6);
+	struct sockaddr_in6 remote_addr = { 0 };
 
 	nd_assert(buf && size > 0) ;
 
-	read_len  = (int)recvfrom(fd, buf,(int)  size, 0, (LPSOCKADDR)from_addr, &sock_len )  ;
+	read_len  = (int)recvfrom(fd, buf,(int)  size, 0, (LPSOCKADDR)&remote_addr, &sock_len )  ;
+	if (read_len > 0) {
+		memcpy(from_addr, &remote_addr, sock_len);
+	}
 	return read_len  ;
 }
 
@@ -74,66 +85,100 @@ void nd_socket_close(ndsocket_t s)
  */
 int get_sockaddr_in(const char *host_name, short port, SOCKADDR_IN* sock_addr)
 {
-	HOSTENT *host ;
-
-	nd_assert(sock_addr && host_name) ;
-	if(!sock_addr ) {
-		return -1 ;
+	struct addrinfo *rp;
+	
+	if (getaddrinfo(host_name, NULL, NULL, &rp) != 0) {
+		//nd_logfatal("getaddrinfo: %s\n" AND gai_strerror(s));
+		nd_logerror("getaddrinfo: %s\n", nd_last_error());
+		return -1;
 	}
-
-	host = gethostbyname((const char *)(host_name ));
-	if(!host){
-		return -1 ;
+	if (rp) {
+		memcpy(sock_addr, rp->ai_addr, rp->ai_addrlen);
+		sock_addr->sin_family = rp->ai_family;
+		sock_addr->sin_port = htons(port);		
+		freeaddrinfo(rp); 
+		return 0;
 	}
+	return -1;
 
-	memset(sock_addr, 0, sizeof(*sock_addr)) ;
-
-	sock_addr->sin_family = AF_INET ;
-	sock_addr->sin_port = htons(port) ;
-
-	sock_addr->sin_addr = *((struct in_addr*)(host->h_addr)) ;
-	return 0 ;
+// 	HOSTENT *host ;
+// 	nd_assert(sock_addr && host_name) ;
+// 	if(!sock_addr ) {
+// 		return -1 ;
+// 	}
+// 	host = gethostbyname((const char *)(host_name ));
+// 	if(!host){
+// 		return -1 ;
+// 	}
+// 
+// 	memset(sock_addr, 0, sizeof(*sock_addr)) ;
+// 
+// 	sock_addr->sin_family = AF_INET ;
+// 	sock_addr->sin_port = htons(port) ;
+// 
+// 	sock_addr->sin_addr = *((struct in_addr*)(host->h_addr)) ;
+// 	return 0 ;
 }
 
 //get localhost ip
 ndip_t nd_get_ip()
 {
+	ndip_t ipval = ND_IP_INIT;
 	char hostname[256];
 	int ret = gethostname(hostname,   sizeof(hostname));
 	if(0==ret) {
 		HOSTENT *host ;
 
 		host = gethostbyname((const char *)(hostname ));
-		if(!host){
-			return -1 ;
+		if(host){
+			memcpy(ipval.ip6, host->h_addr, host->h_length);
+			ipval.sin_family = host->h_addrtype;
 		}
-		return *((ndip_t*)(host->h_addr)) ;
 	}
-	return 0;
+	return ipval;
 }
 
-int nd_sock_cmp_ip(ndip_t src, ndip_t dest, ndip_t ipmask)
+int nd_sock_cmp_ip(ndip_t srcIP, ndip_t destIP, NDUINT32 ipmask)
 {
-	if (src == dest){
-		return 0;
+	if (srcIP.sin_family != destIP.sin_family) {
+		return 1;
 	}
-	if (ipmask) {
-		src = src & ipmask ;
-		dest = dest & ipmask ;
-		return !(src == dest) ;
-	}
-	else {
-		int n;
-		unsigned char *srcip = (unsigned char*)&src ;
-		unsigned char *destip = (unsigned char*)&dest ;
-		for( n=0; n<4; n++) {
-			if (destip[n] != 0xff && srcip[n]!=0xff){
-				if (destip[n] != srcip[n]){
-					return 1;
+
+	if (srcIP.sin_family == AF_INET) {
+		NDUINT32 src = srcIP.ip;
+		NDUINT32 dest = destIP.ip;
+
+		if (src == dest) {
+			return 0;
+		}
+		if (ipmask) {
+			src = src & ipmask;
+			dest = dest & ipmask;
+			return !(src == dest);
+		}
+		else {
+			int n;
+			unsigned char *srcip = (unsigned char*)&src;
+			unsigned char *destip = (unsigned char*)&dest;
+			for (n = 0; n < 4; n++) {
+				if (destip[n] != 0xff && srcip[n] != 0xff) {
+					if (destip[n] != srcip[n]) {
+						return 1;
+					}
 				}
 			}
 		}
 	}
+	else {
+		if (srcIP.netIp[1] == 0) {
+			if (srcIP.netIp[0] == destIP.netIp[0]) {
+				return 0;
+			}
+		}
+		else {
+			return  (srcIP.netIp[0] == destIP.netIp[0] && srcIP.netIp[1] == destIP.netIp[1]) ? 0 : 1;
+		}
+	}	
 	return 0 ;
 }
 
@@ -271,7 +316,7 @@ int nd_sock_cmp_ip(ndip_t src, ndip_t dest, ndip_t ipmask)
 
 ndsocket_t nd_socket_openport_ex(int af_netType, int port, int type, int protocol, int listen_nums, const char* bindip)
 {
-	int listen_fd = -1;
+	ndsocket_t listen_fd = -1;
 	//char port_buf[20];
 	int re_usr_addr = 1;
 
@@ -302,7 +347,7 @@ ndsocket_t nd_socket_openport_ex(int af_netType, int port, int type, int protoco
 		else {
 			svraddr.sin6_addr = in6addr_any;
 		}
-		if (0 != bind(listen_fd, (struct sockaddr_in *)&svraddr, sizeof(svraddr))) {
+		if (0 != bind(listen_fd, (SOCKADDR*)&svraddr, sizeof(svraddr))) {
 			nd_logerror("bind error :%s\n", nd_last_error());
 			goto OPEN_ERROR;
 		}
@@ -314,7 +359,7 @@ ndsocket_t nd_socket_openport_ex(int af_netType, int port, int type, int protoco
 		serv_addr.sin_port = htons(port);
 		serv_addr.sin_family = AF_INET;
 		if (bindip && *bindip)
-			serv_addr.sin_addr.s_addr = nd_inet_aton (bindip);
+			serv_addr.sin_addr.s_addr = inet_addr(bindip);
 		else
 			serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
@@ -470,7 +515,8 @@ ndsocket_t nd_socket_connect(const char *host_name, short port, int sock_type, S
 {
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
-	int sfd = -1, s;
+	ndsocket_t sfd = -1;
+	int s;
 	char port_buf[20];
 	//struct sockaddr_storage peer_addr;
 	//socklen_t peer_addr_len;
@@ -519,22 +565,49 @@ ndsocket_t nd_socket_connect(const char *host_name, short port, int sock_type, S
 }
 
 //从ip地址int 到字符串形式
-char *nd_inet_ntoa (unsigned int in, char *buffer)
+const char *nd_inet_ntoa (ndip_t in, char *buffer, size_t size)
 {
-	struct in_addr inaddr ;
-	inaddr.s_addr = in ;
-	if (!buffer) {
-		return inet_ntoa(inaddr);
+	if (in.sin_family == AF_INET6) {
+		return inet_ntop(AF_INET6, in.ip6, buffer, size);
 	}
 	else {
-		return strncpy(buffer, inet_ntoa(inaddr), 20);
+		struct in_addr inaddr;
+		inaddr.s_addr = in.ip;
+		if (!buffer) {
+			return inet_ntoa(inaddr);
+		}
+		else {
+			return strncpy(buffer, inet_ntoa(inaddr), size);
+		}
+	}	
+}
+
+int nd_sockadd_to_ndip(SOCKADDR_IN *sockaddr, ndip_t *ip)
+{
+	ip->sin_family = sockaddr->sin_family;
+	if (sockaddr->sin_family == AF_INET) {
+		ip->ip = sockaddr->sin_addr.s_addr;
+		return 0;
 	}
-	
+	else if (sockaddr->sin_family == AF_INET6) {
+		struct sockaddr_in6 *paddr6 = (struct sockaddr_in6 *)sockaddr;
+		memcpy(ip->ip6, &paddr6->sin6_addr, sizeof(ip->ip6));
+		return 0;
+	}
+	return -1;
 }
 
 ndip_t nd_inet_aton(const char *ipaddr)
 {
-	return (ndip_t) inet_addr(ipaddr) ;
+	ndip_t ipret = ND_IP_INIT;
+	if (strchr(ipaddr, ':')) {
+		inet_pton(AF_INET6, ipaddr, &ipret.ip6);
+		ipret.sin_family = AF_INET6;
+	}
+	else {
+		ipret.ip = inet_addr(ipaddr); 
+	}
+	return ipret;
 }
 
 
@@ -610,48 +683,69 @@ int nd_socket_wait_writablity(ndsocket_t fd,int timeval)
 ndip_t nd_sock_getip(ndsocket_t fd)
 {
 	ENTER_FUNC()
-	struct sockaddr_in saddr = {0};
+	ndip_t ret = ND_IP_INIT;
+	struct sockaddr_in6 saddr = {0};
 	socklen_t addr_len=sizeof(saddr);
 	if(-1==getsockname(fd,(struct sockaddr *)&saddr,&addr_len) ) {
 		nd_logdebug("get ip error: %s\n" AND nd_last_error()) ;
 		LEAVE_FUNC() ;
-		return 0 ;
+		return ret ;
+	}
+
+	ret.sin_family = saddr.sin6_family;
+	if (saddr.sin6_family == AF_INET6) {
+		memcpy(ret.ip6, &saddr.sin6_addr, sizeof(ret.ip6));
+	}
+	else {
+		ret.ip = ((struct sockaddr_in*)&saddr)->sin_addr.s_addr;
 	}
 	LEAVE_FUNC() ;
-	return (int) saddr.sin_addr.s_addr ;
+	return ret;
 }
 
 ndport_t nd_sock_getport(ndsocket_t fd)
 {
-	struct sockaddr_in saddr = {0};
+	struct sockaddr_in6 saddr = {0};
 	socklen_t addr_len=sizeof(saddr);
 	if(-1==getsockname(fd,(struct sockaddr *)&saddr,&addr_len) ) {
 		nd_logdebug("getsockname error: %s\n" AND nd_last_error()) ;
 		return 0 ;
 	}
-	return saddr.sin_port ;
+	return saddr.sin6_port ;
 }
 
 ndip_t nd_sock_getpeerip(ndsocket_t fd)
 {
-	struct sockaddr_in saddr = {0};
-	socklen_t addr_len=sizeof(saddr);
-	if(-1==getpeername(fd,(struct sockaddr *)&saddr,&addr_len) ) {
-		nd_logdebug("get peer ip error: %s\n" AND nd_last_error()) ;
-		return 0 ;
+	ENTER_FUNC()
+	ndip_t ret = ND_IP_INIT;
+	struct sockaddr_in6 saddr = { 0 };
+	socklen_t addr_len = sizeof(saddr);
+	if (-1 == getpeername(fd, (struct sockaddr *)&saddr, &addr_len)) {
+		nd_logdebug("get ip error: %s\n" AND nd_last_error());
+		LEAVE_FUNC();
+		return ret;
 	}
-	return (int) saddr.sin_addr.s_addr ;
+
+	ret.sin_family = saddr.sin6_family;
+	if (saddr.sin6_family == AF_INET6) {
+		memcpy(ret.ip6, &saddr.sin6_addr, sizeof(ret.ip6));
+	}
+	else {
+		ret.ip = ((struct sockaddr_in*)&saddr)->sin_addr.s_addr;
+	}
+	LEAVE_FUNC();
+	return ret;
 }
 
 ndport_t nd_sock_getpeerport(ndsocket_t fd)
 {
-	struct sockaddr_in saddr = {0};
+	struct sockaddr_in6 saddr = {0};
 	socklen_t addr_len=sizeof(saddr);
 	if(-1==getpeername(fd,(struct sockaddr *)&saddr,&addr_len) ) {
 		nd_logdebug("getpeername error: %s\n" AND nd_last_error()) ;
 		return 0 ;
 	}
-	return saddr.sin_port ;
+	return saddr.sin6_port ;
 }
 /*
  * 等待socket可读

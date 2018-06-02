@@ -65,13 +65,13 @@ int NDBaseSession::CryptPackage(nd_usermsgbuf_t *msgBuf)
 
 }
 //µÃµ½ÍøÂçµØÖ·
-const char* NDBaseSession::GetInetAddr()
-{
-	static char buf[20];
-	SOCKADDR_IN *addr = &(((nd_netui_handle)m_objhandle)->remote_addr);
-	return (const char*)nd_inet_ntoa(addr->sin_addr.s_addr, buf);
-
-}
+// const char* NDBaseSession::GetInetAddr()
+// {
+// 	static char buf[20];
+// 	SOCKADDR_IN *addr = &(((nd_netui_handle)m_objhandle)->remote_addr);
+// 	return (const char*)nd_inet_ntoa(addr->sin_addr.s_addr, buf);
+// 
+// }
 
 NDUINT16 NDBaseSession::GetSessionID()
 {
@@ -147,11 +147,7 @@ int NDBaseSession::GetPrivilege()
 
 ndip_t NDBaseSession::Getip()
 {
-	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd;
-	if (fd){
-		return nd_sock_getip(fd);
-	}
-	return 0;
+	return nd_sock_getip(((nd_netui_handle)m_objhandle)->fd);
 }
 
 ndport_t NDBaseSession::GetPort()
@@ -165,7 +161,6 @@ ndport_t NDBaseSession::GetPort()
 
 ndip_t NDBaseSession::GetPeerip()
 {
-
 	return nd_net_peer_getip(m_objhandle);
 
 }

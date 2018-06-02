@@ -84,7 +84,7 @@ int nd_listensrv_close(nd_listen_handle handle, int flag)
 	return 0 ;
 }
 
-int nd_listensrv_add_port(nd_listen_handle handle , int port, ndip_t bindip )
+int nd_listensrv_add_port(nd_listen_handle handle , int port, const char* bindip )
 {
 	struct listen_port_node *node = malloc(sizeof(struct listen_port_node)) ;
 	if (!node) {
@@ -93,7 +93,7 @@ int nd_listensrv_add_port(nd_listen_handle handle , int port, ndip_t bindip )
 	memset(node, 0, sizeof(*node)) ;
 	INIT_LIST_HEAD(&node->list) ;
 	
-	node->fd = nd_socket_openport( port,  handle->tcp.sock_type, handle->tcp.protocol , bindip, 10) ;
+	node->fd = nd_socket_openport( port,  handle->tcp.sock_type, handle->tcp.protocol , 10,bindip) ;
 	if (node->fd) {
 		list_add_tail(&node->list, &handle->list_ext_ports) ;
 		
@@ -209,7 +209,7 @@ struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info, 
 	struct nd_client_map *client_map ;
 	struct cm_manager *pmanger  = nd_listensrv_get_cmmamager(listen_info) ;
 
-	cli_len = sizeof(*client_map);
+	//cli_len = sizeof(*client_map);
 
 	cli_len = sizeof (client_addr);
 	newconnect_fd = (ndsocket_t)accept(sock_fd, (struct sockaddr*)&client_addr, &cli_len);
@@ -247,7 +247,7 @@ struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info, 
 	_set_ndtcp_session_dft_option(newconnect_fd) ;
 
 	client_map->connect_node.fd = newconnect_fd ;
-	memcpy(&(client_map->connect_node.remote_addr),&client_addr, sizeof(client_addr)) ;
+	memcpy(&(client_map->connect_node.remote_addr),&client_addr, cli_len) ;
 	TCPNODE_SET_OK(&client_map->connect_node) ;
 	client_map->connect_node.srv_root = (nd_handle)&(listen_info->tcp) ;
 

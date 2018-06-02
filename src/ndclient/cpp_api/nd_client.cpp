@@ -63,7 +63,7 @@ public :
 	void Destroy(int flag = 0);
 	int Create(const char *protocol_name=NULL) ;
 	int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL);
-	int Open(ndip_t ip, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) ;
+	int Open(ndip_t& ip, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) ;
 	int Close(int force=0);
 
 	int Send(int maxid, int minid, void *data, size_t size) ;
@@ -89,7 +89,7 @@ public :
 	void SetMsgNum(int maxmsg_num , int maxid_start=ND_MSG_BASE_ID) ;
 	virtual~NDConnector() ;
     
-	int Reconnect(ndip_t IP, int port,nd_proxy_info *proxy=NULL) ;//connect to another host
+	int Reconnect(ndip_t& IP, int port,nd_proxy_info *proxy=NULL) ;//connect to another host
 
 	nd_handle GetHandle() {return m_objhandle;}
 	int ExchangeKey(void *output_key) ;
@@ -226,12 +226,13 @@ int NDConnector::Open(const char *host, int port,const char *protocol_name,nd_pr
 
 }
 
-int NDConnector::Open(ndip_t ip, int port,const char *protocol_name, nd_proxy_info *proxy) 
+int NDConnector::Open(ndip_t& ip, int port,const char *protocol_name, nd_proxy_info *proxy) 
 {
-	return Open((char*)nd_inet_ntoa(ip,NULL), port, protocol_name, proxy) ;
+	char iptext[64];
+	return Open(ND_INET_NTOA(ip, iptext), port, protocol_name, proxy) ;
 }
 
-int NDConnector::Reconnect(ndip_t IP, int port,nd_proxy_info *proxy)
+int NDConnector::Reconnect(ndip_t& IP, int port,nd_proxy_info *proxy)
 {
 	return ::nd_reconnect(m_objhandle,  IP,  port, (nd_proxy_info*)proxy) ;
 }

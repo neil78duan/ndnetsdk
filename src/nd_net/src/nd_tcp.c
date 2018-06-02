@@ -144,9 +144,11 @@ int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node *node,stru
 	}
 	TCPNODE_SET_OK(node) ;
 	nd_socket_nonblock(node->fd,1);
-	_set_ndtcp_conn_dft_option(node->fd);
-	
+	_set_ndtcp_conn_dft_option(node->fd);	
 	node->start_time = nd_time() ;
+	if (node->remote_addr.sin_family == AF_INET6) {
+		node->is_ipv6 = 1;
+	}
 	LEAVE_FUNC();
 	return 0 ;
 }

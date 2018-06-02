@@ -175,8 +175,8 @@ int send_error_ack(nd_handle hconnect, int errcode)
 	
 	
 	NDSession *pSession = (NDSession*) NDGetSession(hconnect) ;
-	char ipbuf[32] ;
-	nd_logdebug("send error %d to %s \n", errcode, nd_inet_ntoa(pSession->Getip(), ipbuf) ) ;
+	char ipbuf[64] ;
+	nd_logdebug("send error %d to %s \n", errcode, ND_INET_NTOA(pSession->Getip(), ipbuf) ) ;
 	return 0;
 }
 

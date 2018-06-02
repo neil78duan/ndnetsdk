@@ -486,11 +486,12 @@ int nd_connector_set_timeout(nd_netui_handle net_handle, int seconds)
 
 ndip_t nd_net_peer_getip(nd_handle h)
 {
+	ndip_t ret = ND_IP_INIT;
 	if (h->type ==NDHANDLE_TCPNODE ||  h->type==NDHANDLE_UDPNODE){
 		nd_netui_handle handle = (nd_netui_handle)h ;
-		return (ndip_t)handle->remote_addr.sin_addr.s_addr ;
+		nd_sockadd_to_ndip(&handle->remote_addr, &ret);
 	}
-	return 0 ;
+	return ret ;
 }
 ndport_t nd_net_peer_getport(nd_handle h)
 {

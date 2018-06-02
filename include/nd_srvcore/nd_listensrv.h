@@ -85,7 +85,7 @@ ND_SRV_API void nd_listensrv_set_entry(nd_listen_handle handle, accept_callback 
 ND_SRV_API nd_handle nd_listensrv_get_cmallocator(nd_listen_handle handle) ;
 
 //add another port to listen list 
-ND_SRV_API int nd_listensrv_add_port(nd_listen_handle handle , int port, ndip_t bindip ) ;
+ND_SRV_API int nd_listensrv_add_port(nd_listen_handle handle , int port, const char* bindip ) ;
 
 //得到连接管理器
 ND_SRV_API struct cm_manager *nd_listensrv_get_cmmamager(nd_listen_handle handle) ;

@@ -38,7 +38,7 @@ ndsocket_t nd_proxy_connect(const char *host, short port,SOCKADDR_IN *out_addr, 
 		return -1 ;
 	}
 	if (out_addr && proxy->proxy_type==ND_PROXY_SOCKS5) {
-		out_addr->sin_family = AF_INET ;
+		out_addr->sin_family = proxy_addr.sin_family ;
 	}
 	return fd ;
 }
@@ -165,7 +165,7 @@ int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_
 
 		if (is_udp)	{
 			command[3]=1;		//ipv4 address
-			*(int*)&command[4] = nd_sock_getip(fd) ;
+			*(int*)&command[4] = nd_sock_getip(fd).ip ;
 			*(short *) &command[8] = htons(port) ;
 			//*(int*)&command[4] = 0 ;
 			//*(short *) &command[8] = 0 ;

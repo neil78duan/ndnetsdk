@@ -47,18 +47,22 @@ int nd_udp_connect(struct nd_udp_node*node,const char *host, int port,struct nd_
 			return -1 ;
 		}
 		
-		if(-1==get_sockaddr_in(host,  port, &node->remote_addr)) {
+		if(-1==get_sockaddr_in(host,  port,(SOCKADDR_IN*) &node->remote_addr6)) {
 			node->prox_info->remote_port =  port ;
 			strncpy(node->prox_info->remote_name, host, sizeof(node->prox_info->remote_name)) ;
 		}
 		
 	}
 	else {
-		node->fd = nd_socket_udp_connect(host,  port, &node->remote_addr);
+		node->fd = nd_socket_udp_connect(host,  port, (SOCKADDR_IN*)&node->remote_addr6);
 		if(node->fd <=0) {
 			node->myerrno = NDERR_OPENFILE ;
 			return -1;
 		}
+	}
+
+	if (node->remote_addr6.sin6_family == AF_INET6) {
+		node->is_ipv6 = 1;
 	}
 	nd_socket_nonblock(node->fd, 1) ;
 	return 0 ;
@@ -154,8 +158,8 @@ int nd_udp_sendtoex(struct nd_udp_node*node,const char *data, size_t len, char *
 {
 	int ret ;
 	if (!node->prox_info){
-		SOCKADDR_IN to_addr ;
-		if(-1==get_sockaddr_in(host, port, &to_addr) ) {
+		struct sockaddr_in6 to_addr ;
+		if(-1==get_sockaddr_in(host, port, (SOCKADDR_IN*)&to_addr) ) {
 			node->myerrno = NDERR_INVALID_INPUT;
 			return -1;
 		}

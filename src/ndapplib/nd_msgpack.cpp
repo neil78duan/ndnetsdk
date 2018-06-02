@@ -288,36 +288,49 @@ int NDOStreamMsg::SetStructEnd()
 }
 
 
-int NDOStreamMsg::WriteIp(ndip_t a)
+int NDOStreamMsg::WriteIp(ndip_t& a)
 {
-	if (-1 == _writeMarker(ENDSTREAM_MARKER_IP32, 4)) {
-		return -1;
-	}
+	if (a.sin_family == AF_INET) {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_IP, 4)) {
+			return -1;
+		}
 
-	if (_op_addr + sizeof(a) <= _end) {
-		memcpy(_op_addr, &a, sizeof(a));
-		MsgLength() += sizeof(a);
-		_op_addr += sizeof(a);
-		return 0;
+		if (_op_addr + sizeof(a.ip) <= _end) {
+			memcpy(_op_addr, &a.ip, sizeof(a.ip));
+			MsgLength() += sizeof(a.ip);
+			_op_addr += sizeof(a.ip);
+			return 0;
+		}
+	}
+	else {
+		if (-1 == _writeMarker(ENDSTREAM_MARKER_IP6, 0xf)) {
+			return -1;
+		}
+		if (_op_addr + sizeof(a.ip6) <= _end) {
+			memcpy(_op_addr, &a.ip6, sizeof(a.ip6));
+			MsgLength() += sizeof(a.ip6);
+			_op_addr += sizeof(a.ip6);
+			return 0;
+		}
 	}
 	return -1;
 }
-
-int NDOStreamMsg::WriteIp(ndip_v6_t a)
-{
-
-	if (-1 == _writeMarker(ENDSTREAM_MARKER_IP64, 8)) {
-		return -1;
-	}
-
-	if (_op_addr + sizeof(a) <= _end) {
-		memcpy(_op_addr, &a, sizeof(a));
-		MsgLength() += sizeof(a);
-		_op_addr += sizeof(a);
-		return 0;
-	}
-	return -1;
-}
+// 
+// int NDOStreamMsg::WriteIp(ndip_v6_t a)
+// {
+// 
+// 	if (-1 == _writeMarker(ENDSTREAM_MARKER_IP64, 8)) {
+// 		return -1;
+// 	}
+// 
+// 	if (_op_addr + sizeof(a) <= _end) {
+// 		memcpy(_op_addr, &a, sizeof(a));
+// 		MsgLength() += sizeof(a);
+// 		_op_addr += sizeof(a);
+// 		return 0;
+// 	}
+// 	return -1;
+// }
 
 
 int NDOStreamMsg::Write(int a)
@@ -714,11 +727,11 @@ int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
 		}
 	}
 		break;
-	case ENDSTREAM_MARKER_IP32:
-		OUT_PUT_TYPE(p, len, ndip_t, %x, ReadIp);
+	case ENDSTREAM_MARKER_IP:
+		///OUT_PUT_TYPE(p, len, ndip_t, %x, ReadIp);
 		break;
-	case ENDSTREAM_MARKER_IP64:
-		OUT_PUT_TYPE(p, len, ndip_v6_t, %llx, ReadIp);
+	case ENDSTREAM_MARKER_IP6:
+		//OUT_PUT_TYPE(p, len, ndip_v6_t, %llx, ReadIp);
 		break;
 	default:
 		return -1;
@@ -973,9 +986,12 @@ bool NDIStreamMsg::TrytoMoveStructEnd()
 		case ENDSTREAM_MARKER_INT64:
 		case ENDSTREAM_MARKER_FLOAT:
 		case ENDSTREAM_MARKER_DOUBLE:
-		case ENDSTREAM_MARKER_IP32:
-		case ENDSTREAM_MARKER_IP64:
+		case ENDSTREAM_MARKER_IP:
 			_op_addr += size;
+			break;
+
+		case ENDSTREAM_MARKER_IP6:
+			_op_addr += 16;
 			break;
 		case ENDSTREAM_MARKER_TEXT:
 			if (size == 0) {
@@ -1258,39 +1274,48 @@ int NDIStreamMsg::ReadIp(ndip_t &a)
 	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
 		return -1;
 	}
-	if (type != ENDSTREAM_MARKER_IP32)	{
+	size_t readlen = 4;
+	if (type == ENDSTREAM_MARKER_IP)	{
+		a.sin_family = AF_INET;
+		readlen = sizeof(a.ip);
+	}
+	else if (type == ENDSTREAM_MARKER_IP6) {
+		a.sin_family = AF_INET6;
+		readlen = sizeof(a.ip6);
+	}
+	else {
 		return -1;
 	}
 
-	if(_end >= _op_addr + sizeof(a) ) {		
-		memcpy(&a, _op_addr, sizeof(a)) ;
-		_op_addr += sizeof(a) ;
-		return 0 ;
-		
+	if(_end >= _op_addr + readlen) {
+		memcpy(a.ip6, _op_addr, readlen) ;
+		_op_addr += readlen;
+		return 0 ;		
 	}
 	return -1;
 }
-int NDIStreamMsg::ReadIp(ndip_v6_t &a )
-{
-	eNDnetStreamMarker type;
-	NDUINT8 size;
-	m_bStruckEndMarker = false;
-	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
-		return -1;
-	}
-	if (type != ENDSTREAM_MARKER_IP64)	{
-		return -1;
-	}
 
-	if(_end >= _op_addr + sizeof(a) ) {
-		
-		memcpy(&a, _op_addr, sizeof(a)) ;
-		_op_addr += sizeof(a) ;
-		return 0 ;
-		
-	}
-	return -1;
-}
+// int NDIStreamMsg::ReadIp(ndip_v6_t &a )
+// {
+// 	eNDnetStreamMarker type;
+// 	NDUINT8 size;
+// 	m_bStruckEndMarker = false;
+// 	if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+// 		return -1;
+// 	}
+// 	if (type != ENDSTREAM_MARKER_IP64)	{
+// 		return -1;
+// 	}
+// 
+// 	if(_end >= _op_addr + sizeof(a) ) {
+// 		
+// 		memcpy(&a, _op_addr, sizeof(a)) ;
+// 		_op_addr += sizeof(a) ;
+// 		return 0 ;
+// 		
+// 	}
+// 	return -1;
+// }
 
 
 //read all left data to stream_buf

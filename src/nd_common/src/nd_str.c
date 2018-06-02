@@ -413,11 +413,11 @@ int ndstr_parse_command(const char *input_text, char *argv[], int bufize, int nu
 
 }
 
-int ndstr_get_ip(const char *src, ndip_t *ip)
+int ndstr_get_ip(const char *src, NDUINT32 *ip)
 {
 	int i= 0;
 	union {
-		ndip_t ip ;
+		NDUINT32 ip ;
 		NDUINT8 buf[4] ;
 	}readip;
 	char *p = (char*) src ;
@@ -460,6 +460,7 @@ int ndstr_get_ip(const char *src, ndip_t *ip)
 	*ip = readip.ip ;
 	return 0;
 }
+
 
 /*读取一个字符串，知道遇到一个制定的结束字符为止*/
 const char *ndstr_str_end(const char *src, char *outstr, const char end)

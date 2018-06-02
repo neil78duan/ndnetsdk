@@ -63,7 +63,7 @@ class NDIConn : public NDObject
 {
 public:
 	virtual int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
-	virtual int Open(ndip_t ip, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
+	virtual int Open(ndip_t& ip, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) = 0;
 	virtual int Close(int force=0) = 0;
 	virtual int Send(int maxid, int minid, void *data, size_t size)  = 0;
 	virtual int SendMsg(NDSendMsg &msg, int flag=0) = 0;
@@ -80,7 +80,7 @@ public:
 	virtual	bool TestMsgIsHandle(ndmsgid_t maxid, ndmsgid_t minid) = 0;
     virtual void SetDftMsgHandler(nd_iconn_func) = 0;
 	virtual void SetMsgNum(int maxmsg_num , int maxid_start)  = 0;
-	virtual int Reconnect(ndip_t IP, int port,nd_proxy_info *proxy=NULL) = 0 ;//connect to another host
+	virtual int Reconnect(ndip_t& IP, int port,nd_proxy_info *proxy=NULL) = 0 ;//connect to another host
 	virtual int ExchangeKey(void *output_key) =0;
 	virtual const char *ErrorDesc() =0;
 	virtual const char *ConvertErrorDesc(NDUINT32 errcode) =0;

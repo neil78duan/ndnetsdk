@@ -22,7 +22,7 @@ public:
 	NDBaseSession  ();
 	virtual~NDBaseSession ();
 
-	const char* GetInetAddr();
+	//const char* GetInetAddr();
 	virtual void Initilize(nd_handle hsession, nd_handle listen = NULL);
 	NDUINT16 GetSessionID();
 

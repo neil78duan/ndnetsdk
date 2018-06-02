@@ -103,8 +103,10 @@ static __INLINE__ int nd_sockadd_in_cmp(SOCKADDR_IN *src_addr, SOCKADDR_IN *desc
 
 ND_NET_API int nd_socket_nonblock(ndsocket_t fd, int cmd) ; //set socket nonblock or blocl
 
-ND_NET_API char *nd_inet_ntoa (unsigned int in, char *buff) ;
+ND_NET_API const char *nd_inet_ntoa (ndip_t in, char *buff,size_t size) ;
 ND_NET_API ndip_t nd_inet_aton(const char *ipaddr) ;
+ND_NET_API int nd_sockadd_to_ndip(SOCKADDR_IN *sockaddr, ndip_t *ip);
+#define ND_INET_NTOA(in,buff) nd_inet_ntoa(in,buff, sizeof(buff))
 
 ND_NET_API NDUINT64 nd_hton64(NDUINT64 h) ;
 ND_NET_API NDUINT64 nd_ntoh64(NDUINT64 h) ;
@@ -172,5 +174,5 @@ ND_NET_API int nd_proxy_sendto(ndsocket_t fd, void *data, size_t size,  SOCKADDR
 
 //比较IP,如果是 192.168.0.1 和192.168.1.255,是相等的, 192.168.1.%将会转变成192.168.1.255
 //return 0 success
-ND_NET_API int nd_sock_cmp_ip(ndip_t src, ndip_t desc, ndip_t ipmask) ;
+ND_NET_API int nd_sock_cmp_ip(ndip_t src, ndip_t desc, NDUINT32 ipmask) ;
 #endif

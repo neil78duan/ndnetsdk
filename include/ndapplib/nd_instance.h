@@ -52,7 +52,7 @@ public :
     int EnableAlarm(bool bEnable =true) ;
     
 	server_config *GetInstConfig() {return &m_config;}
-	bool CheckReliableHost(ndip_t peerip) ;
+	bool CheckReliableHost(ndip_t& peerip) ;
 	bool CheckReliable(NDSession *psession) ;
 	bool CheckReliableConn(nd_handle hsession);
 	virtual bool CheckIsDeveVer() ;

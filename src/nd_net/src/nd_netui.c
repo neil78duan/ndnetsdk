@@ -521,12 +521,12 @@ int nd_reconnect(nd_netui_handle net_handle, ndip_t ip, int port, struct nd_prox
 {
 	ENTER_FUNC() 
 	int ret = 0 ;
-	char ip_text[32] ;
+	char ip_text[64] ;
 	ndtime_t starttime = net_handle->start_time ;
 	nd_connector_close(net_handle, 0) ;
 
 
-	ret = nd_connector_open( net_handle,(char*)nd_inet_ntoa(ip,ip_text), port, proxy) ;
+	ret = nd_connector_open( net_handle,ND_INET_NTOA(ip,ip_text), port, proxy) ;
 	if (ret == 0){
 		net_handle->start_time = starttime;
 		nd_object_seterror(net_handle,NDERR_SUCCESS);
@@ -1085,9 +1085,9 @@ int nd_packet_decrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 {
 	int ret = nd_packet_decrypt_key(&(net_handle->crypt_key ), msgbuf) ;
 	if (-1==ret ) {
-		char buf[20] ;
+		char buf[64] ;
 		SOCKADDR_IN *addr =& (net_handle->remote_addr );
-		nd_logdebug("[%s] send data error :unknow crypt data\n" AND nd_inet_ntoa( addr->sin_addr.s_addr, buf )) ;
+		nd_logdebug("[%s] send data error :unknow crypt data\n" AND inet_ntop(addr->sin_family, &addr->sin_addr, buf ,sizeof(buf)) );
 		return 0;
 	}
 	return ret;
