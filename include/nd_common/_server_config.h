@@ -52,6 +52,8 @@
 #define ND_LOG_WITH_TIME	1
 #define ND_LOG_WITH_DATE	1
 #define ND_CALLSTACK_TRACE	1			//trace function call
+#define ND_UNUSE_STDC_ALLOC 1
+#define ND_OVER_RIDE_NEW	1
 
 #elif defined(__ND_LINUX__)		//----------------------linux platform------------------------
 

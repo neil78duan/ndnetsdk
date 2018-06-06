@@ -87,10 +87,10 @@ int udp_test()
 		read_len = nd_socket_udp_read(sock_fd ,buf, 1024, &sock_add) ;
 		if(read_len>0) {
 
-			char buf[32] ;
-			fprintf(stderr,"reced from %s:%d datalen=%d \n",  
-				nd_inet_ntoa( sock_add.sin_addr.s_addr,buf ),
-				htons(sock_add.sin_port) ,read_len);
+// 			char buf[32] ;
+// 			fprintf(stderr,"reced from %s:%d datalen=%d \n",  
+// 				nd_inet_ntoa( sock_add.sin_addr.s_addr,buf ),
+// 				htons(sock_add.sin_port) ,read_len);
 
 			
 			//NetMsgEntry(sock_fd , (NetMsg_t *)buf, read_len, &sock_add);
