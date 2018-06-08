@@ -161,7 +161,8 @@ ndport_t NDBaseSession::GetPort()
 
 ndip_t NDBaseSession::GetPeerip()
 {
-	return nd_net_peer_getip(m_objhandle);
+	return nd_sock_getpeerip(((nd_netui_handle)m_objhandle)->fd);
+	//return nd_net_peer_getip(m_objhandle);
 
 }
 ndport_t NDBaseSession::GetPeerPort()

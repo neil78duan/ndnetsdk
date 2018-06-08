@@ -344,7 +344,7 @@ bool NDInstanceBase::CheckReliable(NDSession *psession)
 
 bool NDInstanceBase::CheckReliableConn(nd_handle hsession)
 {
-	ndip_t peerip = nd_net_peer_getip(hsession) ;
+	ndip_t peerip = nd_sock_getpeerip(((nd_netui_handle)hsession)->fd);
 	return CheckReliableHost(peerip);
 }
 
