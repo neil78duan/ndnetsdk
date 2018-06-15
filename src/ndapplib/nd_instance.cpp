@@ -207,7 +207,11 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 		
 		if (CALLSTACK_INIT(callFile) == -1) {
 		*/
+#ifdef __ND_WIN__
+		if (CALLSTACK_INIT(nd_filename(m_config.i_cfg.callstack_file)) == -1) {
+#else 
 		if (CALLSTACK_INIT(m_config.i_cfg.callstack_file) == -1) {
+#endif
 			nd_logfatal("create map file %s error!\n" AND m_config.i_cfg.callstack_file);
 			return -1 ;
 		}

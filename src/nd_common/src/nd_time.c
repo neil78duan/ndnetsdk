@@ -14,12 +14,12 @@
 
 static time_t app_inst_delta = 0;
 
-void app_inst_set_hm(int _h, int _m)
+void nd_gmtime_set_offset(int _h, int _m)
 {
 	app_inst_delta += _h * 3600 + _m * 60;
 }
 
-time_t app_inst_time(time_t* _t)
+time_t nd_gmtime(time_t* _t)
 {
 	//porting to linux 
 	time_t cur = time(NULL);
@@ -72,6 +72,17 @@ const char *nd_get_datetimestr_ex(time_t in_tm, char *timebuf, int size)
 {
 	struct tm *gtm, tm1;
 	gtm = localtime_r(&in_tm, &tm1);
+
+	snprintf(timebuf, size, "%d-%d-%d %d:%d:%d",
+		gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
+		gtm->tm_hour, gtm->tm_min, gtm->tm_sec);
+	return (const char *)timebuf;
+}
+
+const char *nd_get_datetimestr_gm(time_t in_tm, char *timebuf, int size)
+{
+	struct tm *gtm, tm1;
+	gtm = gmtime_r(&in_tm, &tm1);
 
 	snprintf(timebuf, size, "%d-%d-%d %d:%d:%d",
 		gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
@@ -164,7 +175,7 @@ int nd_time_clock_to_seconds(const char *timetext)
 	return hour * 3600 + minute * 60 + second;
 }
 
-time_t nd_time_getgm_from_offset(int secondIndexOfDay, time_t now, int tm_zone)
+time_t nd_time_from_offset(int secondIndexOfDay, time_t now, int tm_zone)
 {
 	if (tm_zone == 0xff){
 		tm_zone = nd_time_zone();
@@ -178,6 +189,33 @@ time_t nd_time_getgm_from_offset(int secondIndexOfDay, time_t now, int tm_zone)
 	
 	return now;
 }
+
+time_t nd_time_from_month(int day_in_month, int secondIndexOfDay, time_t nowtm, int timezone)
+{
+	struct tm *gtm, tm1;
+
+	nowtm += timezone * 3600;
+
+	gtm = gmtime_r(&nowtm, &tm1);
+
+	gtm->tm_hour = 0;
+	gtm->tm_min = 0;
+	gtm->tm_sec = 0;
+	gtm->tm_mday = day_in_month;
+
+	time_t ret = timegm(gtm);
+	return ret - timezone * 3600 + secondIndexOfDay;
+}
+
+time_t nd_time_from_month_clock(int day_in_month, const char*timetext, time_t nowtm, int timezone)
+{
+	int secondIndex = nd_time_clock_to_seconds(timetext);
+	if (secondIndex == -1) {
+		return 0;
+	}
+	return nd_time_from_month(day_in_month, secondIndex, nowtm, timezone);
+}
+
 //get time_t from text-clock "9:30:10" GT
 time_t nd_time_from_clock(const char *timetext, time_t cur_time, int tm_zone)
 {
@@ -185,7 +223,7 @@ time_t nd_time_from_clock(const char *timetext, time_t cur_time, int tm_zone)
 	if (secondIndex == -1){
 		return 0;
 	}
-	return nd_time_getgm_from_offset(secondIndex, cur_time, tm_zone);
+	return nd_time_from_offset(secondIndex, cur_time, tm_zone);
 // 	int hour = 0, minute = 0, second = 0;
 // 
 // 	char *p = (char*)timetext;
@@ -252,7 +290,7 @@ time_t nd_time_from_week(int week_day, int secondIndexOfDay, time_t cur_time, in
 
 	cur_time += (week_day - gm_tm.tm_wday) * 24 * 3600;
 
-	return nd_time_getgm_from_offset(secondIndexOfDay, cur_time, tm_zone);
+	return nd_time_from_offset(secondIndexOfDay, cur_time, tm_zone);
 }
 
 time_t nd_time_from_week_clock(int week_day, const char *timetext, time_t cur_time, int tm_zone)
@@ -265,25 +303,31 @@ time_t nd_time_from_week_clock(int week_day, const char *timetext, time_t cur_ti
 }
 
 //get second index from 00:00:00 (local time)
-int nd_time_second_index_day(time_t timest)
+int nd_time_second_offset_fromday(time_t timest, int tm_zone)
 {
-	NDINT64 tm_zone = nd_time_zone();
+	//NDINT64 tm_zone = nd_time_zone();
 	NDINT64 start64 = (NDINT64)timest;
 
 	start64 += tm_zone * 3600;
 
 	return (int)(start64 % (3600 * 24));
 }
-int nd_time_day_index_second(time_t timest)
+int nd_time_day_index(time_t timest, int tm_zone)
 {
-	NDINT64 tm_zone = nd_time_zone();
+	//NDINT64 tm_zone = nd_time_zone();
 	NDINT64 start64 = (NDINT64)timest;
 
 	start64 += tm_zone * 3600;
 
 	return (int)(start64 / (3600 * 24));
 }
-time_t  nd_time_from_str(const char *pInput, time_t* tim)
+
+time_t  nd_time_from_str(const char *pInput, time_t* pOutTm)
+{
+	return  nd_time_from_str_ex(pInput, nd_time_zone(), pOutTm);
+}
+
+time_t  nd_time_from_str_ex(const char *pInput, int tm_zone, time_t* pOutTm)
 {
 	time_t ret = 0;
 	struct tm mytm = { 0 };
@@ -310,9 +354,10 @@ time_t  nd_time_from_str(const char *pInput, time_t* tim)
 	GET_TIME_TYPE(tm_min);
 	GET_TIME_TYPE(tm_sec);
 
-	ret = mktime(&mytm); //localtime time ;
-	if (tim){
-		*tim = ret;
+	ret = timegm(&mytm); //localtime time ;
+	ret -= tm_zone * 3600;
+	if (pOutTm){
+		*pOutTm = ret;
 	}
 	return ret;
 }

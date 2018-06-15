@@ -24,6 +24,7 @@ public:
 
 	virtual void UpdateDaily(const char *eventName, void* p, int renewTimes) ;	//daily function
 	virtual void UpdateWeek(const char *eventName, void* p) ;		// weekly function
+	virtual void UpdateMonth(const char *eventName, void* p);		// monthly function
 	
 	virtual void Destroy(int flag=0) ;
 	virtual int Create() ;

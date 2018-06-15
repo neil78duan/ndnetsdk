@@ -226,4 +226,9 @@ static __INLINE__ struct tm* gmtime_r(const time_t* _time, struct tm* _res_tm)
 	}
 	return _res_tm;
 }
+
+static __INLINE__ time_t timegm( struct tm* _res_tm)
+{
+	return _mkgmtime(_res_tm);
+}
 #endif 

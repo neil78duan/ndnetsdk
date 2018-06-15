@@ -252,6 +252,11 @@ void NDAlarm::UpdateWeek(const char *eventName, void* p)
 {
 
 }
+
+void NDAlarm::UpdateMonth(const char *eventName, void* p)
+{
+
+}
 // 
 // void NDAlarm::SetDailyTime(int hour_index,int minute_index)
 // {
