@@ -84,7 +84,9 @@ public:
 		if (it == _MyBase::end()){
 			return false ;
 		}
-		*backup  = it->second ;
+		if (backup) {
+			*backup = it->second;
+		}
 		_MyBase::erase(it) ;
 		return true ;
 

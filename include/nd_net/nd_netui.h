@@ -57,6 +57,12 @@ static __INLINE__ struct netui_info *nd_get_netui(nd_handle handle)
  */
 ND_NET_API int nd_connector_send(nd_handle net_handle, nd_packhdr_t *msg_hdr, int flag) ;
 
+/* send common data stream , not ND message struct data 
+ * but only for tcp
+ */
+
+ND_NET_API int nd_connector_send_stream(nd_handle net_handle, void* data, size_t len, int flag);
+
 /*直接在nd_handle 打开的socket上写数据
  *不能和nd_connector_send混和用,因为它会破坏nd_packhdr_t 格式
  * 这个函数主要处理不用nd_packhdr_t 封装的数据

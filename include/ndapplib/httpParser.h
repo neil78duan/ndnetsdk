@@ -24,7 +24,7 @@ struct httpHeaderNode{
 	std::string value ;
 };
 
-class NDHttpParser
+class NDHttpParser : public NDIBaseObj
 {
 public:
 	NDHttpParser();
@@ -39,9 +39,10 @@ public:
 	int getStatus()const{ return m_status; }
 	void setStatus(int stat) { m_status = stat; }
 
+	void setBody(const char*body) { m_body = body; }
 	const char *getBody()const { return m_body.c_str(); }
 	int getBodySize() const{ return (int)m_body.size(); }
-	const char *getHeader(const char *);
+	const char *getHeader(const char *) const;
 	int getHeaderSize() const {	return (int)m_header.size();	}
 	const char* getHeaderVal(int index)const;
 	const char* getHeaderName(int index)const;
@@ -62,6 +63,10 @@ public:
 	typedef std::vector<httpHeaderNode>HttpHeader_t;
 
 protected:
+
+	virtual int Create(const char *name = 0);
+	virtual void Destroy(int flag = 0);
+
 	virtual int ParseProtocol();
 	virtual void onParseEnd();
 	int ParseData();
@@ -100,7 +105,6 @@ public:
 	const char *getPath() { return m_path.c_str(); }
 	const char* getRequestVal(const char *name); //get header value
 	bool addRequestFormVal(const char *name, const char *value);
-	void setBody(const char*body) { m_body = body; }
 	size_t RequestValueTobuf(char *buf, size_t size);
 
 	int dump();

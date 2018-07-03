@@ -22,6 +22,7 @@ OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_srvcore/obj/,$(obj1) )
 obj1 = $(shell ls $(TOPDIR)/src/nd_vm/obj | grep '\.o\>')
 OBJS_SRV += $(addprefix $(TOPDIR)/src/nd_vm/obj/,$(obj1) )
 OBJ_COMMON += $(addprefix $(TOPDIR)/src/nd_vm/obj/,$(obj1) )
+OBJ_CLIENT +=  $(addprefix $(TOPDIR)/src/nd_vm/obj/,$(obj1) )
 
 obj1 = $(shell ls $(TOPDIR)/src/ndapplib/obj | grep '\.o\>')
 OBJS_SRV += $(addprefix $(TOPDIR)/src/ndapplib/obj/,$(obj1) )

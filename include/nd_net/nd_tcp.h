@@ -56,7 +56,8 @@ struct nd_tcp_node{
 ND_NET_API int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node *node,struct nd_proxy_info *proxy);	//连接到主机
 ND_NET_API int nd_tcpnode_close(struct nd_tcp_node *node,int force);				//关闭连接
 ND_NET_API int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf, int flag) ;	//发送网络消息 flag ref send_flag
-ND_NET_API int nd_tcpnode_read(struct nd_tcp_node *node) ;		//读取数据,0 timeout ,-1 error or closed ,else datalen
+ND_NET_API int nd_tcpnode_read(struct nd_tcp_node *node);		//读取数据,0 timeout ,-1 error or closed ,else datalen
+ND_NET_API int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int flag);	//发送网络消息 flag ref send_flag
 
 ND_NET_API int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node, int force) ;	//发送缓冲中的数据
 ND_NET_API int nd_tcpnode_tryto_flush_sendbuf(struct nd_tcp_node *conn_node) ;	//发送缓冲中的数据

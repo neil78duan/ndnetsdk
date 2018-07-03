@@ -83,6 +83,7 @@ public:
 	virtual~NDHttpSession();
 	int SendResponse(NDHttpResponse &response, const char *errorDesc);
 	int sendErrorResponse(int errorCdoe, const char *desc);
+	int sendBinaryData(NDHttpResponse &response, void *data, size_t datalen, const char*errorDesc);
 	void OnCreate();
 	int onDataRecv(char *buf, int size, NDHttpListener *pListener);
 	

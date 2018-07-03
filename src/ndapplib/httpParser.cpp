@@ -59,10 +59,11 @@ bool parser_check_end(char *src, char **next, int size)
 
 static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path, const char *host, int port,bool bLongConnect)
 {
+	int ret = 0;
 	int len, bodySize;
 	char *p;
-	char buf[0x10000];
-	char bodyBuf[4096];
+	char buf[4096];
+	char bodyBuf[0x10000];
 	char *formBuf = bodyBuf;
 
 	bodyBuf[0] = 0;
@@ -104,24 +105,44 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 		"Content-Length:%d\r\nConnection:Keep-Alive\r\n\r\n", bodySize);
 	p += len;
 
+	//write header to send buf
+	len = nd_connector_send_stream(h, buf, p - buf,0);
+	if (len <= 0) {
+		return len;
+	}
+	ret += len;
+	
 	if (NDHttpRequest::E_ACTION_POST == reques->getAction() && bodySize) {
-		len = snprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", formBuf);
-		p += len;
+		//len = snprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", formBuf);
+		//p += len;
+
+		len = nd_connector_send_stream(h, formBuf, bodySize, 0);
+		if (len <= 0) {
+			return len;
+		}
+		ret += len;
+
+
+		len = nd_connector_send_stream(h, "\r\n\r\n",4, 0);
+		if (len <= 0) {
+			return len;
+		}
+		ret += len;
 	}
 
-	nd_log_screen( "send http request : \n%s\n", buf);
-	return nd_connector_raw_write(h, buf, p - buf);
+	nd_tcpnode_flush_sendbuf_force((nd_netui_handle)h);
+	return 0;
 }
 
 int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc)
 {
+	int ret = 0;
 	int bodySize = reques->getBodySize();;
 	int len;
 	char *p;
 	char buf[0x10000];
 
 	p = buf;
-
 
 	len = snprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", reques->getStatus(), errorDesc);
 	p += len;
@@ -132,12 +153,25 @@ int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc
 	len = snprintf(p, sizeof(buf) - (p - buf),"Server:userDefine\r\nContent-Length:%d\r\nConnection: Keep-Alive\r\n\r\n", bodySize);
 	p += len;
 
+	len = nd_connector_send_stream(h, buf, p - buf, 0);
+	if (len <= 0) {
+		return len;
+	}
+	ret += len;
+
+
 	if (bodySize) {
-		len = snprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", reques->getBody());
-		p += len;
+		len = nd_connector_send_stream(h, (void*)reques->getBody(), bodySize,0);
+		if (len <= 0) {
+			return len;
+		}
+		ret += len;
+		nd_connector_send_stream(h, (void*)"\r\n\r\n",4, 0);
+		ret += 4;
 	}
 
-	return nd_connector_raw_write(h, buf, p - buf);
+	nd_tcpnode_flush_sendbuf_force((nd_netui_handle)h); 
+	return ret;
 }
 
 
@@ -296,9 +330,9 @@ int NDHttpParser::dump()
 	return  ret;
 }
 
-const char *NDHttpParser::getHeader(const char *name)
+const char *NDHttpParser::getHeader(const char *name)const
 {
-	httpHeaderNode *pNode = _getNode(name, m_header);
+	httpHeaderNode *pNode = ((NDHttpParser*)this)->_getNode(name, (HttpHeader_t&)m_header);
 	if (pNode)	{
 		return pNode->value.c_str();
 	}
@@ -324,6 +358,14 @@ bool NDHttpParser::addHeader(const char *name, const char *value)
 {
 	_adNode(name, value, m_header);
 	return true;
+}
+
+int NDHttpParser::Create(const char *name)
+{
+	return 0;
+}
+void NDHttpParser::Destroy(int flag)
+{
 }
 
 int NDHttpParser::ParseProtocol()

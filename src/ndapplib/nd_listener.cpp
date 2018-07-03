@@ -19,6 +19,9 @@ static ndatomic_t __current_num = 0 ;
 
 NDObject *NDObject::FromHandle(nd_handle h)
 {
+	if (!h) {
+		return NULL;
+	}
 	int type = nd_object_get_type(h);
 	if (type == NDHANDLE_TCPNODE || type == NDHANDLE_UDPNODE) {
 		if (nd_netobj_is_session(h)) {
@@ -38,14 +41,17 @@ NDObject *NDObject::FromHandle(nd_handle h)
 NDListener *NDGetListener(nd_handle h_listen) 
 {
 	ND_TRACE_FUNC();
-	return static_cast<NDListener*>(((struct listen_contex *)h_listen)->user_data)  ;
+	if (h_listen) {
+		return static_cast<NDListener*>(((struct listen_contex *)h_listen)->user_data);
+	}
+	return NULL;
 }
 
 //通过句柄得到绘话
 NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener)
 {
 	ND_TRACE_FUNC();
-	if (!check_connect_valid(session)){
+	if (!session || !check_connect_valid(session)){
 		return NULL ;
 	}
 	NDObject *pobj = (NDObject *) nd_session_getdata((nd_netui_handle )session) ;

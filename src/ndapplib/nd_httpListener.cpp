@@ -97,12 +97,50 @@ int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 	return ret;
 }
 
+int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t datalen, const char*errorDesc)
+{
+	int ret = 0;
+	int len;
+	char *p;
+	char buf[0x10000];
+
+	p = buf;
+
+	len = snprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", response.getStatus(), errorDesc);
+	p += len;
+
+	len = (int)response.HeaderToBuf(p, sizeof(buf) - (p - buf));
+	p += len;
+
+	len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:%lld\r\n\r\n\r\n", datalen);
+	p += len;
+
+	len = nd_connector_send_stream(GetHandle(), buf, p - buf, 0);
+	if (len <= 0) {
+		return len;
+	}
+	ret += len;
+
+	if (datalen) {
+		len = nd_connector_send_stream(GetHandle(), data, datalen, 0);
+		if (len <= 0) {
+			return len;
+		}
+		ret += len;
+		nd_connector_send_stream(GetHandle(), (void*)"\r\n\r\n", 4, 0);
+		ret += 4;
+	}
+
+	nd_tcpnode_flush_sendbuf_force((nd_netui_handle)GetHandle());
+	return ret;
+}
+
 
 int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 {
 	int len;
 	char *p;
-	char buf[0x10000];
+	char buf[4096];
 	
 	p = buf;
 
@@ -125,7 +163,7 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 	p += len;
 
 
-	int ret = nd_connector_raw_write(GetHandle(), buf, p - buf);
+	int ret = nd_connector_send_stream(GetHandle(), buf, p - buf,0);
 	if (!m_bLongConnect) {
 		this->Close(0);
 	}

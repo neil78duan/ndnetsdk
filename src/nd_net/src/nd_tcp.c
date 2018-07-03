@@ -170,14 +170,14 @@ int nd_tcpnode_close(struct nd_tcp_node *node,int force)
 	return 0 ;
 }
 
-static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
+//static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
+static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datalen, int flag)
 {
 	ENTER_FUNC()
 	signed int ret =0;
-	size_t datalen = node->get_pack_size(( nd_handle )node, msg_buf) ; //(size_t)nd_pack_len( msg_buf) ;
+	//size_t datalen = node->get_pack_size(( nd_handle )node, msg_buf) ; //(size_t)nd_pack_len( msg_buf) ;
 	nd_assert(node) ;
 	nd_assert(msg_buf) ;
-	nd_assert(datalen<ndlbuf_capacity(&node->send_buffer)) ;
 	
 	if(ndlbuf_datalen(&(node->send_buffer))>0) {
 		size_t space_len = ndlbuf_free_capacity(&(node->send_buffer)) ;
@@ -257,10 +257,12 @@ static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int fl
 //修改了发送方式,如果是session 发送失败将关闭连接
 int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 {
+	size_t datalen = node->get_pack_size((nd_handle)node, msg_buf); 
+
 	if (node->is_session){
 		int ret ;
 		flag  &= ~ESF_URGENCY ; //can not use
-		ret = __tcpnode_send(node, msg_buf, flag) ;
+		ret = __tcpnode_send(node, (void*)msg_buf,datalen, flag) ;
 		if (-1==ret){
 			node->myerrno = NDERR_WRITE ;
 			TCPNODE_SET_RESET(node);
@@ -270,9 +272,13 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 		return ret ;
 	}
 	else {
-		return __tcpnode_send(node, msg_buf, flag) ; 
+		return __tcpnode_send(node, (void*)msg_buf, datalen, flag) ;
 	}
+}
 
+int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int flag)
+{
+	return __tcpnode_send(node, (void*)data, len, flag);
 }
 
 int nd_tcpnode_read(struct nd_tcp_node *node)
