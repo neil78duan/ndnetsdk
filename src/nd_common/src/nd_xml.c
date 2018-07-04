@@ -178,6 +178,27 @@ static const char *_xml_read_value(const char *xmlbuf, char *buf, size_t size)
 	return p;
 }
 
+static size_t _xml_get_value_size(const char *p)
+{
+	size_t ret = 0;
+	char buf[10];
+	while (*p) {
+		
+		if (*p == '&' && (IS_LITTLE_LATIN(p[1]) || IS_BIG_LATIN(p[1]))) {
+			p = _read_replace_text(p, buf);
+			++ret;
+		}
+		else if (*p == '<' && *(p + 1) == '/') {
+			break;
+		}
+		else {
+			char *pOut = buf;
+			int len = ndstr_read_utf8char((char **)&p, (char**)&pOut);
+			ret += len;
+		}
+	}
+	return ret;
+}
 
 ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const char **error_addr) ;
 ndxml *alloc_xml();
@@ -1233,7 +1254,7 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 	int ret = 0;
 	ndxml *xmlnode =NULL ;
 	const char *paddr ;//, *error_addr =NULL;
-	char buf[1024] ;
+	//char buf[1024*16] ;
 	
 	paddr = parse_marked(xmlbuf, size, error_addr)  ;
 	if(!paddr){
@@ -1270,8 +1291,7 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 		*parse_end = NULL ;
 		return NULL ;
 	}
-	//paddr = ndstr_parse_word(paddr, buf) ;		//xml node name
-	//strncpy(xmlnode->name, buf, MAX_XMLNAME_SIZE) ;
+
 	ret = ndstr_parse_variant_n(paddr, xmlnode->name,  MAX_XMLNAME_SIZE);
 	if (ret <= 0)	{
 		dealloc_xml(xmlnode);
@@ -1323,39 +1343,27 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 			*parse_end = NULL;
 			return NULL;
 		}
+		else {
+			char buf[4096];
+			*error_addr = paddr;
+			paddr = _xml_read_attrval(paddr, buf, sizeof(buf));
+			if (!paddr) {
+				dealloc_xml(xmlnode);
+				return NULL;
+			}
+			//------------------
 
-		//---------------
-		/*
-		paddr = strchr(paddr,_ND_QUOT) ;
-		if(!paddr) {
-			dealloc_xml(xmlnode) ;
-			*parse_end = NULL ;
-			return NULL ;
+			attrib_node = alloc_attrib_node(attr_name, buf);
+			if (attrib_node) {
+				list_add_tail(&attrib_node->lst, &xmlnode->lst_attr);
+				(xmlnode->attr_num)++;
+			}
 		}
-		++paddr ;
-		//read attrib VALUE
-		paddr = ndstr_str_end(paddr,buf, _ND_QUOT) ;
-		++paddr ;
-		*/
-		*error_addr = paddr;
-		paddr = _xml_read_attrval(paddr, buf, sizeof(buf));
-		if (!paddr)	{
-			dealloc_xml(xmlnode);
-			return NULL;
-		}
-		//------------------
-
-		attrib_node = alloc_attrib_node(attr_name, buf) ;
-		if(attrib_node) {
-			list_add_tail(&attrib_node->lst, &xmlnode->lst_attr) ;
-			(xmlnode->attr_num)++ ;
-		}
-		//paddr = ndstr_first_valid(paddr) ;
+		
 	}
 	
 	//read value and sub-xmlnode
 	paddr = ndstr_first_valid(paddr) ;
-	//if(XML_T_END==*((short*)paddr)) {
 	if (_is_mark_start(paddr)) {
 		//xml node end </
 		goto READ_END ;
@@ -1391,41 +1399,43 @@ ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const 
 	else {
 		//read xml value 
 		size_t val_size ;
-		const char *tmp  = ndstr_reverse_chr(paddr, '>', xmlbuf) ;
+		/*const char *tmp  = ndstr_reverse_chr(paddr, '>', xmlbuf) ;
 		if(!tmp){
 			tmp = paddr ;
 		}
 		else {
 			++tmp ;
-		}
+		}*/
 		//----------------
 		/*
 		paddr = ndstr_str_end(tmp,buf, '<') ;		//读取xml值,一直到"<"结束
 		*/
+		//get size 
+		val_size = _xml_get_value_size(paddr );
 
-		*parse_end = paddr;
-		paddr = _xml_read_value(paddr, buf, sizeof(buf));
-		if (!paddr)	{
+		val_size += 8; val_size &= ~3;
+		xmlnode->value = malloc(val_size);
+		
+		//store value 
+		if (xmlnode->value) {
+			
+			*parse_end = paddr;
+			paddr = _xml_read_value(paddr, xmlnode->value, val_size);
+			if (!paddr) {
+				dealloc_xml(xmlnode);
+				return NULL;
+			}
+			xmlnode->val_size = val_size;
+		}
+		else {
 			dealloc_xml(xmlnode);
+			*parse_end = NULL;
 			return NULL;
 		}
 
 		//-------
-		val_size = paddr - tmp;
+		//val_size = paddr - tmp;
 
-		//store value 
-		val_size += 4 ;val_size &= ~3 ;
-
-		xmlnode->value = malloc(val_size) ;
-		if(xmlnode->value) {
-			strcpy(xmlnode->value, buf) ;
-			xmlnode->val_size = val_size ;
-		}
-		else {
-			dealloc_xml(xmlnode) ;
-			*parse_end = NULL ;
-			return NULL ;
-		}
 	}
 	
 	//read end
