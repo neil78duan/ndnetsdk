@@ -61,6 +61,7 @@ int NDHttpListener::onRequestScript(const char* script, NDHttpSession *session, 
 {
 	return 200;
 }
+
 ////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
@@ -78,8 +79,44 @@ static int _session_data_handler(nd_handle sessionHandler, void *data, size_t le
 }
 
 
-NDHttpSession::NDHttpSession() : m_bLongConnect(false)
+NDHttpSession::NDHttpSession() 
 {
+	m_closedTime = 0;
+}
+
+
+int NDHttpSession::UpdateSecond()
+{
+	if (m_closedTime) {
+		int interval = (int)( nd_time() - m_closedTime);
+		if (interval >= 0) {
+			Close(0);
+			nd_logdebug("time out closed %d session\n", GetSessionID());
+			return 0;
+		}
+	}
+}
+
+void NDHttpSession::setDelayClosed(bool bRightnow)
+{
+	if (bRightnow) {
+		m_closedTime = nd_time();
+	}
+	else {
+		m_closedTime =nd_time() + getWaitTimeout() * 1000;
+	}
+}
+
+int NDHttpSession::getWaitTimeout()
+{
+	NDInstanceBase *inst = nd_get_appinst();
+	if (inst) {
+		nd_handle hlisten =inst->GetDeftListener()->GetHandle();
+		if (hlisten) {
+			return nd_listensrv_get_empty_conntimeout(hlisten);
+		}
+	}
+	return 60;
 }
 
 NDHttpSession ::~NDHttpSession()
@@ -90,11 +127,8 @@ NDHttpSession ::~NDHttpSession()
 
 int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 {
-	int ret = _sendHttpResponse(GetHandle(), &response, errorDesc);
-	if (!m_bLongConnect) {
-		this->Close(0);
-	}
-	return ret;
+	setDelayClosed(!response.isLongConnect());
+	return _sendHttpResponse(GetHandle(), &response, errorDesc);
 }
 
 int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t datalen, const char*errorDesc)
@@ -104,8 +138,9 @@ int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t d
 	char *p;
 	char buf[0x10000];
 
-	p = buf;
+	setDelayClosed(!response.isLongConnect()); 
 
+	p = buf;
 	len = snprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", response.getStatus(), errorDesc);
 	p += len;
 
@@ -142,6 +177,8 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 	char *p;
 	char buf[4096];
 	
+	setDelayClosed(true);
+
 	p = buf;
 
 	if (desc && *desc) {
@@ -161,13 +198,7 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 		len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:0\r\nConnection: close\r\n\r\n" );
 	}
 	p += len;
-
-
-	int ret = nd_connector_send_stream(GetHandle(), buf, p - buf,0);
-	if (!m_bLongConnect) {
-		this->Close(0);
-	}
-	return ret;
+	return nd_connector_send_stream(GetHandle(), buf, p - buf,0);
 }
 
 void NDHttpSession::OnCreate()
@@ -175,32 +206,18 @@ void NDHttpSession::OnCreate()
 	nd_hook_data(GetHandle(), _session_data_handler);
 }
 
+
 int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 {
 	ndprintf("%s\n", buf);
 	m_request.InData(buf, size);
+	SetPrivilege(EPL_LOGIN);
 
 	if (m_request.CheckRecvOk()) {
-		//setLongConnect();
-		m_bLongConnect = m_request.isLongConnect();
 		m_request.dump();
 		m_request.m_userData = pListener;
 		pListener->onRequest(m_request.getPath(), this, m_request);
 		m_request.Reset();
-		//if (!m_bLongConnect) {
-		//	return -1; //CLOSE after on request
-		//}
 	}
 	return size;
 }
-// 
-// void NDHttpSession::setLongConnect()
-// {
-// 	const char *connSt = m_request.getHeader("Connection");
-// 	if (connSt) {
-// 		if (0 == ndstricmp(connSt, "Keep-Alive")) {
-// 			m_bLongConnect = true;
-// 		}
-// 	}
-// 
-// }

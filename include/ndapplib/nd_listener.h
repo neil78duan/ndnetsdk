@@ -92,7 +92,7 @@ public:
 	NDSafeListener(nd_fectory_base *sf=NULL ) ;	
 	void Destroy(int flag) ;
 protected:
-	int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
+	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
 };
 NDListener *NDGetListener(nd_handle h_listen) ;
 NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener = NULL);

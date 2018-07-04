@@ -60,6 +60,7 @@ template<class keyT> struct httpStringComp
 
 class NDHttpListener : public NDSafeListener
 {
+	typedef  NDSafeListener myBase;
 public:
 	NDHttpListener(nd_fectory_base *sf = NULL);
 	~NDHttpListener();
@@ -86,11 +87,13 @@ public:
 	int sendBinaryData(NDHttpResponse &response, void *data, size_t datalen, const char*errorDesc);
 	void OnCreate();
 	int onDataRecv(char *buf, int size, NDHttpListener *pListener);
-	
-private:
-	//void setLongConnect();
-	NDHttpRequest m_request;
-	bool m_bLongConnect;
 
+	void setDelayClosed(bool bRightnow=true);
+
+	virtual int UpdateSecond();				//update per second
+protected:
+	int getWaitTimeout();
+	NDHttpRequest m_request;
+	ndtime_t m_closedTime;
 };
 #endif

@@ -591,7 +591,7 @@ connect_config *NDInstanceBase::getConnectorInfo(const char *name)
 	return NULL ;
 }
 
-NDInstanceBase *getbase_inst() 
+NDInstanceBase *nd_get_appinst()
 {
 	return g_base_inst ;
 }

@@ -139,7 +139,8 @@ public:
 typedef nd_instance<NDSession, NDListener> NDInstance ;
 typedef nd_instance<NDSession, NDSafeListener> NDSafeInstance ;
 
-NDInstanceBase *getbase_inst() ;
+NDInstanceBase *nd_get_appinst();
+#define getbase_inst nd_get_appinst
 
 #ifdef ND_USE_VLD
 #include "vld/vld.h"

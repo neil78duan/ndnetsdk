@@ -143,6 +143,11 @@ static __INLINE__ void nd_listensrv_set_empty_conntimeout(nd_listen_handle h, in
 	((struct listen_contex*)h)->empty_conn_timeout = second * 1000 ;
 }
 
+static __INLINE__ int nd_listensrv_get_empty_conntimeout(nd_listen_handle h)
+{
+	return ((struct listen_contex*)h)->empty_conn_timeout / 1000;
+}
+
 
 //为listen句柄handle 创建一个管理连接session的线程
 ND_SRV_API nd_thsrvid_t nd_listensrv_thread_alloc(nd_listen_handle h);
