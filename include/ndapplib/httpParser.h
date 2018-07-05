@@ -39,16 +39,16 @@ public:
 	int getStatus()const{ return m_status; }
 	void setStatus(int stat) { m_status = stat; }
 
-	void setBody(const char*body) { m_body = body; }
-	const char *getBody()const { return m_body.c_str(); }
-	int getBodySize() const{ return (int)m_body.size(); }
+	void setBody(const char*body);
+	const char *getBody();
+	int getBodySize();
+
 	const char *getHeader(const char *) const;
 	int getHeaderSize() const {	return (int)m_header.size();	}
 	const char* getHeaderVal(int index)const;
 	const char* getHeaderName(int index)const;
 
 	bool addHeader(const char *name, const char *value);
-
 
 	size_t HeaderToBuf(char *buf, size_t size);
 
@@ -61,7 +61,7 @@ public:
 	static std::string URLcodeTotext(const char *urlCode);
 
 	typedef std::vector<httpHeaderNode>HttpHeader_t;
-
+	void setParseStepIndex(int stepIndex) { m_parseStat = stepIndex; }
 protected:
 
 	virtual int Create(const char *name = 0);
@@ -69,10 +69,10 @@ protected:
 
 	virtual int ParseProtocol();
 	virtual void onParseEnd();
-	int ParseData();
 
 	int _parseHeader();
 	int _parseBody();
+	int ParseData();
 
 	httpHeaderNode *_getNode(const char *name, HttpHeader_t &headers);
 	std::string *_getHeader(const char *name);
@@ -82,15 +82,16 @@ protected:
 	int _getDataSize();
 	int _findBodySize();
 
-	int m_status;
+	int m_status;		//200 is ok ,404 not found
 
-	nd_linebuf *m_recvBuf;
+	//nd_linebuf *m_recvBuf;
 	int m_parseStat; // 0 empty , 1 start parse ,2 parse body, 3 parse ok
 	int m_parseProgress; // 0 head, 1 body
 
 	eAction m_action;
+	nd_linebuf m_bodyBuf;
 public:
-	std::string m_body;
+	//std::string m_body;
 	HttpHeader_t m_header;
 };
 
@@ -98,12 +99,12 @@ public:
 class NDHttpRequest : public NDHttpParser 
 {
 public:
-
 	NDHttpRequest() ;
 	virtual ~NDHttpRequest() ;
 	
 	const char *getPath() { return m_path.c_str(); }
 	const char* getRequestVal(const char *name); //get header value
+	//size_t getRequestBodySize();
 	bool addRequestFormVal(const char *name, const char *value);
 	size_t RequestValueTobuf(char *buf, size_t size);
 
@@ -111,21 +112,35 @@ public:
 	virtual void Reset();
 	int _postBodyToJson();
 
+	struct fileCacheInfo
+	{
+		std::string fileName;
+		size_t size;
+		char *dataAddr;
+		fileCacheInfo() :size(0), dataAddr(0) {}
+	};
+
+	const fileCacheInfo *getUploadFile(const char *filename)const;
+
 protected:
 	int _parseMultipart(const char *pHeaderText);
+	int _parseOnePart(const char *partStart, size_t len);
 	int _parse_x_form();
 	virtual int ParseProtocol();
 	virtual void onParseEnd();
 	int _parsePathInfo(const char *path);
 
-	
+	bool _insertFile(const char *varname, const char*filePath, void *data, size_t length);
+	void _destroyUpFile();
 public:
 
+
+	typedef std::map<std::string, fileCacheInfo > fileCacheMap_t;
 	typedef std::vector<httpHeaderNode>HttpHeader_t;
-	//HttpHeader_t m_header;
+	fileCacheMap_t m_upfiles;
+
 	HttpHeader_t m_requestForms;
 	std::string m_path;
-	//std::string m_body;
 	void *m_userData;
 };
 

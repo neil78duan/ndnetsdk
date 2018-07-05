@@ -21,23 +21,6 @@ char *parser_valid( char *src, int size)
 	return (char*)tmp ;
 	
 }
-// 
-// int parser_fetch_data(char *src, char *outstr, int size)
-// {
-// 	unsigned char a ;
-// 	char *_init = src ;
-// 	while(*src && --size >=0) {
-// 		a = (unsigned char)*src ;
-// 		if(a > 0x20 ){
-// 			*outstr++ = *src++ ;
-// 		}
-// 		else {
-// 			break ;
-// 		}
-// 	}
-// 	*outstr = 0 ;
-// 	return (int)(src - _init);
-// }
 
 bool parser_check_end(char *src, char **next, int size)
 {
@@ -71,9 +54,9 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 
 	
 	bodySize = (int)reques->RequestValueTobuf(bodyBuf, sizeof(bodyBuf));
-	if (bodySize == 0 && reques->m_body.size() > 0 && NDHttpRequest::E_ACTION_POST){
-		bodySize = (int) reques->m_body.size();
-		formBuf = (char*) reques->m_body.c_str();
+	if (bodySize == 0 && reques->getBodySize() > 0 && NDHttpRequest::E_ACTION_POST){
+		bodySize = (int) reques->getBodySize();
+		formBuf = (char*) reques->getBody();
 	}
 	
 	p = buf;
@@ -248,40 +231,28 @@ std::string NDHttpParser::URLcodeTotext(const char *urlCode)
 
 NDHttpParser::NDHttpParser()
 {
-	m_recvBuf = NULL;
+	ndlbuf_init(&m_bodyBuf, 4096);
+	ndlbuf_auto_inc_enable(&m_bodyBuf);
 	Reset();
 }
 
 NDHttpParser::~NDHttpParser()
 {
-
-	if (m_recvBuf){
-		ndlbuf_destroy(m_recvBuf);
-		delete m_recvBuf;
-		m_recvBuf = NULL;
-	}
+	ndlbuf_destroy(&m_bodyBuf);
 	Reset();
 
 }
 
 void NDHttpParser::Reset()
 {
-	//ndlbuf_reset(&m_recvBuf);
-	if (m_recvBuf){
-		ndlbuf_reset(m_recvBuf);
-	}
+	ndlbuf_reset(&m_bodyBuf);
 	
 	m_parseStat = 0;
 	m_parseProgress = 0;
 	m_header.clear();
-	m_body.clear();
 	
-	//m_requestForms.clear();
-	//m_path.clear();
-
 	m_action = E_ACTION_GET;
 	m_status = 200;
-	//m_bodySize = 0;
 }
 bool NDHttpParser::CheckRecvOk()
 {
@@ -301,12 +272,11 @@ bool NDHttpParser::isLongConnect()
 
 void NDHttpParser::InData(const char *data, int size)
 {
-	if (m_recvBuf==NULL){
-		m_recvBuf = new nd_linebuf;
-		ndlbuf_init(m_recvBuf, 0x10000);
-	}
+	//ndprintf("%s\n", data);
+	
+	ndlbuf_write(&m_bodyBuf, (void*)data, size, 0);
+	ndlbuf_set_zero_tail(&m_bodyBuf);
 
-	ndlbuf_write(m_recvBuf, (char*)data, size, 0);
 	while (m_parseStat < 3 && ParseData() > 0) {
 		if (_getDataSize() == 0) {
 			break;
@@ -324,10 +294,24 @@ int NDHttpParser::dump()
 		fprintf(stderr, "[header] %s : %s \n", it->name.c_str(), it->value.c_str());
 	}
 	
-	if (m_body.size())	{
-		fprintf(stderr, "%s\n", m_body.c_str());
+	if (getBodySize())	{
+		fprintf(stderr, "%s\n", getBody());
 	}
 	return  ret;
+}
+
+void NDHttpParser::setBody(const char*body)
+{
+	ndlbuf_write(&m_bodyBuf, (void*)body, strlen(body), 0);
+}
+const char *NDHttpParser::getBody()
+{
+	return (const char*) ndlbuf_data(&m_bodyBuf);
+}
+
+int NDHttpParser::getBodySize()
+{
+	return (int)ndlbuf_datalen(&m_bodyBuf);
 }
 
 const char *NDHttpParser::getHeader(const char *name)const
@@ -400,11 +384,8 @@ int NDHttpParser::ParseData()
 
 char *NDHttpParser::_getCurParseAddr()
 {
-	if (!m_recvBuf)	{
-		return NULL;
-	}
-	if (ndlbuf_datalen(m_recvBuf)) {
-		return (char*)ndlbuf_data(m_recvBuf);
+	if (ndlbuf_datalen(&m_bodyBuf)) {
+		return (char*)ndlbuf_data(&m_bodyBuf);
 	}
 	return NULL;
 
@@ -412,10 +393,7 @@ char *NDHttpParser::_getCurParseAddr()
 
 int NDHttpParser::_getDataSize()
 {
-	if (!m_recvBuf)	{
-		return 0;
-	}
-	return (int)ndlbuf_datalen(m_recvBuf);
+	return (int)ndlbuf_datalen(&m_bodyBuf);
 }
 
 
@@ -463,7 +441,6 @@ int NDHttpParser::_findBodySize()
 
 int NDHttpParser::_parseHeader()
 {
-
 	int datasize = _getDataSize();
 	char *p_start = _getCurParseAddr();
 	char buf[1024];
@@ -513,8 +490,7 @@ int NDHttpParser::_parseHeader()
 		}
 
 		len = (int)(p - p_start);
-		ndlbuf_sub_data(m_recvBuf, len);
-
+		ndlbuf_sub_data(&m_bodyBuf, len);
 		return len;
 	}
 
@@ -524,51 +500,31 @@ int NDHttpParser::_parseHeader()
 }
 int NDHttpParser::_parseBody()
 {
-
 	int contentSize = _findBodySize();
 	int datasize = _getDataSize();
-	char *p_start = _getCurParseAddr();
 
-	if (!p_start) {
-		return 0;
-	}
-	char *p = p_start;
-
-	if (contentSize > datasize)		{
-		return 0;
-	}
-	if (contentSize){
-		for (int i = 0; i < contentSize; i++){
-			m_body.push_back(*p);
-			++p;
-		}
-	}
-	else {
-		p = strstr(p_start, "\r\n\r\n");
-		if (!p)	{
+	if (contentSize == 0 || contentSize == -1) {
+		char *p_start = _getCurParseAddr();
+		if (!p_start) {
 			return 0;
 		}
+		char *p = strstr(p_start, "\r\n\r\n");
+		if (!p) {
+			return 0;
+		}
+		size_t realSize = p - p_start;
+		char buf[32];
+		snprintf(buf, sizeof(buf), "%lld", realSize);
+		addHeader("content-length", buf);
 
-		char ch = *p;
-		*p = 0;
-
-		m_body = p_start;
-		*p = ch;
-
+		m_parseStat = 3;
+		onParseEnd();
 	}
-	//p += 4;
-
-	ndlbuf_sub_data(m_recvBuf, (p - p_start));
-
-	//m_bodySize = m_body.size();
-	m_parseStat = 3;
-
-	onParseEnd();
-// 	if (m_action == E_ACTION_POST && m_body.size()){
-// 		_postBodyToJson();
-// 	}
-	return (int)(p - p_start);
-
+	else if(datasize >= contentSize) {
+		m_parseStat = 3;
+		onParseEnd();
+	}
+	return datasize;
 }
 
 
@@ -687,34 +643,16 @@ int NDHttpRequest::dump()
 	}
 	return  ret;
 }
-// 
-// char *NDHttpRequest::_getCurParseAddr()
-// {
-// 	if (ndlbuf_datalen(&m_recvBuf)) {
-// 		return (char*)ndlbuf_data(&m_recvBuf);
-// 	}
-// 	return NULL;
-// 
-// }
-// 
-// int NDHttpRequest::_getDataSize()
-// {
-// 	return (int)ndlbuf_datalen(&m_recvBuf);
-// }
+
 
 void NDHttpRequest::Reset()
 {
 	NDHttpParser::Reset();
 	m_path.clear();
 	m_requestForms.clear();
+	_destroyUpFile();
 	m_userData = NULL;
 }
-
-// 
-// bool NDHttpRequest::CheckRecvOk()
-// {
-// 	return (3 == m_parseStat || (2 == m_parseStat && m_action == E_ACTION_GET));
-// }
 
 int NDHttpRequest::ParseProtocol()
 {
@@ -763,45 +701,20 @@ int NDHttpRequest::ParseProtocol()
 		//parse prorocol success
 		len = (int)(p - p_start);
 
-		ndlbuf_sub_data(m_recvBuf, len);
+		ndlbuf_sub_data(&m_bodyBuf, len);
 		m_parseStat = 1;
 		return len;
 	}
 
 	return 0;
 
-// 	if (p) {
-// 		len = parser_fetch_data(p, buf, datasize - (int)(p - p_start));
-// 		if (len >= datasize) {
-// 			return  0;
-// 		}
-// 		p += len;
-// 		//get status
-// 		//m_httpProtocol = buf ;
-// 
-// 		m_status = (int)strtol(p, &p, 10);
-// 		if (!p) {
-// 			return 0;
-// 		}
-// 
-// 		if (parser_check_end(p, &p, datasize - (int)(p - p_start))) {
-// 			//parse prorocol success
-// 			len = (int)(p - p_start);
-// 
-// 			ndlbuf_sub_data(&m_recvBuf, len);
-// 			m_parseStat = 1;
-// 			return len;
-// 		}
-// 
-// 	}
-	return 0;
 
 }
 
 
 void NDHttpRequest::onParseEnd()
 {
-	if (m_action == E_ACTION_POST && m_body.size()){
+	if (m_action == E_ACTION_POST && getBodySize()>0){
 		_postBodyToJson();
 	}
 }
@@ -815,14 +728,30 @@ const char* NDHttpRequest::getRequestVal(const char *name)
 	return NULL;
 }
 
+// size_t NDHttpRequest::getRequestBodySize()
+// {
+// 	const char *pContlen = getRequestVal("Content-Length");
+// 	if (pContlen) {
+// 		return atoi(pContlen);
+// 	}
+// 	return 0;
+// }
+
 bool NDHttpRequest::addRequestFormVal(const char *name, const char *value)
 {
 	_adNode(name, value, m_requestForms);
-// 	httpHeaderNode node1 = { name, value };
-// 	m_requestForms.push_back(node1);
 	return true;
 }
 
+
+const NDHttpRequest::fileCacheInfo *NDHttpRequest::getUploadFile(const char *filename)const
+{
+	fileCacheMap_t::const_iterator it = m_upfiles.find(filename);
+	if (it == m_upfiles.end()) {
+		return NULL;
+	}
+	return &it->second;
+}
 
 size_t NDHttpRequest::RequestValueTobuf(char *buf, size_t size)
 {
@@ -867,55 +796,169 @@ int NDHttpRequest::_postBodyToJson()
 }
 
 
-int NDHttpRequest::_parseMultipart(const char *pHeaderText)
+void NDHttpRequest::_destroyUpFile()
 {
-	pHeaderText = ndstristr(pHeaderText, "boundary=");
+	fileCacheMap_t m_upfiles;
+	for (fileCacheMap_t::iterator it = m_upfiles.begin(); it != m_upfiles.end(); ++it) {
+		delete[] it->second.dataAddr;
+	}
+	m_upfiles.clear();
+}
+bool NDHttpRequest::_insertFile(const char *varname, const char*filePath, void *data, size_t length)
+{
+	fileCacheInfo cacheInfo;
 
-	if (!pHeaderText ) {
+	if (data && length > 0) {
+		cacheInfo.dataAddr = new char[length + 1];
+		memcpy(cacheInfo.dataAddr, data, length);
+		cacheInfo.dataAddr[length] = 0;
+	}
+	cacheInfo.size = length;
+	cacheInfo.fileName = filePath;
+	
+	std::pair<fileCacheMap_t::iterator, bool> ret = m_upfiles.insert(std::make_pair(varname, cacheInfo));
+	if (ret.second == false) {
+		delete cacheInfo.dataAddr;
+		return false;
+	}
+	return true;
+}
+
+int NDHttpRequest::_parseOnePart(const char *partStart, size_t len)
+{
+	char buf[1024];
+	NDHttpParser _tmpParser;
+
+	_tmpParser.setAction(E_ACTION_POST);
+	_tmpParser.setParseStepIndex(1);
+	_tmpParser.InData(partStart, (int)len);
+	
+	
+	//_tmpParser._parseHeader();
+	//_tmpParser._parseBody();
+
+	const char *p = _tmpParser.getHeader("Content-Disposition");
+	if (!p) {
 		return -1;
 	}
-
-	char val[1024];
-	char buf[1024];
-	pHeaderText += 9;
-	std::string WebKitFormName = pHeaderText;
-
-	const char *p = m_body.c_str();
-	p = ndstr_first_valid(p);
-
-	while (p && *p) {
-		buf[0] = 0;
-		val[0] = 0;
-		p = ndstristr(p, WebKitFormName.c_str());
-		if (!p || !*p) {
-			break;
-		}
-
-		p += WebKitFormName.size();
-		p = ndstristr(p, "name=\"");
-		if (!p) {
-			break;
-		}
-		p += 6;
-
-		p = ndstr_nstr_ansi(p, buf, '\"', sizeof(buf));
-		if (!p || *p != '\"') {
-			break;
-		}
-		++p;
-		p = ndstr_first_valid(p);
-		if (!p) {
-			break;
-		}
-		p = ndstr_nstr_end(p, val, '\r', sizeof(val));
-
-
-		if (buf[0] && val[0]) {
-			httpHeaderNode node = { buf, val };
-			m_requestForms.push_back(node);
-		}
+	//get name 
+	const char *pName = ndstristr(p, "name=\"");
+	if (!pName) {
+		return -1;
 	}
-	return (int)m_body.size();
+	pName += 6;
+	ndstr_nstr_ansi(pName, buf, '\"', sizeof(buf));
+
+	std::string name = buf;
+
+	std::string value ;
+
+	const char *pFileName = ndstristr(p, "filename=\"");
+	if (pFileName) {
+		pFileName += 10;
+		ndstr_nstr_ansi(pFileName, buf, '\"', sizeof(buf));
+		value = buf;
+
+		const char *body = _tmpParser.getBody();
+		_insertFile(name.c_str(), value.c_str(), (void*)body, _tmpParser.getBodySize());
+	}
+	else {
+		value = _tmpParser.getBody();
+	}
+
+
+	httpHeaderNode node = { buf, value };
+	m_requestForms.push_back(node);
+	return len;
+}
+
+
+int NDHttpRequest::_parseMultipart(const char *pHeaderText)
+{
+	size_t bodySize = _findBodySize();
+	if (bodySize == 0) {
+		return -1;
+	}
+	const char *pbound = ndstristr(pHeaderText, "boundary=");
+	if (!pbound) {
+		return -1;
+	}
+	pbound += 9;
+	std::string boundary = "--";
+	boundary += pbound;
+
+	size_t boundarySize = strlen(pbound) + 2;
+	if (boundarySize == 0) {
+		return -1;
+	}
+	const char *p = getBody();
+	const char *pEnd = p + bodySize;
+
+	while (p < pEnd) {
+		const char *partStart = strstr(p, boundary.c_str());
+		if (!partStart) {
+			return p - getBody();
+		}
+		partStart += boundarySize;
+
+		const char *partEnd = strstr(partStart, boundary.c_str());
+		if (!partEnd) {
+			return p - getBody();
+		}
+		if (*(partEnd - 2) == '\r' && *(partEnd - 1) == '\n') {
+			partEnd -= 2;
+		}
+		_parseOnePart(partStart, partEnd - partStart);
+		p = partEnd + boundarySize;
+	}
+	return p - getBody();
+// 	pHeaderText = ndstristr(pHeaderText, "boundary=");
+// 
+// 	if (!pHeaderText ) {
+// 		return -1;
+// 	}
+// 
+// 	char val[1024];
+// 	char buf[1024];
+// 	pHeaderText += 9;
+// 	std::string WebKitFormName = pHeaderText;
+// 
+// 	const char *p = m_body.c_str();
+// 	p = ndstr_first_valid(p);
+// 
+// 	while (p && *p) {
+// 		buf[0] = 0;
+// 		val[0] = 0;
+// 		p = ndstristr(p, WebKitFormName.c_str());
+// 		if (!p || !*p) {
+// 			break;
+// 		}
+// 
+// 		p += WebKitFormName.size();
+// 		p = ndstristr(p, "name=\"");
+// 		if (!p) {
+// 			break;
+// 		}
+// 		p += 6;
+// 
+// 		p = ndstr_nstr_ansi(p, buf, '\"', sizeof(buf));
+// 		if (!p || *p != '\"') {
+// 			break;
+// 		}
+// 		++p;
+// 		p = ndstr_first_valid(p);
+// 		if (!p) {
+// 			break;
+// 		}
+// 		p = ndstr_nstr_end(p, val, '\r', sizeof(val));
+// 
+// 
+// 		if (buf[0] && val[0]) {
+// 			httpHeaderNode node = { buf, val };
+// 			m_requestForms.push_back(node);
+// 		}
+// 	}
+// 	return (int)m_body.size();
 }
 
 int NDHttpRequest::_parse_x_form()
@@ -924,7 +967,7 @@ int NDHttpRequest::_parse_x_form()
 	char val[1024];
 	char buf[1024];
 
-	const char *p = m_body.c_str();
+	const char *p = getBody();
 	p = ndstr_first_valid(p);
 
 	do {
@@ -947,7 +990,7 @@ int NDHttpRequest::_parse_x_form()
 
 	} while (p && *p);
 
-	return (int)m_body.size();
+	return (int) (p - getBody());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -992,7 +1035,7 @@ int NDHttpResponse::ParseProtocol()
 			//parse prorocol success
 			len = (int)(p - p_start);
 
-			ndlbuf_sub_data(m_recvBuf, len);
+			ndlbuf_sub_data(&m_bodyBuf, len);
 			m_parseStat = 1;
 			return len;
 		}

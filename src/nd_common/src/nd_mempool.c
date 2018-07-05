@@ -21,7 +21,6 @@ typedef struct nd_mm_pool *nd_handle ;
 #include "nd_common/nd_handle.h"
 #include "nd_common/nd_mempool.h"
 
-#define _ND_ALINE(_size, _aline) (((_size)+(_aline)-1) & (~((_aline)-1)))
 
 #define ND_DEFAULT_ALINE_SIZE	16
 #define MIN_SIZE				16

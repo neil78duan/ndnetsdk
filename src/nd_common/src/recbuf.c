@@ -187,6 +187,7 @@ int _lbuf_init(struct nd_linebuf *pbuf, size_t data_size)
 		return -1 ;
 	}
 	pbuf->buf_capacity = data_size ;
+	pbuf->auto_inc = 0;
 	_lbuf_reset(pbuf);
 	return 0;
 }
@@ -196,14 +197,11 @@ int _lbuf_realloc(struct nd_linebuf *pbuf, size_t newsize)
 	void *newaddr ;
 	size_t dl = _lbuf_datalen(pbuf) ;
 
-	if (pbuf->buf_capacity == newsize)	{
-		return 0;
+	if (pbuf->buf_capacity >= newsize) {
+		nd_logerror("newsize is too small\n ");
+		return -1;
 	}
 
-	if (dl >= newsize )	{
-		nd_logerror("newsize is too small\n " ) ;
-		return -1 ;
-	}
 	newaddr = malloc(newsize) ;	
 	if (!newaddr){
 		nd_logerror("malloc error %s\n " AND nd_last_error() ) ;
@@ -285,23 +283,48 @@ int _lbuf_read(struct nd_linebuf *pbuf,void *buf, size_t size,int flag)
 
 }
 
+static int _tryto_inc_capacity(struct nd_linebuf *pbuf, size_t increase_size)
+{
+	size_t size_new;
+	if (!pbuf->auto_inc) {
+		return -1;
+	}
+	size_new = pbuf->buf_capacity + increase_size;
+	if (size_new > pbuf->buf_capacity * 2) {
+		size_new = ND_ROUNDUP8(size_new);
+	}
+	else {
+		size_new = pbuf->buf_capacity * 2;
+	}
+	return ndlbuf_realloc(pbuf, size_new);
+}
+
 int _lbuf_write(struct nd_linebuf *pbuf,void *data, size_t datalen,int flag)
 {
 	size_t space_len = _lbuf_freespace(pbuf) ;
 	if(EBUF_SPECIFIED==flag){
 		if(space_len < datalen ) {
 			size_t free_capacity = _lbuf_free_capacity(pbuf) ;
-			if(free_capacity < datalen)
-				return -1 ;
-			_lbuf_move_ahead(pbuf) ;
+			if (free_capacity < datalen) {
+				if(!pbuf->auto_inc || -1==_tryto_inc_capacity(pbuf,datalen)) {
+					return -1;
+				}
+			}
+			else {
+				_lbuf_move_ahead(pbuf);
+			}
 		}
 	}
 	else {
 		if(space_len < datalen ) {
 			_lbuf_move_ahead(pbuf) ;
 			space_len = _lbuf_free_capacity(pbuf) ;
-			if(space_len < datalen)
-				datalen = space_len ;
+			if (space_len < datalen) {
+				if (-1 == _tryto_inc_capacity(pbuf, datalen)) {
+					datalen = space_len;
+				}
+			}
+				
 		}
 	}
 	memcpy(pbuf->__end, data, datalen) ;

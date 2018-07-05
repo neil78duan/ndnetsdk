@@ -86,15 +86,16 @@ ND_COMMON_API int ndcbuf_write(ndrecybuf_t *pbuf,void *data, size_t datalen,int 
 
 struct nd_linebuf
 {
+	int auto_inc;			//auto increase capacity 
 	size_t buf_capacity ;
 	char *__start, *__end ;	
-	//char __buf[C_BUF_SIZE] ;	
 	char *__buf;
 };
 
 //定义线性缓冲头
 struct line_buf_hdr
 {
+	int auto_inc;			//auto increase capacity 
 	size_t buf_capacity ;
 	char *__start, *__end ;	
 };
@@ -143,6 +144,21 @@ static __INLINE__ size_t _lbuf_freespace(struct nd_linebuf *pbuf)
 	nd_assert(pbuf->__end <= pbuf->__buf+_lbuf_capacity(pbuf));
 	return (size_t) (pbuf->__buf + _lbuf_capacity(pbuf) - pbuf->__end) ;
 }
+static __INLINE__ void ndlbuf_auto_inc_enable(struct nd_linebuf *pbuf)
+{
+	pbuf->auto_inc = 1;
+}
+
+static __INLINE__ void ndlbuf_auto_inc_disable(struct nd_linebuf *pbuf)
+{
+	pbuf->auto_inc = 0;
+}
+
+static __INLINE__ void ndlbuf_set_zero_tail(struct nd_linebuf *pbuf)
+{
+	*pbuf->__end = 0;
+}
+
 ND_COMMON_API void _lbuf_add_data(struct nd_linebuf *pbuf,size_t len);
 //读写数据
 ND_COMMON_API int _lbuf_read(struct nd_linebuf *pbuf,void *buf, size_t size,int flag);
@@ -184,7 +200,7 @@ struct nd_linebuf_xx
 #define ndlbuf_add_data(pbuf, len)	_lbuf_add_data((struct nd_linebuf*)((pbuf)), len)
 #define ndlbuf_read(pbuf, buf, size, flag )			_lbuf_read((struct nd_linebuf*) (pbuf),buf, size, flag)
 
-#define ndlbuf_write(pbuf,buf, size, flag)			_lbuf_write((struct nd_linebuf*) (pbuf),buf, size, flag)
+#define ndlbuf_write(pbuf,data, size, flag)			_lbuf_write((struct nd_linebuf*) (pbuf),data, size, flag)
 
 #define ndlbuf_sub_data(pbuf, len) _lbuf_sub_data((struct nd_linebuf*) (pbuf), len)
 

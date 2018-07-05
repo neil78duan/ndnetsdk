@@ -18,6 +18,11 @@
 
 #define MIN_ALLOC_SIZE		ALIGN_SIZE
 
+#define _ND_ALINE(_size, _aline) (((_size)+(_aline)-1) & (~((_aline)-1)))
+#define ND_ROUNDUP4(_size) _ND_ALINE(_size, 4)
+#define ND_ROUNDUP8(_size) _ND_ALINE(_size, 8)
+#define ND_ROUNDUP16(_size) _ND_ALINE(_size, 16)
+
 //内存池类型
 enum emem_pool_type{
 	EMEMPOOL_TINY =  64*1024,		//微型内存池
