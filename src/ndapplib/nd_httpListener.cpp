@@ -24,6 +24,7 @@ void NDHttpListener::Destroy(int flag)
 }
 bool NDHttpListener::installRequest_c(const char *pathName, http_reqeust_func func)
 {
+	ND_TRACE_FUNC();
 	if (!pathName || !*pathName) {
 		return false;
 	}
@@ -32,6 +33,7 @@ bool NDHttpListener::installRequest_c(const char *pathName, http_reqeust_func fu
 }
 bool NDHttpListener::installRequest_script(const char *pathName, const char *script)
 {
+	ND_TRACE_FUNC();
 	if (!pathName || !*pathName || !script) {
 		nd_logerror("input pathname or script name error\n");
 		return false;
@@ -42,6 +44,7 @@ bool NDHttpListener::installRequest_script(const char *pathName, const char *scr
 
 int NDHttpListener::onRequest(const char *reqPath, NDHttpSession *session, const NDHttpRequest &request)
 {
+	ND_TRACE_FUNC();
 	requestEntry_map::iterator it = m_entrys.find(reqPath);
 	if (it == m_entrys.end() ) {
 		return 404;
@@ -68,6 +71,7 @@ int NDHttpListener::onRequestScript(const char* script, NDHttpSession *session, 
 
 static int _session_data_handler(nd_handle sessionHandler, void *data, size_t len, nd_handle listen_h)
 {
+	ND_TRACE_FUNC();
 	if (!data || len == 0) {
 		return 0;
 	}
@@ -87,6 +91,7 @@ NDHttpSession::NDHttpSession()
 
 int NDHttpSession::UpdateSecond()
 {
+	ND_TRACE_FUNC();
 	if (m_closedTime) {
 		int interval = (int)( nd_time() - m_closedTime);
 		if (interval >= 0) {
@@ -99,6 +104,7 @@ int NDHttpSession::UpdateSecond()
 
 void NDHttpSession::setDelayClosed(bool bRightnow)
 {
+	ND_TRACE_FUNC();
 	if (bRightnow) {
 		m_closedTime = nd_time();
 	}
@@ -109,6 +115,7 @@ void NDHttpSession::setDelayClosed(bool bRightnow)
 
 int NDHttpSession::getWaitTimeout()
 {
+	ND_TRACE_FUNC();
 	NDInstanceBase *inst = nd_get_appinst();
 	if (inst) {
 		nd_handle hlisten =inst->GetDeftListener()->GetHandle();
@@ -127,12 +134,14 @@ NDHttpSession ::~NDHttpSession()
 
 int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 {
+	ND_TRACE_FUNC();
 	setDelayClosed(!response.isLongConnect());
 	return _sendHttpResponse(GetHandle(), &response, errorDesc);
 }
 
 int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t datalen, const char*errorDesc)
 {
+	ND_TRACE_FUNC();
 	int ret = 0;
 	int len;
 	char *p;
@@ -173,6 +182,7 @@ int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t d
 
 int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 {
+	ND_TRACE_FUNC();
 	int len;
 	char *p;
 	char buf[4096];
@@ -206,12 +216,14 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 
 void NDHttpSession::OnCreate()
 {
+	ND_TRACE_FUNC();
 	nd_hook_data(GetHandle(), _session_data_handler);
 }
 
 
 int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 {
+	ND_TRACE_FUNC();
 	ndprintf("%s\n", buf);
 	m_request.InData(buf, size);
 	SetPrivilege(EPL_LOGIN);

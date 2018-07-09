@@ -42,6 +42,7 @@ bool parser_check_end(char *src, char **next, int size)
 
 static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path, const char *host, int port,bool bLongConnect)
 {
+	ND_TRACE_FUNC();
 	int ret = 0;
 	int len, bodySize;
 	char *p;
@@ -119,6 +120,7 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 
 int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc)
 {
+	ND_TRACE_FUNC();
 	int ret = 0;
 	int bodySize = reques->getBodySize();;
 	int len;
@@ -181,6 +183,7 @@ static unsigned char FromHexChar(unsigned char x)
 
 std::string NDHttpParser::textToURLcode(const char *text, bool isLittle )
 {
+	ND_TRACE_FUNC();
 	std::string strTemp = "";
 	while (*text) {
 		unsigned char chr1 = *text++;
@@ -202,6 +205,7 @@ std::string NDHttpParser::textToURLcode(const char *text, bool isLittle )
 }
 std::string NDHttpParser::URLcodeTotext(const char *urlCode)
 {
+	ND_TRACE_FUNC();
 	std::string strTemp = "";
 	while (*urlCode) {
 		unsigned char chr1 = *urlCode++;
@@ -231,6 +235,7 @@ std::string NDHttpParser::URLcodeTotext(const char *urlCode)
 
 NDHttpParser::NDHttpParser()
 {
+	ND_TRACE_FUNC();
 	ndlbuf_init(&m_bodyBuf, 4096);
 	ndlbuf_auto_inc_enable(&m_bodyBuf);
 	Reset();
@@ -238,6 +243,7 @@ NDHttpParser::NDHttpParser()
 
 NDHttpParser::~NDHttpParser()
 {
+	ND_TRACE_FUNC();
 	ndlbuf_destroy(&m_bodyBuf);
 	Reset();
 
@@ -245,6 +251,7 @@ NDHttpParser::~NDHttpParser()
 
 void NDHttpParser::Reset()
 {
+	ND_TRACE_FUNC();
 	ndlbuf_reset(&m_bodyBuf);
 	
 	m_parseStat = 0;
@@ -261,6 +268,7 @@ bool NDHttpParser::CheckRecvOk()
 
 bool NDHttpParser::isLongConnect()
 {
+	ND_TRACE_FUNC();
 	const char *pConnHeader = getHeader("Connection");
 	if (pConnHeader && *pConnHeader){
 		if (ndstristr(pConnHeader, "Keep-alive"))	{
@@ -272,6 +280,7 @@ bool NDHttpParser::isLongConnect()
 
 void NDHttpParser::InData(const char *data, int size)
 {
+	ND_TRACE_FUNC();
 	//ndprintf("%s\n", data);
 	
 	ndlbuf_write(&m_bodyBuf, (void*)data, size, 0);
@@ -287,6 +296,7 @@ void NDHttpParser::InData(const char *data, int size)
 
 int NDHttpParser::dump()
 {
+	ND_TRACE_FUNC();
 	int ret = 0;
 	HttpHeader_t::iterator it;
 	for (it = m_header.begin(); it != m_header.end(); ++it) {
@@ -325,6 +335,7 @@ const char *NDHttpParser::getHeader(const char *name)const
 
 const char* NDHttpParser::getHeaderVal(int index)const
 {
+	ND_TRACE_FUNC();
 	if (index < m_header.size()) {
 		return m_header[index].value.c_str();
 	}
@@ -332,6 +343,7 @@ const char* NDHttpParser::getHeaderVal(int index)const
 }
 const char* NDHttpParser::getHeaderName(int index)const
 {
+	ND_TRACE_FUNC();
 	if (index < m_header.size()) {
 		return m_header[index].name.c_str();
 	}
@@ -340,6 +352,7 @@ const char* NDHttpParser::getHeaderName(int index)const
 
 bool NDHttpParser::addHeader(const char *name, const char *value)
 {
+	ND_TRACE_FUNC();
 	_adNode(name, value, m_header);
 	return true;
 }
@@ -364,6 +377,7 @@ void NDHttpParser::onParseEnd()
 
 int NDHttpParser::ParseData()
 {
+	ND_TRACE_FUNC();
 	if (0 == m_parseStat) {
 		return ParseProtocol();
 	}
@@ -384,6 +398,7 @@ int NDHttpParser::ParseData()
 
 char *NDHttpParser::_getCurParseAddr()
 {
+	ND_TRACE_FUNC();
 	if (ndlbuf_datalen(&m_bodyBuf)) {
 		return (char*)ndlbuf_data(&m_bodyBuf);
 	}
@@ -393,12 +408,14 @@ char *NDHttpParser::_getCurParseAddr()
 
 int NDHttpParser::_getDataSize()
 {
+	ND_TRACE_FUNC();
 	return (int)ndlbuf_datalen(&m_bodyBuf);
 }
 
 
 std::string *NDHttpParser::_getHeader(const char *name)
 {
+	ND_TRACE_FUNC();
 	httpHeaderNode *pNode = _getNode(name, m_header);
 	if (pNode)	{
 		return &(pNode->value);
@@ -408,6 +425,7 @@ std::string *NDHttpParser::_getHeader(const char *name)
 
 httpHeaderNode *NDHttpParser::_getNode(const char *name, HttpHeader_t &headers)
 {
+	ND_TRACE_FUNC();
 	HttpHeader_t::iterator it;
 	for (it = headers.begin(); it != headers.end(); ++it) {
 		if (ndstricmp((char*)it->name.c_str(), (char*)name) == 0) {
@@ -418,6 +436,7 @@ httpHeaderNode *NDHttpParser::_getNode(const char *name, HttpHeader_t &headers)
 }
 void NDHttpParser::_adNode(const char *name, const char *value, HttpHeader_t &headers)
 {
+	ND_TRACE_FUNC();
 	httpHeaderNode *pNode = _getNode(name, headers);
 	if (pNode)	{
 		pNode->value = value;
@@ -432,6 +451,7 @@ void NDHttpParser::_adNode(const char *name, const char *value, HttpHeader_t &he
 
 int NDHttpParser::_findBodySize()
 {
+	ND_TRACE_FUNC();
 	const char *p = getHeader("content-length");
 	if (p) {
 		return atoi(p);
@@ -441,6 +461,7 @@ int NDHttpParser::_findBodySize()
 
 int NDHttpParser::_parseHeader()
 {
+	ND_TRACE_FUNC();
 	int datasize = _getDataSize();
 	char *p_start = _getCurParseAddr();
 	char buf[1024];
@@ -500,6 +521,7 @@ int NDHttpParser::_parseHeader()
 }
 int NDHttpParser::_parseBody()
 {
+	ND_TRACE_FUNC();
 	int contentSize = _findBodySize();
 	int datasize = _getDataSize();
 
@@ -530,6 +552,7 @@ int NDHttpParser::_parseBody()
 
 size_t NDHttpParser::HeaderToBuf(char *buf, size_t size)
 {
+	ND_TRACE_FUNC();
 	HttpHeader_t::iterator it;
 	char *p = buf;
 	for (it = m_header.begin(); it != m_header.end(); ++it) {
@@ -593,6 +616,7 @@ NDHttpRequest:: ~NDHttpRequest()
 
 int NDHttpRequest::_parsePathInfo(const char *path)
 {
+	ND_TRACE_FUNC();
 	char val[4096];
 	char buf[4096];
 	size_t size = strlen(path);
@@ -630,6 +654,7 @@ int NDHttpRequest::_parsePathInfo(const char *path)
 
 int NDHttpRequest::dump()
 {
+	ND_TRACE_FUNC();
 	int ret = 0;
 	HttpHeader_t::iterator it;
 	for (it = m_header.begin(); it != m_header.end(); ++it) {
@@ -647,6 +672,7 @@ int NDHttpRequest::dump()
 
 void NDHttpRequest::Reset()
 {
+	ND_TRACE_FUNC();
 	NDHttpParser::Reset();
 	m_path.clear();
 	m_requestForms.clear();
@@ -656,6 +682,7 @@ void NDHttpRequest::Reset()
 
 int NDHttpRequest::ParseProtocol()
 {
+	ND_TRACE_FUNC();
 	int len;
 	int datasize = _getDataSize();
 	char *p_start = _getCurParseAddr();
@@ -714,6 +741,7 @@ int NDHttpRequest::ParseProtocol()
 
 void NDHttpRequest::onParseEnd()
 {
+	ND_TRACE_FUNC();
 	if (m_action == E_ACTION_POST && getBodySize()>0){
 		_postBodyToJson();
 	}
@@ -721,6 +749,7 @@ void NDHttpRequest::onParseEnd()
 
 const char* NDHttpRequest::getRequestVal(const char *name)
 {
+	ND_TRACE_FUNC();
 	httpHeaderNode *pNode = _getNode(name, m_requestForms);
 	if (pNode)	{
 		return pNode->value.c_str();
@@ -739,6 +768,7 @@ const char* NDHttpRequest::getRequestVal(const char *name)
 
 bool NDHttpRequest::addRequestFormVal(const char *name, const char *value)
 {
+	ND_TRACE_FUNC();
 	_adNode(name, value, m_requestForms);
 	return true;
 }
@@ -746,6 +776,7 @@ bool NDHttpRequest::addRequestFormVal(const char *name, const char *value)
 
 const NDHttpRequest::fileCacheInfo *NDHttpRequest::getUploadFile(const char *filename)const
 {
+	ND_TRACE_FUNC();
 	fileCacheMap_t::const_iterator it = m_upfiles.find(filename);
 	if (it == m_upfiles.end()) {
 		return NULL;
@@ -755,6 +786,7 @@ const NDHttpRequest::fileCacheInfo *NDHttpRequest::getUploadFile(const char *fil
 
 size_t NDHttpRequest::RequestValueTobuf(char *buf, size_t size)
 {
+	ND_TRACE_FUNC();
 	char *p = buf;
 	for (size_t i = 0; i < m_requestForms.size(); i++)	{
 		if (m_requestForms[i].value.size() ==0)		{
@@ -778,6 +810,7 @@ size_t NDHttpRequest::RequestValueTobuf(char *buf, size_t size)
 
 int NDHttpRequest::_postBodyToJson()
 {
+	ND_TRACE_FUNC();
 	std::string *pContent = _getHeader("Content-Type");
 	if (!pContent || pContent->size() == 0)	{
 		return 0;
@@ -798,6 +831,7 @@ int NDHttpRequest::_postBodyToJson()
 
 void NDHttpRequest::_destroyUpFile()
 {
+	ND_TRACE_FUNC();
 	fileCacheMap_t m_upfiles;
 	for (fileCacheMap_t::iterator it = m_upfiles.begin(); it != m_upfiles.end(); ++it) {
 		delete[] it->second.dataAddr;
@@ -806,6 +840,7 @@ void NDHttpRequest::_destroyUpFile()
 }
 bool NDHttpRequest::_insertFile(const char *varname, const char*filePath, void *data, size_t length)
 {
+	ND_TRACE_FUNC();
 	fileCacheInfo cacheInfo;
 
 	if (data && length > 0) {
@@ -826,6 +861,7 @@ bool NDHttpRequest::_insertFile(const char *varname, const char*filePath, void *
 
 int NDHttpRequest::_parseOnePart(const char *partStart, size_t len)
 {
+	ND_TRACE_FUNC();
 	char buf[1024];
 	NDHttpParser _tmpParser;
 
@@ -875,6 +911,7 @@ int NDHttpRequest::_parseOnePart(const char *partStart, size_t len)
 
 int NDHttpRequest::_parseMultipart(const char *pHeaderText)
 {
+	ND_TRACE_FUNC();
 	size_t bodySize = _findBodySize();
 	if (bodySize == 0) {
 		return -1;
@@ -964,6 +1001,7 @@ int NDHttpRequest::_parseMultipart(const char *pHeaderText)
 int NDHttpRequest::_parse_x_form()
 {
 
+	ND_TRACE_FUNC();
 	char val[1024];
 	char buf[1024];
 
@@ -997,6 +1035,7 @@ int NDHttpRequest::_parse_x_form()
 
 int NDHttpResponse::ParseProtocol()
 {
+	ND_TRACE_FUNC();
 	int len;
 	int datasize = _getDataSize();
 	char *p_start = _getCurParseAddr();
@@ -1047,6 +1086,7 @@ int NDHttpResponse::ParseProtocol()
 
 static int _http_connector_data_handler(nd_handle sessionHandler, void *data, size_t len, nd_handle )
 {
+	ND_TRACE_FUNC();
 	if (!data || len == 0) {
 		return 0;
 	}
@@ -1070,6 +1110,7 @@ HttpConnector:: ~HttpConnector()
 
 int HttpConnector::Create(const char *instantName)
 {
+	ND_TRACE_FUNC();
 	if (m_objhandle) {
 		nd_object_destroy(m_objhandle, 0);
 		//DestroyConnectorObj(m_objhandle) ;
@@ -1091,6 +1132,7 @@ int HttpConnector::Create(const char *instantName)
 
 int HttpConnector::Open(const char *host, int port)
 {
+	ND_TRACE_FUNC();
 	if (!m_objhandle) {
 		if (-1 == Create(NULL)) {
 			return -1;
@@ -1115,6 +1157,7 @@ int HttpConnector::Open(const char *host, int port)
 
 int HttpConnector::Close(int flag)
 {
+	ND_TRACE_FUNC();
 	if (m_objhandle)	{
 		nd_connector_close(m_objhandle, flag);
 	}
@@ -1124,6 +1167,7 @@ int HttpConnector::Close(int flag)
 
 void HttpConnector::Destroy(int flag)
 {
+	ND_TRACE_FUNC();
 	if (m_objhandle) {
 		nd_object_destroy(m_objhandle, flag) ;
 		//DestroyConnectorObj(m_objhandle) ;
@@ -1135,6 +1179,7 @@ void HttpConnector::Destroy(int flag)
 
 int HttpConnector::SendRequest(NDHttpRequest &request, const char *host, int port, const char *path)
 {
+	ND_TRACE_FUNC();
 	m_lastRequestPath = path;
 	std::string pathUrl = NDHttpParser::textToURLcode(path);
 	return _sendHttpRequest(m_objhandle, &request, pathUrl.c_str(), host, port,m_bLongConnection);
@@ -1148,6 +1193,7 @@ int HttpConnector::Recv(char *buf, int size, int timeout)
 
 int HttpConnector::onDataRecv(char *buf, int size)
 {
+	ND_TRACE_FUNC();
 #ifdef ND_DEBUG
 	char reserved = buf[size];
 	buf[size] = 0;
@@ -1168,6 +1214,7 @@ int HttpConnector::onDataRecv(char *buf, int size)
 
 int HttpConnector::Update(int timeout)
 {
+	ND_TRACE_FUNC();
 	char buf[0x10000] ;
 	
 	ndtime_t start = nd_time() ;
@@ -1202,7 +1249,7 @@ int HttpConnector::Update(int timeout)
 
 bool HttpConnector::CheckValid()
 {
-	
+	ND_TRACE_FUNC();
 	if (m_objhandle) {
 		return nd_connector_valid((nd_netui_handle)m_objhandle) ? true: false ;
 	}
@@ -1211,6 +1258,7 @@ bool HttpConnector::CheckValid()
 
 void HttpConnector::onResponse(NDHttpResponse *response)
 {
+	ND_TRACE_FUNC();
 
 	nd_logdebug("on response success \n");
 
