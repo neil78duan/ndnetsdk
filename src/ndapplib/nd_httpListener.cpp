@@ -198,7 +198,10 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 		len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:0\r\nConnection: close\r\n\r\n" );
 	}
 	p += len;
-	return nd_connector_send_stream(GetHandle(), buf, p - buf,0);
+	len = nd_connector_send_stream(GetHandle(), buf, p - buf,0);
+
+	nd_tcpnode_flush_sendbuf_force((nd_netui_handle)GetHandle());
+	return len;
 }
 
 void NDHttpSession::OnCreate()
