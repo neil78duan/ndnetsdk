@@ -1022,7 +1022,8 @@ int NDHttpRequest::_parse_x_form()
 		}
 
 		if (buf[0]) {
-			httpHeaderNode node = { buf, val };
+			httpHeaderNode node = { buf };
+			node.value = URLcodeTotext(val);
 			m_requestForms.push_back(node);
 		}
 
