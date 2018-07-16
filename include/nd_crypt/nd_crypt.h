@@ -85,16 +85,17 @@ ND_CRYPT_API char *crypt_stuff(char *src, int datalen, int stufflen ) ;	/*stuff 
 ND_CRYPT_API char* MD5ToString(unsigned char src[16], unsigned char desc[33]);
 
 /*加密可打印的字符(\0的字符串)*/
-ND_CRYPT_API char *MD5CryptStr16(char *input, char output[16]) ;
+ND_CRYPT_API char *MD5CryptStr16(const char *in_text, char output[16]);
+ND_CRYPT_API char *MD5CryptStr32(const char *in_text, char output[33]);
 
-/* 输入字符是二进制字符
+/* 输入二进制字符
  * @inlen input length
  * @input data address of input
  * @output buffer address char[16]
  */
-ND_CRYPT_API char *MD5Crypt16(char *input, int inlen, char output[16]);
+ND_CRYPT_API char *MD5Crypt16(const void *inbuf, int inlen, char output[16]);
 /* 计算md5,输出可打印的字符*/
-ND_CRYPT_API char *MD5CryptToStr32(char *input, int inlen, char output[33]);
+ND_CRYPT_API char *MD5Crypt32(const void *in_buf, int inlen, char output[33]);
 ND_CRYPT_API int MD5cmp(char src[16], char desc[16]) ;
 
 ND_CRYPT_API int base64_encode( const char * source, int len, char * destination_string );

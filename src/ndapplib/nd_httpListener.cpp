@@ -227,6 +227,11 @@ int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 	ND_TRACE_FUNC();
 	ndprintf("%s\n", buf);
 	m_request.InData(buf, size);
+	if (m_request.CheckParseError()) {
+		nd_logerror("parse received data error\n");
+		sendErrorResponse(501, "input error");
+		return -1;
+	}
 	SetPrivilege(EPL_LOGIN);
 
 	if (m_request.CheckRecvOk()) {

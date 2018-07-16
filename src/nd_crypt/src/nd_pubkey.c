@@ -81,7 +81,7 @@ int nd_get_public_certificate_version(void)
 
 char* nd_calc_publickey_md5(char text[33])
 {
-	return MD5CryptToStr32((char*)&__nd_pub_key, sizeof(__nd_pub_key), text) ;
+	return MD5Crypt32((char*)&__nd_pub_key, sizeof(__nd_pub_key), text) ;
 }
 
 R_RSA_PUBLIC_KEY *nd_get_publickey(void) 

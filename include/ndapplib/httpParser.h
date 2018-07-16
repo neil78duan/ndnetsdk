@@ -55,6 +55,7 @@ public:
 	enum eAction{ E_ACTION_GET, E_ACTION_POST, E_ACTION_RESPONSE };
 	eAction getAction() { return m_action; }
 	void setAction(NDHttpParser::eAction act) { m_action = act; }
+	bool CheckParseError() { return m_parseError; }
 
 	static std::string textToURLcode(const char *text,bool isLittle= false);
 
@@ -82,8 +83,8 @@ protected:
 	int _getDataSize();
 	int _findBodySize();
 
+	bool m_parseError;
 	int m_status;		//200 is ok ,404 not found
-
 	//nd_linebuf *m_recvBuf;
 	int m_parseStat; // 0 empty , 1 start parse ,2 parse body, 3 parse ok
 	int m_parseProgress; // 0 head, 1 body

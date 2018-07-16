@@ -237,6 +237,7 @@ NDHttpParser::NDHttpParser()
 {
 	ND_TRACE_FUNC();
 	ndlbuf_init(&m_bodyBuf, 4096);
+	m_parseError = false;
 	ndlbuf_auto_inc_enable(&m_bodyBuf);
 	Reset();
 }
@@ -260,6 +261,7 @@ void NDHttpParser::Reset()
 	
 	m_action = E_ACTION_GET;
 	m_status = 200;
+	m_parseError = false;
 }
 bool NDHttpParser::CheckRecvOk()
 {
@@ -287,7 +289,7 @@ void NDHttpParser::InData(const char *data, int size)
 	ndlbuf_set_zero_tail(&m_bodyBuf);
 
 	while (m_parseStat < 3 && ParseData() > 0) {
-		if (_getDataSize() == 0) {
+		if (_getDataSize() == 0 || CheckParseError()) {
 			break;
 		}
 	}
@@ -316,6 +318,7 @@ void NDHttpParser::setBody(const char*body)
 }
 const char *NDHttpParser::getBody()
 {
+	ndlbuf_set_zero_tail(&m_bodyBuf);
 	return (const char*) ndlbuf_data(&m_bodyBuf);
 }
 
@@ -400,6 +403,7 @@ char *NDHttpParser::_getCurParseAddr()
 {
 	ND_TRACE_FUNC();
 	if (ndlbuf_datalen(&m_bodyBuf)) {
+		ndlbuf_set_zero_tail(&m_bodyBuf);
 		return (char*)ndlbuf_data(&m_bodyBuf);
 	}
 	return NULL;
@@ -545,6 +549,9 @@ int NDHttpParser::_parseBody()
 	else if(datasize >= contentSize) {
 		m_parseStat = 3;
 		onParseEnd();
+	}
+	else {
+		return 0;	//data received not completed
 	}
 	return datasize;
 }
@@ -825,6 +832,7 @@ int NDHttpRequest::_postBodyToJson()
 	if (pHeaderText) {
 		return _parse_x_form();
 	}
+	m_parseError = true;
 	return -1;
 }
 
@@ -926,6 +934,7 @@ int NDHttpRequest::_parseMultipart(const char *pHeaderText)
 
 	size_t boundarySize = strlen(pbound) + 2;
 	if (boundarySize == 0) {
+		m_parseError = true; 
 		return -1;
 	}
 	const char *p = getBody();
@@ -1002,7 +1011,7 @@ int NDHttpRequest::_parse_x_form()
 {
 
 	ND_TRACE_FUNC();
-	char val[1024];
+	char val[4096];
 	char buf[1024];
 
 	const char *p = getBody();
@@ -1011,12 +1020,13 @@ int NDHttpRequest::_parse_x_form()
 	do {
 		val[0] = 0;
 		buf[0] = 0;
-		p = ndstr_nstr_ansi(p, buf, '=', sizeof(buf));
+		p = ndstr_nstr_ansi(p, buf, '=', sizeof(buf)-1);
 		if (!p || !*p || *p != '=') {
+			m_parseError = true;
 			return 0;
 		}
 		++p;
-		p = ndstr_nstr_ansi(p, val, '&', sizeof(val));
+		p = ndstr_nstr_ansi(p, val, '&', sizeof(val)-1);
 		if (p && *p == '&') {
 			++p;
 		}
@@ -1202,6 +1212,9 @@ int HttpConnector::onDataRecv(char *buf, int size)
 	buf[size] = reserved;
 #endif
 	m_response.InData(buf, size);
+	if (m_response.CheckParseError()) {
+		return -1;
+	}
 
 	if (m_response.CheckRecvOk()) {
 		onResponse(&m_response);

@@ -41,7 +41,7 @@
 //crypt read write file
 static inline const char* getFileKey(char *buf, int inlen)
 {
-	MD5CryptToStr32((char*)"apoloKey", 9, buf);
+	MD5Crypt32((void*)"apoloKey", 9, buf);
 	buf[32] = 0 ;
 	return buf ;
 }

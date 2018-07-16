@@ -120,6 +120,9 @@ static __INLINE__ void _lbuf_reset(struct nd_linebuf *pbuf)
 {
 	pbuf->__start = pbuf->__buf;
 	pbuf->__end = pbuf->__buf ;	
+	if (pbuf->__buf) {
+		pbuf->__buf[0] = 0;
+	}
 }
 
 static __INLINE__ void *_lbuf_data(struct nd_linebuf *pbuf)
@@ -156,7 +159,7 @@ static __INLINE__ void ndlbuf_auto_inc_disable(struct nd_linebuf *pbuf)
 
 static __INLINE__ void ndlbuf_set_zero_tail(struct nd_linebuf *pbuf)
 {
-	*pbuf->__end = 0;
+	*(pbuf->__end) = 0;
 }
 
 ND_COMMON_API void _lbuf_add_data(struct nd_linebuf *pbuf,size_t len);

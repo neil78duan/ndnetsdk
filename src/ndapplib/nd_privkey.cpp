@@ -185,7 +185,7 @@ char *nd_get_publickey_md5(void)
 
 char* nd_calc_privatekey_md5(char text[33])
 {
-	return MD5CryptToStr32((char*)&__nd_pri_key, sizeof(__nd_pri_key), text) ;
+	return MD5Crypt32((char*)&__nd_pri_key, sizeof(__nd_pri_key), text) ;
 }
 
 R_RSA_PRIVATE_KEY *nd_get_privatekey(void) 

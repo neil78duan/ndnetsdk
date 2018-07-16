@@ -128,7 +128,7 @@ char* MD5ToString(unsigned char src[16], unsigned char desc[33])
 
 
 /*加密可打印的字符(\0的字符串)*/
-char *MD5CryptStr16(char *input, char output[16]) 
+char *MD5CryptStr16(const char *input, char output[16]) 
 {
 	MD5_CTX context;
 	unsigned int len = (unsigned int) strlen (input);
@@ -140,12 +140,27 @@ char *MD5CryptStr16(char *input, char output[16])
 	return output ;
 }
 
+char *MD5CryptStr32(const char *in_text, char output[33])
+{
+	unsigned int len = (unsigned int)strlen(in_text);
+	char tmp[16];
+	MD5_CTX context;
+
+	MD5Init(&context);
+	MD5Update(&context, in_text, len);
+	MD5Final(tmp, &context);
+
+	MD5ToString(tmp, output);
+	return output;
+
+}
+
 /* 输入字符是二进制字符
  * @inlen input length
  * @input data address of input
  * @output buffer address char[16]
  */
-char *MD5Crypt16(char *input, int inlen, char output[16])
+char *MD5Crypt16(const void *input, int inlen, char output[16])
 {
 	MD5_CTX context;
 	
@@ -156,7 +171,7 @@ char *MD5Crypt16(char *input, int inlen, char output[16])
 	return output ;
 }
 
-char *MD5CryptToStr32(char *input, int inlen, char output[33])
+char *MD5Crypt32(const void *input, int inlen, char output[33])
 {
 	char tmp[16] ;
 	MD5_CTX context;
