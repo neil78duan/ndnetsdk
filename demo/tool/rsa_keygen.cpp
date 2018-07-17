@@ -76,14 +76,14 @@ int main(int argc, char *argv[])
 	}
 	TestRsa(_h_rsa->privateKey);
 
-	MD5CryptToStr32((char*)&_h_rsa->privateKey,sizeof(_h_rsa->privateKey),md5text);
+	MD5Crypt32(&_h_rsa->privateKey,sizeof(_h_rsa->privateKey),md5text);
 
 	if (-1==out_pub_file(_pub_file,_h_rsa->publicKey,number_index,md5text)) {
 		printf("out put public key to file %s error \n", _pub_file) ;
 		exit(1) ;
 	}
 
-	MD5CryptToStr32((char*)&_h_rsa->publicKey,sizeof(_h_rsa->publicKey),md5text);
+	MD5Crypt32(&_h_rsa->publicKey,sizeof(_h_rsa->publicKey),md5text);
 
 	if (-1==out_priv_file(_pri_file,_h_rsa->privateKey,number_index,md5text)) {
 		printf("out put private key to file %s error \n", _pri_file) ;
@@ -131,12 +131,12 @@ int testReadKey(RSA_HANDLE _h_rsa)
 		exit(1) ;
 	}
 
-	MD5CryptToStr32((char*)&_h_rsa->publicKey,sizeof(_h_rsa->publicKey),md5text1);
-	MD5CryptToStr32((char*)&pub_key,sizeof(pub_key),md5text2);
+	MD5Crypt32(&_h_rsa->publicKey,sizeof(_h_rsa->publicKey),md5text1);
+	MD5Crypt32(&pub_key,sizeof(pub_key),md5text2);
 
 
-	MD5CryptToStr32((char*)&_h_rsa->privateKey,sizeof(_h_rsa->privateKey),md5text3);
-	MD5CryptToStr32((char*)&priv_key,sizeof(priv_key),md5text4);
+	MD5Crypt32(&_h_rsa->privateKey,sizeof(_h_rsa->privateKey),md5text3);
+	MD5Crypt32(&priv_key,sizeof(priv_key),md5text4);
 
 	if (strcmp(md5text1,md5text2) ) {
 		printf("read public key data error not match \n") ;
@@ -226,7 +226,7 @@ int out_pub_file(const char * filename,R_RSA_PUBLIC_KEY &pub_key,int ver_num, ch
 
 	fprintf(pf, "int nd_get_public_certificate_version(void)\n{\n\treturn __g_pub_publis_num ;\n}\n\n") ;
 	//fprintf(pf, "char *nd_get_privatekey_md5(void)\n{\n\treturn __g_privkey_md5 ;\n}\n\n" ) ;
-	fprintf(pf, "char* nd_calc_publickey_md5(char text[33])\n{\n\treturn MD5CryptToStr32((char*)&__nd_pub_key, sizeof(__nd_pub_key), text) ;\n}\n\n") ;
+	fprintf(pf, "char* nd_calc_publickey_md5(char text[33])\n{\n\treturn MD5Crypt32(&__nd_pub_key, sizeof(__nd_pub_key), text) ;\n}\n\n") ;
 	fprintf(pf, "R_RSA_PUBLIC_KEY *nd_get_publickey(void) \n{\n\treturn &__nd_pub_key ;\n}\n\n") ;
 	fclose(pf) ;
 	return 0 ;
@@ -278,7 +278,7 @@ int out_priv_file(const char * filename,R_RSA_PRIVATE_KEY &priv_key,int ver_num,
 
 	fprintf(pf, "int nd_get_private_certificate_version(void)\n{\n\treturn __g_pirv_publis_num ;\n}\n\n") ;
 	fprintf(pf, "char *nd_get_publickey_md5(void)\n{\n\treturn __g_pubkey_md5 ;\n}\n\n" ) ;
-	fprintf(pf, "char* nd_calc_privatekey_md5(char text[33])\n{\n\treturn MD5CryptToStr32((char*)&__nd_pri_key, sizeof(__nd_pri_key), text) ;\n}\n\n") ;
+	fprintf(pf, "char* nd_calc_privatekey_md5(char text[33])\n{\n\treturn MD5Crypt32(&__nd_pri_key, sizeof(__nd_pri_key), text) ;\n}\n\n") ;
 	fprintf(pf, "R_RSA_PRIVATE_KEY *nd_get_privatekey(void) \n{\n\treturn &__nd_pri_key ;\n}\n\n") ;
 
 	fclose(pf) ;

@@ -107,7 +107,7 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 		ret += len;
 
 
-		len = nd_connector_send_stream(h, "\r\n\r\n",4, 0);
+		len = nd_connector_send_stream(h, (void*)"\r\n\r\n",4, 0);
 		if (len <= 0) {
 			return len;
 		}

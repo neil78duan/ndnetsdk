@@ -73,12 +73,12 @@ int testReadKey(RSA_HANDLE _h_rsa)
 		exit(1) ;
 	}
 
-	MD5CryptToStr32((char*)&_h_rsa->publicKey,sizeof(_h_rsa->publicKey),md5text1);
-	MD5CryptToStr32((char*)&pub_key,sizeof(pub_key),md5text2);
+	MD5Crypt32(&_h_rsa->publicKey,sizeof(_h_rsa->publicKey),md5text1);
+	MD5Crypt32(&pub_key,sizeof(pub_key),md5text2);
 
 
-	MD5CryptToStr32((char*)&_h_rsa->privateKey,sizeof(_h_rsa->privateKey),md5text3);
-	MD5CryptToStr32((char*)&priv_key,sizeof(priv_key),md5text4);
+	MD5Crypt32(&_h_rsa->privateKey,sizeof(_h_rsa->privateKey),md5text3);
+	MD5Crypt32(&priv_key,sizeof(priv_key),md5text4);
 
 	if (strcmp(md5text1,md5text2) ) {
 		printf("read public key data error not match \n") ;
