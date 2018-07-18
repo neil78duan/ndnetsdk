@@ -14,6 +14,12 @@
 #define E_SRC_CODE_GBK		1
 #define E_SRC_CODE_UTF_8	2
 
+#define E_SRC_CODE_UTF8		E_SRC_CODE_UTF_8
+
+#define ND_ENCODE_UTF8		E_SRC_CODE_UTF_8
+#define ND_ENCODE_GBK		E_SRC_CODE_GBK
+#define ND_ENCODE_ANSI		E_SRC_CODE_ANSI
+
 //source code compiled encode
 //define platform
 /*

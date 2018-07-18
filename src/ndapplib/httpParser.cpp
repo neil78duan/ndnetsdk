@@ -913,7 +913,7 @@ int NDHttpRequest::_parseOnePart(const char *partStart, size_t len)
 
 	httpHeaderNode node = { buf, value };
 	m_requestForms.push_back(node);
-	return len;
+	return (int)len;
 }
 
 
@@ -943,7 +943,7 @@ int NDHttpRequest::_parseMultipart(const char *pHeaderText)
 	while (p < pEnd) {
 		const char *partStart = strstr(p, boundary.c_str());
 		if (!partStart) {
-			return p - getBody();
+			return (int)( p - getBody());
 		}
 		partStart += boundarySize;
 
@@ -957,7 +957,7 @@ int NDHttpRequest::_parseMultipart(const char *pHeaderText)
 		_parseOnePart(partStart, partEnd - partStart);
 		p = partEnd + boundarySize;
 	}
-	return p - getBody();
+	return (int)(p - getBody());
 // 	pHeaderText = ndstristr(pHeaderText, "boundary=");
 // 
 // 	if (!pHeaderText ) {

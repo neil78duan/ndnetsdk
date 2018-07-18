@@ -11,6 +11,14 @@
 
 #include "nd_common/nd_time.h"
 
+#ifdef ND_UNIX 
+#if defined(_BSD_SOURCE)  || defined(_SVID_SOURCE )
+
+#else 
+#define timegm nd_sys_timegm
+#endif
+
+#endif 
 
 static time_t app_inst_delta = 0;
 
@@ -30,6 +38,13 @@ time_t nd_gmtime(time_t* _t)
 	return cur;
 }
 
+
+time_t nd_sys_timegm(struct tm* _res_tm)
+{
+	int mytimezone = nd_time_zone() ;
+	time_t ret = mktime(_res_tm);
+	return ret + mytimezone * 3600;
+}
 
 //得到字符串形式的时间
 const char *nd_get_timestr(void)

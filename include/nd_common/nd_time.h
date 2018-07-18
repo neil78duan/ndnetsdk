@@ -18,6 +18,8 @@ ND_COMMON_API ndbigtime_t	nd_bigtime(void);
 ND_COMMON_API void nd_gmtime_set_offset(int hour_offset, int minute_offset);
 ND_COMMON_API time_t nd_gmtime(time_t* pt);
 
+ND_COMMON_API  time_t nd_sys_timegm(struct tm* _res_tm);
+
 static __INLINE__  time_t app_inst_time(time_t* _t) {	return nd_gmtime(_t);}
 static __INLINE__  void app_inst_set_hm(int _h, int _m) {	nd_gmtime_set_offset(_h, _m);}
 
