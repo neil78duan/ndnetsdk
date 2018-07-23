@@ -100,6 +100,7 @@ int NDHttpSession::UpdateSecond()
 			return 0;
 		}
 	}
+	return 0;
 }
 
 void NDHttpSession::setDelayClosed(bool bRightnow)
