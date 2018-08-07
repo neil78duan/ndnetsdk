@@ -59,7 +59,14 @@ static __INLINE__ int _read_word(unsigned  char** dest, unsigned char **src)
 	else if (__s_code_type == E_SRC_CODE_UTF_8) {
 		if (**src > (unsigned  char)0x80){
 			int ret = 1;
-			if (**src >= (unsigned  char)224)	{
+
+			if (**src >= (unsigned  char)240) {
+				**dest = **src; ++(*src); ++(*dest);
+				**dest = **src; ++(*src); ++(*dest);
+				**dest = **src; ++(*src); ++(*dest);
+				ret += 3;
+			}
+			else if (**src >= (unsigned  char)224)	{
 				**dest = **src; ++(*src); ++(*dest);
 				**dest = **src; ++(*src); ++(*dest);
 				ret += 2;

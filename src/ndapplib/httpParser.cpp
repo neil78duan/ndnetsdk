@@ -135,7 +135,7 @@ int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc
 	len =(int) reques->HeaderToBuf(p, sizeof(buf) -(p - buf));
 	p += len;
 
-	len = snprintf(p, sizeof(buf) - (p - buf),"Server:userDefine\r\nContent-Length:%d\r\nConnection: Keep-Alive\r\n\r\n", bodySize);
+	len = snprintf(p, sizeof(buf) - (p - buf),"Server:userDefine\r\nContent-Length:%d\r\n\r\n", bodySize);
 	p += len;
 
 	len = nd_connector_send_stream(h, buf, p - buf, 0);
