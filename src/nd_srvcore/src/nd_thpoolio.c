@@ -103,7 +103,9 @@ int listen_thread_create(struct thread_pool_info *ic,nd_threadsrv_entry th_func)
 	nd_assert(hth) ;
 
 	init_netthread_msg( hth ) ;
-	nd_thsrv_resume(ic->thid) ;
+
+	//nd_sleep(100);
+	nd_thsrv_resume_force(ic->thid) ;
 	return 0;
 }
 

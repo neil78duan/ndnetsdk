@@ -42,8 +42,18 @@
 #endif
 
 
-typedef unsigned int		HANDLE ;
+typedef unsigned int			HANDLE ;
 typedef void				*HINSTANCE ;
+
+#define __FUNC__	__func__
+//last error 
+#define nd_last_errno() errno
+#define nd_last_error()	strerror(errno)
+#define nd_str_error(_errid) strerror(_errid)
+static __INLINE__ void _showerror(char *file, int line, const char *func) {
+	fprintf(stderr, "[%s:%d(%s)] last error:%s\n", file, line, func, nd_last_error());
+}
+#define nd_showerror() _showerror(__FILE__,__LINE__,__FUNC__)
 
 #define LOWORD(a)			((a) & 0xffff)
 #define HIWORD(a)			(((a) >>16) & 0xffff)
@@ -78,42 +88,78 @@ struct nd_name_sem
 	char _name[ND_SEM_NAME_SIZE] ;
 };
 
+typedef struct nd_name_sem *nd_sem_name_t ;
 typedef struct nd_name_sem *ndsem_t ;
 
-ND_COMMON_API int _nd_sem_open(ndsem_t *sem,  unsigned int value) ;
-ND_COMMON_API int _nd_sem_close(ndsem_t sem) ;
-ND_COMMON_API ndsem_t _nd_sem_open_ex(const char *name, unsigned int value,int flag);
-ND_COMMON_API int _unix_sem_timewait(ndsem_t sem , NDUINT32 waittime)  ;
+ND_COMMON_API int _nd_sem_open(nd_sem_name_t *sem,  unsigned int value) ;
+ND_COMMON_API int _nd_sem_close(nd_sem_name_t sem) ;
+ND_COMMON_API nd_sem_name_t _nd_sem_open_ex(const char *name, unsigned int value,int flag);
+ND_COMMON_API int _unix_sem_timewait(nd_sem_name_t sem , NDUINT32 waittime)  ;
 
-#define nd_sem_wait(s, timeout)		_unix_sem_timewait(s, timeout) //sem_wait(&(s))		//µ»¥˝–≈∫≈
-#define nd_sem_post(s)		sem_post((s)->_sem)		//∑¢ÀÕ–≈∫≈
+//#if defined(__ND_LINUX__)
+//
+//typedef sem_t 	*ndsem_t ;
+//ND_COMMON_API int _sys_sem_timewait(sem_t *sem , NDUINT32 waittime)  ;
+//
+//#define nd_sem_wait(s, timeout)	_sys_sem_timewait(s, timeout) //sem_wait(&(s))
+//static __INLINE__ int nd_sem_post(ndsem_t s)
+//{
+//	int ret = sem_post(s);
+//	if (-1 == ret) {
+//		nd_showerror();
+//	}
+//	return ret;
+//}
+//
+//static __INLINE__ int _sys_sem_init(ndsem_t *sem)
+//{
+//	ndsem_t mysem = (ndsem_t) malloc(sizeof(sem_t)) ;
+//	int ret = sem_init(mysem,0,0) ;
+//	if(ret ==0) {
+//		*sem =mysem ;
+//	}
+//	else {
+//		free(mysem) ;
+//		nd_showerror();
+//	}
+//	return ret ;
+//}
+//static __INLINE__ int _sys_sem_destroy(ndsem_t sem)
+//{
+//	int ret =sem_destroy(sem) ;
+//	free(sem) ;
+//	if (-1 == ret)
+//		nd_showerror();
+//	return ret;
+//}
+//
+//#define nd_sem_init(s)		_sys_sem_init(&(s))
+//#define nd_sem_destroy(s)   	_sys_sem_destroy(s) 		//destroy semahpore resource
+//#define nd_sem_open(name) 	sem_open( name, O_CREAT, 0644, 0 )
+//
+//#else
+
+#define nd_sem_wait(s, timeout)		_unix_sem_timewait(s, timeout) //sem_wait(&(s))
+#define nd_sem_post(s)		sem_post((s)->_sem)		//
 #define nd_sem_init(s)		_nd_sem_open(&(s),0)	//initilize semahpore resource, return 0 on success , error r
 #define nd_sem_destroy(s)   _nd_sem_close(s) 		//destroy semahpore resource
-
 #define nd_sem_open(name) _nd_sem_open_ex( name, 0, O_CREAT)
 
-#if defined(__ND_MAC__) || defined(__ND_IOS__)
-//int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
-#else
-//typedef sem_t 				ndsem_t ;			//–≈∫≈±‰¡ø
-//ND_COMMON_API int _unix_sem_timewait(ndsem_t *sem , NDUINT32 waittime)  ;
-//
-//#define nd_sem_wait(s, timeout)		_unix_sem_timewait(&(s), timeout) //sem_wait(&(s))		//µ»¥˝–≈∫≈
-//#define nd_sem_post(s)		sem_post(&(s))		//∑¢ÀÕ–≈∫≈
-//#define nd_sem_init(s)		sem_init(&(s),0,0)	//initilize semahpore resource, return 0 on success , error r
-//#define nd_sem_destroy(s)   sem_destroy(&(s)) 		//destroy semahpore resource
+//#endif
 
+#if defined(__ND_MAC__) || defined(__ND_IOS__)
+#else
 ND_COMMON_API void nd_init_daemon(void) ;
 #endif
 
 
 
-#define nd_thread_self()	pthread_self()		//µ√µΩœ÷≥…◊‘º∫µƒid
-#define nd_processid()		getpid()			//µ√µΩΩ¯≥ÃID
+#define nd_thread_self()	pthread_self()
+#define nd_processid()		getpid()
 
 
 ND_COMMON_API void pthread_sleep(NDUINT32 msec) ;
-#define nd_sleep			pthread_sleep  		//ÀØ√ﬂ1/1000 second
+#define nd_sleep			pthread_sleep  
 
 #ifdef ND_DEBUG
 #define nd_assert(a)		assert(a)
@@ -121,20 +167,6 @@ ND_COMMON_API void pthread_sleep(NDUINT32 msec) ;
 #define nd_assert(a)
 #endif
 
-
-#if	0
-#define __FUNC__ 	__ASSERT_FUNCTION
-#else 
-#define __FUNC__	__func__
-#endif 
-
-//last error 
-#define nd_last_errno() errno
-#define nd_last_error()	strerror(errno)
-#define nd_str_error(_errid) strerror(_errid)
-static __INLINE__ void _showerror(char *file, int line,const char *func) { 
-	fprintf(stderr,"[%s:%d(%s)] last error:%s\n",file, line, func, nd_last_error()) ;}
-#define nd_showerror() _showerror(__FILE__,__LINE__,__FUNC__)
 
 //define truck functon
 
@@ -167,23 +199,7 @@ ND_COMMON_API int mythread_cond_timewait(pthread_cond_t *cond,
 							pthread_mutex_t *mutex, 
 							unsigned long mseconds);
 
-/*
-typedef pthread_mutex_t		nd_mutex ;
-typedef pthread_cond_t		nd_cond;
 
-#define nd_mutex_init(m)	pthread_mutex_init((m), NULL) 
-#define nd_mutex_lock(m) 	pthread_mutex_lock(m) 
-#define nd_mutex_trylock(m)	pthread_mutex_trylock(m) 
-#define nd_mutex_unlock(m) 	pthread_mutex_unlock(m) 
-#define nd_mutex_destroy(m) pthread_mutex_destroy(m)
-
-#define nd_cond_init(m)		pthread_cond_init((m), NULL) 
-#define nd_cond_destroy(c)  pthread_cond_destroy(c)
-#define nd_cond_wait(c, m)			pthread_cond_wait(c, m)
-#define nd_cond_timewait(c,m, ms) 	mythread_cond_timewait(c,m,ms)
-#define nd_cond_signal(v)			pthread_cond_signal(v) 
-#define nd_cond_broadcast(v)		pthread_cond_broadcast(v)
-*/
 //file map 
 typedef struct nd_filemap_t
 {

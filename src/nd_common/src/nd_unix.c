@@ -120,10 +120,10 @@ void nd_init_daemon(void)
 #endif
 }
 
-int _nd_sem_open(ndsem_t *sem, unsigned int value)
+int _nd_sem_open(nd_sem_name_t *sem, unsigned int value)
 {
 #if defined(__ND_IOS__)
-	ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
+	nd_sem_name_t  psem = (nd_sem_name_t) malloc(sizeof(struct nd_name_sem) );
 	psem->_sem = sem_open("/s", O_CREAT, 0644, 1);
 	if (psem->_sem== SEM_FAILED) {
 		if (errno != EEXIST) {
@@ -134,7 +134,7 @@ int _nd_sem_open(ndsem_t *sem, unsigned int value)
 	}
 	*sem = psem ;
 #elif defined(__ND_ANDROID__)
-	ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
+	nd_sem_name_t  psem = (nd_sem_name_t) malloc(sizeof(struct nd_name_sem) );
 	psem->_sem =(sem_t*) malloc(sizeof(sem_t)) ;
 	if( sem_init(psem->_sem, O_CREAT, value) ){
 		nd_logerror("sem_open(%s) : %s\n",psem->_name, nd_last_error()) ;
@@ -149,7 +149,7 @@ int _nd_sem_open(ndsem_t *sem, unsigned int value)
 	
 	static ndatomic_t _s_sem_index = 0 ;
 	//char sem_name[64] ;
-	ndsem_t  psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
+	nd_sem_name_t  psem = (nd_sem_name_t) malloc(sizeof(struct nd_name_sem) );
 	do {
 		snprintf(psem->_name, sizeof(psem->_name), "%s_sem_%d", nd_process_name(),  nd_atomic_inc( &_s_sem_index)) ;
 		
@@ -171,10 +171,10 @@ int _nd_sem_open(ndsem_t *sem, unsigned int value)
 	return 0;
 }
 
-ndsem_t _nd_sem_open_ex(const char *name, unsigned int value,int flag)
+nd_sem_name_t _nd_sem_open_ex(const char *name, unsigned int value,int flag)
 {
 	
-	ndsem_t  psem =  NULL ;
+	nd_sem_name_t  psem =  NULL ;
 	
 #if defined(__ND_IOS__)
 	sem_t *mysem = sem_open("/s", O_CREAT, 0644, value);
@@ -194,7 +194,7 @@ ndsem_t _nd_sem_open_ex(const char *name, unsigned int value,int flag)
 		nd_logerror("sem_open(%s) : %s\n",name, nd_last_error()) ;
 		return NULL;
 	}
-	psem = (ndsem_t) malloc(sizeof(struct nd_name_sem) );
+	psem = (nd_sem_name_t) malloc(sizeof(struct nd_name_sem) );
 	if(!psem) {
 		sem_close(mysem) ;
 		sem_unlink(name) ;
@@ -208,7 +208,7 @@ ndsem_t _nd_sem_open_ex(const char *name, unsigned int value,int flag)
 }
 
 
-int _nd_sem_close(ndsem_t sem)
+int _nd_sem_close(nd_sem_name_t sem)
 {
 	sem_close(sem->_sem) ;
 #if  defined(__ND_IOS__)
@@ -231,13 +231,17 @@ void pthread_sleep(NDUINT32 msec)
     usleep(t) ;
 }
 
-int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
+int _unix_sem_timewait(nd_sem_name_t pSem , NDUINT32 waittime)
 {
     sem_t *sem = pSem->_sem ;
     int times = waittime / 50 ;
     int ret ;
     if(ND_INFINITE==waittime) {
-        return sem_wait(sem) ;
+        ret = sem_wait(sem) ;
+		if(ret ==-1) {
+			nd_showerror() ;
+		}
+		return ret;
     }
     else if(times > 0){
         while (times) {
@@ -268,6 +272,7 @@ int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
     }
 }
 
+
 #else
 
 void pthread_sleep(NDUINT32 msec)
@@ -278,41 +283,52 @@ void pthread_sleep(NDUINT32 msec)
     mythread_cond_timewait(&_cond,&_mutex, msec) ;
 }
 
-int _unix_sem_timewait(ndsem_t pSem , NDUINT32 waittime)
+int _unix_sem_timewait(nd_sem_name_t pSem , NDUINT32 waittime)
 {
-	sem_t *sem = pSem->_sem ;
+	return _sys_sem_timewait(pSem->_sem, waittime) ;
+	
+}
+
+int _sys_sem_timewait(sem_t *sem , NDUINT32 waittime)
+{
 	int ret ;
-	if(ND_INFINITE==waittime) {		
+	if(ND_INFINITE==waittime) {
 		return sem_wait(sem) ;
 	}
-	else if(waittime){
-		
+	else if(0== waittime){
+		return sem_trywait(sem);
+//		ret = sem_trywait(sem);
+//		if (ret == -1) {
+//			nd_showerror();
+//		}
+//		return ret;
+	}
+	else {		
 		struct timespec ts ;
 		
 		if (nd_clock_gettime(&ts) == -1) {
+			nd_showerror();
 			return -1 ;
 		}
 		ts.tv_sec += waittime /1000 ;
 		ts.tv_nsec += (waittime %1000 ) * 1000000;
 		
-		//’‚¿Ô≤ªƒ‹ π”√ (ret = sem_timedwait(sem, &ts)) == -1 && errno == EINTR ’‚∏ˆ≈–∂œ
-		//∑Ò‘Úctrl+cΩ´≤ªƒ‹ π≥Ã–Ú’˝≥£ÕÀ≥ˆ
-		//while ((ret = sem_timedwait(sem, &ts)) == -1 && errno == EINTR)
-		//	continue ;
 		//check what happened
 		ret = sem_timedwait(sem, &ts);
 		if (ret == -1) {
-			if (errno == ETIMEDOUT)
-				return NDSEM_TIMEOUT ;
-			else
-				return NDSEM_ERROR ;
-		} 
-		else
-			return NDSEM_SUCCESS ;
+			if (errno == ETIMEDOUT) {
+				return NDSEM_TIMEOUT;
+			}
+			else {
+				nd_showerror();
+				return NDSEM_ERROR;
+			}
+		}
+		else {
+			return NDSEM_SUCCESS;
+		}
 	}
-	else {
-		return  sem_trywait(sem);
-	}
+	
 }
 
 

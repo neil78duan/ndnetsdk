@@ -138,59 +138,7 @@ int nd_thsrv_isexit(nd_handle h_srvth )
 		nd_atomic_set(&_context->in_suspend, 0);	\
 	} while (0)
 
-// 专业消息处理线程函数
-// static int _msg_th_func(nd_thsrv_context_t *contex)
-// {
-// 	ENTER_FUNC()
-// 	int ret = 0;
-// 	struct nd_thread_msg *node ;
-// 	struct list_head *pos, *next;
-// 	struct list_head header ;
-// 	struct nd_srv_entry *srventry = get_srv_entry()  ;
-// 
-// 	nd_mutex_lock(&contex->msg_lock) ;
-// 		if(list_empty(&contex->msg_list)) {
-// 			nd_mutex_unlock(&contex->msg_lock) ;
-// 			LEAVE_FUNC();
-// 			return 0 ;
-// 		}
-// 		list_add(&header, &contex->msg_list);
-// 		list_del_init(&contex->msg_list) ;
-// 	nd_mutex_unlock(&contex->msg_lock) ;
-// 	
-// 	if(contex->msg_entry ) {
-// 		pos = header.next ;
-// 		while(pos !=  &header){
-// 			int hr ;
-// 			next = pos->next ;
-// 			node = list_entry(pos, struct nd_thread_msg, list) ;
-// 			hr = contex->msg_entry(node) ;			
-// 			pos = next ;
-// 			
-// #ifdef TEST_MYMM 
-// 			free(node) ;
-// #else 
-// 			nd_pool_free(contex->allocator, node) ;
-// #endif
-// 			if(-1==hr){
-// 				LEAVE_FUNC();
-// 				return -1 ;
-// 			}
-// 			++ret ;
-// 		}
-// 	}
-// 
-// 	
-// 	while(nd_atomic_read(&contex->is_suspend)>0 ) {
-// 		nd_atomic_set(&contex->in_suspend,1);
-// 		nd_sem_wait(contex->sem_suspend,-1) ;
-// 		nd_atomic_set(&contex->in_suspend,0) ;
-// 		++ret ;
-// 	}
-// 	LEAVE_FUNC();
-// 	return ret ;
-// }
-//received message function entry
+
 static int _msg_entry(nd_thsrv_context_t *contex)
 {
 	int ret = 0;
@@ -246,9 +194,6 @@ EXIT_MSG:
 	
 	while(nd_atomic_read(&contex->is_suspend)>0 ) {
 		THSRV_ENTER_SUSPEND(contex, -1);
-// 		nd_atomic_set(&contex->in_suspend,1) ;
-// 		nd_sem_wait(contex->sem_suspend,-1) ;
-// 		nd_atomic_set(&contex->in_suspend,0) ;
 	}
 
 	LEAVE_FUNC();
@@ -324,12 +269,11 @@ static void *_srv_entry(void *p)
 	nd_assert(contex) ;
 	nd_sem_post(create_param->sem) ;
 
-	THSRV_ENTER_SUSPEND(contex, -1);
-// 	nd_atomic_set(&contex->in_suspend, 1);
-// 	nd_sem_wait(contex->sem_suspend,-1) ;		//wait received run command
-// 	nd_atomic_set(&contex->in_suspend, 0);
+	nd_logdebug("th-service %s  waked up creator and enter suspend .....\n", contex->srv_name);
 
-	nd_log_screen("*** %s server start\n", contex->srv_name) ;
+	THSRV_ENTER_SUSPEND(contex, -1);
+
+	nd_logdebug("th-service %s begin running .....\n", contex->srv_name) ;
 	if(SUBSRV_RUNMOD_LOOP==contex->run_module) {
 		while(0==nd_atomic_read(&contex->__exit) && 0==nd_atomic_read(&__s_entry.__exit)) {
 			if(-1==contex->srv_entry(contex->srv_param) ) {
@@ -377,7 +321,7 @@ EXIT_SRV:
 		nd_timer_destroy(contex->h_timer, 0) ;
 		contex->h_timer = 0 ;
 	}
-	nd_log_screen("%s server is exit\n", contex->srv_name) ;
+	nd_logdebug("th-service %s is exit\n", contex->srv_name) ;
 
 #ifdef ND_CALLSTACK_TRACE
 	if (0 == __push_func_return_value) {
@@ -407,18 +351,19 @@ nd_thsrvid_t nd_thsrv_createex(struct nd_thsrv_createinfo* create_info,int prior
 	contex =(nd_thsrv_context_t * ) malloc(sizeof (nd_thsrv_context_t) ) ;
 	if(!contex)
 		return 0 ;
+	memset(contex, 0, sizeof(*contex));
 	
 	create_param.pcontext = contex ;	
 	if(-1==nd_sem_init(create_param.sem)) {
 		free(contex) ;
-		nd_logfatal("create thread server error for sem init error=%s !\n" AND nd_last_error()) ;
+		nd_logfatal("create th-service error for sem init error=%s !\n" AND nd_last_error()) ;
 		return 0 ;
 	}
 
 	if(-1==nd_sem_init(contex->sem_suspend)) {
 		nd_sem_destroy(create_param.sem) ;
 		free(contex) ;
-		nd_logfatal("create thread server error for sem suspend init error=%s !\n" AND nd_last_error()) ;
+		nd_logfatal("create th-service error for sem suspend init error=%s !\n" AND nd_last_error()) ;
 		return 0 ;
 	}
 	contex->size = sizeof(nd_thsrv_context_t) ;
@@ -451,6 +396,7 @@ nd_thsrvid_t nd_thsrv_createex(struct nd_thsrv_createinfo* create_info,int prior
 	}
 
 	//create_param 
+	nd_logdebug(" th-service %s creating .....\n", create_info->srv_name);
 	contex-> th_handle = nd_createthread(_srv_entry, &create_param, &(contex->thid),priority) ;
 	if(!contex-> th_handle ){
 		nd_sem_destroy(create_param.sem) ;
@@ -458,13 +404,16 @@ nd_thsrvid_t nd_thsrv_createex(struct nd_thsrv_createinfo* create_info,int prior
 		return 0;
 	}
 	list_add(&(contex->list), &(__s_entry.th_context_list)) ;
-	nd_sem_wait(create_param.sem, -1) ;
-nd_log_screen("%s server create success id=%d!\n", contex->srv_name, (int) contex->thid) ;	
-	nd_sem_destroy(create_param.sem) ;
+	
+	nd_sem_wait(create_param.sem, ND_INFINITE) ;
+	nd_logdebug("th-service %s create success id=%d!\n", contex->srv_name, (int)contex->thid);
+	//nd_sleep(50) ;
+	nd_sem_destroy(create_param.sem);
 
 	if(0==suspend) {
 		nd_atomic_swap(&contex->is_suspend ,0) ;
 		nd_sem_post(contex->sem_suspend);
+		nd_logdebug(" creator waked up  %s th-service \n", contex->srv_name);
 	}
 	return contex->thid ;
 }
@@ -489,17 +438,19 @@ static int _thsrv_suspend(nd_thsrv_context_t *contex, int wait_success)
 
 static int _thsrv_resume(nd_thsrv_context_t *contex)
 {
-	ndatomic_t oldval = nd_atomic_read(&contex->is_suspend);
+	ndatomic_t oldval;
+	nd_threadsched();
+	oldval = nd_atomic_read(&contex->is_suspend);
 	while (oldval > 0 )	{
 		if (nd_compare_swap(&contex->is_suspend, oldval, oldval - 1)) {
 			if (nd_atomic_read(&contex->in_suspend)){
 				nd_sem_post(contex->sem_suspend);
+				nd_threadsched();
 			}
 
-			nd_logdebug("thread %s enter WAKE-UP\n", contex->srv_name);
+			nd_logdebug("thread %s was WAKED-UP by other\n", contex->srv_name);
 			return 0;
 		}
-		nd_threadsched();
 		oldval = nd_atomic_read(&contex->is_suspend);
 	}
 
@@ -538,6 +489,19 @@ int nd_thsrv_suspend_self(nd_handle handle)
 	return 0 ;
 }
 
+
+int nd_thsrv_resume_force(nd_thsrvid_t  srv_id)
+{
+	nd_thsrv_context_t *contex = (nd_thsrv_context_t *)nd_thsrv_gethandle(srv_id);
+	if (!contex)
+		return -1;
+
+	nd_atomic_swap(&contex->is_suspend, 0);	
+	nd_sem_post(contex->sem_suspend);
+	nd_logdebug("thread %s was force WAKED-UP by other\n", contex->srv_name);
+	return 0;
+}
+
 int nd_thsrv_resume(nd_thsrvid_t  srv_id) 
 {
 	nd_thsrv_context_t *contex = (nd_thsrv_context_t *)nd_thsrv_gethandle(srv_id ) ;
@@ -545,13 +509,7 @@ int nd_thsrv_resume(nd_thsrvid_t  srv_id)
 		return -1;
 
 	return _thsrv_resume(contex);
-// 	if ((int)nd_atomic_read(&contex->is_suspend) <= 1){
-// 		nd_atomic_swap(&contex->is_suspend,0) ;
-// 	}
-// 	else {
-// 		nd_atomic_dec(&contex->is_suspend) ;
-// 	}
-// 	nd_sem_post(contex->sem_suspend) ;
+
 	return 0 ;
 }
 
@@ -567,22 +525,7 @@ int nd_thsrv_suspendall()
 			_thsrv_suspend(context, 1);
 		}
 	}
-	/*
-	nd_atomic_set(&srventry->__suspend,1) ;
-
-	pos = srventry->th_context_list.next ;
-	while(pos != &(srventry->th_context_list)) {
-		next = pos->next ;
-		context = list_entry(pos,nd_thsrv_context_t,list) ;
-		if(!nd_thread_equal(context->thid,srvid)) {
-			nd_atomic_inc(&context->is_suspend) ;
-			do 	{
-				nd_sleep(20) ;
-			} while (nd_atomic_read(&context->in_suspend)==0);
-		}
-		pos = next ;
-	}
-	*/
+	
 	return 0 ;
 }
 
@@ -600,23 +543,6 @@ int nd_thsrv_resumeall()
 		}
 	}
 
-// 	nd_atomic_set(&srventry->__suspend,0) ;
-// 
-// 	pos = srventry->th_context_list.next ;
-// 	while(pos != &(srventry->th_context_list)) {
-// 		next = pos->next ;
-// 		context = list_entry(pos,nd_thsrv_context_t,list) ;
-// 		if(!nd_thread_equal(context->thid,srvid)) {
-// 			if ((int)nd_atomic_read(&context->is_suspend) <= 1){
-// 				nd_atomic_swap(&context->is_suspend,0) ;
-// 			}
-// 			else {
-// 				nd_atomic_dec(&context->is_suspend) ;
-// 			}
-// 			nd_sem_post(context->sem_suspend) ;
-// 		}
-// 		pos = next ;
-// 	}
 	return 0 ;
 }
 

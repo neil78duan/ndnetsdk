@@ -62,10 +62,10 @@ private:
 #define ND_LOG_WRAPPER_PRINT(_type) &(NDLogWrapperBase<_type>::print)
 #define ND_LOG_WRAPPER_LOG(_type) &(NDLogWrapperBase<_type>::log)
 
-#define ND_LOG_WRAPPER_IMPLEMENTION(_type, _name) \
+#define ND_LOG_WRAPPER_IMPLEMENTION(_type) \
         template <typename _type> _type* NDLogWrapperBase< _type>::m_hostWindows = 0;	\
-	static NDLogWrapperBase<_type> *_name
+	static NDLogWrapperBase<_type> *_localLogHelperOf_##_type
 
-#define ND_LOG_WRAPPER_NEW(_type) new NDLogWrapperBase<_type>(this)
-#define ND_LOG_WRAPPER_DELETE(_varName) if(_varName) {delete _varName ; _varName  =0;}
+#define ND_LOG_WRAPPER_NEW(_type) _localLogHelperOf_##_type = new NDLogWrapperBase<_type>(this)
+#define ND_LOG_WRAPPER_DELETE(_type) if(_localLogHelperOf_##_type) {delete _localLogHelperOf_##_type ; _localLogHelperOf_##_type  =0;}
 #endif
