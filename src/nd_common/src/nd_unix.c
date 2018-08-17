@@ -320,7 +320,6 @@ int _sys_sem_timewait(sem_t *sem , NDUINT32 waittime)
 				return NDSEM_TIMEOUT;
 			}
 			else {
-				nd_showerror();
 				return NDSEM_ERROR;
 			}
 		}

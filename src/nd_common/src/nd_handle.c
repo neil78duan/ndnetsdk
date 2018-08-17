@@ -325,15 +325,17 @@ int nd_tryto_clear_err(nd_handle h)
 #ifdef ND_SOURCE_TRACE
 
 static struct nd_rb_root _g_rb_handler_root  ;
-static NDUINT32 _g_objindex = 0 ;
+static ndatomic_t _g_is_init = 0;
+static NDUINT32 _g_objindex = 1 ;
 static nd_mutex _g_handle_lock ;
 static ndatomic_t _g_handle_num ;
 
 int _tryto_init_handle_mgr()
 {
-	if (nd_compare_swap(&_g_objindex, 0, 1)){
+	if (nd_compare_swap(&_g_is_init, 0, 1)){
 		nd_mutex_init(&_g_handle_lock) ;
 		_g_rb_handler_root.rb_node = 0 ;
+		_g_objindex = 1;
 		_g_handle_num = 0 ;
 	}
 	return 0 ;
@@ -341,11 +343,11 @@ int _tryto_init_handle_mgr()
 
 void _tryto_deinit_handle_mgr()
 {
-	if(nd_atomic_read(&_g_handle_num)== 0) {
-		nd_mutex_destroy(&_g_handle_lock) ;
-		_g_rb_handler_root.rb_node = 0 ;
-		nd_atomic_set(&_g_objindex ,0) ;
-	}
+// 	if(nd_atomic_read(&_g_handle_num)== 0) {
+// 		nd_mutex_destroy(&_g_handle_lock) ;
+// 		_g_rb_handler_root.rb_node = 0 ;
+// 		nd_atomic_set(&_g_objindex ,0) ;
+// 	}
 }
 
 struct tag_nd_handle * _search_handle(NDUINT32 objid) 
@@ -386,9 +388,9 @@ int nd_reg_handle(nd_handle hobj)
 	nd_atomic_set(&handle->__created,1) ;
 	rb_init_node(&handle->__self_rbnode);
 	
-	handle->__objid = nd_atomic_inc(&_g_objindex) ;
 	//insert 
 	nd_mutex_lock(&_g_handle_lock) ;
+	handle->__objid = nd_atomic_inc(&_g_objindex) ;
 	do 	{
 		struct nd_rb_root *root = &_g_rb_handler_root;
 		struct nd_rb_node **new_node = &(root->rb_node), *parent = NULL;
@@ -409,8 +411,8 @@ int nd_reg_handle(nd_handle hobj)
 		rb_link_node(&handle->__self_rbnode, parent, new_node);
 		rb_insert_color(&handle->__self_rbnode, root);
 	}while(0) ;
-	nd_mutex_unlock(&_g_handle_lock) ;
 	nd_atomic_inc(&_g_handle_num) ;
+	nd_mutex_unlock(&_g_handle_lock) ;
 	return 0;
 }
 int nd_unreg_handle(nd_handle hobj) 
@@ -429,10 +431,10 @@ int nd_unreg_handle(nd_handle hobj)
 	nd_atomic_set(&handle->__created,0) ;
 
 	nd_mutex_lock(&_g_handle_lock) ;
-	rb_erase(&p->__self_rbnode, &_g_rb_handler_root) ;
+	rb_erase(&p->__self_rbnode, &_g_rb_handler_root);
+	nd_atomic_dec(&_g_handle_num);
 	nd_mutex_unlock(&_g_handle_lock) ;
 
-	nd_atomic_inc(&_g_handle_num) ;
 	rb_init_node(&handle->__self_rbnode);
 	nd_atomic_set(&handle->__objid,0) ;
 	

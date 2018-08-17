@@ -222,6 +222,7 @@ int nd_thsrv_install_msg(nd_handle  thhandle,NDUINT32 msgid, nd_thsrvmsg_func fu
 
 int deft_msg_handler(nd_thsrv_msg *msg) 
 {
+	ENTER_FUNC();
 	struct list_head *pos ;
 	struct thmsg_entry *entry ;
 	nd_thsrv_context_t *contex =(nd_thsrv_context_t *) msg->recv_handle ;
@@ -236,6 +237,7 @@ int deft_msg_handler(nd_thsrv_msg *msg)
 			break ;
 		}
 	}
+	LEAVE_FUNC();
 	return 0;
 }
 
@@ -420,6 +422,7 @@ nd_thsrvid_t nd_thsrv_createex(struct nd_thsrv_createinfo* create_info,int prior
 
 static int _thsrv_suspend(nd_thsrv_context_t *contex, int wait_success)
 {
+	ENTER_FUNC();
 	nd_atomic_inc(&contex->is_suspend);
 	if (wait_success) {
 		do 	{
@@ -433,6 +436,7 @@ static int _thsrv_suspend(nd_thsrv_context_t *contex, int wait_success)
 	}
 
 	nd_logdebug("thread %s enter resume .....\n", contex->srv_name);
+	LEAVE_FUNC();
 	return 0;
 }
 
@@ -509,14 +513,11 @@ int nd_thsrv_resume(nd_thsrvid_t  srv_id)
 		return -1;
 
 	return _thsrv_resume(contex);
-
-	return 0 ;
 }
 
 int nd_thsrv_suspendall()
 {
 	nd_thsrvid_t srvid = nd_thread_self() ;
-	//struct list_head *pos, *next ;
 	nd_thsrv_context_t *context ;
 	struct nd_srv_entry *srventry  = get_srv_entry()  ;
 
@@ -531,6 +532,7 @@ int nd_thsrv_suspendall()
 
 int nd_thsrv_resumeall() 
 {
+	ENTER_FUNC()
 	nd_thsrvid_t srvid = nd_thread_self() ;
 	//struct list_head *pos, *next ;
 	nd_thsrv_context_t *context ;
@@ -543,6 +545,7 @@ int nd_thsrv_resumeall()
 		}
 	}
 
+	LEAVE_FUNC();
 	return 0 ;
 }
 
@@ -551,19 +554,16 @@ int _destroy_service(nd_thsrv_context_t *contex, int wait)
 {
 	ENTER_FUNC()
 	int ret = 0;
-	struct list_head *pos;
+	struct list_head *pos,*next;
 	struct nd_srv_entry *srventry = get_srv_entry()  ;
 
 	nd_assert(contex);
 
 	nd_atomic_swap(&contex->__exit,1);
 
-	{
-		while(nd_atomic_read(&contex->is_suspend)>0) {
-			nd_atomic_swap(&contex->is_suspend,0) ;
-			nd_sem_post(contex->sem_suspend) ;
-		}
-	}
+	//force eake up!
+	nd_atomic_swap(&contex->is_suspend, 0);
+	nd_sem_post(contex->sem_suspend);
 
 	if(contex->th_handle && wait){
 		nd_log_screen("waiting for %s id=%d\n", contex->srv_name, (int)contex->thid) ;
@@ -571,34 +571,38 @@ int _destroy_service(nd_thsrv_context_t *contex, int wait)
 		
 		nd_log_screen("success waiting for %s(%d) success ret =%d\n", contex->srv_name,(int)contex->thid, ret) ;
 	}
-	list_del(&(contex->list)) ;
+	else {
+		nd_sleep(100);
+	}
+	list_del_init(&(contex->list)) ;
 
 	//destroy timer 
 	if(contex->h_timer) {
 		nd_timer_destroy(contex->h_timer, wait) ;
 		contex->h_timer = 0 ;
 	}
-	//destroy message context
+	//destroy message context	
+	list_for_each_safe(pos, next, &contex->msg_list) {
+		struct nd_thread_msg *node = list_entry(pos, struct nd_thread_msg, list);
+		nd_pool_free(contex->allocator, node);
+	}
+	INIT_LIST_HEAD(&contex->msg_list);	
 	
-	pos = contex->msg_list.next ;
-	while(pos !=  &contex->msg_list){
-		struct nd_thread_msg *node = list_entry(pos, struct nd_thread_msg, list) ;
-		pos = pos->next ;
-		nd_pool_free(contex->allocator, node) ;
-	}
 	//destroy message entry 
-	pos = contex->msg_entry_list.next ;
-	while(pos != &contex->msg_entry_list) {
-		struct thmsg_entry *entry = list_entry(pos,struct thmsg_entry, list) ;
-		pos = pos->next ;
-		nd_pool_free(contex->allocator, entry) ;
+	list_for_each_safe(pos, next, &contex->msg_entry_list) {
+		struct thmsg_entry *node = list_entry(pos, struct thmsg_entry, list);
+		nd_pool_free(contex->allocator, node);
 	}
+	INIT_LIST_HEAD(&contex->msg_entry_list);
 
 	if(contex->cleanup_entry)
 		contex->cleanup_entry() ;
-	nd_sem_destroy(contex->sem_suspend) ;
+	if (contex->sem_suspend) {
+		nd_sem_destroy(contex->sem_suspend);
+		contex->sem_suspend = 0;
+	}
 
-	nd_mutex_destroy(&contex->msg_lock) ;
+	nd_mutex_destroy(&(contex->msg_lock));
 	if(contex->allocator) {
 		nd_handle h_alloc = nd_global_mmpool() ;
 		if(h_alloc!=contex->allocator) {
@@ -607,7 +611,6 @@ int _destroy_service(nd_thsrv_context_t *contex, int wait)
 		contex->allocator = 0 ;
 	}
 	free(contex) ;
-
 	LEAVE_FUNC();
 	return ret ;
 }
@@ -624,22 +627,23 @@ int nd_thsrv_destroy(nd_thsrvid_t srvid,int force)
 //find service context
 nd_handle nd_thsrv_gethandle(nd_thsrvid_t srvid )
 {
-	struct list_head *pos, *next ;
-	nd_thsrv_context_t *context ;
+	ENTER_FUNC();
+	struct list_head *pos ;
 	struct nd_srv_entry *srventry ;
 	if(0==srvid) {
 		srvid = nd_thread_self() ;
 	}
 
 	srventry = get_srv_entry()  ;
-	pos = srventry->th_context_list.next ;
-	while(pos != &(srventry->th_context_list)) {
-		next = pos->next ;
-		context = list_entry(pos,nd_thsrv_context_t,list) ;
-		if(nd_thread_equal(context->thid,srvid))
-			return (nd_handle)context ;
-		pos = next ;
+	list_for_each(pos, &srventry->th_context_list) {
+		nd_thsrv_context_t *context = list_entry(pos, nd_thsrv_context_t, list);
+		if (nd_thread_equal(context->thid, srvid)) {
+			LEAVE_FUNC();
+			return (nd_handle)context;
+		}
 	}
+
+	LEAVE_FUNC();
 	return NULL ;
 }
 
@@ -673,15 +677,7 @@ void nd_thsrv_release_all()
 	list_for_each_entry_safe(node, next_node, header, nd_thsrv_context_t, list){
 		_destroy_service(node, 1);
 	}
-// 
-// nd_log_screen("release all thread server\n") ;
-// 	pos = entry->th_context_list.next ;
-// 	while(pos !=&(entry->th_context_list))  {
-// 		next = pos->next ;
-// 		node = list_entry(pos,nd_thsrv_context_t,list) ;
-// 		_destroy_service(node,1) ;
-// 		pos = next ;
-// 	}
+
 	INIT_LIST_HEAD(&(__s_entry.th_context_list)) ;
 
 	LEAVE_FUNC();

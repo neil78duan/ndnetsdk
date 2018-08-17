@@ -21,8 +21,6 @@
 
 static char __log_filename[256] ;
 
-static char __jf_log_filename[256];
-static char __jf_log_filePathname[256];
 static nd_log_entry __log_func = NULL;
 static ndatomic_t __log_write_len = 0 ;
 static NDUINT32 __log_file_length = -1 ;
