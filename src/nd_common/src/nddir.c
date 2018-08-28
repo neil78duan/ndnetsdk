@@ -492,3 +492,22 @@ const char * nd_file_ext_name(const char *fullPath)
 	}
 	return NULL;
 }
+
+
+//test input_path is in parent_path
+int  nd_is_subpath(const char *parent_path, const char *input_path)
+{
+	char tmp_path[ND_FILE_PATH_SIZE];
+	char *p = nd_absolute_path(input_path, tmp_path, sizeof(tmp_path));
+	const char *r = parent_path;
+
+	while (*r) {
+		if (*p == 0) {
+			return 0;
+		}
+		if (*p==0 || !__is_equal_char(*p++, *r++)) {
+			return 0;
+		}
+	}
+	return 1;
+}

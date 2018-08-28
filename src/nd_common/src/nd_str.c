@@ -230,7 +230,7 @@ const char *ndstr_parse_word(const char *src, char *outstr)
 	register unsigned char a ;
 	while(*src) {
 		a = (unsigned char)*src ;
-		if (IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a == '_' || a == '$'){
+		if (IS_NUMERALS(a) || IS_BIG_LATIN(a) || IS_LITTLE_LATIN(a) || a == '_' || a == '$' || a=='@'){
 			*outstr++ = *src++ ;
 		}
 //#ifndef ND_ANSI
