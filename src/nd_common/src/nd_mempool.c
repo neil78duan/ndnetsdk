@@ -11,10 +11,7 @@
 
 #include "nd_common/nd_os.h"
 #include "nd_common/list.h"
-#include "nd_common/nd_dbg.h"
-#include "nd_common/ndchar.h"
-#include "nd_common/nd_comdef.h"
-
+#include "nd_common/nd_logger.h"
 
 #ifdef ND_UNUSE_STDC_ALLOC	//Ê¹ÓÃÄÚ´æ³Ø
 typedef struct nd_mm_pool *nd_handle ;

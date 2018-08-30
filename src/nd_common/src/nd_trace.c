@@ -1,388 +1,201 @@
 ﻿/* file : nd_trace.c
- * trace log function 
- *
- * author : neil duan 
- * 2007-9-27 
- * version : 1.0 
+ * log source usage such as malloc / new / fopen etc..
+ * version 1.0
+ * neil
+ * 2005-11-16
  */
 
-#include "nd_common/nd_comcfg.h"
+#include "nd_common/list.h"
 #include "nd_common/nd_os.h"
-#include "nd_common/nd_dbg.h"
-#include "nd_common/nddir.h"
-#include "nd_common/nd_str.h"
+#include "nd_common/nd_handle.h"
+#include "nd_common/_source_trace.h"
+#include "nd_common/nd_mempool.h"
 
-
-#include <time.h>
-#include <stdlib.h>
 #include <stdio.h>
 
-#include "nd_common/nd_time.h"
+#ifdef _ND_MEMORY_H_
+ //这里需要使用libc的malloc函数
+#error do not include nd_alloc.h
+#endif
 
-static char __log_filename[256] ;
+#ifdef ND_SOURCE_TRACE
 
-static nd_log_entry __log_func = NULL;
-static ndatomic_t __log_write_len = 0 ;
-static NDUINT32 __log_file_length = -1 ;
-static NDUINT8 __close_screen_log = 0 ;
+#ifdef ND_MULTI_THREADED
+ //使用多线程
+static nd_mutex __S_source_lock;
+static int __s_source_init = 0;
+nd_handle __s_srclog_pool;
 
-static NDUINT8 __without_file_info = 0;
-static NDUINT8 __without_file_time = 0;
-static NDUINT8 __witout_date = 0;
-static NDUINT8 __log_path_without_date = 0;
-#ifdef ND_DEBUG
-static NDUINT8 _logoff_switch_bits = 0; //close debug and warning
+#define __LOCK() do{ \
+	nd_assert(__s_source_init) ;\
+	nd_mutex_lock(&__S_source_lock) ; \
+}while(0)
+#define __UNLOCK() nd_mutex_unlock(&__S_source_lock) 
 #else 
-static NDUINT8 _logoff_switch_bits = 2 ; //close debug and warning
-#endif 
+#define __LOCK() (void)0
+#define __UNLOCK() (void)0
+#endif
 
-int nd_set_logpath_without_date(int without_date)
+static ND_LIST_HEAD(__s_source_head);
+static int _source_numbers = 0;
+#define SOURCE_DUMP nd_logfatal
+//fprintf(stderr,msg) 
+//定义资源记录器的数据结果
+struct _Source_loginfo {
+	void *__source;
+	int __line;			//line munber in file
+	char __file[256];
+	char __operate[32];
+	char __msg[128];
+	struct list_head __list;
+};
+
+int _source_log(void *p, const char *operate, const char *msg, const char *file, int line)
 {
-	int ret = __log_path_without_date;
-	__log_path_without_date = without_date;
-	return ret;
-}
-
-int nd_log_no_file(int without_file)
-{
-	int ret = __without_file_info;
-	__without_file_info = without_file;
-	return ret;
-}
-int nd_log_no_time(int without_time)
-{
-	int ret = __without_file_time;
-	__without_file_time = without_time;
-	return ret;
-
-}
-int nd_log_no_date(int without_date)
-{
-	int ret = __witout_date;
-	__witout_date = without_date;
-	return ret;
-
-	
-}
-nd_log_entry nd_setlog_func(nd_log_entry f)
-{
-	nd_log_entry ret = __log_func;
-	__log_func = f ;
-	return ret;
-}
-void nd_log_close_screen(int flag)
-{
-	__close_screen_log = flag ? 1 : 0 ;
-}
-
-
-void nd_log_open(edg_ID logType)
-{
-	_logoff_switch_bits &= ~(1 << (int)logType);
-}
-void nd_log_close(edg_ID logType)
-{
-	_logoff_switch_bits |= 1 << (int)logType;
-}
-
-int nd_log_check(edg_ID logType)
-{
-	return !( _logoff_switch_bits & (1 << (int)logType));
-}
-
-NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size)
-{
-	NDUINT32 oldval = __log_file_length ;
-	__log_file_length = perfile_size ;
-	return  oldval ;
-}
-
-int nd_output(const char *text)  
-{
-	return fprintf(stdout,"%s", text) ;
-}
-
-#define ND_LOG_FILE get_log_file()
-
-
-static char  __log_ext[10] ;
-
-void set_log_file(const char *pathfile)
-{
-	//nd_fi
-#if defined(ND_LOG_PATH_WITH_DATE)
-
-	if (__log_path_without_date==0) {
-		const char *fileExt = nd_file_ext_name(pathfile);
-		if (fileExt){
-			char ch = 0;
-			char *tmp = fileExt - 1;
-			strncpy(__log_ext, fileExt, sizeof(__log_ext));
-
-			ch = *tmp;
-			*tmp = 0;
-			strncpy(__log_filename, pathfile, sizeof(__log_filename));
-			*tmp = ch;
-}
-		else {
-			strncpy(__log_filename, pathfile, sizeof(__log_filename));
-		}
+	if (__s_source_init == 0) {
+		nd_sourcelog_init();
 	}
-	else
-#endif 
-	{
-		strncpy(__log_filename, pathfile, sizeof(__log_filename));
-	}	
+	if (!p) {
+		return -1;
+	}
+	else {
+		struct _Source_loginfo *node;
+		node = (struct _Source_loginfo *)
+			nd_pool_alloc_real(__s_srclog_pool, sizeof(struct _Source_loginfo));
+		//malloc(sizeof(struct _Source_loginfo ) ) ;
+		if (!node) {
+			return -1;
+		}
+		node->__source = p;
+		node->__line = line;
+		//node->__file = file ;
+		//node->__operate = operate;
+		//node->__msg = msg ;
+		if (operate)
+			strncpy(node->__operate, operate, 32);
+		if (msg)
+			strncpy(node->__msg, msg, 128);
+		if (file)
+			strncpy(node->__file, file, 256);
+
+		__LOCK();
+		INIT_LIST_HEAD(&(node->__list));
+		list_add(&(node->__list), &__s_source_head);
+		++_source_numbers;
+		__UNLOCK();
+		return 0;
+	}
+}
+static void _destroy_source_node(struct _Source_loginfo *node)
+{
+	nd_assert(node);
+	list_del_init(&(node->__list));
+	--_source_numbers;
+	//free(node) ;	
+	nd_pool_free_real(__s_srclog_pool, node);
 }
 
-char *get_log_file()
+static void _dump_source(struct _Source_loginfo *node)
 {
+	//char buf[1024] = {0};
+	nd_assert(node);
+	SOURCE_DUMP("ERROR %s operate [%s] in file %s line %d\n",
+		node->__msg, node->__operate, node->__file, node->__line);
 
-#if defined(ND_LOG_PATH_WITH_DATE)
-	if (__log_path_without_date ) {
-		time_t now = time(NULL);
-		static time_t s_lastRePathTime = 0;
-		static ndatomic_t s_atomic_using;
-		static char s_cur_path[1024];
-
-
-		int  days = nd_time_day_interval(now, s_lastRePathTime);
-
-		if (days > 0){
-			if (nd_compare_swap(&s_atomic_using, 0, 1))	{
-				struct tm tm1;
-				//char myPath[1024];
-				//localtime_r(&now, &tm1);
-
-				if (__log_ext[0]){
-					snprintf(s_cur_path, sizeof(s_cur_path), "%s.%s.%s", __log_filename, nd_get_datestr(), __log_ext);
-				}
-				else {
-					snprintf(s_cur_path, sizeof(s_cur_path), "%s.%s", __log_filename, nd_get_datestr());
-				}
-				s_lastRePathTime = now;
-				nd_atomic_set(&s_atomic_using, 0);
-
+	//SOURCE_DUMP(buf) ;
+	list_del(&(node->__list));
+	//free(node) ;
+	nd_pool_free_real(__s_srclog_pool, node);
+}
+int _source_release(void *source)
+{
+	int ret = -1;
+	if (!source) {
+		nd_assert(source);
+		return  -1;
+	}
+	else {
+		struct list_head *pos;
+		struct _Source_loginfo *node = NULL;
+		__LOCK();
+		pos = __s_source_head.next;
+		list_for_each(pos, &__s_source_head) {
+			node = list_entry(pos, struct _Source_loginfo, __list);
+			if (source == node->__source) {
+				_destroy_source_node(node);
+				ret = 0;
+				break;
 			}
 		}
-
-		if (s_cur_path[0])
-			return s_cur_path;
-		else
-			return "ndlog.log";
+		__UNLOCK();
 	}
-	else 
-#endif 
-	{
-		if (__log_filename[0])
-			return __log_filename;
-		else
-			return "ndlog.log";
-	}
-	
-	
-}
-
-
-int nd_default_filelog(const char* text)
-{
-	int size = 0;
-	const char *logfile_name = ND_LOG_FILE;
-	FILE *log_fp = fopen(logfile_name, "a");
-	if (!log_fp) {
-		return 0;
-	}
-	size = fprintf(log_fp, "%s", text);
-	fclose(log_fp);
-
-	if (size <= 0) {
-		return 0;
-	}
-
-
-	nd_atomic_add(&__log_write_len, size);
-	if ((NDUINT32)__log_write_len >= __log_file_length && __log_file_length!=0) {
-		char aimFile[1024];
-		int i = 1;
-		char *p = aimFile;
-
-		size = snprintf(p, sizeof(aimFile), "%s.", logfile_name);
-		p += size;
-		do {
-			snprintf(p, sizeof(aimFile) - size, "%d", i);
-			++i;
-		} while (nd_existfile(aimFile));
-		nd_renfile(logfile_name, aimFile);
-
-		nd_atomic_set(&__log_write_len, 0);
-	}
-	return size;
-}
-
-//ndchar_t *strtowcs(char *src, ndchar_t *desc,int len) ;
-
-static const char *_dg_msg_str[] = 
-{"COMMON" , ("DEBUG"),("WARNING" ), 
-("ERROR"),("FATAL")} ;
-
-static __INLINE__ const char *log_level_str(int level)
-{
-	if((level) >=  ND_MSG && (level) <= ND_FATAL_ERR) {
-		return _dg_msg_str[level]  ;
-	}
-	else {
-		return "COMMON" ;
-	}
-}	
-
-/* log_msg mutex */
-//static nd_mutex 		log_mutex  ;
-
-
-const char * _getfilename(const char *filenamePath) 
-{
-	const char * ret = filenamePath ;
-	const char *p = filenamePath ;
-	while ( *p ) {
-		if (*p == '/' || *p=='\\') {
-			ret = p+1 ;
-		}
-		++p ;
-	}
-	
-	return ret ;
-}
-
-int _logmsg_screen(const char *filePath, int line, const char *stm,...) 
-{
-	char buf[1024*4] ;
-	char *p = buf;
-	va_list arg;
-	int done;
-	const char *file ;
-	
-	if (__close_screen_log) {
-		return 0;
-	}
-	
-	file = _getfilename(filePath) ;
-		
-#ifdef	ND_LOG_WITH_DATE
-	p += snprintf(p, 4096 ,"%s ", nd_get_datestr()) ;
-#endif
-
-#ifdef	ND_LOG_WITH_TIME
-	p += snprintf(p, 4096 - (p - buf), "%s ", nd_get_timestr());
-#endif
-
-#ifdef	ND_LOG_WITH_SOURCE
-	p += snprintf(p, 4096- (p-buf),"[%d:%s] ",   line, file) ;
-#endif
-	
-	va_start (arg, stm);
-	done = vsnprintf (p, sizeof(buf) - (p-buf),stm, arg);
-	va_end (arg);
-	
-	fprintf(stdout, "%s", buf) ;
-	
-	return done ;
-}
-
-int nd_logtext(const char *buf)
-{
-	int ret = 0;
-	
-	
-#if defined(ND_OUT_LOG_2CTRL)
-	if (__close_screen_log == 0) {
-		ret = fprintf(stderr, "%s", buf);
-	}
-#endif
-
-	if (__log_func)	{
-		ret =__log_func(buf);
-	}
-	else {
-#ifdef ND_OUT_LOG_2FILE
-		ret = nd_default_filelog(buf);
-#endif
-	}
-	
 	return ret;
 }
-
-int _logmsg(const char *func, const char *filePath, int line, int level, const char *stm,...) 
+int nd_sourcelog_init()
 {
-	size_t size;
-	char buf[1024*4] ;
-	char *p = buf;
-	va_list arg;
-	int done;
-	const char *file = _getfilename(filePath) ;
 
-	if (!nd_log_check(level)){
-		return 0 ;
-	}
-	
-	size = sizeof(buf);
+	if (__s_source_init == 0) {
+		__s_srclog_pool = nd_pool_create((size_t)-1, "source_log");
+		if (!__s_srclog_pool) {
+			nd_logfatal("source log memory pool create failed!\n");
+			return -1;
+		}
 
-	p += snprintf(p, size,"[%s] ", log_level_str(level)) ;
-	size = sizeof(buf) - (p - buf);
-
-#ifdef ND_LOG_WITH_ND_MARK
-	
-	strncpy(p, "[nd-log]  ",sizeof(buf)) ;
-	p += 9 ;
-	size = sizeof(buf) - (p - buf);
-	
+#ifdef ND_MULTI_THREADED
+		if (-1 == nd_mutex_init(&__S_source_lock)) {
+			nd_logfatal("source log initilized failed!\n");
+			nd_pool_destroy(__s_srclog_pool, 0);
+			__s_srclog_pool = 0;
+			return -1;
+		}
 #endif
-	
-#ifdef ND_LOG_WITH_DATE
-	if (__witout_date == 0) {
-		p += snprintf(p, size, "%s ", nd_get_datestr());
-		size = sizeof(buf) - (p - buf);
 	}
-#endif
-
-#ifdef	ND_LOG_WITH_TIME
-	if (__without_file_time==0) {
-		p += snprintf(p, size, " %s ", nd_get_timestr());
-		size = sizeof(buf) - (p - buf);
-	}
-#endif
-
-#ifdef	ND_LOG_WITH_SOURCE
-	if (__without_file_info==0){
-		p += snprintf(p, size, " %s() (%d:%s)", func, line, file);
-		size = sizeof(buf) - (p - buf);
-	}
-#endif
-
-	va_start (arg, stm);
-	done = vsnprintf (p, size,stm, arg);
-	size -= done;
-	va_end (arg);
-
-	nd_logtext(buf);
-	return (int)(sizeof(buf) - size) ;
+	__s_source_init = 1;
+	return 0;
 }
+void nd_sourcelog_dump()
+{
+	struct list_head *pos, *next;
+	struct _Source_loginfo *node;
+	if (__s_source_init == 0) {
+		return;
+	}
+
+	list_for_each_safe(pos, next, &__s_source_head) {
+		node = list_entry(pos, struct _Source_loginfo, __list);
+		_dump_source(node);
+	}
+
+	nd_pool_destroy(__s_srclog_pool, 0);
+	__s_srclog_pool = 0;
+
+#ifdef ND_MULTI_THREADED
+	nd_mutex_destroy(&__S_source_lock);
+#endif
+	__s_source_init = 0;
+}
+
+#undef  __LOCK
+#undef __UNLOCK
+#endif		//ND_DEBUG
+
 
 #if defined(ND_FILE_TRACE) && defined(ND_SOURCE_TRACE)
 
-#ifdef _ND_COMMON_H_
+#ifdef _ND_TRACE_H_
 #error not include nd_common.h
 #endif
-FILE *nd_fopen_dbg( const char *filename, const char *mode ,const char *file, int line)
+FILE *nd_fopen_dbg(const char *filename, const char *mode, const char *file, int line)
 {
-	FILE *fp = fopen(filename,mode) ;
-	_source_log(fp, "fopen ", "file not closed", file, line) ;
+	FILE *fp = fopen(filename, mode);
+	_source_log(fp, "fopen ", "file not closed", file, line);
 	return fp;
 }
 void nd_fclose_dbg(FILE *fp)
-{	
-	nd_assert(fp) ;
-	fclose(fp) ;
-	nd_source_release(fp) ;
+{
+	nd_assert(fp);
+	fclose(fp);
+	_source_release(fp);
 }
 
 #endif

@@ -13,13 +13,19 @@
 #include "nd_common/nd_comcfg.h"
 #include <stddef.h>
 
-#define ND_ESC			0x1b
 #ifdef __cplusplus
 #define CPPAPI extern "C"
 #else 
 #define CPPAPI 
 #endif
 
+#define ndfprintf		fprintf     //使用vararg参量的格式化输出 
+#define ndprintf		printf      //使用vararg参量的格式化输出到标准输出 
+#define ndsprintf		sprintf     //根据vararg参量表格式化成字符串 
+#define ndvfprintf		vfprintf    //使用stdarg参量表格式化输出到文件 
+#define ndvsprintf		vsnprintf    //格式化stdarg参量表并写到字符串 
+#define ndsnprintf 		snprintf
+#define ndstrncmp		strncmp
 
 #if !defined(ND_UNIX) 
 #include "nd_common/nd_win.h"

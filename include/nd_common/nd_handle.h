@@ -10,10 +10,27 @@
 #define _ND_HANDLE_H_
 
 #include "nd_comcfg.h"
-#include "nd_comdef.h"
 #include "list.h"
 #include "nd_os.h"
 #include "nd_bintree.h"
+
+ //定义句柄类型
+enum END_OBJECT_TYPE
+{
+	NDHANDLE_UNKNOW = 0,
+	NDHANDLE_MMPOOL,
+	NDHANDLE_TCPNODE,
+	NDHANDLE_UDPNODE,
+	NDHANDLE_LISTEN,
+	NDHANDLE_CMALLOCATOR,
+	NDHANDLE_STATICALLOCATOR,
+	NDHANDLE_NETMSG,
+	NDHANDLE_TIMER,
+	NDHANDLE_SUB_ALLOCATOR,
+	NDHANDLE_USER1,
+	NDHANDLE_NUMBERS
+};
+
 
 /*
  * 如果需要实现自己的handle类型,请在包含当前文件前 定义 ND_IMPLEMENT_HANDLE
@@ -22,7 +39,6 @@
 
 typedef int(*nd_close_callback)(void* handle, int flag) ;			//对象关闭函数
 typedef void (*nd_init_func)(void*)  ;								//对象初始化函数
-typedef const char* (*nd_error_convert)(int errcode)  ;
 
 //对象关闭方式
 enum eObjectClose{
@@ -166,13 +182,6 @@ ND_COMMON_API int nd_tryto_clear_err(nd_handle h) ;
 ND_COMMON_API int nd_reg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_unreg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_handle_checkvalid(nd_handle hobj, NDUINT16 objtype);
-
-ND_COMMON_API const char *nd_error_desc(int errcode);
-
-ND_COMMON_API int nd_error_get_user_number();
-ND_COMMON_API void nd_error_set_user_number(int max_user_number);
-
-ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
 
 ////////////////
 // user resource manager 

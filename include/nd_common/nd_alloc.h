@@ -9,7 +9,6 @@
 #define _ND_MEMORY_H_
 
 #include "nd_common/nd_common.h"
-#include "nd_common/nd_dbg.h"
 #include "nd_common/nd_comcfg.h"
 #include "nd_common/nd_mempool.h"
 

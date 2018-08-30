@@ -57,9 +57,6 @@
     <ClInclude Include="..\..\..\include\nd_common\list.h">
       <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_common\ndchar.h">
-      <Filter>include\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\nddir.h">
       <Filter>include\common</Filter>
     </ClInclude>
@@ -78,13 +75,7 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_comcfg.h">
       <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_common\nd_comdef.h">
-      <Filter>include\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\nd_common.h">
-      <Filter>include\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_common\nd_dbg.h">
       <Filter>include\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\nd_define.h">
@@ -192,6 +183,12 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_time.h">
       <Filter>include\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_common\_source_trace.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_common\nd_logger.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp">
@@ -264,9 +261,6 @@
       <Filter>src\common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_common\src\recbuf.c">
-      <Filter>src\common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_common\src\source_log.c">
       <Filter>src\common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_crypt\rsa\desc.c">
@@ -384,6 +378,9 @@
       <Filter>src\common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_common\src\cJSON.c">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_logger.c">
       <Filter>src\common</Filter>
     </ClCompile>
   </ItemGroup>

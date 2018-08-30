@@ -34,7 +34,6 @@
 #include <string.h>
 
 #include "nd_common/nd_comcfg.h"
-#include "ndchar.h"
 
 #pragma warning (disable:  4018)	
 #pragma warning (disable:  4251)	

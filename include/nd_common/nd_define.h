@@ -34,6 +34,10 @@ typedef unsigned char	NDBYTE;
 #define NDTRUE			1 
 #define NDFALSE			0
 
+#define ND_ESC			0x1b
+#define _NDT(x) x
+typedef  char ndchar_t;
+
 #if defined(_MSC_VER) 
 typedef signed __int64		NDINT64  ;
 typedef unsigned __int64	NDUINT64 ; 
@@ -93,5 +97,18 @@ typedef unsigned short ndport_t ;
 
 #define ND_LODWORD(qwordval) ((qwordval)  & 0xffffffff)
 #define ND_HIDWORD(qwordval) (((qwordval)>>32)  & 0xffffffff)
+
+//nd_error define 
+enum END_ERROR_TYPE
+{
+#undef ErrorElement 
+#define ErrorElement(_errId, _err_description) ND##_errId 
+	NDERR_SUCCESS = 0,	//ÕýÈ·
+#include "_nderr.h"
+	NDERR_SYS_MAX_NUMBER
+#undef ErrorElement 
+};
+
+#define NDERR_USERDEFINE 1024 
 
 #endif

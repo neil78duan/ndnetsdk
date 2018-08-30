@@ -156,6 +156,7 @@
     <ClCompile Include="..\..\..\src\nd_common\src\nd_cmdline.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_handle.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_iconv.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_logger.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_mempool.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_mutex.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_static_alloc.c" />
@@ -168,7 +169,6 @@
     <ClCompile Include="..\..\..\src\nd_common\src\nd_xml.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\node_mgr.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\recbuf.c" />
-    <ClCompile Include="..\..\..\src\nd_common\src\source_log.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

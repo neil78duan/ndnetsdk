@@ -276,6 +276,9 @@ static void *_srv_entry(void *p)
 	THSRV_ENTER_SUSPEND(contex, -1);
 
 	nd_logdebug("th-service %s begin running .....\n", contex->srv_name) ;
+
+	nd_logmsg("THREAD SERVICE \"%s\" start SUCCCESS!!!\n", contex->srv_name);
+
 	if(SUBSRV_RUNMOD_LOOP==contex->run_module) {
 		while(0==nd_atomic_read(&contex->__exit) && 0==nd_atomic_read(&__s_entry.__exit)) {
 			if(-1==contex->srv_entry(contex->srv_param) ) {

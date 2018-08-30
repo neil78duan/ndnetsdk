@@ -193,9 +193,6 @@
     <ClCompile Include="..\..\..\src\nd_common\src\recbuf.c">
       <Filter>Source Files\common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_common\src\source_log.c">
-      <Filter>Source Files\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nd_crypt\rsa\desc.c">
       <Filter>Source Files\nd_crypt</Filter>
     </ClCompile>
@@ -264,6 +261,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_vm\src\nd_vmmain.c">
       <Filter>Source Files\nd_vm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_logger.c">
+      <Filter>Source Files\common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

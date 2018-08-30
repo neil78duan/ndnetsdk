@@ -15,14 +15,13 @@
 
 #include "nd_common/nd_define.h"
 
-#include "nd_common/ndchar.h"
-
-
-#include "nd_common/nd_comdef.h"
-
 #include "nd_common/nd_os.h"
 
-#include "nd_common/nd_dbg.h"
+#include "nd_common/nd_logger.h"
+
+#include "nd_common/_source_trace.h"
+
+#include "nd_common/nd_trace.h"
 
 #include "nd_common/nd_time.h"
 
@@ -49,6 +48,7 @@
 #include "nd_common/nd_node_mgr.h"
 
 #include "nd_common/nddir.h"
+
 #include "nd_common/nd_cmdline.h"
 
 #include "nd_common/nd_iconv.h"
@@ -64,11 +64,18 @@ ND_COMMON_API const char *nd_process_name() ;
 ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
 
-#if defined(ND_FILE_TRACE) && defined(ND_SOURCE_TRACE)
-	#undef  fopen
-	#undef  fclose
-	#define fopen(filename, mod) nd_fopen_dbg(filename, mod,__FILE__,__LINE__)
-	#define fclose(fp)			nd_fclose_dbg(fp)
-#endif
+typedef const char* (*nd_error_convert)(int errcode);
+
+static int nd_error_max_sys_number()
+{
+	return NDERR_SYS_MAX_NUMBER;
+}
+
+
+ND_COMMON_API const char *nd_error_desc(int errcode);
+ND_COMMON_API int nd_error_get_user_number();
+ND_COMMON_API void nd_error_set_user_number(int max_user_number);
+ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
+
 
 #endif

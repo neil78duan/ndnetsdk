@@ -35,8 +35,18 @@
 int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg)
 {	
 	//read port
-	XML_READ_SUB_INT(xmlroot,"port",lcfg->port) ;
-	lcfg->port += base_port ;
+	//XML_READ_SUB_INT(xmlroot,"port",lcfg->port) ;
+	
+	lcfg->port = 0;
+	ndxml *xmlPort = ndxml_refsub(xmlroot, "port");
+	if (xmlPort) {
+		lcfg->port = ndxml_getval_int(xmlPort);
+		const char *pUseBase = ndxml_getattr_val(xmlPort, "not_use_base");
+		if (!pUseBase || *pUseBase == '0') {
+			lcfg->port += base_port;
+		}
+	}
+	
 
 	XML_READ_SUB_INT(xmlroot, "is_ipv6", lcfg->is_ipv6);
 	//read ip

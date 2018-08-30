@@ -8,7 +8,7 @@
 
 #include "nd_common/nd_comcfg.h"
 #include "nd_common/nd_os.h"
-#include "nd_common/nd_dbg.h"
+#include "nd_common/nd_logger.h"
 
 #include <stdlib.h>
 #include <stdio.h>

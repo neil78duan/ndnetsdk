@@ -30,15 +30,6 @@ struct alloced_objects
 };
 static nd_mutex __alloced_lock ;
 static int __inited ;
-static nd_error_convert __error_convert ;
-
-
-nd_error_convert nd_register_error_convert( nd_error_convert func)
-{
-	nd_error_convert ret = __error_convert ;
-	__error_convert = func ;
-	return ret ;
-}
 
 
 nd_handle _object_create(const char *name)
@@ -238,46 +229,6 @@ int _nd_object_on_destroy(nd_handle handle,int type)
 
 ///////////////////////////
 
-const char *nd_error_desc(int in_err)
-{
-	static __ndthread char errdesc[128];
-
-	NDUINT32 errcode = in_err;
-	
-	if (__error_convert) {
-		return __error_convert(errcode);
-	}
-	else {
-		char *perr[] = {
-			"NDERR_SUCCESS ",
-
-#undef ErrorElement 
-#define ErrorElement(a,_err_desc) "system(ND"#a "):" _err_desc
-#include "nd_common/_nderr.h"		
-#undef ErrorElement 
-		};
-
-		if (errcode <= NDERR_UNKNOWN) {
-			return perr[errcode];
-		}
-		else {
-			snprintf(errdesc, sizeof(errdesc), "Error code =%d", errcode);
-			return errdesc;
-		}
-	}
-	
-}
-
-
-static int _S_max_user_define_error_id = NDERR_USERDEFINE;
-int nd_error_get_user_number()
-{
-	return _S_max_user_define_error_id;
-}
-void nd_error_set_user_number(int max_user_number)
-{
-	_S_max_user_define_error_id = max_user_number;
-}
 
 const char *nd_object_errordesc(nd_handle h)
 {
