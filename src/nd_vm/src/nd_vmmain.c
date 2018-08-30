@@ -11,8 +11,7 @@
 #include "nd_common/nd_str.h"
 #include <stdio.h>
 
-
-#pragma comment(lib, "nd_vmlib.lib")
+//#pragma comment(lib, "nd_vmlib.lib")
 
 extern void vm_start_debug() ;
 extern void vm_end_debug() ;

@@ -13,10 +13,10 @@
 #ifndef _ND_VM_H_
 #define _ND_VM_H_
 
-//#include <stdio.h>
-//#include <stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 //#include "nd_comdef.h"
-#include "nd_common/nd_common.h"
+//#include "nd_common/nd_common.h"
 
 #pragma warning(disable: 4996)
 

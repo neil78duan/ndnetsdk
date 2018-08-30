@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ndcommon_s", "ndcommon_s\nd
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ndmonitor", "ndmonitor\ndmonitor.vcxproj", "{BF51A1B8-F0A7-4CE9-A5DE-F1486F5499DA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ndvmdebugger", "ndvmdebugger\ndvmdebugger.vcxproj", "{7A21BEF4-B1EA-4921-B6E7-D29B15718593}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -61,6 +63,14 @@ Global
 		{BF51A1B8-F0A7-4CE9-A5DE-F1486F5499DA}.Release|Win32.Build.0 = Release|Win32
 		{BF51A1B8-F0A7-4CE9-A5DE-F1486F5499DA}.Release|x64.ActiveCfg = Release|x64
 		{BF51A1B8-F0A7-4CE9-A5DE-F1486F5499DA}.Release|x64.Build.0 = Release|x64
+		{7A21BEF4-B1EA-4921-B6E7-D29B15718593}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7A21BEF4-B1EA-4921-B6E7-D29B15718593}.Debug|Win32.Build.0 = Debug|Win32
+		{7A21BEF4-B1EA-4921-B6E7-D29B15718593}.Debug|x64.ActiveCfg = Debug|x64
+		{7A21BEF4-B1EA-4921-B6E7-D29B15718593}.Debug|x64.Build.0 = Debug|x64
+		{7A21BEF4-B1EA-4921-B6E7-D29B15718593}.Release|Win32.ActiveCfg = Release|Win32
+		{7A21BEF4-B1EA-4921-B6E7-D29B15718593}.Release|Win32.Build.0 = Release|Win32
+		{7A21BEF4-B1EA-4921-B6E7-D29B15718593}.Release|x64.ActiveCfg = Release|x64
+		{7A21BEF4-B1EA-4921-B6E7-D29B15718593}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

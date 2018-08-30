@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files\ndcommon">
+      <UniqueIdentifier>{60cf4957-a9e6-41e8-b8eb-d1fdf65de50a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ndvm">
+      <UniqueIdentifier>{066233fa-1acb-4119-864c-ac18262dd667}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_asm.c">
+      <Filter>Source Files\ndvm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_formula.c">
+      <Filter>Source Files\ndvm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vm.c">
+      <Filter>Source Files\ndvm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vmdbg.c">
+      <Filter>Source Files\ndvm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vmmain.c">
+      <Filter>Source Files\ndvm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_str.c">
+      <Filter>Source Files\ndcommon</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
