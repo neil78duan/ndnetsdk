@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07272F232137FDCE00D66BB0 /* nd_logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 07272F222137FDCE00D66BB0 /* nd_logger.c */; };
 		077B8AE4207C6BE800090DFD /* _client_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8966207C6BE800090DFD /* _client_config.h */; };
 		077B8AE5207C6BE800090DFD /* _nderr.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8967207C6BE800090DFD /* _nderr.h */; };
 		077B8AE6207C6BE800090DFD /* _server_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8968207C6BE800090DFD /* _server_config.h */; };
@@ -75,7 +76,6 @@
 		077B8B76207C6BE800090DFD /* nddir.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A05207C6BE800090DFD /* nddir.c */; };
 		077B8B77207C6BE800090DFD /* node_mgr.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A06207C6BE800090DFD /* node_mgr.c */; };
 		077B8B78207C6BE800090DFD /* recbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A07207C6BE800090DFD /* recbuf.c */; };
-		077B8B79207C6BE800090DFD /* source_log.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A08207C6BE800090DFD /* source_log.c */; };
 		077B8B7A207C6BE800090DFD /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A0A207C6BE800090DFD /* Makefile */; };
 		077B8B8D207C6BE800090DFD /* desc.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A1F207C6BE800090DFD /* desc.c */; };
 		077B8B8E207C6BE800090DFD /* digit.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A20207C6BE800090DFD /* digit.c */; };
@@ -101,10 +101,10 @@
 		077B8BDE207C6BE800090DFD /* nd_vm.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7C207C6BE800090DFD /* nd_vm.c */; };
 		077B8BDF207C6BE800090DFD /* nd_vmdbg.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7D207C6BE800090DFD /* nd_vmdbg.c */; };
 		077B8BE0207C6BE800090DFD /* nd_vmmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7E207C6BE800090DFD /* nd_vmmain.c */; };
-		077B8BE1207C6BE800090DFD /* nd_vmmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A80207C6BE800090DFD /* nd_vmmain.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		07272F222137FDCE00D66BB0 /* nd_logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_logger.c; sourceTree = "<group>"; };
 		077B895C207C6BAB00090DFD /* libndcommon_mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndcommon_mac.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		077B8966207C6BE800090DFD /* _client_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _client_config.h; sourceTree = "<group>"; };
 		077B8967207C6BE800090DFD /* _nderr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
@@ -175,7 +175,6 @@
 		077B8A05207C6BE800090DFD /* nddir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nddir.c; sourceTree = "<group>"; };
 		077B8A06207C6BE800090DFD /* node_mgr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = node_mgr.c; sourceTree = "<group>"; };
 		077B8A07207C6BE800090DFD /* recbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recbuf.c; sourceTree = "<group>"; };
-		077B8A08207C6BE800090DFD /* source_log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = source_log.c; sourceTree = "<group>"; };
 		077B8A0A207C6BE800090DFD /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		077B8A1F207C6BE800090DFD /* desc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = desc.c; sourceTree = "<group>"; };
 		077B8A20207C6BE800090DFD /* digit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = digit.c; sourceTree = "<group>"; };
@@ -202,7 +201,6 @@
 		077B8A7C207C6BE800090DFD /* nd_vm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_vm.c; sourceTree = "<group>"; };
 		077B8A7D207C6BE800090DFD /* nd_vmdbg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_vmdbg.c; sourceTree = "<group>"; };
 		077B8A7E207C6BE800090DFD /* nd_vmmain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_vmmain.c; sourceTree = "<group>"; };
-		077B8A80207C6BE800090DFD /* nd_vmmain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_vmmain.c; sourceTree = "<group>"; };
 		077B8AB7207C6BE800090DFD /* Rules.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Rules.make; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -346,6 +344,7 @@
 		077B89F3207C6BE800090DFD /* src */ = {
 			isa = PBXGroup;
 			children = (
+				07272F222137FDCE00D66BB0 /* nd_logger.c */,
 				077B89F4207C6BE800090DFD /* bintree.c */,
 				077B89F5207C6BE800090DFD /* callstack.c */,
 				077B89F6207C6BE800090DFD /* cJSON.c */,
@@ -366,7 +365,6 @@
 				077B8A05207C6BE800090DFD /* nddir.c */,
 				077B8A06207C6BE800090DFD /* node_mgr.c */,
 				077B8A07207C6BE800090DFD /* recbuf.c */,
-				077B8A08207C6BE800090DFD /* source_log.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -419,7 +417,6 @@
 				077B8A73207C6BE800090DFD /* Makefile */,
 				077B8A74207C6BE800090DFD /* ndasm.txt */,
 				077B8A79207C6BE800090DFD /* src */,
-				077B8A7F207C6BE800090DFD /* vmdebug */,
 			);
 			path = nd_vm;
 			sourceTree = "<group>";
@@ -434,14 +431,6 @@
 				077B8A7E207C6BE800090DFD /* nd_vmmain.c */,
 			);
 			path = src;
-			sourceTree = "<group>";
-		};
-		077B8A7F207C6BE800090DFD /* vmdebug */ = {
-			isa = PBXGroup;
-			children = (
-				077B8A80207C6BE800090DFD /* nd_vmmain.c */,
-			);
-			path = vmdebug;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -570,6 +559,7 @@
 				077B8B9E207C6BE800090DFD /* tea.c in Sources */,
 				077B8B75207C6BE800090DFD /* nd_xml.c in Sources */,
 				077B8B91207C6BE800090DFD /* nn.c in Sources */,
+				07272F232137FDCE00D66BB0 /* nd_logger.c in Sources */,
 				077B8B97207C6BE800090DFD /* r_random.c in Sources */,
 				077B8B6C207C6BE800090DFD /* nd_mempool.c in Sources */,
 				077B8B68207C6BE800090DFD /* common.c in Sources */,
@@ -590,12 +580,10 @@
 				077B8BE0207C6BE800090DFD /* nd_vmmain.c in Sources */,
 				077B8B73207C6BE800090DFD /* nd_unix.c in Sources */,
 				077B8B96207C6BE800090DFD /* r_keygen.c in Sources */,
-				077B8BE1207C6BE800090DFD /* nd_vmmain.c in Sources */,
 				077B8B93207C6BE800090DFD /* r_dh.c in Sources */,
 				077B8BDE207C6BE800090DFD /* nd_vm.c in Sources */,
 				077B8B98207C6BE800090DFD /* r_stdlib.c in Sources */,
 				077B8B7A207C6BE800090DFD /* Makefile in Sources */,
-				077B8B79207C6BE800090DFD /* source_log.c in Sources */,
 				077B8B70207C6BE800090DFD /* nd_time.c in Sources */,
 				077B8B6A207C6BE800090DFD /* nd_handle.c in Sources */,
 				077B8BDC207C6BE800090DFD /* nd_asm.c in Sources */,
