@@ -9,7 +9,7 @@
  
 #include "ndapplib/nd_httpListener.h"
 
-NDHttpListener::NDHttpListener(nd_fectory_base *sf ) : NDSafeListener(sf)
+NDHttpListener::NDHttpListener(nd_fectory_base *sf ) : NDSafeListener(sf), m_cookieSessionIds(NULL)
 {
 }
 
@@ -21,7 +21,15 @@ NDHttpListener::~NDHttpListener()
 void NDHttpListener::Destroy(int flag)
 {
 	m_entrys.clear();
+	delete m_cookieSessionIds;
+	m_cookieSessionIds = 0;
 }
+
+void NDHttpListener::OnInitilize()
+{
+	m_cookieSessionIds = new SessionIdMgr;
+}
+
 bool NDHttpListener::installRequest_c(const char *pathName, http_reqeust_func func)
 {
 	ND_TRACE_FUNC();
@@ -137,6 +145,13 @@ int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 {
 	ND_TRACE_FUNC();
 	setDelayClosed(!response.isLongConnect());
+	sessionValInfo sInfo;
+	if (sessionIdGetInfo(sInfo)) {
+		char buf[4096];
+		snprintf(buf, sizeof(buf), "%s=%s;Max-Age=%d", ND_DFT_SESSION_ID_NAME, 
+			m_cookieSessionId.c_str(), ctime(&sInfo.invalidTm));
+
+	}
 	return _sendHttpResponse(GetHandle(), &response, errorDesc);
 }
 
@@ -238,8 +253,244 @@ int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 	if (m_request.CheckRecvOk()) {
 		m_request.dump();
 		m_request.m_userData = pListener;
+		//try to parse session id 
+		_preOnHandle();
+
 		pListener->onRequest(m_request.getPath(), this, m_request);
 		m_request.Reset();
 	}
 	return size;
+}
+
+void NDHttpSession::_preOnHandle()
+{
+	const char *pSessionId = m_request.getHeader(ND_DFT_SESSION_ID_NAME);
+	if (pSessionId) {
+		sessionIdTrytoSet(pSessionId);
+	}
+	else {
+		sessionIdVal::iterator it = m_request.m_cookies.find(ND_DFT_SESSION_ID_NAME);
+		if (it != m_request.m_cookies.end()) {
+			sessionIdTrytoSet(it->second.c_str());
+		}
+	}
+	
+}
+
+// sessionId manage functions 
+
+bool NDHttpSession::sessionIdTrytoSet(const char *clientSendSid)
+{
+	SessionIdMgr *pMgr = _getSessoinIdMgr();
+	if (!pMgr) {
+		return false;
+	}
+	sessionValInfo vals;
+
+	m_cookieSessionId = clientSendSid;
+	if (pMgr->GetSessionIdVal(m_cookieSessionId, vals)) {
+		return true;
+	}
+	m_cookieSessionId.clear();
+	return false;
+}
+
+bool NDHttpSession::sessionIdCreate(int lifeOfSeconds , const char *path )
+{
+	SessionIdMgr *pMgr = _getSessoinIdMgr();
+	if (!pMgr) {
+		return false;
+	}
+	m_cookieSessionId = pMgr->CreateSessionId(sessionIdVal(), lifeOfSeconds, path);
+	return !m_cookieSessionId.empty();
+}
+
+sessionId_t NDHttpSession::sessionIdGet()
+{
+	return m_cookieSessionId;
+}
+
+bool NDHttpSession::sessionIdSetValue(const char *name, const char *value)
+{
+	SessionIdMgr *pMgr = _getSessoinIdMgr();
+	if (!pMgr) {
+		return false;
+	}
+
+	if (m_cookieSessionId.empty()) {
+		if (!name || !value) {
+			return true;
+		}
+
+		sessionIdVal valMaps;
+		valMaps[name] = value;
+		m_cookieSessionId = pMgr->CreateSessionId(valMaps, SESSION_DEFAULT_TIMEOUT, SESSION_DEFAULT_PATH);
+		return !m_cookieSessionId.empty();
+	}
+	else {
+		return pMgr->SaveSessionIdValue(m_cookieSessionId, name, value);
+	}
+}
+
+std::string NDHttpSession::sessionIdGetValue(const char*name)
+{
+	sessionValInfo info;
+	bool ret = sessionIdGetInfo(info);
+	if (!ret) {
+		return std::string();
+	}
+	if (info.invalidTm >= app_inst_time(NULL)) {
+		return std::string();
+	}
+	sessionIdVal::const_iterator it =info.val.find(name);
+	return it->second;
+}
+
+bool NDHttpSession::sessionIdGetInfo(sessionValInfo &info)
+{
+	if (m_cookieSessionId.empty()) {
+		return false;
+	}
+	SessionIdMgr *pMgr = _getSessoinIdMgr();
+	if (!pMgr) {
+		return false;
+	}
+
+	return pMgr->GetSessionIdVal(m_cookieSessionId, info);
+}
+
+SessionIdMgr * NDHttpSession::_getSessoinIdMgr()
+{
+	NDHttpListener *pListener = dynamic_cast<NDHttpListener *> (GetParent());
+	if (!pListener) {
+		return NULL;
+	}
+	return pListener->getSessionIdMgr();
+}
+
+///////////////////////////////////////
+//li
+SessionIdMgr::SessionIdMgr()
+{
+	ND_TRACE_FUNC();
+	nd_mutex_init(&m_lock);
+}
+
+SessionIdMgr::~SessionIdMgr()
+{
+	ND_TRACE_FUNC();
+	nd_mutex_destroy(&m_lock);
+}
+
+sessionId_t SessionIdMgr::CreateSessionId(const sessionIdVal &val, int lifeOfSeconds, const char *path)
+{
+	ND_TRACE_FUNC();
+	int reTrytimes = 100;
+	sessionId_t sid;
+	while (--reTrytimes > 0) {
+		if (BuildSessionId(sid)) {
+			break;
+		}
+		if (reTrytimes == 0) {
+			return sessionId_t();
+		}
+	}
+
+	sessionValInfo valInfo;
+	if (path && *path) {
+		valInfo.path = path;
+	}
+	else {
+		valInfo.path = SESSION_DEFAULT_PATH;
+	}
+
+	if (lifeOfSeconds == 0) {
+		valInfo.invalidTm = time(NULL) + SESSION_DEFAULT_TIMEOUT;
+	}
+	else {
+		valInfo.invalidTm = time(NULL) + lifeOfSeconds;
+	}
+	valInfo.val = val;
+
+
+	nd_mutex_lock(&m_lock);
+	m_data[sid] = valInfo;
+	nd_mutex_unlock(&m_lock);
+	return sid;
+}
+
+bool SessionIdMgr::BuildSessionId(sessionId_t &sid)
+{
+	ND_TRACE_FUNC();
+	static NDUINT32 _s_index = 0;
+	ndtime_t tmnow = nd_time();
+	tmnow *= rand();
+	tmnow = ~tmnow;
+
+	++_s_index;
+	char session_sed[128];
+	int len =snprintf(session_sed, sizeof(session_sed), "%d_%d_apollohttp", _s_index, tmnow);
+
+	char key_buf[33];
+	sid = MD5Crypt32(session_sed, len, key_buf);
+	
+
+	nd_mutex_lock(&m_lock);
+	sessionData_t::iterator it= m_data.find(sid) ;
+	if (it == m_data.end()) {
+		nd_mutex_unlock(&m_lock);
+		return true;
+	}
+	nd_mutex_unlock(&m_lock);
+	return false;
+}
+bool SessionIdMgr::DestroySessionId(const sessionId_t &sid)
+{
+	ND_TRACE_FUNC();
+
+	nd_mutex_lock(&m_lock);
+	m_data.erase(sid);
+	nd_mutex_unlock(&m_lock);
+	return true;
+}
+
+bool SessionIdMgr::GetSessionIdVal(const sessionId_t  &sid, sessionValInfo &outval)
+{
+	ND_TRACE_FUNC();
+
+	nd_mutex_lock(&m_lock);
+
+	sessionData_t::iterator it = m_data.find(sid);
+	if (it == m_data.end()) {
+		nd_mutex_unlock(&m_lock);
+		return false;
+	}
+	outval = it->second;
+	nd_mutex_unlock(&m_lock);
+	return true;
+}
+
+bool SessionIdMgr::SaveSessionIdValue(const sessionId_t  &sid, const char *name, const char*val)
+{
+	ND_TRACE_FUNC();
+	if (!name || !*name) {
+		return false;
+	}
+
+	nd_mutex_lock(&m_lock);
+
+	sessionData_t::iterator it = m_data.find(sid);
+	if (it == m_data.end()) {
+		nd_mutex_unlock(&m_lock);
+		return false;
+	}
+	sessionIdVal &valmaps  = it->second.val;
+	if (!val || !*val) {
+		valmaps.erase(name);
+	}
+	else {
+		valmaps[name] = val;
+	}
+	nd_mutex_unlock(&m_lock);
+	return true;
 }

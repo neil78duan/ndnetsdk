@@ -685,6 +685,7 @@ void NDHttpRequest::Reset()
 	m_requestForms.clear();
 	_destroyUpFile();
 	m_userData = NULL;
+	m_cookies.clear();
 }
 
 int NDHttpRequest::ParseProtocol()
@@ -752,6 +753,7 @@ void NDHttpRequest::onParseEnd()
 	if (m_action == E_ACTION_POST && getBodySize()>0){
 		_postBodyToJson();
 	}
+	_parseCookies();
 }
 
 const char* NDHttpRequest::getRequestVal(const char *name)
@@ -763,15 +765,6 @@ const char* NDHttpRequest::getRequestVal(const char *name)
 	}
 	return NULL;
 }
-
-// size_t NDHttpRequest::getRequestBodySize()
-// {
-// 	const char *pContlen = getRequestVal("Content-Length");
-// 	if (pContlen) {
-// 		return atoi(pContlen);
-// 	}
-// 	return 0;
-// }
 
 bool NDHttpRequest::addRequestFormVal(const char *name, const char *value)
 {
@@ -958,53 +951,7 @@ int NDHttpRequest::_parseMultipart(const char *pHeaderText)
 		p = partEnd + boundarySize;
 	}
 	return (int)(p - getBody());
-// 	pHeaderText = ndstristr(pHeaderText, "boundary=");
-// 
-// 	if (!pHeaderText ) {
-// 		return -1;
-// 	}
-// 
-// 	char val[1024];
-// 	char buf[1024];
-// 	pHeaderText += 9;
-// 	std::string WebKitFormName = pHeaderText;
-// 
-// 	const char *p = m_body.c_str();
-// 	p = ndstr_first_valid(p);
-// 
-// 	while (p && *p) {
-// 		buf[0] = 0;
-// 		val[0] = 0;
-// 		p = ndstristr(p, WebKitFormName.c_str());
-// 		if (!p || !*p) {
-// 			break;
-// 		}
-// 
-// 		p += WebKitFormName.size();
-// 		p = ndstristr(p, "name=\"");
-// 		if (!p) {
-// 			break;
-// 		}
-// 		p += 6;
-// 
-// 		p = ndstr_nstr_ansi(p, buf, '\"', sizeof(buf));
-// 		if (!p || *p != '\"') {
-// 			break;
-// 		}
-// 		++p;
-// 		p = ndstr_first_valid(p);
-// 		if (!p) {
-// 			break;
-// 		}
-// 		p = ndstr_nstr_end(p, val, '\r', sizeof(val));
-// 
-// 
-// 		if (buf[0] && val[0]) {
-// 			httpHeaderNode node = { buf, val };
-// 			m_requestForms.push_back(node);
-// 		}
-// 	}
-// 	return (int)m_body.size();
+
 }
 
 int NDHttpRequest::_parse_x_form()
@@ -1040,6 +987,33 @@ int NDHttpRequest::_parse_x_form()
 	} while (p && *p);
 
 	return (int) (p - getBody());
+}
+
+int NDHttpRequest::_parseCookies()
+{
+	char buf[4096];
+	const char*pCookieText = getRequestVal("Cookie");
+	if (!pCookieText) {
+		return 0;
+	}
+	const char *p = ndstr_first_valid(pCookieText);
+
+	p = ndstr_nstr_end(p, buf, '=',sizeof(buf));
+	if (!p || *p != '=') {
+		return -1;
+	}
+	++p;
+	std::string name = buf;
+
+	std::string val = NDHttpParser::URLcodeTotext(p);
+	if (val.empty()) {
+		return -1;
+	}
+
+	m_cookies[name] = val;
+
+	return 0;
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1245,16 +1219,6 @@ int HttpConnector::Update(int timeout)
 		if (-1 == onDataRecv(buf,size)) {
 			return -1;
 		}
-// 		m_response.InData(buf, size);
-// 		
-// 		if (m_response.CheckRecvOk()){
-// 			onResponse(&m_response);
-// 			m_response.Reset();
-// 			//if (!m_bLongConnection)	{
-// 			//	Close();
-// 			//}
-// 			break;
-// 		}
 
 	}while (lefttime > 0);
 	

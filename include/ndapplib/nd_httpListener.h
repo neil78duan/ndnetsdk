@@ -15,6 +15,9 @@
 #include <string>
 #include <map>
 
+#define SESSION_DEFAULT_TIMEOUT 1800
+#define SESSION_DEFAULT_PATH "/"
+
 class NDHttpSession;
 class NDHttpListener;
 typedef int(*http_reqeust_func)(NDHttpSession *pSession, const NDHttpRequest &resuest, NDHttpListener *pListener);
@@ -50,14 +53,8 @@ struct ndHttpHandler
 };
 
 
-template<class keyT> struct httpStringComp
-{
-	bool operator()(const keyT &l, const keyT &r) const
-	{
-		return ndstricmp(l.c_str(), r.c_str()) < 0;
-	}
-};
 
+class SessionIdMgr;
 class NDHttpListener : public NDSafeListener
 {
 	typedef  NDSafeListener myBase;
@@ -69,12 +66,26 @@ public:
 	bool installRequest_c(const char *pathName, http_reqeust_func func);
 	bool installRequest_script(const char *pathName, const char *script);
 	int onRequest(const char *reqPath, NDHttpSession *session, const NDHttpRequest &request);
+	SessionIdMgr *getSessionIdMgr() { return m_cookieSessionIds; }
 protected:
+	void OnInitilize();		// call on open
 	virtual int onRequestScript(const char* script, NDHttpSession *session, const NDHttpRequest &request);
 	typedef std::map<std::string, ndHttpHandler, httpStringComp<std::string> > requestEntry_map;
 	requestEntry_map m_entrys;
+
+	SessionIdMgr *m_cookieSessionIds;
 };
 
+
+//typedef httpHeaderNode sessionIdVal;
+typedef std::string sessionId_t;
+
+struct sessionValInfo
+{
+	sessionIdVal val;
+	time_t invalidTm;
+	std::string path;
+};
 
 
 class NDHttpSession : public NDBaseSession
@@ -89,11 +100,46 @@ public:
 	int onDataRecv(char *buf, int size, NDHttpListener *pListener);
 
 	void setDelayClosed(bool bRightnow=true);
-
 	virtual int UpdateSecond();				//update per second
+
+	//http session functions 
+	bool sessionIdTrytoSet(const char *clientSendSid);
+	bool sessionIdCreate(int lifeOfSeconds= SESSION_DEFAULT_TIMEOUT, const char *path=NULL);
+	sessionId_t sessionIdGet();
+	bool sessionIdSetValue(const char *name, const char *value);
+	std::string sessionIdGetValue(const char*name);
+	bool sessionIdGetInfo(sessionValInfo &info);
+
 protected:
+	void _preOnHandle();
+	SessionIdMgr * _getSessoinIdMgr();
 	int getWaitTimeout();
 	NDHttpRequest m_request;
 	ndtime_t m_closedTime;
+	sessionId_t m_cookieSessionId;
 };
+
+//this is traditional session
+
+class SessionIdMgr
+{
+public:
+
+
+	SessionIdMgr();
+	~SessionIdMgr();
+
+	sessionId_t CreateSessionId(const sessionIdVal &val, int lifeOfSeconds,const char *path);
+	bool DestroySessionId(const sessionId_t &sid);
+	bool GetSessionIdVal(const sessionId_t  &sid, sessionValInfo &outval);
+	bool SaveSessionIdValue(const sessionId_t  &sid, const char *name, const char*val);
+private:
+	bool BuildSessionId(sessionId_t &sid);
+	typedef std::map<sessionId_t, sessionValInfo> sessionData_t;
+
+	sessionData_t m_data;
+	nd_mutex m_lock;
+};
+
+
 #endif

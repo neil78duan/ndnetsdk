@@ -17,7 +17,15 @@
 #include <vector>
 #include <map>
 
-
+#define ND_DFT_SESSION_ID_NAME "apoSessionId"
+template<class keyT> struct httpStringComp
+{
+	bool operator()(const keyT &l, const keyT &r) const
+	{
+		return ndstricmp(l.c_str(), r.c_str()) < 0;
+	}
+};
+typedef std::map<std::string, std::string, httpStringComp<std::string>> sessionIdVal;
 
 struct httpHeaderNode{
 	std::string name;
@@ -130,6 +138,7 @@ protected:
 	virtual int ParseProtocol();
 	virtual void onParseEnd();
 	int _parsePathInfo(const char *path);
+	int _parseCookies();
 
 	bool _insertFile(const char *varname, const char*filePath, void *data, size_t length);
 	void _destroyUpFile();
@@ -143,6 +152,7 @@ public:
 	HttpHeader_t m_requestForms;
 	std::string m_path;
 	void *m_userData;
+	sessionIdVal m_cookies;
 };
 
 
