@@ -25,7 +25,7 @@ template<class keyT> struct httpStringComp
 		return ndstricmp(l.c_str(), r.c_str()) < 0;
 	}
 };
-typedef std::map<std::string, std::string, httpStringComp<std::string>> sessionIdVal;
+typedef std::map<std::string, std::string, httpStringComp<std::string> >sessionIdVal;
 
 struct httpHeaderNode{
 	std::string name;
