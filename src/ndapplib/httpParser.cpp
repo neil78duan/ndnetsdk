@@ -389,8 +389,7 @@ int NDHttpParser::ParseData()
 	}
 	else if (2 == m_parseStat){
 		if (m_action == E_ACTION_GET){
-
-			m_parseStat = 3;
+			_setParseEnd();
 			return 0;
 		}
 		return _parseBody();
@@ -398,6 +397,14 @@ int NDHttpParser::ParseData()
 	return 0;
 }
 
+
+void NDHttpParser::_setParseEnd()
+{
+	if (m_parseStat != 3) {
+		m_parseStat = 3;
+		onParseEnd();
+	}
+}
 
 char *NDHttpParser::_getCurParseAddr()
 {
@@ -510,7 +517,8 @@ int NDHttpParser::_parseHeader()
 
 			}
 			if (m_action == E_ACTION_GET ){
-				m_parseStat = 3;
+				//m_parseStat = 3;
+				_setParseEnd(); 
 			}
 		}
 
@@ -543,12 +551,10 @@ int NDHttpParser::_parseBody()
 		snprintf(buf, sizeof(buf), "%lld", realSize);
 		addHeader("content-length", buf);
 
-		m_parseStat = 3;
-		onParseEnd();
+		_setParseEnd();
 	}
 	else if(datasize >= contentSize) {
-		m_parseStat = 3;
-		onParseEnd();
+		_setParseEnd();
 	}
 	else {
 		return 0;	//data received not completed
@@ -991,27 +997,27 @@ int NDHttpRequest::_parse_x_form()
 
 int NDHttpRequest::_parseCookies()
 {
-	char buf[4096];
-	const char*pCookieText = getRequestVal("Cookie");
-	if (!pCookieText) {
-		return 0;
-	}
-	const char *p = ndstr_first_valid(pCookieText);
+	for (HttpHeader_t::const_iterator it = m_header.begin(); it != m_header.end(); ++it) {
+		if (ndstricmp(it->name.c_str(), "Cookie")) {
+			continue;
+		}
 
-	p = ndstr_nstr_end(p, buf, '=',sizeof(buf));
-	if (!p || *p != '=') {
-		return -1;
-	}
-	++p;
-	std::string name = buf;
+		char buf[4096];
+		const char *p = ndstr_first_valid(it->value.c_str());
 
-	std::string val = NDHttpParser::URLcodeTotext(p);
-	if (val.empty()) {
-		return -1;
-	}
+		p = ndstr_nstr_end(p, buf, '=', sizeof(buf));
+		if (!p || *p != '=') {
+			continue;
+		}
+		++p;
+		std::string name = buf;
 
-	m_cookies[name] = val;
-
+		std::string val = NDHttpParser::URLcodeTotext(p);
+		if (val.empty()) {
+			return -1;
+		}
+		m_cookies[name] = val;
+	}	
 	return 0;
 
 }

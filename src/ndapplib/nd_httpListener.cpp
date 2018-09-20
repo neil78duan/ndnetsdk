@@ -148,9 +148,9 @@ int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 	sessionValInfo sInfo;
 	if (sessionIdGetInfo(sInfo)) {
 		char buf[4096];
-		snprintf(buf, sizeof(buf), "%s=%s;Max-Age=%d", ND_DFT_SESSION_ID_NAME, 
-			m_cookieSessionId.c_str(), ctime(&sInfo.invalidTm));
-
+		snprintf(buf, sizeof(buf), "%s=%s;Max-Age=%d;path=/", ND_DFT_SESSION_ID_NAME, 
+			m_cookieSessionId.c_str(), SESSION_DEFAULT_TIMEOUT);
+		response.addHeader("Set-Cookie",buf);
 	}
 	return _sendHttpResponse(GetHandle(), &response, errorDesc);
 }
@@ -264,6 +264,7 @@ int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 
 void NDHttpSession::_preOnHandle()
 {
+	ND_TRACE_FUNC();
 	const char *pSessionId = m_request.getHeader(ND_DFT_SESSION_ID_NAME);
 	if (pSessionId) {
 		sessionIdTrytoSet(pSessionId);
@@ -281,6 +282,7 @@ void NDHttpSession::_preOnHandle()
 
 bool NDHttpSession::sessionIdTrytoSet(const char *clientSendSid)
 {
+	ND_TRACE_FUNC();
 	SessionIdMgr *pMgr = _getSessoinIdMgr();
 	if (!pMgr) {
 		return false;
@@ -297,6 +299,7 @@ bool NDHttpSession::sessionIdTrytoSet(const char *clientSendSid)
 
 bool NDHttpSession::sessionIdCreate(int lifeOfSeconds , const char *path )
 {
+	ND_TRACE_FUNC();
 	SessionIdMgr *pMgr = _getSessoinIdMgr();
 	if (!pMgr) {
 		return false;
@@ -312,6 +315,7 @@ sessionId_t NDHttpSession::sessionIdGet()
 
 bool NDHttpSession::sessionIdSetValue(const char *name, const char *value)
 {
+	ND_TRACE_FUNC();
 	SessionIdMgr *pMgr = _getSessoinIdMgr();
 	if (!pMgr) {
 		return false;
@@ -321,33 +325,38 @@ bool NDHttpSession::sessionIdSetValue(const char *name, const char *value)
 		if (!name || !value) {
 			return true;
 		}
-
 		sessionIdVal valMaps;
 		valMaps[name] = value;
 		m_cookieSessionId = pMgr->CreateSessionId(valMaps, SESSION_DEFAULT_TIMEOUT, SESSION_DEFAULT_PATH);
-		return !m_cookieSessionId.empty();
+		if (m_cookieSessionId.empty()) {
+			return false;
+		}
 	}
-	else {
-		return pMgr->SaveSessionIdValue(m_cookieSessionId, name, value);
-	}
+
+	return pMgr->SaveSessionIdValue(m_cookieSessionId, name, value);
 }
 
 std::string NDHttpSession::sessionIdGetValue(const char*name)
 {
+	ND_TRACE_FUNC();
 	sessionValInfo info;
 	bool ret = sessionIdGetInfo(info);
 	if (!ret) {
 		return std::string();
 	}
-	if (info.invalidTm >= app_inst_time(NULL)) {
+	if (app_inst_time(NULL)>=info.invalidTm) {
 		return std::string();
 	}
 	sessionIdVal::const_iterator it =info.val.find(name);
-	return it->second;
+	if (it != info.val.end()) {
+		return it->second;
+	}
+	return std::string();
 }
 
 bool NDHttpSession::sessionIdGetInfo(sessionValInfo &info)
 {
+	ND_TRACE_FUNC();
 	if (m_cookieSessionId.empty()) {
 		return false;
 	}
@@ -361,6 +370,7 @@ bool NDHttpSession::sessionIdGetInfo(sessionValInfo &info)
 
 SessionIdMgr * NDHttpSession::_getSessoinIdMgr()
 {
+	ND_TRACE_FUNC();
 	NDHttpListener *pListener = dynamic_cast<NDHttpListener *> (GetParent());
 	if (!pListener) {
 		return NULL;

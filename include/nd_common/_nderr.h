@@ -86,5 +86,6 @@ ErrorElement(ERR_ACCESS_DATA_NOT_EXIST, "数据不存在"),
 ErrorElement(ERR_TASK_ALREADY_DONE, "目标已经达成"),
 ErrorElement(ERR_PROGRAM_DATA_ERROR, "程序内部数据错误"),
 ErrorElement(ERR_OPERATE_FAILED_TRY_AGAIN, "操作失败稍后重试"),
+ErrorElement(ERR_SKIP, "忽视该错误"),
 
 ErrorElement(ERR_UNKNOWN, "unknowwing error"),

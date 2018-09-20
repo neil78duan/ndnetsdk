@@ -79,6 +79,7 @@ protected:
 	virtual int ParseProtocol();
 	virtual void onParseEnd();
 
+	void _setParseEnd();
 	int _parseHeader();
 	int _parseBody();
 	int ParseData();
