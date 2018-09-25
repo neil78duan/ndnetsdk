@@ -816,6 +816,7 @@ int ndxml_delnode(ndxml_root *xmlroot,const  char *name)
 	dealloc_xml(node);
 	return 0 ;
 }
+
 int ndxml_delnodei(ndxml_root *xmlroot, int index) 
 {
 	ndxml *node = ndxml_getnodei(xmlroot,index) ;
@@ -827,11 +828,44 @@ int ndxml_delnodei(ndxml_root *xmlroot, int index)
 	return 0 ;
 }
 
+void ndxml_delall_children(ndxml* xml)
+{
+	struct list_head *pos,*next;
+	struct list_head *header = &xml->lst_sub;
 
-int ndxml_remove(ndxml *node, ndxml *xmlParent)
+
+	list_del_init(&xml->lst_sub);	
+	xml->sub_num = 0;
+
+	list_for_each_safe(pos, next, header ) {
+		ndxml *sub_xml = list_entry(pos, struct tagxml, lst_self);
+		dealloc_xml(sub_xml);
+	}
+}
+
+
+void ndxml_delall_attrib(ndxml* xml)
+{
+	struct list_head *pos, *next;
+	struct list_head *header = &xml->lst_attr;
+
+
+	list_del_init(&xml->lst_attr);
+	xml->sub_num = 0;
+
+	list_for_each_safe(pos, next, header) {
+		struct ndxml_attr *attrnode = list_entry(pos, struct ndxml_attr, lst);
+		dealloc_attrib_node(attrnode);
+	}
+}
+
+int ndxml_unlink(ndxml *node, ndxml *xmlParent)
 {
 	int ret = -1;
 	struct list_head *pos;
+
+	if (!node)
+		return -1;
 
 	if (xmlParent == NULL)	{
 		xmlParent = node->parent;
@@ -841,10 +875,7 @@ int ndxml_remove(ndxml *node, ndxml *xmlParent)
 		}
 	}
 	pos = xmlParent->lst_sub.next;
-
-	if (!node )
-		return -1;
-
+	
 	while (pos != &xmlParent->lst_sub) {
 		ndxml *sub_xml = list_entry(pos, struct tagxml, lst_self);
 		pos = pos->next;
@@ -1801,6 +1832,22 @@ ndxml* ndxml_recursive_ref(ndxml *node, const char *xmlNodePath)
 	if (!p || !*p){
 		return NULL;
 	}
+	
+	if (*p == '/') {
+		ndxml *root = NULL;
+		do {
+			root = ndxml_get_parent(root);
+			if (root) {
+				node = root;
+			}
+		} while (root);
+		retXml = root;
+	}
+	else if (*p == '.' && *(p + 1) == '/') {
+		++p; ++p;
+		retXml = node;
+	}
+
 	while (p && *p && node)	{
 		if (*p == '/') {
 			++p;
@@ -1835,6 +1882,7 @@ ndxml* ndxml_recursive_ref(ndxml *node, const char *xmlNodePath)
 
 	return retXml;
 }
+
 const char* ndxml_recursive_getval(ndxml *node, const char *xmlNodePath)
 {
 	ndxml*xml = ndxml_recursive_ref(node, xmlNodePath);

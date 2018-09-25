@@ -67,6 +67,9 @@ public:
 	bool installRequest_script(const char *pathName, const char *script);
 	int onRequest(const char *reqPath, NDHttpSession *session, const NDHttpRequest &request);
 	SessionIdMgr *getSessionIdMgr() { return m_cookieSessionIds; }
+
+	void setSessionAge(int seconds) { m_sessionAge = seconds; }
+	int getSessionAge() { return m_sessionAge; }
 protected:
 	void OnInitilize();		// call on open
 	virtual int onRequestScript(const char* script, NDHttpSession *session, const NDHttpRequest &request);
@@ -74,6 +77,8 @@ protected:
 	requestEntry_map m_entrys;
 
 	SessionIdMgr *m_cookieSessionIds;
+
+	NDINT32 m_sessionAge;
 };
 
 
@@ -94,6 +99,7 @@ public:
 	NDHttpSession();
 	virtual~NDHttpSession();
 	int SendResponse(NDHttpResponse &response, const char *errorDesc);
+	int SendRedirect(const char *newUrl);
 	int sendErrorResponse(int errorCdoe, const char *desc);
 	int sendBinaryData(NDHttpResponse &response, void *data, size_t datalen, const char*errorDesc);
 	void OnCreate();
@@ -109,14 +115,18 @@ public:
 	bool sessionIdSetValue(const char *name, const char *value);
 	std::string sessionIdGetValue(const char*name);
 	bool sessionIdGetInfo(sessionValInfo &info);
+	void setSessionAge(int seconds) { m_sessionAge = seconds; }
+	int getSessionAge();
 
 protected:
 	void _preOnHandle();
+	int _getMyCookie(char *buf, size_t size);
 	SessionIdMgr * _getSessoinIdMgr();
 	int getWaitTimeout();
 	NDHttpRequest m_request;
 	ndtime_t m_closedTime;
 	sessionId_t m_cookieSessionId;
+	NDINT32 m_sessionAge;		// 0 clear cookie right now , -1 cleared when close
 };
 
 //this is traditional session

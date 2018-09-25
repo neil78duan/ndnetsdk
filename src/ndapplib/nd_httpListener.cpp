@@ -9,7 +9,7 @@
  
 #include "ndapplib/nd_httpListener.h"
 
-NDHttpListener::NDHttpListener(nd_fectory_base *sf ) : NDSafeListener(sf), m_cookieSessionIds(NULL)
+NDHttpListener::NDHttpListener(nd_fectory_base *sf ) : NDSafeListener(sf), m_cookieSessionIds(NULL), m_sessionAge(-1)
 {
 }
 
@@ -94,6 +94,7 @@ static int _session_data_handler(nd_handle sessionHandler, void *data, size_t le
 NDHttpSession::NDHttpSession() 
 {
 	m_closedTime = 0;
+	m_sessionAge = -1;
 }
 
 
@@ -140,6 +141,19 @@ NDHttpSession ::~NDHttpSession()
 }
 
 
+int NDHttpSession::_getMyCookie(char *buf, size_t size)
+{
+	int age = getSessionAge();
+	if (age == -1) {
+		return snprintf(buf, size, "%s=%s;path=/", ND_DFT_SESSION_ID_NAME,
+			m_cookieSessionId.c_str());
+	}
+	else {
+		return snprintf(buf, size, "%s=%s;Max-Age=%d;path=/", ND_DFT_SESSION_ID_NAME,
+			m_cookieSessionId.c_str(), age);
+	}
+	
+}
 
 int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 {
@@ -148,12 +162,47 @@ int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 	sessionValInfo sInfo;
 	if (sessionIdGetInfo(sInfo)) {
 		char buf[4096];
-		snprintf(buf, sizeof(buf), "%s=%s;Max-Age=%d;path=/", ND_DFT_SESSION_ID_NAME, 
-			m_cookieSessionId.c_str(), SESSION_DEFAULT_TIMEOUT);
-		response.addHeader("Set-Cookie",buf);
+		_getMyCookie(buf, sizeof(buf));
+		response.addHeader("Set-Cookie", buf);
 	}
 	return _sendHttpResponse(GetHandle(), &response, errorDesc);
 }
+
+int NDHttpSession::SendRedirect(const char *newUrl)
+{
+	ND_TRACE_FUNC();
+	int len;
+	char *p;
+	char cookie[1024];
+	char buf[4096];
+	if (!newUrl || !*newUrl) {
+		return -1;
+	}
+	setDelayClosed(true);
+	
+	sessionValInfo sInfo;
+	if (sessionIdGetInfo(sInfo)){
+		_getMyCookie(cookie, sizeof(cookie));
+
+		len = snprintf(p, sizeof(buf), "HTTP/1.1 302 Found \r\n"
+			"Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
+			"Location:%s\r\n"
+			"Set-Cookie:%s\r\n"
+			"Content-Length:0\r\nConnection: close\r\n\r\n", newUrl, cookie);
+	}
+	else {
+		len = snprintf(p, sizeof(buf), "HTTP/1.1 302 Found \r\n"
+			"Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
+			"Location:%s\r\n"
+			"Content-Length:0\r\nConnection: close\r\n\r\n", newUrl);
+	}
+	
+	len = nd_connector_send_stream(GetHandle(), buf,len, 0);
+
+	nd_tcpnode_flush_sendbuf_force((nd_netui_handle)GetHandle());
+	return len;
+}
+
 
 int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t datalen, const char*errorDesc)
 {
@@ -366,6 +415,19 @@ bool NDHttpSession::sessionIdGetInfo(sessionValInfo &info)
 	}
 
 	return pMgr->GetSessionIdVal(m_cookieSessionId, info);
+}
+
+int NDHttpSession::getSessionAge()
+{
+	ND_TRACE_FUNC();
+	int ret = m_sessionAge;
+	if(ret ==0)	{
+		NDHttpListener *pListener = dynamic_cast<NDHttpListener *> (GetParent());
+		if (pListener) {
+			ret = pListener->getSessionAge();
+		}
+	}
+	return ret;
 }
 
 SessionIdMgr * NDHttpSession::_getSessoinIdMgr()

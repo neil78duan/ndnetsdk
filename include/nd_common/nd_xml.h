@@ -108,7 +108,13 @@ ND_COMMON_API size_t ndxml_to_buf(ndxml *node, char *buf, size_t size);
 ND_COMMON_API int ndxml_delnode(ndxml_root *xmlroot, const char *name) ;
 ND_COMMON_API int ndxml_delnodei(ndxml_root *xmlroot, int index);
 ND_COMMON_API int ndxml_delxml(ndxml *delnode, ndxml *xmlParent);
-ND_COMMON_API int ndxml_remove(ndxml *node, ndxml *xmlParent); //remove not dealloc-memory
+ND_COMMON_API int ndxml_unlink(ndxml *node, ndxml *xmlParent);
+//ND_COMMON_API int ndxml_remove(ndxml *node, ndxml *xmlParent); //unlink node without dealloc-memory
+ND_COMMON_API void ndxml_delall_children(ndxml* xml);
+ND_COMMON_API void ndxml_delall_attrib(ndxml* xml);
+
+#define ndxml_remove ndxml_unlink
+
 static __INLINE__ int ndxml_disconnect(ndxml *xmlParent, ndxml *node)
 {
 	return ndxml_remove(node, xmlParent);
