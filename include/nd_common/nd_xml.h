@@ -144,6 +144,7 @@ ND_COMMON_API int ndxml_insert_after(ndxml *parent, ndxml*insertNode, ndxml* bro
 ND_COMMON_API int ndxml_insert_before(ndxml *parent, ndxml*insertNode, ndxml*brother);//insertNode before brother
 
 ND_COMMON_API int ndxml_get_index(ndxml *parent, ndxml*child);
+ND_COMMON_API int ndxml_get_myindex(ndxml*xml);
 
 //引用一个子节点
 ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;

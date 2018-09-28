@@ -647,6 +647,15 @@ int ndxml_insert(ndxml *parent, ndxml*child)
 	return 0;
 }
 
+int ndxml_get_myindex(ndxml*xml)
+{
+	ndxml *parent =ndxml_get_parent(xml);
+	if (parent == NULL) {
+		return -1;
+	}
+	return ndxml_get_index(parent, xml);
+}
+
 int ndxml_get_index(ndxml *parent, ndxml*child)
 {
 	int i = 0;
