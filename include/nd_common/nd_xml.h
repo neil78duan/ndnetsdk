@@ -127,7 +127,7 @@ static __INLINE__ ndxml *ndxml_get_parent(ndxml *xmlnode)
 
 ND_COMMON_API void ndxml_free(ndxml *xmlnode);
 //销毁这个xml集合
-ND_COMMON_API void ndxml_destroy(ndxml_root *xmlroot) ;
+ND_COMMON_API void ndxml_destroy(ndxml_root *xmlroot) ; //destroy xmlroot's children and attributes but not free xmlroot self
 
 //把xml保存到文件中
 ND_COMMON_API int ndxml_save(ndxml_root *xmlroot, const char *file) ;
