@@ -653,8 +653,8 @@ int NDHttpRequest::_parsePathInfo(const char *path)
 			++p;
 		}
 
-		if (buf[0]) 	{
-			httpHeaderNode node = { buf, val };
+		if (buf[0] && val[0]) 	{
+			httpHeaderNode node = { buf, URLcodeTotext(val) };
 			m_requestForms.push_back(node);
 		}
 
@@ -910,7 +910,8 @@ int NDHttpRequest::_parseOnePart(const char *partStart, size_t len)
 	}
 
 
-	httpHeaderNode node = { buf, value };
+	//httpHeaderNode node = { buf, URLcodeTotext(value.c_str()) };
+	httpHeaderNode node = { buf, value.c_str() };
 	m_requestForms.push_back(node);
 	return (int)len;
 }

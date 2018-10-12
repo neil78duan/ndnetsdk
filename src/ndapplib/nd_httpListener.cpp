@@ -221,7 +221,7 @@ int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t d
 	len = (int)response.HeaderToBuf(p, sizeof(buf) - (p - buf));
 	p += len;
 
-	len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:%lld\r\n\r\n\r\n", datalen);
+	len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:%lld\r\n\r\n", datalen);
 	p += len;
 
 	len = nd_connector_send_stream(GetHandle(), buf, p - buf, 0);
