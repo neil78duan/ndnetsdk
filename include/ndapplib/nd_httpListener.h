@@ -70,6 +70,7 @@ public:
 
 	void setSessionAge(int seconds) { m_sessionAge = seconds; }
 	int getSessionAge() { return m_sessionAge; }
+	void updateSessionIds();
 protected:
 	void OnInitilize();		// call on open
 	virtual int onRequestScript(const char* script, NDHttpSession *session, const NDHttpRequest &request);
@@ -143,6 +144,7 @@ public:
 	bool DestroySessionId(const sessionId_t &sid);
 	bool GetSessionIdVal(const sessionId_t  &sid, sessionValInfo &outval);
 	bool SaveSessionIdValue(const sessionId_t  &sid, const char *name, const char*val);
+	void Update();
 private:
 	bool BuildSessionId(sessionId_t &sid);
 	typedef std::map<sessionId_t, sessionValInfo> sessionData_t;

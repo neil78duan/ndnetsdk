@@ -133,7 +133,7 @@ public:
 			delete pListen;	 pListen = 0 ;
 		} 
 	}
-
+	TListener* GetMyListener() {return (TListener*)pListen;}
 };
 
 typedef nd_instance<NDSession, NDListener> NDInstance ;

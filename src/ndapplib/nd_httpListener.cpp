@@ -30,6 +30,13 @@ void NDHttpListener::OnInitilize()
 	m_cookieSessionIds = new SessionIdMgr;
 }
 
+void NDHttpListener::updateSessionIds()
+{
+	if (m_cookieSessionIds) {
+		m_cookieSessionIds->Update();
+	}
+}
+
 bool NDHttpListener::installRequest_c(const char *pathName, http_reqeust_func func)
 {
 	ND_TRACE_FUNC();
@@ -454,6 +461,24 @@ SessionIdMgr::~SessionIdMgr()
 	nd_mutex_destroy(&m_lock);
 }
 
+void SessionIdMgr::Update()
+{
+	LockHelper tmplock(&m_lock);
+
+	time_t now = app_inst_time(NULL);
+
+	for (sessionData_t::iterator it = m_data.begin(); it != m_data.end(); ) {
+		if (now >= it->second.invalidTm) {
+			nd_logdebug("http sessionid %d is timeout \n", it->first.c_str()) ;
+			m_data.erase(it++);
+		}
+		else {
+			++it;
+		}
+	}
+
+}
+
 sessionId_t SessionIdMgr::CreateSessionId(const sessionIdVal &val, int lifeOfSeconds, const char *path)
 {
 	ND_TRACE_FUNC();
@@ -477,10 +502,10 @@ sessionId_t SessionIdMgr::CreateSessionId(const sessionIdVal &val, int lifeOfSec
 	}
 
 	if (lifeOfSeconds == 0) {
-		valInfo.invalidTm = time(NULL) + SESSION_DEFAULT_TIMEOUT;
+		valInfo.invalidTm = app_inst_time(NULL) + SESSION_DEFAULT_TIMEOUT;
 	}
 	else {
-		valInfo.invalidTm = time(NULL) + lifeOfSeconds;
+		valInfo.invalidTm = app_inst_time(NULL) + lifeOfSeconds;
 	}
 	valInfo.val = val;
 
