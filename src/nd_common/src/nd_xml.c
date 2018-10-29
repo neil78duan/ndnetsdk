@@ -311,6 +311,15 @@ int ndxml_load(const char *file,ndxml_root *xmlroot)
 	return ndxml_load_ex(file, xmlroot, NULL);	
 }
 
+
+int ndxml_is_empty(ndxml *node)
+{
+	if (node->name[0] == 0 && list_empty(&node->lst_sub) && list_empty(&node->lst_attr)) {
+		return 1;
+	}
+	return 0;
+}
+
 int ndxml_load_ex(const char *file, ndxml_root *xmlroot, const char*encodeType)
 {
 	size_t size = 0;
