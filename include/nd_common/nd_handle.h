@@ -140,7 +140,7 @@ static __INLINE__ nd_handle  object_create(const char *name,const char *file, in
 	nd_handle p = _object_create(name )  ;
 	if(p) {
 		nd_object_set_instname(p,name) ;
-		_source_log(p,(char*)"nd_object_create",(char*)"object not release!", file,line) ;
+		_source_log(p,"nd_object_create","object not release!", file,line) ;
 	}
 	return p ;
 }

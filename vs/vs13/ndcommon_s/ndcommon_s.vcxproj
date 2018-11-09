@@ -166,7 +166,6 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_bintree.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_cmdline.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_comcfg.h" />
-    <ClInclude Include="..\..\..\include\nd_common\nd_comdef.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_common.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_dbg.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_define.h" />
