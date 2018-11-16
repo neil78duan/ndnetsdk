@@ -43,25 +43,7 @@
 #define _ND_CRYPT_
 
 #include "nd_common/nd_comcfg.h"
-
-#ifndef CPPAPI
-	#ifdef __cplusplus
-	#define CPPAPI extern "C" 
-	#else 
-	#define CPPAPI 
-	#endif
-#endif 
-//#define RSA_COMPILE_AS_DLL	1		//	±‡“Î≥…dll
-
-#if  defined(ND_COMPILE_AS_DLL) && (defined(_WINDOWS)  || defined(WIN32) || defined(WIN64))
-	#if  defined(ND_CRYPT_EXPORTS) 
-	# define ND_CRYPT_API 				CPPAPI __declspec(dllexport)
-	#else
-	# define ND_CRYPT_API 				CPPAPI __declspec(dllimport)
-	#endif
-#else 
-	# define ND_CRYPT_API 				CPPAPI
-#endif 
+#include "nd_common/nd_export_def.h"
 
 #include "nd_crypt/tea.h"
 

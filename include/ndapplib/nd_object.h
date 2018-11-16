@@ -20,7 +20,7 @@ using namespace std ;
 #pragma  warning (disable : 4290 )
 #pragma  warning (disable : 4291 )
 
-class NDObject : public NDIBaseObj 
+class  ND_COMMON_CLASS  NDObject : public NDIBaseObj
 {
 protected :
 	NDObject();

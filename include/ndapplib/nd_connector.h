@@ -20,7 +20,7 @@
 #define CONNECT_INSTALL_MSG_INT16(connect, msgFunc, msgID) \
 	(connect)->InstallMsgFunc(msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID), #msgID)
 //net connector 
-class NDConnector : public NDObject 
+class  ND_COMMON_CLASS NDConnector : public NDObject
 {
 public :		
 	void Destroy(int flag = 0);
@@ -63,7 +63,7 @@ private:
 };
 
 // safe connect , the data will be stored when send error 
-class NDSafeConnector: public NDConnector 
+class  ND_COMMON_CLASS NDSafeConnector: public NDConnector
 {
 public:
 	NDSafeConnector(int maxmsg_num = ND_MAIN_MSG_CAPACITY, int maxid_start = ND_MSG_BASE_ID);

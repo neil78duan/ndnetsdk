@@ -179,7 +179,7 @@ int NDHttpSession::SendRedirect(const char *newUrl)
 {
 	ND_TRACE_FUNC();
 	int len;
-	char *p;
+	//char *p;
 	char cookie[1024];
 	char buf[4096];
 	if (!newUrl || !*newUrl) {
@@ -191,14 +191,14 @@ int NDHttpSession::SendRedirect(const char *newUrl)
 	if (sessionIdGetInfo(sInfo)){
 		_getMyCookie(cookie, sizeof(cookie));
 
-		len = snprintf(p, sizeof(buf), "HTTP/1.1 302 Found \r\n"
+		len = snprintf(buf, sizeof(buf), "HTTP/1.1 302 Found \r\n"
 			"Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
 			"Location:%s\r\n"
 			"Set-Cookie:%s\r\n"
 			"Content-Length:0\r\nConnection: close\r\n\r\n", newUrl, cookie);
 	}
 	else {
-		len = snprintf(p, sizeof(buf), "HTTP/1.1 302 Found \r\n"
+		len = snprintf(buf, sizeof(buf), "HTTP/1.1 302 Found \r\n"
 			"Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
 			"Location:%s\r\n"
 			"Content-Length:0\r\nConnection: close\r\n\r\n", newUrl);

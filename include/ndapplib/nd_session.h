@@ -16,7 +16,7 @@
 #pragma  warning (disable : 4290 )
 //net session 
 
-class NDBaseSession : public NDAlarm 
+class ND_COMMON_CLASS  NDBaseSession : public NDAlarm
 {
 public:
 	NDBaseSession  ();
@@ -55,7 +55,7 @@ private:
 };
 
 
-class NDSession : public NDBaseSession
+class ND_COMMON_CLASS  NDSession : public NDBaseSession
 {
 public :
 

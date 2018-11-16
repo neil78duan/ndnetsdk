@@ -34,7 +34,7 @@ enum eNDnetStreamMarker
 
 
 };
-class ND_CONNCLI_CLASS NDSendMsg
+class  ND_COMMON_CLASS  NDSendMsg
 {
 public:
 	NDSendMsg() ;
@@ -58,7 +58,7 @@ protected:
 };
 
 class NDIStreamMsg;
-class ND_CONNCLI_CLASS NDOStreamMsg :public NDSendMsg
+class  ND_COMMON_CLASS  NDOStreamMsg :public NDSendMsg
 {
 public :
 	void Reset();
@@ -113,7 +113,7 @@ private:
 	char *_end ;
 };
 
-class ND_CONNCLI_CLASS NDRecvMsg
+class  ND_COMMON_CLASS  NDRecvMsg
 {
 public:
 	NDRecvMsg(nd_usermsgbuf_t *pmsg) :recv_packet(pmsg){}
@@ -132,7 +132,7 @@ protected:
 	nd_usermsgbuf_t  *recv_packet ;
 };
 
-class ND_CONNCLI_CLASS NDIStreamMsg : public NDRecvMsg
+class  ND_COMMON_CLASS  NDIStreamMsg : public NDRecvMsg
 {
 public :
 

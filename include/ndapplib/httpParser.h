@@ -32,7 +32,7 @@ struct httpHeaderNode{
 	std::string value ;
 };
 
-class NDHttpParser : public NDIBaseObj
+class  ND_COMMON_CLASS  NDHttpParser : public NDIBaseObj
 {
 public:
 	NDHttpParser();
@@ -106,7 +106,7 @@ public:
 };
 
 
-class NDHttpRequest : public NDHttpParser 
+class ND_COMMON_CLASS  NDHttpRequest : public NDHttpParser
 {
 public:
 	NDHttpRequest() ;
@@ -157,7 +157,7 @@ public:
 };
 
 
-class NDHttpResponse : public NDHttpParser
+class ND_COMMON_CLASS  NDHttpResponse : public NDHttpParser
 {
 public:
 	NDHttpResponse() : NDHttpParser()
@@ -174,7 +174,7 @@ protected:
 
 };
 
-class HttpConnector : public NDObject
+class  ND_COMMON_CLASS  HttpConnector : public NDObject
 {
 public:
 	HttpConnector(bool bLongConnect=false);

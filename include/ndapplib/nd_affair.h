@@ -16,7 +16,7 @@
 
 //事务打开,保存,同步开关
 template<class TAfair>
-class EnableAffairHelper
+class ND_COMMON_CLASS  EnableAffairHelper
 {
 public:
 	EnableAffairHelper(TAfair *pa, int flag) 
@@ -36,7 +36,7 @@ private:
 };
 
 template<class TAfair>
-class SyndbFlagHelper
+class  ND_COMMON_CLASS SyndbFlagHelper
 {
 public:
 	SyndbFlagHelper(TAfair *pa, int flag) 

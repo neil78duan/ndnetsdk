@@ -33,7 +33,7 @@ enum eBigDataType{
 };
 
 
-class NDBigDataTransfer 
+class  ND_COMMON_CLASS NDBigDataTransfer
 {
 public:
 	enum {TRANSFER_UNIT_SIZE = ND_PACKET_SIZE - 1024 } ;
@@ -61,7 +61,7 @@ private:
 };
 
 
-class NDBigDataReceiver
+class  ND_COMMON_CLASS NDBigDataReceiver
 {
 public:
 	NDBigDataReceiver(data_recv_callback cb, void *receiver=NULL) ;

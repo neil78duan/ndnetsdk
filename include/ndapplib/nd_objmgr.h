@@ -20,7 +20,7 @@ typedef node_iterator nd_object_iterator ;
 class NDObjectIterator ;
 
 //manager session in listenor
-class NDObjectMgrBase 
+class  ND_COMMON_CLASS NDObjectMgrBase
 {
 public:
 	typedef NDObjectIterator iterator ;
@@ -52,7 +52,7 @@ protected:
 	//nd_handle alloc_handle ;
 };
 
-class NDObjectIterator
+class ND_COMMON_CLASS  NDObjectIterator
 {
 public:
 	NDObjectIterator()  ;

@@ -10,7 +10,7 @@
 int __g_pirv_publis_num=2 ; 
 
 /* md5 of private key  */
-char *__g_pubkey_md5="e02d66ce58a205765202ddba74b1e431" ; 
+const char *__g_pubkey_md5="e02d66ce58a205765202ddba74b1e431" ; 
 
 
 /* RSA private key  data */ 
@@ -178,7 +178,7 @@ int nd_get_private_certificate_version(void)
 	return __g_pirv_publis_num ;
 }
 
-char *nd_get_publickey_md5(void)
+const char *nd_get_publickey_md5(void)
 {
 	return __g_pubkey_md5 ;
 }

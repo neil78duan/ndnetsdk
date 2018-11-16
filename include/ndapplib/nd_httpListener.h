@@ -55,7 +55,7 @@ struct ndHttpHandler
 
 
 class SessionIdMgr;
-class NDHttpListener : public NDSafeListener
+class ND_COMMON_CLASS NDHttpListener : public NDSafeListener
 {
 	typedef  NDSafeListener myBase;
 public:
@@ -94,7 +94,7 @@ struct sessionValInfo
 };
 
 
-class NDHttpSession : public NDBaseSession
+class ND_COMMON_CLASS  NDHttpSession : public NDBaseSession
 {
 public:
 	NDHttpSession();
@@ -132,7 +132,7 @@ protected:
 
 //this is traditional session
 
-class SessionIdMgr
+class ND_COMMON_CLASS  SessionIdMgr
 {
 public:
 

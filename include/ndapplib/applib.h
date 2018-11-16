@@ -48,38 +48,38 @@ static __INLINE__ void nd_pause()
 	getch() ;
 }
 
-CPPAPI int nd_end_server(int force);
+ND_APPLIB_API int nd_end_server(int force);
 
-CPPAPI int system_signals_init() ;
-CPPAPI int wait_services() ;
-//CPPAPI int read_config(const char *file, struct srv_config *readcfg) ;
+ND_APPLIB_API int system_signals_init() ;
+ND_APPLIB_API int wait_services() ;
+//ND_APPLIB_API int read_config(const char *file, struct srv_config *readcfg) ;
 
-CPPAPI void exit_instance(int flag) ;
+ND_APPLIB_API void exit_instance(int flag) ;
 #ifdef ND_UNIX
-//CPPAPI int installed_sig_handle(void);
-//CPPAPI int wait_signal_entry();
-//CPPAPI int block_signal(void) ;
+//ND_APPLIB_API int installed_sig_handle(void);
+//ND_APPLIB_API int wait_signal_entry();
+//ND_APPLIB_API int block_signal(void) ;
 //char *get_signal_desc(int signo);
-//CPPAPI int unblock_signal(void) ;
-//CPPAPI int ignore_all_signal(void) ;
+//ND_APPLIB_API int unblock_signal(void) ;
+//ND_APPLIB_API int ignore_all_signal(void) ;
 
-CPPAPI int nd_wait_terminate_signals();
-CPPAPI int nd_signals_init();
+ND_APPLIB_API int nd_wait_terminate_signals();
+ND_APPLIB_API int nd_signals_init();
 
 #else
-CPPAPI BOOL WINAPI winclose_entry(DWORD dwevent);
+ND_APPLIB_API BOOL WINAPI winclose_entry(DWORD dwevent);
 #endif //_WINDOWS
 
 //set user appliction exit function
-//CPPAPI void app_exit_entry(exit_app_func func) ;
-CPPAPI void _error_exit(const char *file, int line,const char *stm,...) ;
-CPPAPI void nd_set_exit_callback(exit_app_func func) ;
-CPPAPI void nd_instance_exit(int flag);
+//ND_APPLIB_API void app_exit_entry(exit_app_func func) ;
+ND_APPLIB_API void _error_exit(const char *file, int line,const char *stm,...) ;
+ND_APPLIB_API void nd_set_exit_callback(exit_app_func func) ;
+ND_APPLIB_API void nd_instance_exit(int flag);
 
-CPPAPI void nd_sys_exit(int exitcode) ;
+ND_APPLIB_API void nd_sys_exit(int exitcode) ;
 
 
-CPPAPI int send_error_ack(nd_handle hconnect, int errcode);
+ND_APPLIB_API int send_error_ack(nd_handle hconnect, int errcode);
 
 #if defined(_MSC_VER)
 #define error_exit(msg,...) _error_exit(__FILE__, __LINE__ ,msg,__VA_ARGS__)
@@ -87,7 +87,7 @@ CPPAPI int send_error_ack(nd_handle hconnect, int errcode);
 #define error_exit(fmt,arg...) _error_exit(__FILE__ , __LINE__ , fmt,##arg)
 #endif
 
-CPPAPI int set_mp() ;
+ND_APPLIB_API int set_mp() ;
 //定义消息发送函数
 #define ND_SENDEX(nethandle, msg, flag, h_listen)	nd_sessionmsg_sendex(nethandle, msg, flag )
 #define ND_MSG_SEND(nethandle, msg,  h_listen)		nd_sessionmsg_send(nethandle, msg )
@@ -117,11 +117,11 @@ static inline int nd_check_coming_our_server(nd_usermsgbuf_t *msg)
 	CPPAPI int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen)
 
 
-CPPAPI int nd_get_private_certificate_version(void);
-CPPAPI char *nd_get_publickey_md5(void);
+ND_APPLIB_API int nd_get_private_certificate_version(void);
+ND_APPLIB_API const char *nd_get_publickey_md5(void);
 
-CPPAPI char* nd_calc_privatekey_md5(char text[33]);
-CPPAPI R_RSA_PRIVATE_KEY *nd_get_privatekey(void) ;
+ND_APPLIB_API char* nd_calc_privatekey_md5(char text[33]);
+ND_APPLIB_API R_RSA_PRIVATE_KEY *nd_get_privatekey(void) ;
 
 #define  ND_SAFE_DESTROY_OBJ(obj)	\
 	if(obj) {						\

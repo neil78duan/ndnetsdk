@@ -11,7 +11,7 @@
 
 //#include "nd_common/nd_common.h"
 #include "ndapplib/nd_object.h"
-class LockHelper
+class  ND_COMMON_CLASS LockHelper
 {
 public:
 	LockHelper(nd_mutex *lock)

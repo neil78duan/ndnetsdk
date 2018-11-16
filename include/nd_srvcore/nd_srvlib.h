@@ -10,15 +10,6 @@
 #include "nd_common/nd_common.h"
 #include "nd_net/nd_netlib.h"
 
-#if defined(ND_COMPILE_AS_DLL) && (defined(_WINDOWS) || defined(WIN32) || defined(WIN64))
-	#if  defined(ND_SRVCORE_EXPORTS) 
-# define ND_SRV_API 				CPPAPI  __declspec(dllexport)
-	#else
-# define ND_SRV_API 				CPPAPI  __declspec(dllimport)
-	#endif
-#else 
-	# define ND_SRV_API 				CPPAPI
-#endif 
 
 #include "nd_srvcore/nd_threadsrv.h"
 #include "nd_srvcore/nd_thpool.h"

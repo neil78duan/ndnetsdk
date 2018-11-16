@@ -34,6 +34,7 @@
 #include <string.h>
 
 #include "nd_common/nd_comcfg.h"
+#include "nd_common/nd_export_def.h"
 
 #pragma warning (disable:  4018)	
 #pragma warning (disable:  4251)	
@@ -57,17 +58,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#ifdef ND_COMPILE_AS_DLL
-	#if  defined(ND_COMMON_EXPORTS) 
-#define ND_COMMON_API 				CPPAPI  __declspec(dllexport)
-	#else
-#define ND_COMMON_API 				CPPAPI  __declspec(dllimport)
-	#endif
-#else 
-#define ND_COMMON_API 				CPPAPI 
-#endif
-
-#define __INLINE__			__inline	
+//#define __INLINE__			__inline	
 
 
 #define __ndthread  __declspec(thread)

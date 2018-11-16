@@ -424,7 +424,7 @@ void NDInstanceBase::StartStaticsMem()
 }
 int NDReportHook(int nRptType, char *szMsg,int  *retVal)
 {
-	char *RptTypes[] = { "Warning", "Error", "Assert" };
+	const char *RptTypes[] = { "Warning", "Error", "Assert" };
 	if ( ( nRptType > 0 ) || ( strstr( szMsg, "HEAP CORRUPTION DETECTED" ) ) )
 		nd_logmsg("%s: %s" AND RptTypes[nRptType] AND szMsg );
 

@@ -10,16 +10,6 @@
 #ifndef _ND_NETLIB_H_
 #define _ND_NETLIB_H_
 
-#if  defined(ND_COMPILE_AS_DLL) && (defined(WIN32) || defined(_WINDOWS) || defined(WIN64))
-	#if  defined(ND_NET_EXPORTS) 
-# define ND_NET_API 				CPPAPI __declspec(dllexport)
-	#else
-# define ND_NET_API 				CPPAPI __declspec(dllimport)
-	#endif
-#else 
-# define ND_NET_API 				CPPAPI 
-#endif 
-
 #include "nd_common/nd_common.h"
 
 #include "nd_net/nd_sock.h"

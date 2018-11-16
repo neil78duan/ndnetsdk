@@ -9,8 +9,9 @@
 
 #ifndef _ND_IBASE_OBJ_H_
 #define _ND_IBASE_OBJ_H_
+#include "nd_common/nd_export_def.h"
 
-class NDIBaseObj
+class ND_COMMON_CLASS NDIBaseObj
 {
 public:
 

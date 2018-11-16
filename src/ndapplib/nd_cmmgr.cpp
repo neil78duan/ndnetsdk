@@ -17,6 +17,12 @@ static inline NDBaseSession* GetSessionFromHandle(nd_netui_handle handle)
 		return NULL;
 	return static_cast<NDBaseSession*>(nd_session_getdata(handle));
 }
+
+NDBaseSession* NDSessionMgr::GetObject(NDObjectMgrBase::iterator &it)
+{
+	return NDGetSession((nd_handle)it.second, NULL);
+}
+
 NDBaseSession* NDSessionMgr::Lock(OBJECTID_T oid)
 {
 	void *addr = NDObjectMgrBase::Lock(oid) ;

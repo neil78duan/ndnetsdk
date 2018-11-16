@@ -30,7 +30,7 @@ class NDSafeListener;
 //·þÎñÆ÷ÊµÀý
 
 
-class NDInstanceBase : public NDAlarm
+class  ND_COMMON_CLASS NDInstanceBase : public NDAlarm
 {
 public :
 	int Create(int argc, const char *argv[]) ;
@@ -101,7 +101,6 @@ public:
 #endif
 };
 
-CPPAPI void nd_instance_exit(int flag);
 template < class TSession,class TListener=NDListener>
 class nd_instance:public NDInstanceBase
 {
@@ -139,7 +138,7 @@ public:
 typedef nd_instance<NDSession, NDListener> NDInstance ;
 typedef nd_instance<NDSession, NDSafeListener> NDSafeInstance ;
 
-NDInstanceBase *nd_get_appinst();
+ND_APPLIB_API NDInstanceBase *nd_get_appinst();
 #define getbase_inst nd_get_appinst
 
 #ifdef ND_USE_VLD

@@ -8,6 +8,8 @@
 #ifndef _READCFG_H_
 #define _READCFG_H_
 
+#include "nd_common/nd_export_def.h"
+
 #define ND_HOST_NAME_SIZE 256 
 //#define ND_FILE_PATH_SIZE 256
 #define ND_IP_TEXT_SIZE 64
@@ -84,16 +86,16 @@ struct server_config
 // };
 
 //读取端口基数
-int read_base_port(ndxml *xmlroot) ;
+ND_APPLIB_API int read_base_port(ndxml *xmlroot) ;
 //读取实例信息
-int read_instance_info(ndxml *xmlroot, struct instance_config *icfg);
+ND_APPLIB_API int read_instance_info(ndxml *xmlroot, struct instance_config *icfg);
 //读取连接信息
-int read_connect_cfg(ndxml *xmlroot, int base_port, struct connect_config *ccfg);
+ND_APPLIB_API int read_connect_cfg(ndxml *xmlroot, int base_port, struct connect_config *ccfg);
 //读取监听信息
-int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg);
+ND_APPLIB_API int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg);
 
 //从xml读取配置信息
-int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg) ;
+ND_APPLIB_API int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg) ;
 
-int read_dbconfig(const char *fileName, const char *dbCfgname ,struct nd_db_config *db_cfg) ;
+ND_APPLIB_API int read_dbconfig(const char *fileName, const char *dbCfgname ,struct nd_db_config *db_cfg) ;
 #endif

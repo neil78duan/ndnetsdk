@@ -28,7 +28,7 @@ class NDInstanceBase ;
 #define LISTENER_INSTALL_MSG_INT16(listener, msgFunc, msgID, level) \
 	(listener)->InstallMsgFunc(msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID),level, #msgID)
 
-class NDListener : public NDObject
+class  ND_COMMON_CLASS NDListener : public NDObject
 {
 public:
 	int Close(int force=0);
@@ -86,7 +86,7 @@ protected :
 	NDObjectMgrBase m_session_mgr ;
 } ;
 
-class NDSafeListener: public NDListener
+class  ND_COMMON_CLASS NDSafeListener: public NDListener
 {
 public:
 	NDSafeListener(nd_fectory_base *sf=NULL ) ;	
@@ -94,8 +94,8 @@ public:
 protected:
 	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
 };
-NDListener *NDGetListener(nd_handle h_listen) ;
-NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener = NULL);
+ND_APPLIB_API NDListener *NDGetListener(nd_handle h_listen) ;
+ND_APPLIB_API NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener = NULL);
 //#pragma  warning (pop)
 #endif
 

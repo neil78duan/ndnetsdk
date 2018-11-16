@@ -31,6 +31,7 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_common.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_dbg.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_define.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_export_def.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_handle.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_iconv.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_mempool.h" />
@@ -46,11 +47,11 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_xml.h" />
     <ClInclude Include="..\..\..\include\nd_common\_client_config.h" />
     <ClInclude Include="..\..\..\include\nd_common\_nderr.h" />
+    <ClInclude Include="..\..\..\include\nd_common\_server_config.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_crypt.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_cryptfile.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_pubkey.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\tea.h" />
-    <ClInclude Include="..\..\..\include\nd_vm\nd_vm.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c" />
@@ -146,7 +147,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>../../../lib/Win64</OutDir>
+    <OutDir>..\..\..\lib\Win64</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -157,7 +158,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../../lib/Win64</OutDir>
+    <OutDir>..\..\..\lib\Win64</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -165,7 +166,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>ND_DEBUG;_DEBUG;ND_COMMON_EXPORTS;_WINDOWS;_USRDLL;ND_COMPILE_AS_DLL;ND_CRYPT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ND_DEBUG;ND_COMMON_EXPORTS;ND_COMPILE_AS_DLL;ND_CRYPT_EXPORTS;X86_64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -173,6 +174,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y $(TargetPath)  ..\..\..\..\apolloBP\bin;
+copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -214,7 +219,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;ND_COMMON_EXPORTS;ND_CRYPT_EXPORTS;ND_COMPILE_AS_DLL;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;X86_64;ND_COMMON_EXPORTS;ND_CRYPT_EXPORTS;ND_COMPILE_AS_DLL;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -224,6 +229,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y $(TargetPath)  ..\..\..\..\apolloBP\bin;
+copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

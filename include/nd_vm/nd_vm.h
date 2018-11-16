@@ -18,27 +18,10 @@
 //#include "nd_comdef.h"
 //#include "nd_common/nd_common.h"
 
+#include "nd_common/nd_export_def.h"
+
 #pragma warning(disable: 4996)
 
-#ifndef CPPAPI
-#ifdef __cplusplus
-#define CPPAPI extern "C" 
-#else 
-#define CPPAPI 
-#endif 
-#endif
-
-#ifndef __INLINE__
-#ifdef __cplusplus
-#define __INLINE__			inline	
-#else 
-#define __INLINE__			__inline	
-#endif 
-#endif
-
-#ifndef ND_VM_API
-#define ND_VM_API		CPPAPI
-#endif
 
 typedef float vm_value ;				//²Ù×÷Êý
 typedef unsigned char vm_ins ;			//Ö¸Áî

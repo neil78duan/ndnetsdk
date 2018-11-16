@@ -1,0 +1,359 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\net">
+      <UniqueIdentifier>{1030840b-a7da-46b8-9721-7fed3d807733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ndapplib">
+      <UniqueIdentifier>{bec50d46-e9b7-48ac-b767-50a217c5a4da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\srvcore">
+      <UniqueIdentifier>{885a4d3a-e40c-40cf-b449-16ba3137abe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\nd_net">
+      <UniqueIdentifier>{b04dfeb0-f353-4852-8ef5-7312e3389350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\nd_srvcore">
+      <UniqueIdentifier>{6740ee62-b4b0-4471-9a37-6376c84a97b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ndapplib">
+      <UniqueIdentifier>{82dc41d2-8422-47e2-9235-c610e79d25dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ndstl">
+      <UniqueIdentifier>{df357d4a-4ae1-4ee9-ae14-b8e20692ea44}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\nd_net\src\ipraw.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_msgentry.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_net.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_netobj.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_netui.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_socket.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_tcp.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_udp.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\net_srv.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\proxy_cli.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\udt_icmp.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\httpParser.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\misc.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_affair.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_alarms.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_cmmgr.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_httpListener.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_instance.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_listener.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_new.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_objmgr.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_privkey.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_session.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_stlalloc.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_sysmsg.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_version.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\readcfg.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\unix_sig.c">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\client_map.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_netthread.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thmsg.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thpoolio.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\session.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_listen.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_nodemgr.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\srvcore.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\thread_srv.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\udp_listen.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\thread_iocp.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\src\ndapplib\Makefile">
+      <Filter>Source Files\ndapplib</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\nd_net\byte_order.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_iphdr.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_msgentry.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_netbyte.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_netcrypt.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_netioctl.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_netlib.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_netobj.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_netpack.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_netui.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_sock.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_srv.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_tcp.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_udp.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_udt.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_net\nd_udthdr.h">
+      <Filter>Header Files\nd_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\client_map.h">
+      <Filter>Header Files\nd_srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_epoll.h">
+      <Filter>Header Files\nd_srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_listensrv.h">
+      <Filter>Header Files\nd_srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_netthread.h">
+      <Filter>Header Files\nd_srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_session.h">
+      <Filter>Header Files\nd_srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_srvlib.h">
+      <Filter>Header Files\nd_srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_thpool.h">
+      <Filter>Header Files\nd_srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadmsgid.h">
+      <Filter>Header Files\nd_srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadsrv.h">
+      <Filter>Header Files\nd_srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\applib.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\httpParser.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_affair.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_alarms.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_cmmgr.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_connector.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_containerXL.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_datatransfer.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_httpListener.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_iBaseObj.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_instance.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_listener.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_lockhelper.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_msgpacket.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_object.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_objmgr.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_session.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_sysmsg.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\ndsingleton.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\readcfg.h">
+      <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_allocator.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_array.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_new.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_rbtree.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_reftree.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_safemap.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_stllist.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_stlmap.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_stlset.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_text.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_utility.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndstl\nd_vector.h">
+      <Filter>Header Files\ndstl</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

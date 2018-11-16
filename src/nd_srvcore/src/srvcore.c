@@ -10,17 +10,17 @@
 
 #if !defined(ND_UNIX) 
 
-#if defined(ND_COMPILE_AS_DLL)
-#pragma comment(lib, "Ws2_32.lib")
-
-#ifdef ND_DEBUG
-#pragma comment(lib, "nd_common_dbg.lib")
-#pragma comment(lib, "nd_net_dbg.lib")
-#else 
-#pragma comment(lib, "nd_common.lib")
-#pragma comment(lib, "nd_net.lib")
-#endif 
-#endif
+// #if defined(ND_COMPILE_AS_DLL)
+// #pragma comment(lib, "Ws2_32.lib")
+// 
+// #ifdef ND_DEBUG
+// #pragma comment(lib, "nd_common_dbg.lib")
+// #pragma comment(lib, "nd_net_dbg.lib")
+// #else 
+// #pragma comment(lib, "nd_common.lib")
+// #pragma comment(lib, "nd_net.lib")
+// #endif 
+// #endif
 
 extern int nd_iocp_node_init(struct nd_client_map_iocp *iocp_map,nd_handle h_listen) ;
 extern int iocp_close_client(struct nd_client_map_iocp *iocp_map, int force) ; 

@@ -16,22 +16,19 @@ class NDBaseSession;
 class NDListener ;
 class NDInstanceBase ;
 
-extern NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener);
+//extern NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener);
 
-class NDSessionMgr : public NDObjectMgrBase
+class  ND_COMMON_CLASS NDSessionMgr : public NDObjectMgrBase
 {
 public:	
-	NDBaseSession* GetObject(NDObjectMgrBase::iterator &it)
-	{
-		return NDGetSession((nd_handle)it.second,NULL) ;
-	}
+	NDBaseSession * GetObject(NDObjectMgrBase::iterator &it);
 	NDBaseSession* Lock(OBJECTID_T oid);
 	NDBaseSession* TryLock(OBJECTID_T oid);
 	NDSessionMgr(NDListener *listener) ;
 	NDSessionMgr(NDInstanceBase *inst) ;
 };
 
-class NDThreadSessionIterator 
+class  ND_COMMON_CLASS NDThreadSessionIterator
 {
 public:
 	NDThreadSessionIterator()  ;
@@ -49,7 +46,7 @@ private:
 	struct thread_pool_info *m_tpi;
 };
 //每个线程池的会话管理器
-class NDThreadSessionMgr
+class  ND_COMMON_CLASS NDThreadSessionMgr
 {
 public:
 	typedef NDThreadSessionIterator iterator;
