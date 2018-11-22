@@ -5,6 +5,19 @@
       location = "container:"
       name = "root">
       <Group
+         location = "container:"
+         name = "src">
+         <FileRef
+            location = "group:../src/build-lib">
+         </FileRef>
+         <FileRef
+            location = "group:../src/Makefile">
+         </FileRef>
+         <FileRef
+            location = "group:../src/Rules.make">
+         </FileRef>
+      </Group>
+      <Group
          location = "group:../cfg"
          name = "cfg">
          <FileRef

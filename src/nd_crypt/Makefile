@@ -9,21 +9,12 @@
 
 include ../Rules.make
 
-
-
 #create objdir
 objdir := $(shell [ -d obj ] || mkdir obj) 
-
 
 ##############set flag
 
 CFLAGS += -I$(TOPDIR)/include -I$(TOPDIR)/include/nd_crypt/rsah -I$(TOPDIR)/include/nd_crypt
-
-ifeq ($(DEBUG),y)
-   PROJS = $(LIBDIR)/libnd_crypt_dbg.a
-else 
-   PROJS = $(LIBDIR)/libnd_crypt.a
-endif
 
 ######################
 
@@ -49,18 +40,39 @@ PathOBJS += $(PathOBJSrsa)
 ##########make 
 ##############################################################
 
+ifeq ($(DEBUG),y)
+	PROJS = $(LIBDIR)/libnd_crypt_dbg.a
+	DLLPROJS = $(LIBDIR)/libnd_crypt_dbg.so
+else 
+	PROJS = $(LIBDIR)/libnd_crypt.a
+	DLLPROJS = $(LIBDIR)/libnd_crypt.so
+endif
+
+ifeq ($(BUILD_DLL),y)
+   PROJS = $(DLLPROJS)
+   LOCAL_CFLAG =  $(CFLAGS) -fPIC
+   LibFLAGS += -lnd_common_dbg -L$(LIBDIR)
+else 
+   LOCAL_CFLAG =  $(CFLAGS) 
+endif
+
 
 all: $(PROJS)
 
 $(PROJS): $(OBJS)
 	$(AR) $(PROJS)  $(PathOBJS) $(LibFLAGS) 
-	
+
+$(DLLPROJS): $(OBJS)
+	$(CC_DLL) -fPIC -o $(DLLPROJS)  $(PathOBJS) $(LibFLAGS) -liconv
+
 .c.o:
-	$(CC) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
+	$(CC) $(INCLUDE) $(LOCAL_CFLAG) -o $(OBJDIR)/$*.o $<
+
+
 #.cpp.o:
 #	$(GPP) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
 	
 clean:
-	rm -f $(PROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
+	rm -f $(PROJS) $(DLLPROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
 
 

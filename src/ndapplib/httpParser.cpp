@@ -6,8 +6,8 @@
 //  Copyright (c) 2015年 duanxiuyun. All rights reserved.
 //
 
+#include "ndapplib/applib.h"
 #include "ndapplib/httpParser.h"
-#include "ndapplib/nd_listener.h"
 
 char *parser_valid( char *src, int size)
 {

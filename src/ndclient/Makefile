@@ -16,11 +16,6 @@ objdir := $(shell [ -d obj ] || mkdir obj)
 
 CFLAGS += -I$(TOPDIR)/include 
 
-ifeq ($(DEBUG),y)
-   PROJS = $(LIBDIR)/libndclient_dbg.a
-else 
-   PROJS = $(LIBDIR)/libndclient.a
-endif
 
 ######################
 
@@ -32,17 +27,41 @@ PathOBJS := $(OBJDIR)/msg_format.o $(OBJDIR)/nd_client.o $(OBJDIR)/nd_connector.
 ##############################################################
 
 
+LibFLAGS += -L$(LIBDIR)
+
+ifeq ($(DEBUG),y)
+	PROJS = $(LIBDIR)/libndclient_dbg.a
+	DLLPROJS = $(LIBDIR)/libndclient_dbg.so
+	LibFLAGS += -lnd_common_dbg -lnd_crypt_dbg -lnd_net_dbg -lndclient_pack_dbg
+else 
+	PROJS = $(LIBDIR)/libndclient.a
+	DLLPROJS = $(LIBDIR)/libndclient.so
+	LibFLAGS += -lnd_common -lnd_crypt  -lnd_net -lndclient_pack
+endif
+
+ifeq ($(BUILD_DLL),y)
+   PROJS = $(DLLPROJS)
+   LOCAL_CFLAG =  $(CFLAGS) -fPIC
+else 
+   LOCAL_CFLAG =  $(CFLAGS) 
+endif
+
+
 all: $(PROJS)
 
 $(PROJS): $(OBJS)
-	$(AR) $(PROJS)  $(PathOBJS) $(LibFLAGS) 
-	
+	$(AR) $(PROJS)  $(PathOBJS) 
+
+$(DLLPROJS): $(OBJS)
+	$(CPP_DLL) -fPIC -o $(DLLPROJS)  $(PathOBJS) $(LibFLAGS) -liconv
+
 .c.o:
-	$(CC) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
+	$(CC) $(INCLUDE) $(LOCAL_CFLAG) -o $(OBJDIR)/$*.o $<
+
 .cpp.o:
-	$(CPP) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
+	$(CPP) $(INCLUDE) $(LOCAL_CFLAG) -o $(OBJDIR)/$*.o $<
 	
 clean:
-	rm -f $(PROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
+	rm -f $(PROJS) $(DLLPROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
 
 

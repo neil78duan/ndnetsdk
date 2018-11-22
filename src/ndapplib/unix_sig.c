@@ -11,7 +11,7 @@
 #include <signal.h>
 
 
-extern void nd_instance_exit(int flag) ;
+//extern void nd_instance_exit(int flag) ;
 
 extern void nd_sys_exit(int exitcode) ;
 char *sig_desc[] = {

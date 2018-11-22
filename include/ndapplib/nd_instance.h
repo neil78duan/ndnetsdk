@@ -23,12 +23,30 @@
 #include <crtdbg.h>
 #endif
 
+
+typedef int (*exit_app_func)(int flag) ;
+ND_APPLIB_API int nd_end_server(int force);
+
+ND_APPLIB_API int system_signals_init() ;
+ND_APPLIB_API int wait_services() ;
+ND_APPLIB_API void exit_instance(int flag) ;
+#ifdef ND_UNIX
+ND_APPLIB_API int nd_wait_terminate_signals();
+ND_APPLIB_API int nd_signals_init();
+#else
+ND_APPLIB_API BOOL WINAPI winclose_entry(DWORD dwevent);
+#endif //_WINDOWS
+
+ND_APPLIB_API void _error_exit(const char *file, int line,const char *stm,...) ;
+ND_APPLIB_API void nd_set_exit_callback(exit_app_func func) ;
+ND_APPLIB_API void nd_instance_exit(int flag);
+
+ND_APPLIB_API void nd_sys_exit(int exitcode) ;
+
 #define ND_CUR_VERSION 0x1
 class NDListener ;
 class NDConnector;
 class NDSafeListener;
-//·þÎñÆ÷ÊµÀý
-
 
 class  ND_COMMON_CLASS NDInstanceBase : public NDAlarm
 {

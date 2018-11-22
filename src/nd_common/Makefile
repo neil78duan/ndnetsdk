@@ -19,11 +19,6 @@ objdir := $(shell [ -d obj ] || mkdir obj)
 
 CFLAGS += -I$(TOPDIR)/include 
 
-ifeq ($(DEBUG),y)
-   PROJS = $(LIBDIR)/libnd_common_dbg.a
-else 
-   PROJS = $(LIBDIR)/libnd_common.a
-endif
 
 ######################
 
@@ -40,16 +35,34 @@ PathOBJS :=$(patsubst %.c, $(OBJDIR)/%.o, $(SRC) )
 #########make 
 ##############################################################
 
+ifeq ($(DEBUG),y)
+	PROJS = $(LIBDIR)/libnd_common_dbg.a
+	DLLPROJS = $(LIBDIR)/libnd_common_dbg.so
+else 
+	PROJS = $(LIBDIR)/libnd_common.a
+	DLLPROJS = $(LIBDIR)/libnd_common.so
+endif
+
+ifeq ($(BUILD_DLL),y)
+   PROJS = $(DLLPROJS)
+   LOCAL_CFLAG =  $(CFLAGS) -fPIC
+else 
+   LOCAL_CFLAG =  $(CFLAGS) 
+endif
+
 
 all: $(PROJS)
 
 $(PROJS): $(OBJS)
-	$(AR) $(PROJS)  $(PathOBJS) $(LibFLAGS) 
-	
+	$(AR) $(PROJS)  $(PathOBJS)  
+
+$(DLLPROJS): $(OBJS)
+	$(CC_DLL) -fPIC -o $(DLLPROJS)  $(PathOBJS) $(LibFLAGS) -liconv
+
 .c.o:
-	$(CC) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
+	$(CC) $(INCLUDE) $(LOCAL_CFLAG) -o $(OBJDIR)/$*.o $<
 #.cpp.o:
 #	$(GPP) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
 	
 clean:
-	rm -f $(PROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
+	rm -f $(PROJS) $(DLLPROJS) $(PathOBJS)  $(PathOBJS:.o=.d)

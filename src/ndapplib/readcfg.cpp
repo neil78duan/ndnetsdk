@@ -131,10 +131,10 @@ int read_instance_info(ndxml *xmlroot, struct instance_config *icfg)
 int read_base_port(ndxml *xmlroot)
 {
 	ndxml *xml_sub = ndxml_refsub(xmlroot,"base_port") ;
-	if (!xml_sub){
-		T_ERROR("read base port error") ;
+	if (xml_sub) {
+		return ndxml_getval_int(xml_sub);
 	}
-	return ndxml_getval_int(xml_sub) ;
+	return 0;
 };
 
 int read_iplist(ndxml *xmlnode, ndip_t *ipbuf, int num )
@@ -172,7 +172,7 @@ int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg)
 	int base_port = read_base_port(xmlroot) ;
 
 	memset(scfg, 0, sizeof(scfg)) ;
-	if (0==base_port) {
+	if (-1==base_port) {
 		return -1;
 	}
 	

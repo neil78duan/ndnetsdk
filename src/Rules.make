@@ -86,5 +86,7 @@ TMPPARAM1 = $(shell  [ -d  $(LIBDIR) ] || mkdir $(LIBDIR))
 CC = cc
 CPP = c++
 AR = ar rv
+CC_DLL= cc -shared
+CPP_DLL= c++ -shared
 
 

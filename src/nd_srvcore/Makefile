@@ -16,12 +16,6 @@ objdir := $(shell [ -d obj ] || mkdir obj)
 ##############set flag
 CFLAGS += -I$(TOPDIR)/include
 
-ifeq ($(DEBUG),y)
-	PROJS = $(LIBDIR)/libnd_srvcore_dbg.a
-else 
-	PROJS = $(LIBDIR)/libnd_srvcore.a
-endif
-
 ######################
 
 VPATH :=  $(SRCDIR)  $(OBJDIR)
@@ -35,16 +29,38 @@ PathOBJS :=$(patsubst %.c, $(OBJDIR)/%.o, $(SRC) )
 ##########make 
 ##############################################################
 
+LibFLAGS += -L$(LIBDIR)
+
+ifeq ($(DEBUG),y)
+	PROJS = $(LIBDIR)/libnd_srvcore_dbg.a
+	DLLPROJS = $(LIBDIR)/libnd_srvcore_dbg.so
+	LibFLAGS += -lnd_common_dbg -lnd_crypt_dbg -lnd_net_dbg
+else 
+	PROJS = $(LIBDIR)/libnd_srvcore.a
+	DLLPROJS = $(LIBDIR)/libnd_srvcore.so
+	LibFLAGS += -lnd_common -lnd_crypt  -lnd_net
+endif
+
+ifeq ($(BUILD_DLL),y)
+   PROJS = $(DLLPROJS)
+   LOCAL_CFLAG =  $(CFLAGS) -fPIC
+else 
+   LOCAL_CFLAG =  $(CFLAGS) 
+endif
+
 
 all: $(PROJS)
 
 $(PROJS): $(OBJS)
 	$(AR) $(PROJS)  $(PathOBJS) 
-	
+
+$(DLLPROJS): $(OBJS)
+	$(CC_DLL) -fPIC -o $(DLLPROJS)  $(PathOBJS) $(LibFLAGS) -liconv
+
 .c.o:
-	$(CC) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
+	$(CC) $(INCLUDE) $(LOCAL_CFLAG) -o $(OBJDIR)/$*.o $<
 #.cpp.o:
 #	$(GPP) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
 	
 clean:
-	rm -f $(PROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
+	rm -f $(PROJS) $(DLLPROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
