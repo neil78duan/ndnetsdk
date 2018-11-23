@@ -15,6 +15,12 @@ debug:
 release:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n DEBUG="n" PROFILE="n" || exit 1; done
 
+dll:
+	echo "make dll success!"
+dll_debug:
+	echo "make dll-debug success!"
+dll_release:
+	echo "make dll-release success!"
 	
 clean:
 	rm -f *.o *~

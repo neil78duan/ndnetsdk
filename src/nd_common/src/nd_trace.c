@@ -177,10 +177,8 @@ void nd_sourcelog_dump()
 
 #undef  __LOCK
 #undef __UNLOCK
-#endif		//ND_DEBUG
 
-
-#if defined(ND_FILE_TRACE) && defined(ND_SOURCE_TRACE)
+#if defined(ND_FILE_TRACE) 
 
 #ifdef _ND_TRACE_H_
 #error not include nd_common.h
@@ -199,3 +197,6 @@ void nd_fclose_dbg(FILE *fp)
 }
 
 #endif
+
+#endif		//ND_DEBUG
+

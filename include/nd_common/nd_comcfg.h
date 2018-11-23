@@ -20,27 +20,6 @@
 #define ND_ENCODE_GBK		E_SRC_CODE_GBK
 #define ND_ENCODE_ANSI		E_SRC_CODE_ANSI
 
-//source code compiled encode
-//define platform
-/*
- __ND_MAC__		//MAC_OS
- __ND_LINUX__	//linux
- __ND_IOS__		//iOS
- __ND_ANDROID__ // android 
- __ND_WIN__		//WIN32 WIN64
- __ND_BSD__		//freebsd bsd...
-
- 
- ND_SERVER //build for server
- ND_CLIENT //build for client 
- WITHOUT_ICONV //without iconv
- _GUI_TOOL_ // for gui tool
- ND_UNIX // UNIX-LIKE platform un-windows
- ND_COMPILE_AS_DLL //build as dll
- ND_UNICODE //inter-char as unicode-16
- BUILD_AS_STATIC_LIB //build as static lib
- 
-*/
 
 #ifdef _MSC_VER
 #define ND_ENCODE_TYPE E_SRC_CODE_GBK
@@ -50,27 +29,111 @@
 #endif  //_MSC_VER
 
 #else
-
 #define ND_ENCODE_TYPE E_SRC_CODE_UTF_8
-#define ND_UNIX 
-
+#define ND_UNIX			//unix like system
 #endif
-
-#define BUILD_AS_STATIC_LIB 1 
-#define ND_BUFSIZE 4096						
+			
 #define ND_FILE_PATH_SIZE	1024
 #define NOT_SUPPORT_THIS_FUNCTION 0			// old linux version
 #define ND_MULTI_THREADED 1				// must be define 
 #define ND_MAX_THREAD_NUM 16			//for server
 
-#ifdef ND_CLIENT_ONLY
+//---------------------------------------------------------begin platform define
+ //source code compiled encode
+ //define platform
+ /*
+ __ND_MAC__		//MAC_OS
+ __ND_LINUX__	//linux
+ __ND_IOS__		//iOS
+ __ND_ANDROID__ // android
+ __ND_WIN__		//WIN32 WIN64
+ __ND_BSD__		//freebsd bsd...
 
-#include "nd_common/_client_config.h"
+ #define ND_OPEN_TRACE		1
+ #define ND_OPEN_LOG_COMMON 	1
+ #define ND_OPEN_LOG_DEBUG	1
+ #define ND_OPEN_LOG_WARN	1
+ #define ND_OPEN_LOG_ERROR	1
+ #define ND_OPEN_LOG_FATAL	1
+ #define ND_SOURCE_TRACE		1
+ #define ND_FILE_TRACE		1
+ #define ND_OUT_LOG_2CTRL	1
+ #define ND_OUT_LOG_2FILE	1
+ #define ND_MEM_CHECK		1
+ #define ND_USE_MSGBOX		1
+ #define ND_LOG_WITH_SOURCE	1
+ #define ND_LOG_WITH_TIME	1
+ #define ND_MEM_STATICS		1		// statics memory used info and check mm-leak
+ #define ND_UNUSE_STDC_ALLOC 1		// use nd_alloc replace
+ #define ND_OVER_RIDE_NEW	1		// use myself new/delete
+ #define ND_CALLSTACK_TRACE	1		//trace function call
+ #define ND_LOG_WITH_ND_MARK 1 		//log with nd-log different other module
+ #define WITHOUT_ICONV		1		// do not compile iconv-functions
 
-#else
+ */
 
-#include "nd_common/_server_config.h"
+#if defined(__ND_IOS__)	|| defined(__ND_ADNROID__)	// define IOS Android
 
-#endif
+#define ND_PLATFORM "ARM"
+
+#define WITHOUT_ICONV		1
+#define ND_LOG_WITH_ND_MARK 1 			//log with nd-log different other module
+
+#define ND_OPEN_LOG_COMMON 	1
+//#define ND_OPEN_LOG_DEBUG	1
+#define ND_OPEN_LOG_WARN	1
+#define ND_OPEN_LOG_ERROR	1
+#define ND_OPEN_LOG_FATAL	1
+//#define ND_OUT_LOG_2CTRL	1
+
+#else  	
+
+#define ND_PLATFORM "x86"
+
+#define ND_OPEN_LOG_COMMON 	1
+#define ND_OPEN_LOG_WARN	1
+#define ND_OPEN_LOG_ERROR	1
+#define ND_OPEN_LOG_FATAL	1
+#define ND_OUT_LOG_2FILE	1
+#define ND_LOG_WITH_SOURCE	1
+#define ND_LOG_WITH_TIME	1
+#define ND_LOG_WITH_DATE	1
+#define ND_CALLSTACK_TRACE	1			//trace function call
+
+
+#ifdef ND_DEBUG					//---------------------------define debug--------------
+
+#define ND_OUT_LOG_2CTRL	1
+#define ND_OPEN_TRACE		1		//vs TRACE
+#define ND_OPEN_LOG_DEBUG	1
+#define ND_SOURCE_TRACE		1
+#define ND_FILE_TRACE		1
+#define ND_TRACE_MESSAGE	1
+#define ND_MEM_CHECK		1
+#define ND_USE_MSGBOX		1
+#define ND_MEM_STATICS		1
+#define ND_UNUSE_STDC_ALLOC 1
+#define ND_OVER_RIDE_NEW	1
+
+#else //-------------------------------------release -----------------------------
+
+#if defined(__ND_WIN__) 
+
+#define ND_OUT_LOG_2CTRL	1
+#define ND_UNUSE_STDC_ALLOC 1
+#define ND_OVER_RIDE_NEW	1
+
+#elif defined(__ND_LINUX__)
+#define ND_LOG_PATH_WITH_DATE 1			//output log one day one direct
+#elif defined(__ND_MAC__)
+#else 
+#error unknown platform !!!!!!!!!!!!!!!!!
+#endif 
+
+#endif		//---------------------------------debug --------------------------
+
+
+#endif 	//-----------------------------platform----------------------
+
 
 #endif

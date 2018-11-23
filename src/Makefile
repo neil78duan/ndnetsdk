@@ -27,9 +27,11 @@ dll_release:
 
 clean:
 	rm -f *.o *~
+	for n in $(SUBDIRS); do $(MAKE) -C $$n clean ; done
+
+uninstall:
 	rm -f ../lib/*.a  ../lib/*.so
 	rm -f ../lib/$(AIM_NAME)/*.a ../lib/$(AIM_NAME)/*.so
-	for n in $(SUBDIRS); do $(MAKE) -C $$n clean ; done
 
 checkthem:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n checkthem; done

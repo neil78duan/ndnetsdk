@@ -119,12 +119,6 @@
     <ClInclude Include="..\..\..\include\nd_vm\nd_vm.h">
       <Filter>Header Files\ndvm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_common\_client_config.h">
-      <Filter>Header Files\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_common\_server_config.h">
-      <Filter>Header Files\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\cJSON.h">
       <Filter>Header Files\common</Filter>
     </ClInclude>

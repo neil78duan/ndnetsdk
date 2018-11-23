@@ -16,9 +16,19 @@ debug:
 
 release:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n release || exit 1; done
-	
+
+dll: dll_debug
+
+dll_debug:
+	for n in $(SUBDIRS); do $(MAKE) -C $$n dll_debug || exit 1; done
+dll_release:
+	for n in $(SUBDIRS); do $(MAKE) -C $$n dll_release || exit 1; done
+
 clean:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n clean ; done
+
+uninstall:
+	cd src; make uninstall
 
 checkthem:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n checkthem ; done

@@ -54,7 +54,9 @@ else
 endif
 
 
-all: $(PROJS)
+#all: $(PROJS)
+
+all : $(OBJS)
 
 $(PROJS): $(OBJS)
 	$(AR) $(PROJS)  $(PathOBJS) 

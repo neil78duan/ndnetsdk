@@ -51,10 +51,12 @@ else
 endif
 
 
-all: $(PROJS)
+#all: $(PROJS)
 
-$(PROJS): $(OBJS)
-	$(AR) $(PROJS)  $(PathOBJS)  
+#$(PROJS): $(OBJS)
+#	$(AR) $(PROJS)  $(PathOBJS)  
+
+all : $(OBJS)
 
 $(DLLPROJS): $(OBJS)
 	$(CC_DLL) -fPIC -o $(DLLPROJS)  $(PathOBJS) $(LibFLAGS) -liconv

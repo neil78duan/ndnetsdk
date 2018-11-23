@@ -41,12 +41,12 @@ OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_datatransfer.o
 
 ifeq ($(BUILD_DLL),y)
 	
-	PROJ_CLIENT_DLL = $(LIBOUTPUT)/lib$(CLIENT_LIB).so
-	PROJ_SRV_DLL = $(LIBOUTPUT)/lib$(SRV_LIB).so
-	PROJ_COMMON_DLL = $(LIBOUTPUT)/lib$(COMMON_LIB).so
+	PROJ_CLIENT_DLL = $(LIBOUTPUT)/lib$(CLIENT_DLL).so
+	PROJ_SRV_DLL = $(LIBOUTPUT)/lib$(SRV_DLL).so
+	PROJ_COMMON_DLL = $(LIBOUTPUT)/lib$(COMMON_DLL).so
 
 	DLL_OBJS = $(PROJ_SRV_DLL) $(PROJ_CLIENT_DLL) $(PROJ_COMMON_DLL)
-	ALL_PROJS = $(ALL_PROJS)
+	ALL_PROJS = $(DLL_OBJS)
 
 	LOCAL_CFLAG =  $(CFLAGS) -fPIC
 else
@@ -86,8 +86,8 @@ $(PROJ_CLIENT_DLL): $(OBJ_CLIENT)
 $(PROJ_COMMON_DLL): $(OBJ_COMMON)
 	$(CPP_DLL) -fPIC -o $(PROJ_COMMON_DLL) $(OBJS_SRV) $(LibFLAGS) -liconv
 
-clean:
-	rm -f $(ALL_PROJS) $(DLL_OBJS)
+#clean:
+#	rm -f $(ALL_PROJS) $(DLL_OBJS)
 	
 
 ###############create dependence file #############

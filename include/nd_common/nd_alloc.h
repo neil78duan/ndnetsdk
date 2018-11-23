@@ -54,9 +54,9 @@ static __INLINE__ void *nd_realloc(void *oldp, size_t newsize)
 }
 
 
-#define malloc(__n)		nd_malloc(__n,__FILE__, __LINE__) 
-#define free(__p)		nd_free(__p)
-#define realloc(__p,__s)		nd_realloc(__p,__s)
+#define malloc(__n)			nd_malloc(__n,__FILE__, __LINE__) 
+#define free(__p)			nd_free(__p)
+#define realloc(__p,__s)	nd_realloc(__p,__s)
 
 #else 
 #endif	//	ND_UNUSE_STDC_ALLOC

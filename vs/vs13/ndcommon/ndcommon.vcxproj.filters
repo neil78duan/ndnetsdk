@@ -102,9 +102,6 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_xml.h">
       <Filter>Header Files\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_common\_client_config.h">
-      <Filter>Header Files\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\_nderr.h">
       <Filter>Header Files\common</Filter>
     </ClInclude>
@@ -121,9 +118,6 @@
       <Filter>Header Files\nd_crypt</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\nd_export_def.h">
-      <Filter>Header Files\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_common\_server_config.h">
       <Filter>Header Files\common</Filter>
     </ClInclude>
   </ItemGroup>

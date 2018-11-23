@@ -51,7 +51,9 @@ else
 endif
 
 
-all: $(PROJS) $(PROJ_CLIENT)
+#all: $(PROJS) $(PROJ_CLIENT)
+
+all : $(OBJS)
 
 $(PROJS): $(OBJS)
 	$(AR) $(PROJS)  $(PathOBJS) 

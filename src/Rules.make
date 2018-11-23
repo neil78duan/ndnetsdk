@@ -35,7 +35,7 @@ OBJDIR = $(CURDIR)/obj
 
 WORKDIR = $(TOPDIR)/bin/$(AIM_NAME)
 LIBDIR = $(TOPDIR)/lib/$(AIM_NAME)
-LIBOUTPUT = $(TOPDIR)/lib
+LIBOUTPUT = $(TOPDIR)/lib/$(AIM_NAME)
 
 ifeq ($(OS_kernel),linux)
     CFLAGS += -D__ND_LINUX__
@@ -57,14 +57,23 @@ ifeq ($(DEBUG),y)
     else
     endif
 
-    CLIENT_LIB := ndclient_$(AIM_NAME)_d
-    SRV_LIB := ndsdk_$(AIM_NAME)_d
-	COMMON_LIB := ndcommon_$(AIM_NAME)_d
+    CLIENT_LIB := ndclient_s_d
+    SRV_LIB := ndsrv_s_d
+	COMMON_LIB := ndcommon_s_d
+
+	CLIENT_DLL := ndclient_d
+	SRV_DLL := ndsrv_d
+	COMMON_DLL := ndcommon_d
 else
     CFLAGS += -DNDEBUG
-    CLIENT_LIB := ndclient_$(AIM_NAME)
-    SRV_LIB := ndsdk_$(AIM_NAME)
-	COMMON_LIB := ndcommon_$(AIM_NAME)
+
+    CLIENT_LIB := ndclient_s
+    SRV_LIB := ndsrv_s
+	COMMON_LIB := ndcommon_s
+
+	CLIENT_DLL := ndclient
+	SRV_DLL := ndsrv
+	COMMON_DLL := ndcommon
 endif
 
 PLATFORM_BITS =  $(shell  getconf LONG_BIT )
