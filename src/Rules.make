@@ -39,11 +39,12 @@ LIBOUTPUT = $(TOPDIR)/lib/$(AIM_NAME)
 
 ifeq ($(OS_kernel),linux)
     CFLAGS += -D__ND_LINUX__
+	DLL_EXT_NAME := so
 endif
 ifeq ($(OS_kernel),darwin)
     CFLAGS += -D__ND_MAC__
 	LFLAGS += -liconv
-
+	DLL_EXT_NAME := dylib
 endif
 
 CFLAGS += -c -w -O
@@ -83,6 +84,16 @@ ifeq ($(PLATFORM_BITS),64)
 else
 endif
 
+ND_LIBOUTPUT := $(LIBOUTPUT)
+ND_CLIENT_LIB := $(ND_LIBOUTPUT)/lib$(CLIENT_LIB).a
+ND_SRV_LIB := $(ND_LIBOUTPUT)/lib$(SRV_LIB).a
+ND_COMMON_LIB := $(ND_LIBOUTPUT)/lib$(COMMON_LIB).a
+
+ND_CLIENT_DLL := $(ND_LIBOUTPUT)/lib$(CLIENT_DLL).$(DLL_EXT_NAME)
+ND_SRV_DLL := $(ND_LIBOUTPUT)/lib$(SRV_DLL).$(DLL_EXT_NAME)
+ND_COMMON_DLL := $(ND_LIBOUTPUT)/lib$(COMMON_DLL).$(DLL_EXT_NAME)
+
+SYS_INSTALL_PATH := /usr/lib
 
 #create objdir
 

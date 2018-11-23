@@ -8,6 +8,51 @@
 
 /* Begin PBXBuildFile section */
 		07272F232137FDCE00D66BB0 /* nd_logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 07272F222137FDCE00D66BB0 /* nd_logger.c */; };
+		0757AA3521A7D5B8001BAE36 /* nd_logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 07272F222137FDCE00D66BB0 /* nd_logger.c */; };
+		0757AA3621A7D5B8001BAE36 /* bintree.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89F4207C6BE800090DFD /* bintree.c */; };
+		0757AA3721A7D5B8001BAE36 /* callstack.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89F5207C6BE800090DFD /* callstack.c */; };
+		0757AA3821A7D5B8001BAE36 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89F6207C6BE800090DFD /* cJSON.c */; };
+		0757AA3921A7D5B8001BAE36 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89F7207C6BE800090DFD /* common.c */; };
+		0757AA3A21A7D5B8001BAE36 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89F8207C6BE800090DFD /* nd_cmdline.c */; };
+		0757AA3B21A7D5B8001BAE36 /* nd_handle.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89F9207C6BE800090DFD /* nd_handle.c */; };
+		0757AA3C21A7D5B8001BAE36 /* nd_iconv.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89FA207C6BE800090DFD /* nd_iconv.c */; };
+		0757AA3D21A7D5B8001BAE36 /* nd_mempool.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89FB207C6BE800090DFD /* nd_mempool.c */; };
+		0757AA3E21A7D5B8001BAE36 /* nd_mutex.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89FC207C6BE800090DFD /* nd_mutex.c */; };
+		0757AA3F21A7D5B8001BAE36 /* nd_static_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89FD207C6BE800090DFD /* nd_static_alloc.c */; };
+		0757AA4021A7D5B8001BAE36 /* nd_str.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89FE207C6BE800090DFD /* nd_str.c */; };
+		0757AA4121A7D5B8001BAE36 /* nd_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89FF207C6BE800090DFD /* nd_time.c */; };
+		0757AA4221A7D5B8001BAE36 /* nd_timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A00207C6BE800090DFD /* nd_timer.c */; };
+		0757AA4321A7D5B8001BAE36 /* nd_trace.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A01207C6BE800090DFD /* nd_trace.c */; };
+		0757AA4421A7D5B8001BAE36 /* nd_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A02207C6BE800090DFD /* nd_unix.c */; };
+		0757AA4521A7D5B8001BAE36 /* nd_win.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A03207C6BE800090DFD /* nd_win.c */; };
+		0757AA4621A7D5B8001BAE36 /* nd_xml.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A04207C6BE800090DFD /* nd_xml.c */; };
+		0757AA4721A7D5B8001BAE36 /* nddir.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A05207C6BE800090DFD /* nddir.c */; };
+		0757AA4821A7D5B8001BAE36 /* node_mgr.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A06207C6BE800090DFD /* node_mgr.c */; };
+		0757AA4921A7D5B8001BAE36 /* recbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A07207C6BE800090DFD /* recbuf.c */; };
+		0757AA4A21A7D5DA001BAE36 /* desc.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A1F207C6BE800090DFD /* desc.c */; };
+		0757AA4B21A7D5DA001BAE36 /* digit.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A20207C6BE800090DFD /* digit.c */; };
+		0757AA4C21A7D5DA001BAE36 /* md2c.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A21207C6BE800090DFD /* md2c.c */; };
+		0757AA4D21A7D5DA001BAE36 /* md5c.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A22207C6BE800090DFD /* md5c.c */; };
+		0757AA4E21A7D5DA001BAE36 /* nn.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A23207C6BE800090DFD /* nn.c */; };
+		0757AA4F21A7D5DA001BAE36 /* prime.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A24207C6BE800090DFD /* prime.c */; };
+		0757AA5021A7D5DA001BAE36 /* r_dh.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A25207C6BE800090DFD /* r_dh.c */; };
+		0757AA5121A7D5DA001BAE36 /* r_encode.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A26207C6BE800090DFD /* r_encode.c */; };
+		0757AA5221A7D5DA001BAE36 /* r_enhanc.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A27207C6BE800090DFD /* r_enhanc.c */; };
+		0757AA5321A7D5DA001BAE36 /* r_keygen.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A28207C6BE800090DFD /* r_keygen.c */; };
+		0757AA5421A7D5DA001BAE36 /* r_random.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A29207C6BE800090DFD /* r_random.c */; };
+		0757AA5521A7D5DA001BAE36 /* r_stdlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A2A207C6BE800090DFD /* r_stdlib.c */; };
+		0757AA5621A7D5DA001BAE36 /* rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A2B207C6BE800090DFD /* rsa.c */; };
+		0757AA5721A7D5DA001BAE36 /* nd_cryptfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A2D207C6BE800090DFD /* nd_cryptfile.c */; };
+		0757AA5821A7D5DA001BAE36 /* nd_pubkey.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A2E207C6BE800090DFD /* nd_pubkey.c */; };
+		0757AA5921A7D5DA001BAE36 /* ndcrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A2F207C6BE800090DFD /* ndcrypt.c */; };
+		0757AA5A21A7D5DA001BAE36 /* ndrsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A30207C6BE800090DFD /* ndrsa.c */; };
+		0757AA5B21A7D5DA001BAE36 /* tea.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A31207C6BE800090DFD /* tea.c */; };
+		0757AA5C21A7D5DA001BAE36 /* nd_asm.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7A207C6BE800090DFD /* nd_asm.c */; };
+		0757AA5D21A7D5DA001BAE36 /* nd_formula.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7B207C6BE800090DFD /* nd_formula.c */; };
+		0757AA5E21A7D5DA001BAE36 /* nd_vm.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7C207C6BE800090DFD /* nd_vm.c */; };
+		0757AA5F21A7D5DA001BAE36 /* nd_vmdbg.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7D207C6BE800090DFD /* nd_vmdbg.c */; };
+		0757AA6021A7D5DA001BAE36 /* nd_vmmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7E207C6BE800090DFD /* nd_vmmain.c */; };
+		0757AA6321A7D5F6001BAE36 /* libiconv.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0757AA6221A7D5F6001BAE36 /* libiconv.2.tbd */; };
 		077B8AE4207C6BE800090DFD /* _client_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8966207C6BE800090DFD /* _client_config.h */; };
 		077B8AE5207C6BE800090DFD /* _nderr.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8967207C6BE800090DFD /* _nderr.h */; };
 		077B8AE6207C6BE800090DFD /* _server_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8968207C6BE800090DFD /* _server_config.h */; };
@@ -105,6 +150,8 @@
 
 /* Begin PBXFileReference section */
 		07272F222137FDCE00D66BB0 /* nd_logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_logger.c; sourceTree = "<group>"; };
+		0757AA3121A7D4E1001BAE36 /* libndcommon_dll.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndcommon_dll.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0757AA6221A7D5F6001BAE36 /* libiconv.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.tbd; path = usr/lib/libiconv.2.tbd; sourceTree = SDKROOT; };
 		077B895C207C6BAB00090DFD /* libndcommon_mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndcommon_mac.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		077B8966207C6BE800090DFD /* _client_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _client_config.h; sourceTree = "<group>"; };
 		077B8967207C6BE800090DFD /* _nderr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
@@ -205,6 +252,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0757AA2E21A7D4E1001BAE36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0757AA6321A7D5F6001BAE36 /* libiconv.2.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		077B8959207C6BAB00090DFD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -215,12 +270,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0757AA6121A7D5F6001BAE36 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0757AA6221A7D5F6001BAE36 /* libiconv.2.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		077B8953207C6BAA00090DFD = {
 			isa = PBXGroup;
 			children = (
 				077B8964207C6BE800090DFD /* include */,
 				077B89D7207C6BE800090DFD /* src */,
 				077B895D207C6BAB00090DFD /* Products */,
+				0757AA6121A7D5F6001BAE36 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -228,6 +292,7 @@
 			isa = PBXGroup;
 			children = (
 				077B895C207C6BAB00090DFD /* libndcommon_mac.a */,
+				0757AA3121A7D4E1001BAE36 /* libndcommon_dll.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -436,6 +501,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		0757AA2F21A7D4E1001BAE36 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		077B895A207C6BAB00090DFD /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -492,6 +564,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0757AA3021A7D4E1001BAE36 /* ndcommon_dll */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0757AA3421A7D4E1001BAE36 /* Build configuration list for PBXNativeTarget "ndcommon_dll" */;
+			buildPhases = (
+				0757AA2D21A7D4E1001BAE36 /* Sources */,
+				0757AA2E21A7D4E1001BAE36 /* Frameworks */,
+				0757AA2F21A7D4E1001BAE36 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ndcommon_dll;
+			productName = ndcommon_dll;
+			productReference = 0757AA3121A7D4E1001BAE36 /* libndcommon_dll.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		077B895B207C6BAB00090DFD /* ndcommon_mac */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 077B8960207C6BAB00090DFD /* Build configuration list for PBXNativeTarget "ndcommon_mac" */;
@@ -518,6 +607,10 @@
 				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = duanxiuyun;
 				TargetAttributes = {
+					0757AA3021A7D4E1001BAE36 = {
+						CreatedOnToolsVersion = 9.3.1;
+						ProvisioningStyle = Automatic;
+					};
 					077B895B207C6BAB00090DFD = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
@@ -537,11 +630,63 @@
 			projectRoot = "";
 			targets = (
 				077B895B207C6BAB00090DFD /* ndcommon_mac */,
+				0757AA3021A7D4E1001BAE36 /* ndcommon_dll */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0757AA2D21A7D4E1001BAE36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0757AA4A21A7D5DA001BAE36 /* desc.c in Sources */,
+				0757AA4B21A7D5DA001BAE36 /* digit.c in Sources */,
+				0757AA4C21A7D5DA001BAE36 /* md2c.c in Sources */,
+				0757AA4D21A7D5DA001BAE36 /* md5c.c in Sources */,
+				0757AA4E21A7D5DA001BAE36 /* nn.c in Sources */,
+				0757AA4F21A7D5DA001BAE36 /* prime.c in Sources */,
+				0757AA5021A7D5DA001BAE36 /* r_dh.c in Sources */,
+				0757AA5121A7D5DA001BAE36 /* r_encode.c in Sources */,
+				0757AA5221A7D5DA001BAE36 /* r_enhanc.c in Sources */,
+				0757AA5321A7D5DA001BAE36 /* r_keygen.c in Sources */,
+				0757AA5421A7D5DA001BAE36 /* r_random.c in Sources */,
+				0757AA5521A7D5DA001BAE36 /* r_stdlib.c in Sources */,
+				0757AA5621A7D5DA001BAE36 /* rsa.c in Sources */,
+				0757AA5721A7D5DA001BAE36 /* nd_cryptfile.c in Sources */,
+				0757AA5821A7D5DA001BAE36 /* nd_pubkey.c in Sources */,
+				0757AA5921A7D5DA001BAE36 /* ndcrypt.c in Sources */,
+				0757AA5A21A7D5DA001BAE36 /* ndrsa.c in Sources */,
+				0757AA5B21A7D5DA001BAE36 /* tea.c in Sources */,
+				0757AA5C21A7D5DA001BAE36 /* nd_asm.c in Sources */,
+				0757AA5D21A7D5DA001BAE36 /* nd_formula.c in Sources */,
+				0757AA5E21A7D5DA001BAE36 /* nd_vm.c in Sources */,
+				0757AA5F21A7D5DA001BAE36 /* nd_vmdbg.c in Sources */,
+				0757AA6021A7D5DA001BAE36 /* nd_vmmain.c in Sources */,
+				0757AA3521A7D5B8001BAE36 /* nd_logger.c in Sources */,
+				0757AA3621A7D5B8001BAE36 /* bintree.c in Sources */,
+				0757AA3721A7D5B8001BAE36 /* callstack.c in Sources */,
+				0757AA3821A7D5B8001BAE36 /* cJSON.c in Sources */,
+				0757AA3921A7D5B8001BAE36 /* common.c in Sources */,
+				0757AA3A21A7D5B8001BAE36 /* nd_cmdline.c in Sources */,
+				0757AA3B21A7D5B8001BAE36 /* nd_handle.c in Sources */,
+				0757AA3C21A7D5B8001BAE36 /* nd_iconv.c in Sources */,
+				0757AA3D21A7D5B8001BAE36 /* nd_mempool.c in Sources */,
+				0757AA3E21A7D5B8001BAE36 /* nd_mutex.c in Sources */,
+				0757AA3F21A7D5B8001BAE36 /* nd_static_alloc.c in Sources */,
+				0757AA4021A7D5B8001BAE36 /* nd_str.c in Sources */,
+				0757AA4121A7D5B8001BAE36 /* nd_time.c in Sources */,
+				0757AA4221A7D5B8001BAE36 /* nd_timer.c in Sources */,
+				0757AA4321A7D5B8001BAE36 /* nd_trace.c in Sources */,
+				0757AA4421A7D5B8001BAE36 /* nd_unix.c in Sources */,
+				0757AA4521A7D5B8001BAE36 /* nd_win.c in Sources */,
+				0757AA4621A7D5B8001BAE36 /* nd_xml.c in Sources */,
+				0757AA4721A7D5B8001BAE36 /* nddir.c in Sources */,
+				0757AA4821A7D5B8001BAE36 /* node_mgr.c in Sources */,
+				0757AA4921A7D5B8001BAE36 /* recbuf.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		077B8958207C6BAB00090DFD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -600,6 +745,38 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		0757AA3221A7D4E1001BAE36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B5437EBYUA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		0757AA3321A7D4E1001BAE36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B5437EBYUA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		077B895E207C6BAB00090DFD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -639,8 +816,8 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
+					__ND_MAC__,
+					ND_DEBUG,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -652,6 +829,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = ../../include;
 			};
 			name = Debug;
 		};
@@ -691,6 +869,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = __ND_MAC__;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -700,6 +879,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = ../../include;
 			};
 			name = Release;
 		};
@@ -709,11 +889,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B5437EBYUA;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					__ND_MAC__,
-					ND_DEBUG,
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = ../../include;
 			};
@@ -734,6 +910,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0757AA3421A7D4E1001BAE36 /* Build configuration list for PBXNativeTarget "ndcommon_dll" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0757AA3221A7D4E1001BAE36 /* Debug */,
+				0757AA3321A7D4E1001BAE36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		077B8957207C6BAA00090DFD /* Build configuration list for PBXProject "ndcommon_mac" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

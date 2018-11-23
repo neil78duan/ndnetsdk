@@ -29,9 +29,14 @@ clean:
 	rm -f *.o *~
 	for n in $(SUBDIRS); do $(MAKE) -C $$n clean ; done
 
+install:
+	cp -f $(ND_CLIENT_DLL) $(SYS_INSTALL_PATH)
+	cp -f $(ND_SRV_DLL) $(SYS_INSTALL_PATH)
+	cp -f $(ND_COMMON_DLL) $(SYS_INSTALL_PATH)
+
 uninstall:
-	rm -f ../lib/*.a  ../lib/*.so
-	rm -f ../lib/$(AIM_NAME)/*.a ../lib/$(AIM_NAME)/*.so
+	rm -f ../lib/*.a  ../lib/*.$(DLL_EXT_NAME)
+	rm -f ../lib/$(AIM_NAME)/*.a ../lib/$(AIM_NAME)/*.$(DLL_EXT_NAME)
 
 checkthem:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n checkthem; done

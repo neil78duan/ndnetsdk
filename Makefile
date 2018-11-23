@@ -27,6 +27,9 @@ dll_release:
 clean:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n clean ; done
 
+install-dll:
+	cd src ; make install  DEBUG="n" BUILD_DLL="y"
+	
 uninstall:
 	cd src; make uninstall
 
