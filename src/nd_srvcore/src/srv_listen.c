@@ -144,7 +144,7 @@ int nd_listensrv_open(int is_ipv6, int port, nd_listen_handle handle, int thread
 	//handle->tcp.bindip = bindip ;
 	handle->tcp.bindip[0] = 0;
 	if (bindip && *bindip) {
-		strncpy(handle->tcp.bindip, bindip, sizeof(handle->tcp.bindip));
+		ndstrncpy(handle->tcp.bindip, bindip, sizeof(handle->tcp.bindip));
 	}
 	ret = nd_srv_open(is_ipv6, port,10, &handle->tcp ) ;
 	if(-1==ret) {

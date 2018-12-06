@@ -32,9 +32,6 @@
     <ClInclude Include="..\..\..\include\nd_common\list.h">
       <Filter>Header Files\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_common\ndchar.h">
-      <Filter>Header Files\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\nddir.h">
       <Filter>Header Files\common</Filter>
     </ClInclude>

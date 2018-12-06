@@ -49,7 +49,7 @@ int nd_udp_connect(struct nd_udp_node*node,const char *host, int port,struct nd_
 		
 		if(-1==get_sockaddr_in(host,  port,(SOCKADDR_IN*) &node->remote_addr6)) {
 			node->prox_info->remote_port =  port ;
-			strncpy(node->prox_info->remote_name, host, sizeof(node->prox_info->remote_name)) ;
+			ndstrncpy(node->prox_info->remote_name, host, sizeof(node->prox_info->remote_name)) ;
 		}
 		
 	}

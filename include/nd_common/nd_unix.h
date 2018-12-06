@@ -51,7 +51,7 @@ typedef void				*HINSTANCE ;
 #define nd_last_error()	strerror(errno)
 #define nd_str_error(_errid) strerror(_errid)
 static __INLINE__ void _showerror(char *file, int line, const char *func) {
-	fprintf(stderr, "[%s:%d(%s)] last error:%s\n", file, line, func, nd_last_error());
+	ndfprintf(stderr, "[%s:%d(%s)] last error:%s\n", file, line, func, nd_last_error());
 }
 #define nd_showerror() _showerror(__FILE__,__LINE__,__FUNC__)
 
@@ -171,9 +171,9 @@ ND_COMMON_API void pthread_sleep(NDUINT32 msec) ;
 //define truck functon
 
 #ifdef ND_OPEN_TRACE
-#define NDTRACF(msg,arg...) do{fprintf(stderr,"%s:%d",__FILE__,__LINE__) ; fprintf(stderr, msg,##arg);}while(0)
-#define NDTRAC(msg,arg...)   fprintf(stderr, msg,##arg)
-#define _CRTTRAC(msg,arg...) fprintf(stderr, msg,##arg)
+#define NDTRACF(msg,arg...) do{ndfprintf(stderr,"%s:%d",__FILE__,__LINE__) ; ndfprintf(stderr, msg,##arg);}while(0)
+#define NDTRAC(msg,arg...)   ndfprintf(stderr, msg,##arg)
+#define _CRTTRAC(msg,arg...) ndfprintf(stderr, msg,##arg)
 #else 
 #define NDTRACF(msg,arg...) 
 #define NDTRAC(msg,arg...)
@@ -181,11 +181,11 @@ ND_COMMON_API void pthread_sleep(NDUINT32 msec) ;
 #endif
 
 #ifdef ND_USE_MSGBOX
-	#define nd_msgbox(msg,title) fprintf(stderr,"%s:%s\n", title, msg) 
+	#define nd_msgbox(msg,title) ndfprintf(stderr,"%s:%s\n", title, msg) 
 	#define nd_msgbox_dg(msg,title,flag) \
 	do{	char buf[1024] ;				\
 		char header[128] ;				\
-		snprintf(buf,1024, "%s\n%s:%d line \n %s",(title),__FILE__,__LINE__, (msg)) ;	\
+		ndsnprintf(buf,1024, "%s\n%s:%d line \n %s",(title),__FILE__,__LINE__, (msg)) ;	\
 		nd_msgbox(buf,header);		\
 	}while(0)
 #else 

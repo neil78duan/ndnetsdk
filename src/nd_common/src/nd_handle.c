@@ -49,7 +49,7 @@ nd_handle _object_create(const char *name)
 	}
 	while (pos != &__reg_list) {
 		objlist = list_entry(pos, struct register_object_info, list) ;		
-		if(0==strcmp(objlist->obj.name,name)) {
+		if(0==ndstrcmp(objlist->obj.name,name)) {
 			reginfo = &(objlist->obj) ;
 			break ;
 		}

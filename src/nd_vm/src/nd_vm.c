@@ -5,7 +5,7 @@
  */
 
 #include "nd_vm/nd_vm.h"
-
+#include "nd_common/ndstdstring.h"
 #include <math.h>
 #include <string.h>
 
@@ -520,11 +520,11 @@ vm_value vm_rand(vm_value val1, vm_value val2)
 char* vm_operand_name(vm_data_src ds,vm_value val, struct vm_cpu *vm, char *buf)
 {
 	if(EDS_REG1==ds) {
-		strcpy(buf, "REG1") ;
+		ndstrcpy(buf, "REG1") ;
 		//return &(vm->reg1);
 	}
 	else if(EDS_REG2==ds) {
-		strcpy(buf, "REG1") ;
+		ndstrcpy(buf, "REG1") ;
 		//return &(vm->reg2);
 	}
 	else if(EDS_STACK==ds) {
@@ -533,12 +533,12 @@ char* vm_operand_name(vm_data_src ds,vm_value val, struct vm_cpu *vm, char *buf)
 		if( index < 0  ) {
 			if(vm->stack <= (vm->sp + index)) {
 				//return (vm->sp + index);
-				sprintf(buf, "STACK[%d]", index) ;
+				ndsprintf(buf, "STACK[%d]", index) ;
 			}
 		}
 		else if((vm->stack+index) <  vm->sp ){
 			//return &(vm->stack[index]) ;
-			sprintf(buf, "STACK[%d]", index) ;
+			ndsprintf(buf, "STACK[%d]", index) ;
 		}
 		else
 			return NULL;
@@ -547,7 +547,7 @@ char* vm_operand_name(vm_data_src ds,vm_value val, struct vm_cpu *vm, char *buf)
 	else if(EDS_ADDRESS==ds) {
 		vm_adddress index = *((vm_adddress*) &val) ;
 		if(index >=0 && index < (vm_adddress)vm->mem_size ) {
-			sprintf(buf, "MEMORY[%d]", index) ;
+			ndsprintf(buf, "MEMORY[%d]", index) ;
 		}
 		else 
 			return 0;

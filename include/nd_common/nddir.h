@@ -76,6 +76,7 @@ ND_COMMON_API  int  nd_is_subpath(const char *parent_path, const char *input_pat
 
 //get extend name 
 ND_COMMON_API  const char * nd_file_ext_name(const char *fullPath);
+ND_COMMON_API  const char * nd_file_name_without_ext(const char *fullPath,char *outbuf, size_t size);
 
 
 #endif

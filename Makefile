@@ -17,12 +17,17 @@ debug:
 release:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n release || exit 1; done
 
-dll: dll_debug
+dll: dll_release
 
 dll_debug:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n dll_debug || exit 1; done
 dll_release:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n dll_release || exit 1; done
+
+
+clean_dll:
+	cd src ;make clean
+	cd ./lib/$(SUB_AIM_DIR) ; rm *.so ; rm *.dylib
 
 clean:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n clean ; done

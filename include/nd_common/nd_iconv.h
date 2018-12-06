@@ -15,20 +15,20 @@
 #ifdef WITHOUT_ICONV
 static __INLINE__ char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf)
 {
-	return strncpy(output_buf, input_text,(size_t) size_buf) ;
+	return ndstrncpy(output_buf, input_text,(size_t) size_buf) ;
 }
 static __INLINE__ char * nd_utf8_to_gbk(const char *input_text, char *output_buf, int size_buf)
 {
-	return strncpy(output_buf, input_text,(size_t) size_buf) ;
+	return ndstrncpy(output_buf, input_text,(size_t) size_buf) ;
 }
 
 static __INLINE__ char * nd_utf8_to_ndcode(const char *input_text, char *outbuf, int size)
 {
-	return strncpy(outbuf, input_text,(size_t) size) ;
+	return ndstrncpy(outbuf, input_text,(size_t) size) ;
 }
 static __INLINE__ char * nd_ndcode_to_utf8(const char *input_text, char *outbuf, int size)
 {
-	return strncpy(outbuf, input_text,(size_t) size) ;
+	return ndstrncpy(outbuf, input_text,(size_t) size) ;
 }
 
 

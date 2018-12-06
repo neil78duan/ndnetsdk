@@ -26,7 +26,7 @@ const char *nd_process_name()
 		return "ndengine" ;
 	}
 	else if(0==s_proname[0]) {
-		size_t len = strlen(__g_process_name) ;
+		size_t len = ndstrlen(__g_process_name) ;
 		const char *p= __g_process_name + len;
 		char *desc =s_proname;
 		while(len-- > 0){
@@ -112,32 +112,32 @@ const char * nd_common_machine_info(char buf[], size_t size)
 	char *p = buf;
 
 #if defined( __ND_WIN__)
-	len = snprintf(buf, size, "MACH-%s", "win");
+	len = ndsnprintf(buf, size, "MACH-%s", "win");
 #elif defined( __ND_MAC__)
-	len = snprintf(buf, size, "MACH-%s", "mac-");
+	len = ndsnprintf(buf, size, "MACH-%s", "mac-");
 #elif defined( __ND_IOS__)
-	len = snprintf(buf, size, "MACH-%s", "ios-");
+	len = ndsnprintf(buf, size, "MACH-%s", "ios-");
 #elif defined( __ND_ANDROID__)
-	len = snprintf(buf, size, "MACH-%s", "android-");
+	len = ndsnprintf(buf, size, "MACH-%s", "android-");
 #elif defined( __ND_LINUX__)
-	len = snprintf(buf, size, "MACH-%s", "linux-");
+	len = ndsnprintf(buf, size, "MACH-%s", "linux-");
 #else 
-	len = snprintf(buf, size, "MACH-%s", "unknown-");
+	len = ndsnprintf(buf, size, "MACH-%s", "unknown-");
 #endif 
 	p += len;
 	size -= len;
 #if defined(X86_64)
-	len = snprintf(p, size, "-%s", "x86-64");
+	len = ndsnprintf(p, size, "-%s", "x86-64");
 #else 
-	len = snprintf(p, size, "-%s", "32");
+	len = ndsnprintf(p, size, "-%s", "32");
 #endif 
 	p += len;
 	size -= len;
 
 #ifdef ND_DEBUG
-	len = snprintf(p, size, "-%s", "debug");
+	len = ndsnprintf(p, size, "-%s", "debug");
 #else 
-	len = snprintf(p, size, "-%s", "release");
+	len = ndsnprintf(p, size, "-%s", "release");
 #endif
 	return buf;
 }
@@ -174,7 +174,7 @@ const char *nd_error_desc(int in_err)
 			return perr[errcode];
 		}
 		else {
-			snprintf(errdesc, sizeof(errdesc), "Error code =%d", errcode);
+			ndsnprintf(errdesc, sizeof(errdesc), "Error code =%d", errcode);
 			return errdesc;
 		}
 	}

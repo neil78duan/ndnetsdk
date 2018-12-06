@@ -192,7 +192,7 @@ if(param) {				\
 	val = ND_LODWORD(param) ; memcpy(pf,&val, sizeof(val)) ; pf +=sizeof(val) ;	\
 	val = ND_HIDWORD(param) ; memcpy(pf,&val, sizeof(val)) ; pf +=sizeof(val) ;	\
 	offset = pf ; pf += sizeof(val) ;		\
-	val = snprintf(pf, bufsize - (pf - tobuf), "Q%s!  ",(const char*)paramText) ;	\
+	val = ndsnprintf(pf, bufsize - (pf - tobuf), "Q%s!  ",(const char*)paramText) ;	\
 	val += 1 ;	pf += val ;	*((*(char**)&pf)++) ='Q' ; val += 1 ;		\
 	memcpy(offset,&val, sizeof(val)) ;		\
 }
@@ -449,7 +449,7 @@ int nd_rsa_test(R_RSA_PRIVATE_KEY *priv_key, R_RSA_PUBLIC_KEY *pub_key)
 	memcpy((void*)&rsa_contex.publicKey, pub_key, sizeof(rsa_contex.publicKey) );
 	RSAinit_random(&rsa_contex.randomStruct);
 
-	text_size = (int)strlen(p) ;
+	text_size = (int)ndstrlen(p) ;
 
 	//test public encrypt , private decrypt
 	if (nd_RSAPublicEncrypt(buf1, &len1, p, text_size, &rsa_contex)){
@@ -460,7 +460,7 @@ int nd_rsa_test(R_RSA_PRIVATE_KEY *priv_key, R_RSA_PUBLIC_KEY *pub_key)
 	}
 
 	buf2[len2] = 0 ;
-	if(strcmp(p, buf2)) {
+	if(ndstrcmp(p, buf2)) {
 		return -1 ;
 	}
 
@@ -473,7 +473,7 @@ int nd_rsa_test(R_RSA_PRIVATE_KEY *priv_key, R_RSA_PUBLIC_KEY *pub_key)
 	}
 
 	buf2[len2] = 0 ;
-	if(strcmp(p, buf2)) {
+	if(ndstrcmp(p, buf2)) {
 		return -1 ;
 	}
 	return 0 ;

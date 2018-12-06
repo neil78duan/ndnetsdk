@@ -109,7 +109,7 @@ int register_listensrv(void)
 	
 	//tcp connector register 
 	reginfo.init_entry = (nd_init_func )srv_tcp_init ;
-	strcpy(reginfo.name, "listen-tcp" ) ;
+	ndstrcpy(reginfo.name, "listen-tcp" ) ;
 	
 	ret = nd_object_register(&reginfo) ;
 	if(-1==ret) {
@@ -120,7 +120,7 @@ int register_listensrv(void)
 	
 	//udt connector register 
 	reginfo.init_entry =(nd_init_func ) srv_udt_init ;
-	strcpy(reginfo.name, "listen-udt" ) ;
+	ndstrcpy(reginfo.name, "listen-udt" ) ;
 	
 	ret = nd_object_register(&reginfo) ;
 	if(-1==ret) {
@@ -130,7 +130,7 @@ int register_listensrv(void)
 
 	//icmp-udt connector register 
 	reginfo.init_entry =(nd_init_func ) srv_icmp_init ;
-	strcpy(reginfo.name, "listen-icmp" ) ;
+	ndstrcpy(reginfo.name, "listen-icmp" ) ;
 
 	ret = nd_object_register(&reginfo) ;
 	if(-1==ret) {
@@ -140,7 +140,7 @@ int register_listensrv(void)
 
 	//ext connector register 
 	reginfo.init_entry =(nd_init_func ) srv_ext_init ;
-	strcpy(reginfo.name, "listen-ext" ) ;
+	ndstrcpy(reginfo.name, "listen-ext" ) ;
 	
 	ret = nd_object_register(&reginfo) ;
 	if(-1==ret) {

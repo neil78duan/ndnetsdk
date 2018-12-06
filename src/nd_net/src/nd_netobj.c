@@ -55,7 +55,7 @@ void net_release_sendlock(nd_netui_handle  socket_node)
 int nd_net_ipbind(nd_handle net_handle, const char* ip) 
 {
 // 	struct nd_netsocket *node =(struct nd_netsocket *)net_handle ;
-// 	strncpy(node->bindip, ip,sizeof(node->bindip));
+// 	ndstrncpy(node->bindip, ip,sizeof(node->bindip));
 // 	if(node->fd) {
 // 		SOCKADDR_IN self ;
 // 		self.sin_family = AF_INET;
@@ -398,7 +398,7 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 				}
 				_s_send_stream = (char*) malloc(*size + 1) ;
 				if (_s_send_stream) {
-					strncpy(_s_send_stream, (const char*)val, *size +1) ;
+					ndstrncpy(_s_send_stream, (const char*)val, *size +1) ;
 					ret =  0 ;
 				}
 			}
@@ -419,7 +419,7 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 				}
 				_s_recv_stream = (char*) malloc(*size + 1) ;
 				if (_s_recv_stream) {
-					strncpy(_s_recv_stream, (const char*)val, *size +1) ;
+					ndstrncpy(_s_recv_stream, (const char*)val, *size +1) ;
 					ret =  0 ;
 				}
 			}
@@ -579,7 +579,7 @@ int _log_net_stream(const char *fileName,   void *data, int size)
 	fwrite(&now, 1, sizeof(now), fp);
 
 	//write message descript
-	mark = snprintf(msg_desc, sizeof(msg_desc), "[%s msg(%d,%d) length=%d time=%d]", nd_get_datetimestr(),
+	mark = ndsnprintf(msg_desc, sizeof(msg_desc), "[%s msg(%d,%d) length=%d time=%d]", nd_get_datetimestr(),
 		pmsg->maxid, pmsg->minid, pmsg->packet_hdr.length, now);
 	fwrite(&mark, 1, sizeof(mark), fp);
 	fwrite(msg_desc, 1, mark, fp);

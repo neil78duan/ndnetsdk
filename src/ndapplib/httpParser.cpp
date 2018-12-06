@@ -63,20 +63,20 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 	p = buf;
 
 	if (NDHttpRequest::E_ACTION_POST == reques->getAction()) {
-		len = snprintf(p, sizeof(buf), "POST /%s HTTP/1.1\r\nHost: %s:%d\r\n", path, host, port);
+		len = ndsnprintf(p, sizeof(buf), "POST /%s HTTP/1.1\r\nHost: %s:%d\r\n", path, host, port);
 		p += len;
 
-		len = snprintf(p, sizeof(buf) - (p - buf), "Accept: */*\r\n");
+		len = ndsnprintf(p, sizeof(buf) - (p - buf), "Accept: */*\r\n");
 		p += len;
 	}
 
 	else {
 		if (bodySize > 0){
-			len = snprintf(p, sizeof(buf), "GET /%s?%s HTTP/1.1\r\nHost: %s:%d\r\n", path, formBuf, host, port);
+			len = ndsnprintf(p, sizeof(buf), "GET /%s?%s HTTP/1.1\r\nHost: %s:%d\r\n", path, formBuf, host, port);
 			p += len;
 		}
 		else {
-			len = snprintf(p, sizeof(buf), "GET /%s HTTP/1.1\r\nHost: %s:%d\r\n", path, host, port);
+			len = ndsnprintf(p, sizeof(buf), "GET /%s HTTP/1.1\r\nHost: %s:%d\r\n", path, host, port);
 			p += len;
 		}
 		bodySize = 0;
@@ -85,7 +85,7 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 	len =(int) reques->HeaderToBuf(p, sizeof(buf) - (p - buf));
 	p += len; 
 
-	len = snprintf(p, sizeof(buf) - (p - buf), "Content-Type:application/x-www-form-urlencoded;charset=utf-8\r\n"
+	len = ndsnprintf(p, sizeof(buf) - (p - buf), "Content-Type:application/x-www-form-urlencoded;charset=utf-8\r\n"
 		"Content-Length:%d\r\nConnection:Keep-Alive\r\n\r\n", bodySize);
 	p += len;
 
@@ -97,7 +97,7 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 	ret += len;
 	
 	if (NDHttpRequest::E_ACTION_POST == reques->getAction() && bodySize) {
-		//len = snprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", formBuf);
+		//len = ndsnprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", formBuf);
 		//p += len;
 
 		len = nd_connector_send_stream(h, formBuf, bodySize, 0);
@@ -129,13 +129,13 @@ int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc
 
 	p = buf;
 
-	len = snprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", reques->getStatus(), errorDesc);
+	len = ndsnprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", reques->getStatus(), errorDesc);
 	p += len;
 
 	len =(int) reques->HeaderToBuf(p, sizeof(buf) -(p - buf));
 	p += len;
 
-	len = snprintf(p, sizeof(buf) - (p - buf),"Server:userDefine\r\nContent-Length:%d\r\n\r\n", bodySize);
+	len = ndsnprintf(p, sizeof(buf) - (p - buf),"Server:userDefine\r\nContent-Length:%d\r\n\r\n", bodySize);
 	p += len;
 
 	len = nd_connector_send_stream(h, buf, p - buf, 0);
@@ -303,18 +303,18 @@ int NDHttpParser::dump()
 	HttpHeader_t::iterator it;
 	for (it = m_header.begin(); it != m_header.end(); ++it) {
 		++ret;
-		fprintf(stderr, "[header] %s : %s \n", it->name.c_str(), it->value.c_str());
+		ndfprintf(stderr, "[header] %s : %s \n", it->name.c_str(), it->value.c_str());
 	}
 	
 	if (getBodySize())	{
-		fprintf(stderr, "%s\n", getBody());
+		ndfprintf(stderr, "%s\n", getBody());
 	}
 	return  ret;
 }
 
 void NDHttpParser::setBody(const char*body)
 {
-	ndlbuf_write(&m_bodyBuf, (void*)body, strlen(body), 0);
+	ndlbuf_write(&m_bodyBuf, (void*)body, ndstrlen(body), 0);
 }
 const char *NDHttpParser::getBody()
 {
@@ -542,13 +542,13 @@ int NDHttpParser::_parseBody()
 		if (!p_start) {
 			return 0;
 		}
-		char *p = strstr(p_start, "\r\n\r\n");
+		char *p = ndstrstr(p_start, "\r\n\r\n");
 		if (!p) {
 			return 0;
 		}
 		size_t realSize = p - p_start;
 		char buf[32];
-		snprintf(buf, sizeof(buf), "%lld", realSize);
+		ndsnprintf(buf, sizeof(buf), "%lld", realSize);
 		addHeader("content-length", buf);
 
 		_setParseEnd();
@@ -570,7 +570,7 @@ size_t NDHttpParser::HeaderToBuf(char *buf, size_t size)
 	char *p = buf;
 	for (it = m_header.begin(); it != m_header.end(); ++it) {
 		if (it->value.size() > 0)	{
-			int len = snprintf(p, size, "%s:%s\r\n", it->name.c_str(), it->value.c_str());
+			int len = ndsnprintf(p, size, "%s:%s\r\n", it->name.c_str(), it->value.c_str());
 			p += len;
 			if (size >= len) {
 				size -= len;
@@ -632,7 +632,7 @@ int NDHttpRequest::_parsePathInfo(const char *path)
 	ND_TRACE_FUNC();
 	char val[4096];
 	char buf[4096];
-	size_t size = strlen(path);
+	size_t size = ndstrlen(path);
 	const char *p = ndstr_nstr_ansi(path, buf, '?', sizeof(buf));
 	m_path = buf;
 
@@ -672,12 +672,12 @@ int NDHttpRequest::dump()
 	HttpHeader_t::iterator it;
 	for (it = m_header.begin(); it != m_header.end(); ++it) {
 		++ret;
-		fprintf(stderr, "[header] %s : %s \n", it->name.c_str(), it->value.c_str());
+		ndfprintf(stderr, "[header] %s : %s \n", it->name.c_str(), it->value.c_str());
 	}
 
 	for (it = m_requestForms.begin(); it != m_requestForms.end(); ++it) {
 		++ret;
-		fprintf(stderr, "[forms] %s : %s \n", it->name.c_str(), it->value.c_str());
+		ndfprintf(stderr, "[forms] %s : %s \n", it->name.c_str(), it->value.c_str());
 	}
 	return  ret;
 }
@@ -715,7 +715,7 @@ int NDHttpRequest::ParseProtocol()
 		p += 3;
 	}
 
-	p = strchr(p, '/');
+	p = ndstrchr(p, '/');
 	if (!p || *p != '/'){
 		return 0;
 	}
@@ -802,10 +802,10 @@ size_t NDHttpRequest::RequestValueTobuf(char *buf, size_t size)
 		int len = 0;
 
 		if (i == m_requestForms.size() - 1)	{
-			len = snprintf(p, size, "%s=%s", node.name.c_str(), node.value.c_str());
+			len = ndsnprintf(p, size, "%s=%s", node.name.c_str(), node.value.c_str());
 		}
 		else {
-			len = snprintf(p, size, "%s=%s&", node.name.c_str(), node.value.c_str());
+			len = ndsnprintf(p, size, "%s=%s&", node.name.c_str(), node.value.c_str());
 		}
 		p += len;
 		size -= len;
@@ -932,7 +932,7 @@ int NDHttpRequest::_parseMultipart(const char *pHeaderText)
 	std::string boundary = "--";
 	boundary += pbound;
 
-	size_t boundarySize = strlen(pbound) + 2;
+	size_t boundarySize = ndstrlen(pbound) + 2;
 	if (boundarySize == 0) {
 		m_parseError = true; 
 		return -1;
@@ -941,13 +941,13 @@ int NDHttpRequest::_parseMultipart(const char *pHeaderText)
 	const char *pEnd = p + bodySize;
 
 	while (p < pEnd) {
-		const char *partStart = strstr(p, boundary.c_str());
+		const char *partStart = ndstrstr(p, boundary.c_str());
 		if (!partStart) {
 			return (int)( p - getBody());
 		}
 		partStart += boundarySize;
 
-		const char *partEnd = strstr(partStart, boundary.c_str());
+		const char *partEnd = ndstrstr(partStart, boundary.c_str());
 		if (!partEnd) {
 			return p - getBody();
 		}
@@ -1052,7 +1052,7 @@ int NDHttpResponse::ParseProtocol()
 // 		}
 // 		p += len;
 		p += 4;//skip http ;
-		p = strchr(p, ' ');
+		p = ndstrchr(p, ' ');
 		if (!p)	{
 			return 0;
 		}

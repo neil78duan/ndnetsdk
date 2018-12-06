@@ -17,6 +17,8 @@
 
 #include "nd_common/nd_os.h"
 
+#include "nd_common/ndstdstring.h"
+
 #include "nd_common/nd_logger.h"
 
 #include "nd_common/_source_trace.h"

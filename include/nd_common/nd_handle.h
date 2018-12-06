@@ -123,8 +123,8 @@ static __INLINE__ int nd_object_set_instname(nd_handle handle, const char *name)
 {
 	struct tag_nd_handle *ptag = (struct tag_nd_handle *)handle;
 	if (name && name[0]){
-		strncpy(ptag->inst_name, name, sizeof(ptag->inst_name));
-		return (int)strlen(ptag->inst_name);
+		ndstrncpy(ptag->inst_name, name, sizeof(ptag->inst_name));
+		return (int)ndstrlen(ptag->inst_name);
 	}
 	return 0;
 }

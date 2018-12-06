@@ -52,6 +52,7 @@ class  ND_COMMON_CLASS NDInstanceBase : public NDAlarm
 {
 public :
 	int Create(int argc, const char *argv[]) ;
+	int CreateEx(int argc, ...);
 	void Destroy(int flag) ;
 	virtual int Close(int flag=0) ;
 	virtual int Open(int session_size) ;
@@ -82,7 +83,7 @@ public :
 
 	const char *Getcfgfile() { return config_file; }
 protected :
-	
+	int _create();
 	int connectServer(const char *name,NDConnector *inconnect);
 	connect_config *getConnectorInfo(const char *name) ;
 	int ReadConfig(const char *configname) ;		//read config from file
@@ -131,7 +132,6 @@ public:
 			return -1 ;
 		return Open(sizeof(TSession)) ;
 	}
-    
  	int End(int flag)
  	{        
         nd_instance_exit(flag) ;

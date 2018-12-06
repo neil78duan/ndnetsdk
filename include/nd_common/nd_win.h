@@ -68,9 +68,9 @@ ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
 
 // compatible for unix
-//#define snprintf _snprintf
-#ifndef snprintf
-#define snprintf  sprintf_s
+//#define ndsnprintf _snprintf
+#ifndef ndsnprintf
+#define ndsnprintf  sprintf_s
 #endif
 
 #define bzero(pstr,size) 	memset((pstr),0,(size))		//∂®“Âbzero ºÊ»›gcc bzero
@@ -90,7 +90,7 @@ ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
 __INLINE__ void ND_MsgBox(LPCSTR s) {
 	char buf[1024];
-	snprintf(buf, 1024, ("%s ASSERT FAILED"), nd_process_name());
+	ndsnprintf(buf, 1024, ("%s ASSERT FAILED"), nd_process_name());
 	MessageBoxA(GetActiveWindow(), s, buf, MB_OK);
 }
 
@@ -101,7 +101,7 @@ __INLINE__ void ND_FAILED(LPCSTR szMsg) {
 // Put up an assertion failure message box.
 __INLINE__ void ND_ASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
 	char sz[1024];
-	snprintf(sz, 1024, "ASSERT failed in\nFile %s, line %d \n"
+	ndsnprintf(sz, 1024, "ASSERT failed in\nFile %s, line %d \n"
 		"nd_assert(%s)", file, line, expr);
 	ND_FAILED(sz);
 }
@@ -181,7 +181,7 @@ ND_COMMON_API int MyDbgReport(const char *file, int line, const char *stm, ...);
 	#define nd_msgbox_dg(msg,title,flag) \
 	do{	char buf[1024] ;				\
 		char header[128] ;				\
-		snprintf(buf,1024, "%s\n%s:%d line \n %s",(title),__FILE__,__LINE__, (msg)) ;	\
+		ndsnprintf(buf,1024, "%s\n%s:%d line \n %s",(title),__FILE__,__LINE__, (msg)) ;	\
 		nd_msgbox(buf,header,flag);		\
 	}while(0)
 #else 

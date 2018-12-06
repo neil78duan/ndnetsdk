@@ -338,6 +338,10 @@ void NDListener::InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t
 {
 	::nd_msgentry_install(m_objhandle, func,  maxid,  minid, level,msgname) ;
 }
+void NDListener::setScriptEngine(void *script_engine, nd_msg_script_entry entry)
+{
+	::nd_message_set_script_engine(m_objhandle, script_engine, entry);
+}
 
 int NDListener::Attach(NDObject &conn, nd_thsrvid_t thid )
 {

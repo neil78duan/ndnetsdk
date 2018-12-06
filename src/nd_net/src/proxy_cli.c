@@ -61,8 +61,8 @@ int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_
 			command[5]=0;
 			command[6]=0;
 			command[7]=1;
-			strcpy(&command[9],host);
-			len = (int)strlen(host)+10;
+			ndstrcpy(&command[9],host);
+			len = (int)ndstrlen(host)+10;
 		}
 		else {
 			*(unsigned long *)&command[4] = sock_addr.sin_addr.s_addr ;
@@ -78,23 +78,23 @@ int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_
 	}
 	else if (proxy->proxy_type==ND_PROXY_HTTP11) {
 
-		sprintf(command, "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n", host, port,host, port);
+		ndsprintf(command, "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n", host, port,host, port);
 
 		if (!proxy->user[0])
-			strcat(command, "\r\n") ;
+			ndstrcat(command, "\r\n") ;
 		else	{
 			char userpass[PROXY_USER_SIZE<<1];
 			char base64str[PROXY_USER_SIZE<<1];
-			sprintf(userpass, "%s:%s", proxy->user, proxy->password[0]? proxy->password :"");
+			ndsprintf(userpass, "%s:%s", proxy->user, proxy->password[0]? proxy->password :"");
 
-			base64_encode(userpass, (int)strlen(userpass), base64str) ;			
-			strcat(command, "Authorization: Basic ");
-			strcat(command, base64str);
-			strcat(command, "\r\nProxy-Authorization: Basic ");
-			strcat(command, base64str);
-			strcat(command, "\r\n\r\n");
+			base64_encode(userpass, (int)ndstrlen(userpass), base64str) ;			
+			ndstrcat(command, "Authorization: Basic ");
+			ndstrcat(command, base64str);
+			ndstrcat(command, "\r\nProxy-Authorization: Basic ");
+			ndstrcat(command, base64str);
+			ndstrcat(command, "\r\n\r\n");
 		}
-		len =(int) strlen(command);		
+		len =(int) ndstrlen(command);		
 	}
 	else
 		return -1;
@@ -128,15 +128,15 @@ int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_
 				return -1 ;
 			}
 			userpass[0] = 5;
-			strcpy(userpass+1, proxy->user) ;
-			len =(int) strlen(proxy->user) ;
+			ndstrcpy(userpass+1, proxy->user) ;
+			len =(int) ndstrlen(proxy->user) ;
 			userpass[1] = len ;
 			len += 1 ;
 
 			if(proxy->password[0]) {
-				int pwdlen =(int) strlen(proxy->password) ;
+				int pwdlen =(int) ndstrlen(proxy->password) ;
 				userpass[len++] = pwdlen ;
-				strcpy(userpass+len, proxy->password) ;
+				ndstrcpy(userpass+len, proxy->password) ;
 				len += pwdlen ;
 			}
 			else {
@@ -180,8 +180,8 @@ int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_
 		else {
 			command[3]=3;	
 			len = 4 ;
-			command[len]=(int)strlen(host);
-			strcpy(&command[len+1], host);
+			command[len]=(int)ndstrlen(host);
+			ndstrcpy(&command[len+1], host);
 			len += command[len] + 1;
 
 			*(short *) &command[len] = htons(port) ;
@@ -208,7 +208,7 @@ int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_
 	}
 	else if (proxy->proxy_type==ND_PROXY_HTTP11) {
 		char *p = command + len - 4 ;
-		int len =(int) strlen(command) ;			// tail is "\r\n\r\n"
+		int len =(int) ndstrlen(command) ;			// tail is "\r\n\r\n"
 		if(len >= sizeof(command) || len <8 ) {
 			return -1 ;
 		}
@@ -233,8 +233,8 @@ int nd_proxy_sendtoex(ndsocket_t fd, const char *data, size_t size, const char *
 	buf[3]=3;
 	
 	len = 4 ;
-	buf[len]= (unsigned char)strlen(remotehost);
-	strcpy(&buf[len+1], remotehost);
+	buf[len]= (unsigned char)ndstrlen(remotehost);
+	ndstrcpy(&buf[len+1], remotehost);
 	len += buf[len] + 1;
 
 	*(short *) &buf[len] = htons(port) ;

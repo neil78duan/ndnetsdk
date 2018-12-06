@@ -1058,11 +1058,11 @@ void *nd_alloc_check(nd_handle _pool,size_t __n,const char *file, int line, nd_a
 		__result->line = line ;
 
 		pfile = (char*)file ;
-		filesize = strlen(file) ;
+		filesize = ndstrlen(file) ;
 		if(filesize > 40) {
 			pfile += filesize - 40 ;
 		}
-		strncpy(__result->file,pfile,40) ;
+		ndstrncpy(__result->file,pfile,40) ;
 
 		return ((char*)__result) + (long)__extra_before;
 	}
@@ -1119,7 +1119,7 @@ void *nd_pool_alloc_trace(nd_mmpool_t *pool , size_t size, char *file, int line)
 	int len ;
 	NDUINT32 file_size ;
 
-	len = (int) strlen(file) ;
+	len = (int) ndstrlen(file) ;
 	if (len >255){
 		len = 255 ;
 	}
@@ -1455,10 +1455,10 @@ void _insertinto_mmstatics(nd_handle pool, void *addr, size_t size )
 	}
 
 	if(nd_get_callstack_desc(callstack,sizeof(callstack)) ) {
-		len = (int) strlen(callstack) + 1;
+		len = (int) ndstrlen(callstack) + 1;
 	}
 	else {
-		strncpy(callstack, "unknow_stack", 1024) ;
+		ndstrncpy(callstack, "unknow_stack", 1024) ;
 		len = 13;
 	}
 
@@ -1474,11 +1474,11 @@ void _insertinto_mmstatics(nd_handle pool, void *addr, size_t size )
 	node->mmaddr = addr ;
 	node->pool = pool ;
 #ifdef ND_SOURCE_TRACE
-	strncpy(node->pool_name, pool->inst_name, sizeof(node->pool_name)) ;
+	ndstrncpy(node->pool_name, pool->inst_name, sizeof(node->pool_name)) ;
 #else
-	strncpy(node->pool_name, "mmpool", sizeof(node->pool_name)) ;
+	ndstrncpy(node->pool_name, "mmpool", sizeof(node->pool_name)) ;
 #endif
-	strncpy(node->func_stack, callstack, len) ;
+	ndstrncpy(node->func_stack, callstack, len) ;
 
 	nd_mutex_lock(&_s_mmstatics->lock) ;
 	{

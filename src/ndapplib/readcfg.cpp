@@ -118,7 +118,7 @@ int read_instance_info(ndxml *xmlroot, struct instance_config *icfg)
 	
 
 	if (icfg->data_dir[0]){
-		int len = (int) strlen(icfg->data_dir) ;
+		int len = (int) ndstrlen(icfg->data_dir) ;
 		--len ;
 		if (icfg->data_dir[len] != '\\' || icfg->data_dir[len] != '/'){
 			icfg->data_dir[++len]= '/' ;
@@ -149,7 +149,7 @@ int read_iplist(ndxml *xmlnode, ndip_t *ipbuf, int num )
 				ip.ip = 0x0100007f;
 			}
 			else {
-				if (strchr(p,':')) {
+				if (ndstrchr(p,':')) {
 					ip = nd_inet_aton(p);
 				}
 				else {
@@ -234,11 +234,11 @@ int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg)
 			if(0== read_connect_cfg(pnode,  base_port, &scfg->i_cfg.connectors[i]) ) {
 				const char *pname = ndxml_getattr_val(pnode, "name") ;
 				if (pname && pname[0]) {
-					strncpy(scfg->i_cfg.connectors[i].connector_name, pname,sizeof(scfg->i_cfg.connectors[i].connector_name)) ;
+					ndstrncpy(scfg->i_cfg.connectors[i].connector_name, pname,sizeof(scfg->i_cfg.connectors[i].connector_name)) ;
 				}
 				else {
 					pname = ndxml_getname(pnode) ;
-					strncpy(scfg->i_cfg.connectors[i].connector_name, pname,sizeof(scfg->i_cfg.connectors[i].connector_name)) ;
+					ndstrncpy(scfg->i_cfg.connectors[i].connector_name, pname,sizeof(scfg->i_cfg.connectors[i].connector_name)) ;
 				}
 			}
 		}
@@ -261,7 +261,7 @@ int read_dbconfig(const char *fileName, const char *dbCfgname ,struct nd_db_conf
 		ret = -1;                               \
 		goto READ_EXIT ;                        \
 	}                                       \
-	strncpy(db_cfg->db_##name, ndxml_getval(xmlnode), sizeof(db_cfg->db_##name) )
+	ndstrncpy(db_cfg->db_##name, ndxml_getval(xmlnode), sizeof(db_cfg->db_##name) )
 	
 	
 	if ( 0 != ndxml_load(fileName , &xmlfile ) ){

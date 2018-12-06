@@ -65,6 +65,9 @@ $(DLLPROJS): $(OBJS)
 	$(CC) $(INCLUDE) $(LOCAL_CFLAG) -o $(OBJDIR)/$*.o $<
 #.cpp.o:
 #	$(GPP) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
-	
+
+clean_dll:
+	rm -f $(DLLPROJS) $(PathOBJS)
+
 clean:
-	rm -f $(PROJS) $(DLLPROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
+	rm -f $(PROJS)  $(PathOBJS)  $(PathOBJS:.o=.d)

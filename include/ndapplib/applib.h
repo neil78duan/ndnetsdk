@@ -43,7 +43,7 @@
 
 static __INLINE__ void nd_pause()
 {
-	printf(("press ANY key to continue\n") );
+	ndprintf(("press ANY key to continue\n") );
 	getch() ;
 }
 

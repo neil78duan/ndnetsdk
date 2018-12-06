@@ -250,7 +250,7 @@ int create_udp_thpool(struct listen_contex *listen_info,udp_entry data_entry)
 
 	subth_info.data = data_entry ;
 	for(i=0; i<UDP_THREAD_NUM; i++) {
-		snprintf(subth_info.srv_name, sizeof(subth_info.srv_name),("udp_data%d"),i+1) ;
+		ndsnprintf(subth_info.srv_name, sizeof(subth_info.srv_name),("udp_data%d"),i+1) ;
 		pool->thpool_ids[i] = nd_thsrv_createex(&subth_info,NDT_PRIORITY_HIGHT,0) ;
 	}
 

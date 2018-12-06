@@ -20,6 +20,12 @@
 #define ND_ENCODE_GBK		E_SRC_CODE_GBK
 #define ND_ENCODE_ANSI		E_SRC_CODE_ANSI
 
+#define ND_FILE_PATH_SIZE	1024
+#define NOT_SUPPORT_THIS_FUNCTION 0			// old linux version
+#define ND_MULTI_THREADED 1				// must be define 
+#define ND_MAX_THREAD_NUM 16			//for server
+
+#define X86_64 1						//default is 64bits
 
 #ifdef _MSC_VER
 #define ND_ENCODE_TYPE E_SRC_CODE_GBK
@@ -33,10 +39,6 @@
 #define ND_UNIX			//unix like system
 #endif
 			
-#define ND_FILE_PATH_SIZE	1024
-#define NOT_SUPPORT_THIS_FUNCTION 0			// old linux version
-#define ND_MULTI_THREADED 1				// must be define 
-#define ND_MAX_THREAD_NUM 16			//for server
 
 //---------------------------------------------------------begin platform define
  //source code compiled encode

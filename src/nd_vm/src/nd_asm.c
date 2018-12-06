@@ -58,7 +58,7 @@ int vm_error( const char *stm,...)
 	
 	buf[0] = 0 ;
 	va_start (arg, stm);
-	done = vsnprintf (p, sizeof(buf) , stm , arg);
+	done = ndvsnprintf (p, sizeof(buf) , stm , arg);
 	va_end (arg);
 	
 	if(__err_out) {
@@ -66,7 +66,7 @@ int vm_error( const char *stm,...)
 		return done ;
 	}
 	else {
-		return fprintf(stderr, "%s",  buf) ;
+		return ndfprintf(stderr, "%s",  buf) ;
 	}
 	
 }
@@ -80,7 +80,7 @@ int vm_print( const char *stm,...)
 	
 	buf[0] = 0 ;
 	va_start (arg, stm);
-	done = vsnprintf (p, sizeof(buf), stm, arg);
+	done = ndvsnprintf (p, sizeof(buf), stm, arg);
 	va_end (arg);
 	
 	if(__print_out) {
@@ -88,7 +88,7 @@ int vm_print( const char *stm,...)
 		return done ;
 	}
 	else {
-		return fprintf(stderr, "%s", buf) ;
+		return ndfprintf(stderr, "%s", buf) ;
 	}
 	
 }
@@ -255,7 +255,7 @@ int vm_compiler_line(char *text , struct vm_instruction_node *out_node)
 	}
 
 	if(num) {
-		addr = strchr(addr, ',') ;
+		addr = ndstrchr(addr, ',') ;
 		if(!addr) {
 			vm_error("syntax error: [%s] miss , \n",text) ;
 			return -1 ;
@@ -373,7 +373,7 @@ int vm_output_asm(struct vm_instruction_node *node, void *outstream, int type)
 	p = get_ins_name(node->ins);
 	if(!p)
 		return -1 ;
-	len = snprintf(buf, buf_size, "\t%s\t", p) ;
+	len = ndsnprintf(buf, buf_size, "\t%s\t", p) ;
 
 	p = buf + len ;
 	buf_size -= len ;
@@ -386,19 +386,19 @@ int vm_output_asm(struct vm_instruction_node *node, void *outstream, int type)
 		case EDS_NONE:
 			break ;
 		case EDS_IMMEDIATE:
-			len = snprintf(p, buf_size, "%f", node->val1) ;
+			len = ndsnprintf(p, buf_size, "%f", node->val1) ;
 			break ;
 		case EDS_ADDRESS:
-			len = snprintf(p, buf_size, "[%x]", *((vm_adddress*) &node->val1)  ) ;
+			len = ndsnprintf(p, buf_size, "[%x]", *((vm_adddress*) &node->val1)  ) ;
 			break ;
 		case EDS_STACK:
-			len = snprintf(p, buf_size, "[SP  %d]", *((vm_adddress*) &node->val1)  ) ;
+			len = ndsnprintf(p, buf_size, "[SP  %d]", *((vm_adddress*) &node->val1)  ) ;
 			break ;
 		case EDS_REG1:
-			len = snprintf(p, buf_size, "REG1" ) ;
+			len = ndsnprintf(p, buf_size, "REG1" ) ;
 			break ;
 		case EDS_REG2:
-			len = snprintf(p, buf_size, "REG2" ) ;
+			len = ndsnprintf(p, buf_size, "REG2" ) ;
 			break ;
 		default :
 			break ;
@@ -407,7 +407,7 @@ int vm_output_asm(struct vm_instruction_node *node, void *outstream, int type)
 	if(num) {
 		p += len ;
 		buf_size -= len ;
-		len = snprintf(p, buf_size, " ,\t") ;
+		len = ndsnprintf(p, buf_size, " ,\t") ;
 
 		p += len ;
 		buf_size -= len ;
@@ -416,19 +416,19 @@ int vm_output_asm(struct vm_instruction_node *node, void *outstream, int type)
 		case EDS_NONE:
 			break ;
 		case EDS_IMMEDIATE:
-			len = snprintf(p, buf_size, "%f", node->val2) ;
+			len = ndsnprintf(p, buf_size, "%f", node->val2) ;
 			break ;
 		case EDS_ADDRESS:
-			len = snprintf(p, buf_size, "[%x]", *((vm_adddress*) &node->val2)  ) ;
+			len = ndsnprintf(p, buf_size, "[%x]", *((vm_adddress*) &node->val2)  ) ;
 			break ;
 		case EDS_STACK:
-			len = snprintf(p, buf_size, "[SP %d]", *((vm_adddress*) &node->val2)  ) ;
+			len = ndsnprintf(p, buf_size, "[SP %d]", *((vm_adddress*) &node->val2)  ) ;
 			break ;
 		case EDS_REG1:
-			len = snprintf(p, buf_size, "REG1" ) ;
+			len = ndsnprintf(p, buf_size, "REG1" ) ;
 			break ;
 		case EDS_REG2:
-			len = snprintf(p, buf_size, "REG2" ) ;
+			len = ndsnprintf(p, buf_size, "REG2" ) ;
 			break ;
 		default :
 			break ;
@@ -437,10 +437,10 @@ int vm_output_asm(struct vm_instruction_node *node, void *outstream, int type)
 
 
 	if(MEDIUM_FILE==type) {
-		return fprintf((FILE*)outstream, "%s\n", buf) ;
+		return ndfprintf((FILE*)outstream, "%s\n", buf) ;
 	}
 	else if(MEDIUM_BUF==type) {
-		return snprintf(outstream, sizeof(buf),"%s", buf) ;
+		return ndsnprintf(outstream, sizeof(buf),"%s", buf) ;
 	}
 	return 0 ;
 }

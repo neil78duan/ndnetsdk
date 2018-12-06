@@ -39,7 +39,7 @@ nd_handle __s_srclog_pool;
 static ND_LIST_HEAD(__s_source_head);
 static int _source_numbers = 0;
 #define SOURCE_DUMP nd_logfatal
-//fprintf(stderr,msg) 
+//ndfprintf(stderr,msg) 
 //定义资源记录器的数据结果
 struct _Source_loginfo {
 	void *__source;
@@ -72,11 +72,11 @@ int _source_log(void *p, const char *operate, const char *msg, const char *file,
 		//node->__operate = operate;
 		//node->__msg = msg ;
 		if (operate)
-			strncpy(node->__operate, operate, 32);
+			ndstrncpy(node->__operate, operate, 32);
 		if (msg)
-			strncpy(node->__msg, msg, 128);
+			ndstrncpy(node->__msg, msg, 128);
 		if (file)
-			strncpy(node->__file, file, 256);
+			ndstrncpy(node->__file, file, 256);
 
 		__LOCK();
 		INIT_LIST_HEAD(&(node->__list));

@@ -331,11 +331,11 @@ int nd_msgentry_install(nd_netui_handle handle, nd_usermsg_func func, ndmsgid_t 
 		node->is_script = 0;
 #if 1
 		if (name && name[0]) {
-			int len = strlen(name) + 1;
+			int len = ndstrlen(name) + 1;
 			if (len > (int) sizeof(node->name)) {
 				len = sizeof(node->name);
 			}
-			strncpy(node->name, name, len);
+			ndstrncpy(node->name, name, len);
 		}
 #endif
 		ret = 0 ;
@@ -356,12 +356,12 @@ int nd_msgentry_script_install(nd_handle handle, const char*script, ndmsgid_t ma
 	ENTER_FUNC();
 	node = _nd_msgentry_get_node(handle, maxid, minid);
 	if (script && script[0] && node) {
-		int len = (int)strlen(script) + 1;
+		int len = (int)ndstrlen(script) + 1;
 		if (node->is_script && node->entry)	{
 			free(node->entry);
 		}
 		node->entry = (nd_usermsg_func)malloc(len);
-		strncpy((char*)node->entry, script, len);
+		ndstrncpy((char*)node->entry, script, len);
 		node->level = level;
 		node->is_script = 1;
 		ret = 0;

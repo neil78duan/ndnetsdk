@@ -39,7 +39,7 @@ DWORD _ErrBox(char *file, int line)
 {
 	const char *perrdesc=nd_last_error() ;
 	char buf[4096]={0} ;
-	snprintf(buf,4096,"Runtime ERROR in:%s %d line\n %s ",
+	ndsnprintf(buf,4096,"Runtime ERROR in:%s %d line\n %s ",
 		file,line,perrdesc);
 	MessageBoxA(GetActiveWindow(), buf, "error", MB_OK);
 	DebugBreak();
@@ -54,7 +54,7 @@ const char *nd_str_error(int errcode)
 	BOOL fOk ;
 
 	if(0==dwError) {
-		strncpy(buf_desc,pstrNoErr,sizeof(buf_desc));
+		ndstrncpy(buf_desc,pstrNoErr,sizeof(buf_desc));
 		return buf_desc ;
 	}
 	// Get the error code's textual description
@@ -78,10 +78,10 @@ const char *nd_str_error(int errcode)
 	}
 
 	if (hlocal != NULL) {
-		strncpy(buf_desc,(char *) LocalLock(hlocal),sizeof(buf_desc));
+		ndstrncpy(buf_desc,(char *) LocalLock(hlocal),sizeof(buf_desc));
 		LocalFree(hlocal);
 	} else {
-		strncpy(buf_desc,pstrNoErr,sizeof(buf_desc));
+		ndstrncpy(buf_desc,pstrNoErr,sizeof(buf_desc));
 	}
 	return buf_desc ;
 }
@@ -91,9 +91,23 @@ const char *nd_last_error()
 }
 char* get_rlimit_info(char *buf, int buf_size) 
 {
-	strncpy(buf, "unknow", buf_size) ;
+	ndstrncpy(buf, "unknow", buf_size) ;
 	return buf;
 }
+
+HINSTANCE nd_dll_load(const char *dllpath)
+{
+	return LoadLibrary(dllpath);
+}
+void nd_dll_unload(HINSTANCE hdll)
+{
+	FreeLibrary(hdll);
+}
+void* nd_dll_entry(HINSTANCE hdll, const char *name)
+{
+	return (void*)GetProcAddress(hdll, name);
+}
+
 
 #ifdef ND_OPEN_TRACE
 int MyDbgReport(const char *file, int line, const char *stm, ...)
@@ -103,12 +117,12 @@ int MyDbgReport(const char *file, int line, const char *stm, ...)
 	int done;
 
 	if(file) {
-		sprintf(p, "%s ", file) ;
-		p += strlen(p) ;
+		ndsprintf(p, "%s ", file) ;
+		p += ndstrlen(p) ;
 	}
 	if(line) {
-		sprintf(p, "%d ", line) ;
-		p += strlen(p) ;
+		ndsprintf(p, "%d ", line) ;
+		p += ndstrlen(p) ;
 	}
 
 	va_start (arg, stm);
@@ -316,7 +330,7 @@ int nd_mem_share_close(nd_filemap_t *map_handle)
 
 int nd_get_sys_callstack(char *buf, size_t size)
 {
-	return snprintf(buf, size, "call-stack-unknow\n") ;
+	return ndsnprintf(buf, size, "call-stack-unknow\n") ;
 }
 
 int nd_sys_callstack_dump(nd_out_func func,FILE *outfile)

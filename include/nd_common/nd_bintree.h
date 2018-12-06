@@ -57,7 +57,7 @@
 		 struct mytype *data = container_of(node, struct mytype, node);
 		 int result;
 
-		 result = strcmp(string, data->keystring);
+		 result = ndstrcmp(string, data->keystring);
 
 		 if (result < 0)
 			node = node->rb_left;
@@ -88,7 +88,7 @@
   //Figure out where to put new node 
 	while (*new) {
 		struct mytype *this = container_of(*new, struct mytype, node);
-		int result = strcmp(data->keystring, this->keystring);
+		int result = ndstrcmp(data->keystring, this->keystring);
 
 		parent = *new;
 		if (result < 0)

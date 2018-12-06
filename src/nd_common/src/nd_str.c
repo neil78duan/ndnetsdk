@@ -371,7 +371,7 @@ int ndstr_parse_command(const char *input_text, char *argv[], int bufize, int nu
 			if (envValName[0]) {
 				char *envVal = getenv(envValName) ;
 				if (envVal && envVal[0]) {
-					strncpy(argv[ret], envVal, bufize) ;
+					ndstrncpy(argv[ret], envVal, bufize) ;
 				}
 				else {
 					break ;
@@ -393,7 +393,7 @@ int ndstr_parse_command(const char *input_text, char *argv[], int bufize, int nu
 
 				char *envVal = getenv(envValName) ;
 				if (envVal && envVal[0]) {
-					strncpy(argv[ret], envVal, bufize) ;
+					ndstrncpy(argv[ret], envVal, bufize) ;
 				}
 				else {
 					break ;

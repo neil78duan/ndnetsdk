@@ -388,7 +388,7 @@ nd_thsrvid_t nd_thsrv_createex(struct nd_thsrv_createinfo* create_info,int prior
 	contex->run_module = create_info->run_module ;
 	contex->h_timer = NULL ;
 	nd_atomic_swap(&contex->is_suspend ,1) ;
-	strncpy(contex->srv_name,create_info->srv_name,sizeof(contex->srv_name));
+	ndstrncpy(contex->srv_name,create_info->srv_name,sizeof(contex->srv_name));
 
 	INIT_LIST_HEAD(&(contex->list)) ;
 	INIT_LIST_HEAD(&(contex->msg_list)) ;

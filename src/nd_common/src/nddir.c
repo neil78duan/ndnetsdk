@@ -42,21 +42,21 @@ char* nd_full_path(const char*in_path, const char *in_file, char *outbuf, size_t
 	}
 
 	if(in_path &&*in_path) {
-		len =strlen(in_path);
+		len =ndstrlen(in_path);
 	}
 
 	if (len == 0)	{
-		snprintf(outbuf, size,"%s/%s", nd_getcwd(), in_file);
+		ndsnprintf(outbuf, size,"%s/%s", nd_getcwd(), in_file);
 	}
 	else {
 		if (in_path[len - 1] == '/' || in_path[len - 1] == '\\') {
-			snprintf(outbuf, size, "%s%s", in_path, in_file);
+			ndsnprintf(outbuf, size, "%s%s", in_path, in_file);
 		}
 		else {
 #if  defined(ND_UNIX) 
-			snprintf(outbuf, size, "%s/%s", in_path, in_file);
+			ndsnprintf(outbuf, size, "%s/%s", in_path, in_file);
 #else 
-			snprintf(outbuf, size, "%s\\%s", in_path, in_file);
+			ndsnprintf(outbuf, size, "%s\\%s", in_path, in_file);
 #endif
 		}
 	}
@@ -395,7 +395,7 @@ const char *nd_relative_path(const char *fullPath, const char *workPath, char *b
 
 	*p = 0;
 	if (!workPath)	{
-		strncpy(buf, fullPath, bufsize);
+		ndstrncpy(buf, fullPath, bufsize);
 		goto _EXIT;
 	}
 
@@ -415,23 +415,23 @@ const char *nd_relative_path(const char *fullPath, const char *workPath, char *b
 	}
 
 	if (pos == srcpath){
-		strncpy(buf, fullPath, bufsize);
+		ndstrncpy(buf, fullPath, bufsize);
 		goto _EXIT;
 	}
 
 	depth = __path_depth(workPath);
 
 	for (i = 0; i < depth; i++){
-		strncat(p, "../", bufsize);
+		ndstrncat(p, "../", bufsize);
 		p += 3;
 		bufsize -= 3;
 	}
 	if (*pos){
-		strncat(p, pos, bufsize);
+		ndstrncat(p, pos, bufsize);
 	}
 
 _EXIT:
-	p += strlen(p) -1;
+	p += ndstrlen(p) -1;
 
 	if (*p == '/' || *p == '\\') {
 		*p= 0;
@@ -444,13 +444,13 @@ const char * nd_absolute_path(const char *relative_path, char *outbuf, size_t bu
 	char tmp_buf[ND_FILE_PATH_SIZE];
 	const char *wdir = nd_getcwd();
 	
-	strncpy(tmp_buf, wdir, sizeof(tmp_buf));
+	ndstrncpy(tmp_buf, wdir, sizeof(tmp_buf));
 	if (-1 == nd_chdir(relative_path)) {
 		return NULL;
 	}
 
 	wdir = nd_getcwd();
-	strncpy(outbuf, wdir, bufsize) ;
+	ndstrncpy(outbuf, wdir, bufsize) ;
 	nd_chdir(tmp_buf);
 	return outbuf;
 }
@@ -471,7 +471,7 @@ const char * nd_absolute_filename(const char *relative_file, char *outbuf, size_
 const char * nd_file_ext_name(const char *fullPath)
 {
 	const char *start = fullPath;
-	size_t size = strlen(start);
+	size_t size = ndstrlen(start);
 	const char *p = start + size;
 
 	int ret = 0;
@@ -493,6 +493,40 @@ const char * nd_file_ext_name(const char *fullPath)
 	return NULL;
 }
 
+const char * nd_file_name_without_ext(const char *fullPath, char *outbuf, size_t size)
+{
+	const char *begin_name = fullPath;
+	const char* end_name = 0;
+	const char *start = fullPath;
+	const char *p = start + ndstrlen(start);
+
+	while (p-- > start) {
+		if (*p == '/' || *p == '\\') {
+			begin_name = p+1 ;
+			break;
+		}
+		if (end_name) {
+			begin_name = p ;
+		}
+		else if (*p == '.') {
+			end_name = p;
+		}
+	}
+
+	if (end_name==0) {
+		ndstrncpy(outbuf, begin_name, size);
+		
+	}
+	else {
+		size_t realsize = end_name - begin_name ;
+		if(realsize > size) {
+			realsize = size -1 ;
+		}
+		ndstrncpy(outbuf, begin_name, realsize);
+		outbuf[realsize] = 0;
+	}
+	return outbuf;
+}
 
 //test input_path is in parent_path
 int  nd_is_subpath(const char *parent_path, const char *input_path)

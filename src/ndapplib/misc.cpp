@@ -149,16 +149,16 @@ void _error_exit(const char * file, int line, const char *stm,...)
 	int done;
 
 	buf[0] = 0 ;
-	done = snprintf(buf,1024,"%s:%d ", file, line) ;
+	done = ndsnprintf(buf,1024,"%s:%d ", file, line) ;
 	p = buf + done ;
 
 	va_start (arg, stm);
-	done = vsnprintf (p, sizeof(buf),stm, arg);
+	done = ndvsnprintf (p, sizeof(buf),stm, arg);
 	va_end (arg);
 
-	fprintf(stderr, "%s",buf) ;	
+	ndfprintf(stderr, "%s",buf) ;	
 #if defined(_MSC_VER)
-	printf("\npress ANY key to continue\n") ;
+	ndprintf("\npress ANY key to continue\n") ;
 	getch() ;
 #endif
 	exit(1) ;

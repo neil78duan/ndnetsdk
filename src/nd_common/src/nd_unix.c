@@ -20,7 +20,7 @@
 #include <semaphore.h>
 #include <signal.h>
 #include <sys/stat.h>
-
+#include <dlfcn.h>
 
 const char *nd_get_sys_username()
 {
@@ -33,6 +33,25 @@ const char *nd_get_sys_username()
 		return "unknow-user";
 	}
 }
+
+HINSTANCE nd_dll_load(const char *dllpath)
+{
+	HINSTANCE h = dlopen(dllpath, RTLD_LAZY);
+	if(!h) {
+		nd_logerror("dlopen(%s) : %s\n", dllpath, dlerror()) ;
+		return NULL ;
+	}
+	return h;
+}
+void nd_dll_unload(HINSTANCE hdll)
+{
+	dlclose(hdll);
+}
+void* nd_dll_entry(HINSTANCE hdll, const char *name)
+{
+	return (void*)dlsym(hdll, name);
+}
+
 //return NDSEM_SUCCESS wait success, NDSEM_ERROR error , NDSEM_TIMEOUT timeout
 
 static int nd_clock_gettime( struct timespec *t)
@@ -151,7 +170,7 @@ int _nd_sem_open(nd_sem_name_t *sem, unsigned int value)
 	//char sem_name[64] ;
 	nd_sem_name_t  psem = (nd_sem_name_t) malloc(sizeof(struct nd_name_sem) );
 	do {
-		snprintf(psem->_name, sizeof(psem->_name), "%s_sem_%d", nd_process_name(),  nd_atomic_inc( &_s_sem_index)) ;
+		ndsnprintf(psem->_name, sizeof(psem->_name), "%s_sem_%d", nd_process_name(),  nd_atomic_inc( &_s_sem_index)) ;
 		
 		psem->_sem = sem_open( psem->_name, O_CREAT|O_EXCL, 0644, value );
 		if (psem->_sem== SEM_FAILED) {
@@ -202,7 +221,7 @@ nd_sem_name_t _nd_sem_open_ex(const char *name, unsigned int value,int flag)
 	}
 	
 	psem->_sem = mysem ;
-	strncpy(psem->_name,name, sizeof(psem->_name)) ;
+	ndstrncpy(psem->_name,name, sizeof(psem->_name)) ;
 	
 	return psem;
 }
@@ -538,7 +557,7 @@ int enable_core_dump(void)
 #define GET_RLIMIT_INFO(_name,_buf, size)  do {\
 	struct rlimit   limit = {0};	\
 	if( getrlimit(_name, &limit) == 0 && size > 0) {\
-		int _len = snprintf(_buf, size, "%s:cur=%llu max=%llu\n",  #_name, (NDUINT64)limit.rlim_cur, (NDUINT64)limit.rlim_max) ; 	\
+		int _len = ndsnprintf(_buf, size, "%s:cur=%llu max=%llu\n",  #_name, (NDUINT64)limit.rlim_cur, (NDUINT64)limit.rlim_max) ; 	\
 		size -= _len ;				\
 		_buf += _len ;				\
 	} \
@@ -719,7 +738,7 @@ int nd_get_sys_callstack(char *buf, size_t size)
 	char *p= buf ;
 	int ret = 0 ;
 	for (i = 0; i < frames; ++i) {
-		int len = snprintf(p, (size - ret), "%s\n", strs[i]);
+		int len = ndsnprintf(p, (size - ret), "%s\n", strs[i]);
 		ret += len ;
 		p += len ;
 	}

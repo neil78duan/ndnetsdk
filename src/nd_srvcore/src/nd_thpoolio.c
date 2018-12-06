@@ -93,7 +93,7 @@ int listen_thread_create(struct thread_pool_info *ic,nd_threadsrv_entry th_func)
 		ic 
 	};
 
-	snprintf(subth_info.srv_name, sizeof(subth_info.srv_name), "listen%d", ++index);
+	ndsnprintf(subth_info.srv_name, sizeof(subth_info.srv_name), "listen%d", ++index);
 	ic->thid = nd_thsrv_createex(&subth_info,NDT_PRIORITY_HIGHT,1) ;
 
 	if(!ic->thid ) {

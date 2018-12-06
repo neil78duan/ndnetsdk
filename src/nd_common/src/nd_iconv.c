@@ -15,7 +15,7 @@
 
 char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf)
 {
-	int input_len = strlen(input_text);
+	int input_len = ndstrlen(input_text);
 	int insize = ( input_len+1) * sizeof(wchar_t);
 	int wlen, nLen;
 	wchar_t *pWbuf = malloc(insize);
@@ -36,7 +36,7 @@ char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf)
 
 char * nd_utf8_to_gbk(const char *input_text, char *output_buf, int size_buf)
 {
-	int input_len = strlen(input_text);
+	int input_len = ndstrlen(input_text);
 	int insize = ( input_len+1) * sizeof(wchar_t);
 
 	int wlen, nLen;
@@ -85,7 +85,7 @@ static int code_convert(const char *from_charset,const char *to_charset, char *i
 
 char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf)
 {
-	int inlen = strlen(input_text) ;
+	int inlen = ndstrlen(input_text) ;
 	int ret = code_convert("GBK","UTF-8",(char*)input_text,inlen,output_buf,size_buf);
 	if (0==ret) {
 		return output_buf ;
@@ -95,7 +95,7 @@ char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf)
 
 char * nd_utf8_to_gbk(const char *input_text, char *output_buf, int size_buf)
 {
-	int inlen = strlen(input_text) ;
+	int inlen = ndstrlen(input_text) ;
 	int ret = code_convert("UTF-8","GBK",(char*)input_text,inlen,output_buf,size_buf);
 	if (0==ret) {
 		return output_buf ;
@@ -112,7 +112,7 @@ char * nd_utf8_to_ndcode(const char *input_text, char *outbuf, int size)
 #if (ND_ENCODE_TYPE==E_SRC_CODE_GBK)
 	return nd_utf8_to_gbk(input_text, outbuf, size) ;
 #else 
-	return strncpy(outbuf,input_text,size) ;
+	return ndstrncpy(outbuf,input_text,size) ;
 #endif
 
 }
@@ -121,7 +121,7 @@ char * nd_ndcode_to_utf8(const char *input_text, char *outbuf, int size)
 #if (ND_ENCODE_TYPE==E_SRC_CODE_GBK)
 	return nd_gbk_to_utf8(input_text, outbuf, size);
 #else 
-	return strncpy(outbuf, input_text, size);
+	return ndstrncpy(outbuf, input_text, size);
 #endif
 
 
@@ -186,10 +186,10 @@ int nd_code_convert_file(const char *file, int fromType, int toType)
 		char outbuf[4096];
 
 		if (func(buf, outbuf, sizeof(outbuf))) {
-			len = snprintf(p, size, "%s", outbuf);
+			len = ndsnprintf(p, size, "%s", outbuf);
 		}
 		else {
-			len = snprintf(p, size, "%s", buf);
+			len = ndsnprintf(p, size, "%s", buf);
 		}
 		p += len;
 		size -= len;

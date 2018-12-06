@@ -112,6 +112,7 @@
       <PreprocessorDefinitions>ND_DEBUG;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,6 +149,7 @@
       <PreprocessorDefinitions>WIN32;X86_64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,7 +161,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\include\nd_common\cJSON.h" />
     <ClInclude Include="..\..\..\include\nd_common\list.h" />
-    <ClInclude Include="..\..\..\include\nd_common\ndchar.h" />
     <ClInclude Include="..\..\..\include\nd_common\nddir.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_alloc.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_atomic.h" />

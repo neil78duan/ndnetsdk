@@ -64,7 +64,7 @@ int register_connector(void)
 	reginfo.object_size = sizeof(struct nd_tcp_node ) ;
 	reginfo.init_entry =(nd_init_func ) nd_tcpnode_init ;
 	reginfo.close_entry = (nd_close_callback )_connector_destroy  ;
-	strcpy(reginfo.name, "tcp-connector" ) ;
+	ndstrcpy(reginfo.name, "tcp-connector" ) ;
 	
 	ret = nd_object_register(&reginfo) ;
 	if(-1==ret) {
@@ -76,7 +76,7 @@ int register_connector(void)
 	reginfo.object_size = sizeof(nd_udp_node) ;
 	reginfo.init_entry = (nd_init_func ) udp_node_init ;
 	reginfo.close_entry = (nd_close_callback )nd_udp_close  ;
-	strcpy(reginfo.name, "udp-node" ) ;
+	ndstrcpy(reginfo.name, "udp-node" ) ;
 
 	ret = nd_object_register(&reginfo) ;
 	if(-1==ret) {
@@ -87,7 +87,7 @@ int register_connector(void)
 	reginfo.object_size = sizeof(nd_udt_node) ;
 	reginfo.init_entry = (nd_init_func ) nd_udtnode_init ;
 	reginfo.close_entry = (nd_close_callback )_connector_destroy  ;
-	strcpy(reginfo.name, "udt-connector" ) ;
+	ndstrcpy(reginfo.name, "udt-connector" ) ;
 
 	ret = nd_object_register(&reginfo) ;
 	if(-1==ret) {
@@ -100,7 +100,7 @@ int register_connector(void)
 	reginfo.object_size = sizeof(nd_udt_node) ;
 	reginfo.init_entry = (nd_init_func ) udt_icmp_init ;
 	reginfo.close_entry = (nd_close_callback )_connector_destroy  ;
-	strcpy(reginfo.name, "icmp-connector" ) ;
+	ndstrcpy(reginfo.name, "icmp-connector" ) ;
 
 	ret = nd_object_register(&reginfo) ;
 	if(-1==ret) {

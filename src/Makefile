@@ -16,7 +16,7 @@ release:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n DEBUG="n" PROFILE="n" || exit 1; done
 	cp -f $(TOPDIR)/src/build-lib $(LIBDIR)/Makefile; cd $(LIBDIR) ; make DEBUG="n" PROFILE="n"
 
-dll : dll_debug
+dll : dll_release
 dll_debug:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n DEBUG="y" PROFILE="y" BUILD_DLL="y" || exit 1; done
 	cp -f $(TOPDIR)/src/build-lib $(LIBDIR)/Makefile; cd $(LIBDIR) ; make DEBUG="y" PROFILE="y" BUILD_DLL="y" 
@@ -25,6 +25,9 @@ dll_release:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n DEBUG="n" PROFILE="n" BUILD_DLL="y" || exit 1; done
 	cp -f $(TOPDIR)/src/build-lib $(LIBDIR)/Makefile; cd $(LIBDIR) ; make DEBUG="n" PROFILE="n" BUILD_DLL="y" 
 
+clean_dll:
+	for n in $(SUBDIRS); do $(MAKE) -C $$n clean_dll ; done
+	
 clean:
 	rm -f *.o *~
 	for n in $(SUBDIRS); do $(MAKE) -C $$n clean ; done

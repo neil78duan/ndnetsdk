@@ -99,7 +99,7 @@ int push_func(const char *funcname)
 				}
 
 				if (pcs->stack_point < MAX_CALLSTACK_SIZE) {
-					strncpy(pcs->names[pcs->stack_point],funcname, sizeof(functionname_t)) ;
+					ndstrncpy(pcs->names[pcs->stack_point],funcname, sizeof(functionname_t)) ;
 					++(pcs->stack_point);
 					return 0;
 				}
@@ -169,7 +169,7 @@ char *nd_get_callstack_desc(char *buf, size_t size)
 					break ;
 				}
 				else {
-					size_t ret = snprintf(p, len, "%s();", pcs->names[n]) ;
+					size_t ret = ndsnprintf(p, len, "%s();", pcs->names[n]) ;
 					if(ret <=0 )
 						break ;
 					p += ret ;

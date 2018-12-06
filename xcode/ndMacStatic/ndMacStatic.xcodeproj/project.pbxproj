@@ -15,8 +15,6 @@
 		07272F172137FCBD00D66BB0 /* _source_trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 07272F132137FCBD00D66BB0 /* _source_trace.h */; };
 		07272F182137FCBD00D66BB0 /* nd_logger.h in Headers */ = {isa = PBXBuildFile; fileRef = 07272F142137FCBD00D66BB0 /* nd_logger.h */; };
 		07272F192137FCBD00D66BB0 /* nd_trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 07272F152137FCBD00D66BB0 /* nd_trace.h */; };
-		073590D61F5808CB0049C454 /* _client_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 073590D41F5808CB0049C454 /* _client_config.h */; };
-		073590D71F5808CB0049C454 /* _server_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 073590D51F5808CB0049C454 /* _server_config.h */; };
 		0739F41E1A676B1C00520AE2 /* nd_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0739F41D1A676B1C00520AE2 /* nd_version.cpp */; };
 		073DB4321B67162E00A93310 /* ndsingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 073DB4311B67162E00A93310 /* ndsingleton.h */; };
 		074D84FC1D6C25D200201121 /* nd_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 074D84FB1D6C25D200201121 /* nd_time.c */; };
@@ -308,8 +306,6 @@
 		07272F142137FCBD00D66BB0 /* nd_logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_logger.h; sourceTree = "<group>"; };
 		07272F152137FCBD00D66BB0 /* nd_trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_trace.h; sourceTree = "<group>"; };
 		073129B01B57613B00D3F203 /* nd_netbyte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_netbyte.h; sourceTree = "<group>"; };
-		073590D41F5808CB0049C454 /* _client_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _client_config.h; sourceTree = "<group>"; };
-		073590D51F5808CB0049C454 /* _server_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _server_config.h; sourceTree = "<group>"; };
 		0739F41D1A676B1C00520AE2 /* nd_version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_version.cpp; sourceTree = "<group>"; };
 		073DB4311B67162E00A93310 /* ndsingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ndsingleton.h; sourceTree = "<group>"; };
 		074D84FB1D6C25D200201121 /* nd_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_time.c; sourceTree = "<group>"; };
@@ -779,8 +775,6 @@
 				07272F122137FCBD00D66BB0 /* cJSON.h */,
 				07272F142137FCBD00D66BB0 /* nd_logger.h */,
 				07272F152137FCBD00D66BB0 /* nd_trace.h */,
-				073590D41F5808CB0049C454 /* _client_config.h */,
-				073590D51F5808CB0049C454 /* _server_config.h */,
 				074D85091D6C267D00201121 /* nd_iconv.h */,
 				074D850A1D6C267D00201121 /* nd_time.h */,
 				07EBCFD019A8E01500802576 /* list.h */,
@@ -998,7 +992,6 @@
 				07EBD06B19A8E01500802576 /* nd_connector.h in Headers */,
 				07EBD05319A8E01500802576 /* nd_msgentry.h in Headers */,
 				07EBD07D19A8E01500802576 /* nd_stlset.h in Headers */,
-				073590D61F5808CB0049C454 /* _client_config.h in Headers */,
 				07EBD05619A8E01500802576 /* nd_netlib.h in Headers */,
 				07EBD07719A8E01500802576 /* nd_new.h in Headers */,
 				07EBD03419A8E01500802576 /* nd_define.h in Headers */,
@@ -1048,7 +1041,6 @@
 				07EBD07219A8E01500802576 /* nd_objmgr.h in Headers */,
 				07EBD05919A8E01500802576 /* nd_netui.h in Headers */,
 				07EBD03019A8E01500802576 /* nd_comcfg.h in Headers */,
-				073590D71F5808CB0049C454 /* _server_config.h in Headers */,
 				07EBD03519A8E01500802576 /* nd_handle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

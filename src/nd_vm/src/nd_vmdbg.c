@@ -17,7 +17,7 @@ void run_debuger(struct vm_cpu *vm) ;
 int replace_func(const char *input, char *buf, int size,void *userData) 
 {
 	if(ndstricmp(input, "HP")==0) {
-		strncpy(buf, "[1]", size) ;
+		ndstrncpy(buf, "[1]", size) ;
 		return 0 ;
 	}
 	return -1;
@@ -45,14 +45,14 @@ extern char *__op[];
 void show_help() 
 {
 	int i ; 
-	fprintf(stdout, "USAGE: debug command \n" ) ;
+	ndfprintf(stdout, "USAGE: debug command \n" ) ;
 	for (i=0; i<DBG_CMD_NUM; i++) {
-		fprintf(stdout,"\t%s\n", __dbg_cmd[i]) ;
+		ndfprintf(stdout,"\t%s\n", __dbg_cmd[i]) ;
 	}
 	
-	fprintf(stdout, "\nUSAGE: vm command \n" ) ;
+	ndfprintf(stdout, "\nUSAGE: vm command \n" ) ;
 	for (i=0; i<EOP_NUMBERS; i++) {
-		fprintf(stdout,"\t%s\n", __op[i]) ;
+		ndfprintf(stdout,"\t%s\n", __op[i]) ;
 	}
 }
 
@@ -68,34 +68,34 @@ void run_print(const char *src, struct vm_cpu *vm)
 	if(!addr) 
 		return ;
 	if(0==ndstricmp(buf, "reg")) {
-		fprintf(stdout, " reg1 = %f\n  reg2 = %f \n", vm->reg1, vm->reg2) ;
+		ndfprintf(stdout, " reg1 = %f\n  reg2 = %f \n", vm->reg1, vm->reg2) ;
 	}
 	else if(0==ndstricmp(buf, "mem")) {
 		int mm_addr = (int)ndstr_atoi_hex(addr);
 		vm_value * pval = _get_memory(vm ,  (vm_adddress )mm_addr) ;
 		if(pval) {
-			fprintf(stdout, " memory[%d] = %f\n", mm_addr, *pval) ;
+			ndfprintf(stdout, " memory[%d] = %f\n", mm_addr, *pval) ;
 		}
 		else {
-			fprintf(stdout, " bad memory address\n") ;
+			ndfprintf(stdout, " bad memory address\n") ;
 		}
 	}
 	else if(0==ndstricmp(buf, "stack")) {
 		int i = 0 ;
 		vm_value * pval = vm->stack ;
 		while(pval < vm->sp) {
-			fprintf(stdout, " stack[%d] = %f\n", i, *pval) ;
+			ndfprintf(stdout, " stack[%d] = %f\n", i, *pval) ;
 			++pval ;
 			++i ;
 		}
 		if(0==i) {
-			fprintf(stdout, " empty stack \n") ;
+			ndfprintf(stdout, " empty stack \n") ;
 		}
 		else 
-			fprintf(stdout, " sp =%d \n", i ) ;
+			ndfprintf(stdout, " sp =%d \n", i ) ;
 	}
 	else {
-		fprintf(stdout, " usage: print reg/mem/stack n \n") ;
+		ndfprintf(stdout, " usage: print reg/mem/stack n \n") ;
 	}
 	
 }
@@ -130,14 +130,14 @@ int try_run_dbgcmd(char *linebuf, struct vm_cpu *vm)
 		
 	switch(cmd) {
 	case DBG_NOP:
-		fprintf(stdout, " NOP\t\n") ;
+		ndfprintf(stdout, " NOP\t\n") ;
 		break ;
 	case DBG_PRINT:
-		//fprintf(stdout, " reg = %f\n", vm->reg1) ;
+		//ndfprintf(stdout, " reg = %f\n", vm->reg1) ;
 		run_print(addr, vm) ;
 		break ;
 	case DBG_HELP:
-		//fprintf(stdout, " USAGE: \n NOP \n PRINT \n HELP \n QUIT \n") ;
+		//ndfprintf(stdout, " USAGE: \n NOP \n PRINT \n HELP \n QUIT \n") ;
 		show_help() ;
 		break ;
 	case DBG_EXP:
@@ -147,10 +147,10 @@ int try_run_dbgcmd(char *linebuf, struct vm_cpu *vm)
 			if(bin_size>0) {
 				//run code
 				if(-1==vm_run_cmd(vm,buf, bin_size)  ) {
-					fprintf(stdout , " bad exp!\n") ;
+					ndfprintf(stdout , " bad exp!\n") ;
 				}
 				else {
-					fprintf(stdout, "REG1= %f\n" , vm->reg1) ; 
+					ndfprintf(stdout, "REG1= %f\n" , vm->reg1) ; 
 				}
 			}
 			break ;
@@ -192,7 +192,7 @@ void run_debuger(struct vm_cpu *vm)
 
 	for (;;)
 	{
-		fprintf(stdout, "nd vm>" ) ;
+		ndfprintf(stdout, "nd vm>" ) ;
 
 		memset(buf, 0, sizeof(buf)) ;
 
@@ -210,7 +210,7 @@ void run_debuger(struct vm_cpu *vm)
 				}
 			}
 			else if(ret == -1) {
-				fprintf(stderr, "bad command: %s\n", buf ) ;
+				ndfprintf(stderr, "bad command: %s\n", buf ) ;
 			}
 			
 		}

@@ -53,9 +53,7 @@
 		0757AA5F21A7D5DA001BAE36 /* nd_vmdbg.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7D207C6BE800090DFD /* nd_vmdbg.c */; };
 		0757AA6021A7D5DA001BAE36 /* nd_vmmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B8A7E207C6BE800090DFD /* nd_vmmain.c */; };
 		0757AA6321A7D5F6001BAE36 /* libiconv.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0757AA6221A7D5F6001BAE36 /* libiconv.2.tbd */; };
-		077B8AE4207C6BE800090DFD /* _client_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8966207C6BE800090DFD /* _client_config.h */; };
 		077B8AE5207C6BE800090DFD /* _nderr.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8967207C6BE800090DFD /* _nderr.h */; };
-		077B8AE6207C6BE800090DFD /* _server_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8968207C6BE800090DFD /* _server_config.h */; };
 		077B8AE7207C6BE800090DFD /* cJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8969207C6BE800090DFD /* cJSON.h */; };
 		077B8AE8207C6BE800090DFD /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B896A207C6BE800090DFD /* list.h */; };
 		077B8AE9207C6BE800090DFD /* nd_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B896B207C6BE800090DFD /* nd_alloc.h */; };
@@ -63,9 +61,7 @@
 		077B8AEB207C6BE800090DFD /* nd_bintree.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B896D207C6BE800090DFD /* nd_bintree.h */; };
 		077B8AEC207C6BE800090DFD /* nd_cmdline.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B896E207C6BE800090DFD /* nd_cmdline.h */; };
 		077B8AED207C6BE800090DFD /* nd_comcfg.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B896F207C6BE800090DFD /* nd_comcfg.h */; };
-		077B8AEE207C6BE800090DFD /* nd_comdef.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8970207C6BE800090DFD /* nd_comdef.h */; };
 		077B8AEF207C6BE800090DFD /* nd_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8971207C6BE800090DFD /* nd_common.h */; };
-		077B8AF0207C6BE800090DFD /* nd_dbg.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8972207C6BE800090DFD /* nd_dbg.h */; };
 		077B8AF1207C6BE800090DFD /* nd_define.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8973207C6BE800090DFD /* nd_define.h */; };
 		077B8AF2207C6BE800090DFD /* nd_export_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8974207C6BE800090DFD /* nd_export_def.h */; };
 		077B8AF3207C6BE800090DFD /* nd_handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8975207C6BE800090DFD /* nd_handle.h */; };
@@ -81,7 +77,6 @@
 		077B8AFD207C6BE800090DFD /* nd_unix.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B897F207C6BE800090DFD /* nd_unix.h */; };
 		077B8AFE207C6BE800090DFD /* nd_win.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8980207C6BE800090DFD /* nd_win.h */; };
 		077B8AFF207C6BE800090DFD /* nd_xml.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8981207C6BE800090DFD /* nd_xml.h */; };
-		077B8B00207C6BE800090DFD /* ndchar.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8982207C6BE800090DFD /* ndchar.h */; };
 		077B8B01207C6BE800090DFD /* nddir.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8983207C6BE800090DFD /* nddir.h */; };
 		077B8B02207C6BE800090DFD /* crypt_file.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8985207C6BE800090DFD /* crypt_file.h */; };
 		077B8B03207C6BE800090DFD /* nd_crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B8986207C6BE800090DFD /* nd_crypt.h */; };
@@ -153,9 +148,7 @@
 		0757AA3121A7D4E1001BAE36 /* libndcommon_dll.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndcommon_dll.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0757AA6221A7D5F6001BAE36 /* libiconv.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.tbd; path = usr/lib/libiconv.2.tbd; sourceTree = SDKROOT; };
 		077B895C207C6BAB00090DFD /* libndcommon_mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndcommon_mac.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		077B8966207C6BE800090DFD /* _client_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _client_config.h; sourceTree = "<group>"; };
 		077B8967207C6BE800090DFD /* _nderr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
-		077B8968207C6BE800090DFD /* _server_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _server_config.h; sourceTree = "<group>"; };
 		077B8969207C6BE800090DFD /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cJSON.h; sourceTree = "<group>"; };
 		077B896A207C6BE800090DFD /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
 		077B896B207C6BE800090DFD /* nd_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_alloc.h; sourceTree = "<group>"; };
@@ -163,9 +156,7 @@
 		077B896D207C6BE800090DFD /* nd_bintree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_bintree.h; sourceTree = "<group>"; };
 		077B896E207C6BE800090DFD /* nd_cmdline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_cmdline.h; sourceTree = "<group>"; };
 		077B896F207C6BE800090DFD /* nd_comcfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_comcfg.h; sourceTree = "<group>"; };
-		077B8970207C6BE800090DFD /* nd_comdef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_comdef.h; sourceTree = "<group>"; };
 		077B8971207C6BE800090DFD /* nd_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_common.h; sourceTree = "<group>"; };
-		077B8972207C6BE800090DFD /* nd_dbg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_dbg.h; sourceTree = "<group>"; };
 		077B8973207C6BE800090DFD /* nd_define.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_define.h; sourceTree = "<group>"; };
 		077B8974207C6BE800090DFD /* nd_export_def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_export_def.h; sourceTree = "<group>"; };
 		077B8975207C6BE800090DFD /* nd_handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_handle.h; sourceTree = "<group>"; };
@@ -181,7 +172,6 @@
 		077B897F207C6BE800090DFD /* nd_unix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_unix.h; sourceTree = "<group>"; };
 		077B8980207C6BE800090DFD /* nd_win.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_win.h; sourceTree = "<group>"; };
 		077B8981207C6BE800090DFD /* nd_xml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_xml.h; sourceTree = "<group>"; };
-		077B8982207C6BE800090DFD /* ndchar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ndchar.h; sourceTree = "<group>"; };
 		077B8983207C6BE800090DFD /* nddir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nddir.h; sourceTree = "<group>"; };
 		077B8985207C6BE800090DFD /* crypt_file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt_file.h; sourceTree = "<group>"; };
 		077B8986207C6BE800090DFD /* nd_crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_crypt.h; sourceTree = "<group>"; };
@@ -311,9 +301,7 @@
 		077B8965207C6BE800090DFD /* nd_common */ = {
 			isa = PBXGroup;
 			children = (
-				077B8966207C6BE800090DFD /* _client_config.h */,
 				077B8967207C6BE800090DFD /* _nderr.h */,
-				077B8968207C6BE800090DFD /* _server_config.h */,
 				077B8969207C6BE800090DFD /* cJSON.h */,
 				077B896A207C6BE800090DFD /* list.h */,
 				077B896B207C6BE800090DFD /* nd_alloc.h */,
@@ -321,9 +309,7 @@
 				077B896D207C6BE800090DFD /* nd_bintree.h */,
 				077B896E207C6BE800090DFD /* nd_cmdline.h */,
 				077B896F207C6BE800090DFD /* nd_comcfg.h */,
-				077B8970207C6BE800090DFD /* nd_comdef.h */,
 				077B8971207C6BE800090DFD /* nd_common.h */,
-				077B8972207C6BE800090DFD /* nd_dbg.h */,
 				077B8973207C6BE800090DFD /* nd_define.h */,
 				077B8974207C6BE800090DFD /* nd_export_def.h */,
 				077B8975207C6BE800090DFD /* nd_handle.h */,
@@ -339,7 +325,6 @@
 				077B897F207C6BE800090DFD /* nd_unix.h */,
 				077B8980207C6BE800090DFD /* nd_win.h */,
 				077B8981207C6BE800090DFD /* nd_xml.h */,
-				077B8982207C6BE800090DFD /* ndchar.h */,
 				077B8983207C6BE800090DFD /* nddir.h */,
 			);
 			path = nd_common;
@@ -521,7 +506,6 @@
 				077B8B03207C6BE800090DFD /* nd_crypt.h in Headers */,
 				077B8B07207C6BE800090DFD /* digit.h in Headers */,
 				077B8AFC207C6BE800090DFD /* nd_timer.h in Headers */,
-				077B8AE6207C6BE800090DFD /* _server_config.h in Headers */,
 				077B8AF6207C6BE800090DFD /* nd_node_mgr.h in Headers */,
 				077B8AED207C6BE800090DFD /* nd_comcfg.h in Headers */,
 				077B8B08207C6BE800090DFD /* global.h in Headers */,
@@ -529,11 +513,8 @@
 				077B8AF4207C6BE800090DFD /* nd_iconv.h in Headers */,
 				077B8B02207C6BE800090DFD /* crypt_file.h in Headers */,
 				077B8B0D207C6BE800090DFD /* r_random.h in Headers */,
-				077B8AF0207C6BE800090DFD /* nd_dbg.h in Headers */,
 				077B8AFA207C6BE800090DFD /* nd_str.h in Headers */,
 				077B8AF9207C6BE800090DFD /* nd_static_alloc.h in Headers */,
-				077B8B00207C6BE800090DFD /* ndchar.h in Headers */,
-				077B8AEE207C6BE800090DFD /* nd_comdef.h in Headers */,
 				077B8AE7207C6BE800090DFD /* cJSON.h in Headers */,
 				077B8B0B207C6BE800090DFD /* nn.h in Headers */,
 				077B8AEB207C6BE800090DFD /* nd_bintree.h in Headers */,
@@ -554,7 +535,6 @@
 				077B8AF7207C6BE800090DFD /* nd_os.h in Headers */,
 				077B8B10207C6BE800090DFD /* tea.h in Headers */,
 				077B8B0C207C6BE800090DFD /* prime.h in Headers */,
-				077B8AE4207C6BE800090DFD /* _client_config.h in Headers */,
 				077B8AF3207C6BE800090DFD /* nd_handle.h in Headers */,
 				077B8B09207C6BE800090DFD /* md2.h in Headers */,
 				077B8AEF207C6BE800090DFD /* nd_common.h in Headers */,

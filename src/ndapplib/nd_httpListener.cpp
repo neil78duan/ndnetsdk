@@ -152,11 +152,11 @@ int NDHttpSession::_getMyCookie(char *buf, size_t size)
 {
 	int age = getSessionAge();
 	if (age == -1) {
-		return snprintf(buf, size, "%s=%s;path=/", ND_DFT_SESSION_ID_NAME,
+		return ndsnprintf(buf, size, "%s=%s;path=/", ND_DFT_SESSION_ID_NAME,
 			m_cookieSessionId.c_str());
 	}
 	else {
-		return snprintf(buf, size, "%s=%s;Max-Age=%d;path=/", ND_DFT_SESSION_ID_NAME,
+		return ndsnprintf(buf, size, "%s=%s;Max-Age=%d;path=/", ND_DFT_SESSION_ID_NAME,
 			m_cookieSessionId.c_str(), age);
 	}
 	
@@ -191,14 +191,14 @@ int NDHttpSession::SendRedirect(const char *newUrl)
 	if (sessionIdGetInfo(sInfo)){
 		_getMyCookie(cookie, sizeof(cookie));
 
-		len = snprintf(buf, sizeof(buf), "HTTP/1.1 302 Found \r\n"
+		len = ndsnprintf(buf, sizeof(buf), "HTTP/1.1 302 Found \r\n"
 			"Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
 			"Location:%s\r\n"
 			"Set-Cookie:%s\r\n"
 			"Content-Length:0\r\nConnection: close\r\n\r\n", newUrl, cookie);
 	}
 	else {
-		len = snprintf(buf, sizeof(buf), "HTTP/1.1 302 Found \r\n"
+		len = ndsnprintf(buf, sizeof(buf), "HTTP/1.1 302 Found \r\n"
 			"Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
 			"Location:%s\r\n"
 			"Content-Length:0\r\nConnection: close\r\n\r\n", newUrl);
@@ -222,13 +222,13 @@ int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t d
 	setDelayClosed(!response.isLongConnect()); 
 
 	p = buf;
-	len = snprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", response.getStatus(), errorDesc);
+	len = ndsnprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", response.getStatus(), errorDesc);
 	p += len;
 
 	len = (int)response.HeaderToBuf(p, sizeof(buf) - (p - buf));
 	p += len;
 
-	len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:%lld\r\n\r\n", datalen);
+	len = ndsnprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:%lld\r\n\r\n", datalen);
 	p += len;
 
 	len = nd_connector_send_stream(GetHandle(), buf, p - buf, 0);
@@ -264,21 +264,21 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 	p = buf;
 
 	if (desc && *desc) {
-		len = snprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", errorCdoe, desc );
+		len = ndsnprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", errorCdoe, desc );
 	}
 	else {
-		len = snprintf(p, sizeof(buf), "HTTP/1.1 %d errorCode=%d \r\n", errorCdoe, errorCdoe);
+		len = ndsnprintf(p, sizeof(buf), "HTTP/1.1 %d errorCode=%d \r\n", errorCdoe, errorCdoe);
 	}
 	p += len;
 
 	if (desc && *desc) {		
-		len = snprintf(p, sizeof(buf) - (p - buf), "Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
-			"Content-Length:%d\r\nConnection: close\r\n\r\n", (int)strlen(desc));
+		len = ndsnprintf(p, sizeof(buf) - (p - buf), "Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
+			"Content-Length:%d\r\nConnection: close\r\n\r\n", (int)ndstrlen(desc));
 		p += len;  
-		len = snprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", desc);
+		len = ndsnprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", desc);
 	}
 	else {
-		len = snprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:0\r\nConnection: close\r\n\r\n" );
+		len = ndsnprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:0\r\nConnection: close\r\n\r\n" );
 	}
 	p += len;
 	len = nd_connector_send_stream(GetHandle(), buf, p - buf,0);
@@ -526,7 +526,7 @@ bool SessionIdMgr::BuildSessionId(sessionId_t &sid)
 
 	++_s_index;
 	char session_sed[128];
-	int len =snprintf(session_sed, sizeof(session_sed), "%d_%d_apollohttp", _s_index, tmnow);
+	int len =ndsnprintf(session_sed, sizeof(session_sed), "%d_%d_apollohttp", _s_index, tmnow);
 
 	char key_buf[33];
 	sid = MD5Crypt32(session_sed, len, key_buf);

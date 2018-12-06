@@ -12,6 +12,7 @@
 
 #pragma comment(lib,"Ws2_32.lib")
 #include <conio.h>
+#include <stdarg.h>
 int nd_unhandler_except(struct _EXCEPTION_POINTERS *lpExceptionInfo) ;
 #endif
 #include "nd_common/nd_common.h"
@@ -102,69 +103,81 @@ NDInstanceBase::~NDInstanceBase()
 	g_base_inst = NULL ;
 }
 
-int NDInstanceBase::Create(int argc,const char *argv[])
+
+int NDInstanceBase::CreateEx(int argc, ...)
+{
+	int i = 0;
+	const char *p[100];
+	va_list arg;
+	va_start(arg, argc);
+	while (argc-- > 0 && i<100) {
+		p[i++] = va_arg(arg, const char*);
+	}
+	va_end(arg);
+	return Create(i, p) ;
+}
+int NDInstanceBase::Create(int argc, const char *argv[])
+{
+	//get config file 	
+	for (int i = 1; i < argc; i++) {
+		if (0 == ndstrcmp(argv[i], "-f") && i < argc - 1) {
+			NDInstanceBase::config_file = argv[++i];
+		}
+		else if (0 == ndstrcmp(argv[i], "-c") && i < argc - 1) {
+			m_config_name = argv[++i];
+		}
+		else if (0 == ndstrcmp(argv[i], "-nodev")) {
+			m_un_develop = 1;
+		}
+
+		else if (0 == ndstrcmp(argv[i], "-log") && i < argc - 1) {
+			const char*logfileName = argv[++i];
+			ndstrncpy(m_config.i_cfg.log_file, logfileName, sizeof(m_config.i_cfg.log_file));
+		}
+		else if (0 == ndstrcmp(argv[i], "-workdir") && i < argc - 1) {
+			nd_chdir(argv[++i]);
+		}
+		else if (0 == ndstrcmp(argv[i], "-v") || 0 == ndstrcmp(argv[i], "--version")) {
+			ndfprintf(stdout, "version : %s \n", __g_version_desc);
+			exit(0);
+		}
+		else if (0 == ndstrcmp(argv[i], "-l") || 0 == ndstrcmp(argv[i], "--rlimit")) {
+			char buf[1024];
+			ndfprintf(stdout, "rlimit: \n %s\n", get_rlimit_info(buf, sizeof(buf)));
+			exit(0);
+		}
+
+		else if (0 == ndstrcmp(argv[i], "-pid") && i < argc - 1) {
+			FILE *pf = fopen(argv[i + 1], "w");
+			if (pf) {
+				ndfprintf(pf, "%d", nd_processid());
+				fclose(pf);
+			}
+			else {
+				ndfprintf(stderr, "write pid error %s file not exist\n", argv[i + 1]);
+				exit(1);
+			}
+		}
+	}
+	nd_arg(argc, argv);
+	return _create();
+}
+int NDInstanceBase::_create()
 {
 	int i ;
 	const char *logfileName = NULL ;
 	if (m_bCreated)	{
 		return 0;
 	}
-
-    system_signals_init() ;
-    
-	nd_arg(argc, argv);	
-	
-	//get config file 	
-	for (i=1; i<argc; i++){
-		if(0 == strcmp(argv[i],"-f" ) && i< argc-1) {
-			NDInstanceBase::config_file = argv[++i] ;
-		}
-		else if(0== strcmp(argv[i], "-c") && i< argc-1) {
-			m_config_name = argv[++i] ;
-		}
-		else if(0==strcmp(argv[i],"-nodev")) {
-			m_un_develop = 1;
-		}
-		
-		else if(0==strcmp(argv[i],"-log") && i<argc -1) {
-			logfileName = argv[++i];
-		}
-		else if(0==strcmp(argv[i],"-workdir") &&i<argc -1 ) {
-			nd_chdir(argv[++i]) ;
-		}
-		else if(0==strcmp(argv[i],"-v") || 0==strcmp(argv[i],"--version") ) {
-			fprintf(stdout, "version : %s \n" , __g_version_desc) ;
-			exit(0) ;
-		}
-		else if(0==strcmp(argv[i],"-l") || 0==strcmp(argv[i],"--rlimit") ) {
-			char buf[1024] ;
-			fprintf(stdout, "rlimit: \n %s\n" , get_rlimit_info(buf, sizeof(buf)) ) ;
-			exit(0) ;
-		}
-
-        else if(0==strcmp(argv[i],"-pid") && i<argc -1){
-            FILE *pf = fopen(argv[i+1], "w") ;
-            if (pf) {
-                fprintf(pf, "%d", nd_processid()) ;
-                fclose(pf) ;
-            }
-            else {
-                fprintf(stderr,"write pid error %s file not exist\n", argv[i+1]) ;
-                exit(1) ;
-            }
-        }
-	}
+    system_signals_init() ;	
 
 	if(!config_file|| !m_config_name) {
-		printf("usage: -f config-file -c config-name\n press ANY key to continue\n") ;
-		//getch() ;
+		ndprintf("usage: -f config-file -c config-name\n press ANY key to continue\n") ;
 		exit(1) ;
-		//return -1 ;
 	}
 
 	if(-1==ReadConfig(m_config_name) ) {
-		printf("Read config %s file error \n press ANY key to continue\n", m_config_name) ;
-		//getch() ;
+		ndprintf("Read config %s file error \n press ANY key to continue\n", m_config_name) ;
 		exit(1) ;
 	}
 	
@@ -183,9 +196,7 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 		nd_logmsg("set max connect %d real max connect =%d\n",m_config.l_cfg.max_connect, (int) new_fd_num);
 	}
 	
-	if(logfileName && logfileName[0]) {
-		strncpy(m_config.i_cfg.log_file, logfileName, sizeof(m_config.i_cfg.log_file)) ;
-	}
+	
 	if (m_config.i_cfg.log_file[0]){
 		nd_set_logpath_without_date(m_config.i_cfg.log_filename_nodate);
 		set_log_file(m_config.i_cfg.log_file) ;
@@ -196,17 +207,7 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 	}
 
 	if (m_config.i_cfg.callstack_file[0]){
-		/*
-		struct tm *gtm, tm1;
-
-		time_t t = time(NULL);
-		gtm = localtime_r(&t, &tm1);
-		char callFile[1024];
-		snprintf(callFile, sizeof(callFile), "%s.%d.%d.%d.%d",
-			m_config.i_cfg.callstack_file, gtm->tm_mon, gtm->tm_mday,gtm->tm_hour,gtm->tm_min);
 		
-		if (CALLSTACK_INIT(callFile) == -1) {
-		*/
 #ifdef __ND_WIN__
 		if (CALLSTACK_INIT(nd_filename(m_config.i_cfg.callstack_file)) == -1) {
 #else 
@@ -216,15 +217,9 @@ int NDInstanceBase::Create(int argc,const char *argv[])
 			return -1 ;
 		}
 	}
-
 	nd_net_set_crypt((nd_netcrypt)nd_TEAencrypt, (nd_netcrypt)nd_TEAdecrypt, sizeof(tea_v)) ;
-	
-// 	if (g_base_inst==NULL){
-// 		g_base_inst = this ;
-// 	}
 
 	OnCreate();
-
 	m_bCreated = 1;
 	return 0 ;
 
@@ -425,7 +420,7 @@ void NDInstanceBase::StartStaticsMem()
 int NDReportHook(int nRptType, char *szMsg,int  *retVal)
 {
 	const char *RptTypes[] = { "Warning", "Error", "Assert" };
-	if ( ( nRptType > 0 ) || ( strstr( szMsg, "HEAP CORRUPTION DETECTED" ) ) )
+	if ( ( nRptType > 0 ) || ( ndstrstr( szMsg, "HEAP CORRUPTION DETECTED" ) ) )
 		nd_logmsg("%s: %s" AND RptTypes[nRptType] AND szMsg );
 
 	retVal = 0;
@@ -619,7 +614,7 @@ int nd_unhandler_except(struct _EXCEPTION_POINTERS *lpExceptionInfo)
 	char szFileName[256];
 	SYSTEMTIME st;
 	::GetLocalTime(&st);
-	snprintf(szFileName,256, "%04d-%02d-%02d-%02d-%02d-%02d-%02d-%02d.dmp", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, rand()%100);
+	ndsnprintf(szFileName,256, "%04d-%02d-%02d-%02d-%02d-%02d-%02d-%02d.dmp", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, rand()%100);
 
 	HANDLE hFile = ::CreateFileA(szFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
 	if (hFile != INVALID_HANDLE_VALUE){
@@ -633,17 +628,17 @@ int nd_unhandler_except(struct _EXCEPTION_POINTERS *lpExceptionInfo)
 		BOOL bOK = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal, &ExInfo, NULL, NULL );
 		/*
 		if (bOK){
-			printf("Create Dump File Success!\n");
+			ndprintf("Create Dump File Success!\n");
 		}
 		else{
-			printf("MiniDumpWriteDump Failed: %d\n", GetLastError());
+			ndprintf("MiniDumpWriteDump Failed: %d\n", GetLastError());
 		}
 		*/
 		::CloseHandle(hFile);
 	}
 	else
 	{
-		//printf("Create File %s Failed %d\n", szFileName, GetLastError());
+		//ndprintf("Create File %s Failed %d\n", szFileName, GetLastError());
 	}
 	return ret;
 }
@@ -670,7 +665,7 @@ int ipaddr_mac_cmp(const char *input_addr)
 			char mac_buf[128] ;
 			char *p = mac_buf ;
 			for(UINT i=0;i<pAdapter->AddressLength;i++)	{
-				p +=snprintf(p,128 , "%02x-" , pAdapter->Address[i]) ;
+				p +=ndsnprintf(p,128 , "%02x-" , pAdapter->Address[i]) ;
 			}
 			--p ;
 			*p = 0 ;
@@ -714,7 +709,7 @@ int ipaddr_mac_cmp(const char *input_addr)
 			while (intrface-- > 0){
 				if (!(ioctl (fd, SIOCGIFHWADDR, (char *) &buf[intrface])))	{
 
-					snprintf(ma_buf, 128, "%02x-%02x-%02x-%02x-%02x-%02x",
+					ndsnprintf(ma_buf, 128, "%02x-%02x-%02x-%02x-%02x-%02x",
 						(unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
 						(unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
 						(unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],

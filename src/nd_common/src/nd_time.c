@@ -56,7 +56,7 @@ const char *nd_get_timestr(void)
 	time(&nowtm);
 	gtm = localtime_r(&nowtm, &tm1);
 
-	snprintf(timebuf, 64, "%d:%d:%d", gtm->tm_hour,
+	ndsnprintf(timebuf, 64, "%d:%d:%d", gtm->tm_hour,
 		gtm->tm_min, gtm->tm_sec);
 	return (const char *)timebuf;
 }
@@ -70,7 +70,7 @@ const char *nd_get_datestr(void)
 	time(&nowtm);
 	gtm = localtime_r(&nowtm, &tm1);
 
-	snprintf(datebuf, 64, "%d-%d-%d", gtm->tm_year + 1900, gtm->tm_mon + 1,
+	ndsnprintf(datebuf, 64, "%d-%d-%d", gtm->tm_year + 1900, gtm->tm_mon + 1,
 		gtm->tm_mday);
 	return (const char *)datebuf;
 }
@@ -88,7 +88,7 @@ const char *nd_get_datetimestr_ex(time_t in_tm, char *timebuf, int size)
 	struct tm *gtm, tm1;
 	gtm = localtime_r(&in_tm, &tm1);
 
-	snprintf(timebuf, size, "%d-%d-%d %d:%d:%d",
+	ndsnprintf(timebuf, size, "%d-%d-%d %d:%d:%d",
 		gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
 		gtm->tm_hour, gtm->tm_min, gtm->tm_sec);
 	return (const char *)timebuf;
@@ -99,7 +99,7 @@ const char *nd_get_datetimestr_gm(time_t in_tm, char *timebuf, int size)
 	struct tm *gtm, tm1;
 	gtm = gmtime_r(&in_tm, &tm1);
 
-	snprintf(timebuf, size, "%d-%d-%d %d:%d:%d",
+	ndsnprintf(timebuf, size, "%d-%d-%d %d:%d:%d",
 		gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
 		gtm->tm_hour, gtm->tm_min, gtm->tm_sec);
 	return (const char *)timebuf;

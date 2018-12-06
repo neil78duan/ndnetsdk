@@ -84,7 +84,7 @@ void udt_icmp_cm_init(struct nd_udtcli_map *node, nd_handle h_listen)
 	node->connect_node.msg_entry = ((struct nd_srv_node*)h_listen)->msg_entry ;
 
 	if (((struct nd_netsocket*)h_listen)->bindip) {	
-		strncpy(node->connect_node.bindip ,((struct nd_netsocket*)h_listen)->bindip, sizeof(node->connect_node.bindip));
+		ndstrncpy(node->connect_node.bindip ,((struct nd_netsocket*)h_listen)->bindip, sizeof(node->connect_node.bindip));
 	}
 	node->connect_node.port = ((struct nd_netsocket*)h_listen)->port ;
 	node->connect_node.update_entry = (net_update_entry)_tcp_session_update ;

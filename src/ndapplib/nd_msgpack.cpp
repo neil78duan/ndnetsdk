@@ -367,11 +367,11 @@ int NDOStreamMsg::Write(const NDUINT8 *text)
 			return -1;
 		}
 
-		n = strlen((const char*)text);
+		n = ndstrlen((const char*)text);
 		free_size = (_end - _op_addr);
 		if (n + 3 <= free_size) {
 			_WriteOrg((NDUINT16)n);
-			strcpy(_op_addr, (const char*)text);
+			ndstrcpy(_op_addr, (const char*)text);
 			_op_addr[n] = 0x7f;
 			MsgLength() += (NDUINT16)n + 1;
 			_op_addr += (n + 1);
@@ -643,7 +643,7 @@ int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
 	do 	{			\
 		_type val;	\
 		if (0 == _func(val)) {	\
-		int ret = snprintf(_buf, _size, #_type " : " #_format " \n", val);	\
+		int ret = ndsnprintf(_buf, _size, #_type " : " #_format " \n", val);	\
 		_buf += ret;			\
 		_size -= ret;			\
 	}							\
@@ -681,7 +681,7 @@ int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
 		break;
 	case ENDSTREAM_MARKER_TEXT:
 	{
-		int ret = snprintf(p, len, "text :[ ");
+		int ret = ndsnprintf(p, len, "text :[ ");
 		p += ret;
 		len -= ret;
 
@@ -689,7 +689,7 @@ int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
 		p += ret;
 		len -= ret;
 
-		ret = snprintf(p, len, "] \n");
+		ret = ndsnprintf(p, len, "] \n");
 		p += ret;
 		len -= ret;
 
@@ -699,12 +699,12 @@ int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
 	{
 		int ret = 0;
 		int datalen = PeekBinSize();
-		ret = snprintf(p, len, "bin : [");
+		ret = ndsnprintf(p, len, "bin : [");
 		p += ret;
 		len -= ret;
 
 		if (datalen == 0)	{
-			ret = snprintf(p, len, "NULL] \n");
+			ret = ndsnprintf(p, len, "NULL] \n");
 			p += ret;
 			len -= ret;
 		}
@@ -716,11 +716,11 @@ int NDIStreamMsg::_dumpTobuf(char *buf, size_t size)
 			}
 			datalen =(int) ReadBin(tmpbuf, datalen);
 			for (int i = 0; i < datalen; i++)	{
-				ret = snprintf(p, len, "0x%x, ", tmpbuf[i]);
+				ret = ndsnprintf(p, len, "0x%x, ", tmpbuf[i]);
 				p += ret;
 				len -= ret;
 			}
-			ret = snprintf(p, len, "] \n");
+			ret = ndsnprintf(p, len, "] \n");
 			p += ret;
 			len -= ret;
 			free(tmpbuf);

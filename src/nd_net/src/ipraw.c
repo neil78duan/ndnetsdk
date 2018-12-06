@@ -389,7 +389,7 @@ int raw_set_recvall(ndsocket_t raw_fd)
 #else
 	/*struct ifreq ifr;
 
-	strncpy(ifr.ifr_name, eth_name,sizeof(ifr.ifr_name));
+	ndstrncpy(ifr.ifr_name, eth_name,sizeof(ifr.ifr_name));
 	if((ioctl(raw_fd, SIOCGIFFLAGS, &ifr) == -1))  {
 		return -1;
 	}

@@ -95,7 +95,7 @@ int run_file(char *file)
 	
 	FILE *fp = fopen(file, "r") ;
 	if(!fp) {
-		fprintf(stderr, "open %s file error\n", file); ;
+		ndfprintf(stderr, "open %s file error\n", file); ;
 		return 1 ;
 	}
 	
@@ -103,7 +103,7 @@ int run_file(char *file)
 	
 	ret = bin_check_header(fp) ;
 	if(-1==ret) {
-		fprintf(stderr, "bad file %s\n", file) ;
+		ndfprintf(stderr, "bad file %s\n", file) ;
 		return 1 ;
 	}
 	else if(1==ret) {
@@ -153,7 +153,7 @@ int run_file(char *file)
 				}
 			}
 			else if(ret == -1) {
-				fprintf(stderr, "bad command: %s\n", line ) ;
+				ndfprintf(stderr, "bad command: %s\n", line ) ;
 			}
 //#error not complete
 		}

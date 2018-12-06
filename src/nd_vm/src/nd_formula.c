@@ -210,7 +210,7 @@ int read_operand(const char *textbuf,char* operand_buf, char **next)
 			return -1 ;
 		}
 
-		len = (int) strlen(operand_buf) ;
+		len = (int) ndstrlen(operand_buf) ;
 		operand_buf[len] = *textbuf++ ;
 		operand_buf[len+1]  = 0 ;
 
@@ -244,7 +244,7 @@ int read_operand(const char *textbuf,char* operand_buf, char **next)
 			return 3 ;
 		}
 		else if(0==repace_param(operand_buf,optmp, sizeof(optmp) ) ){
-			strncpy(operand_buf, optmp ,OPERAND_SIZE) ;
+			ndstrncpy(operand_buf, optmp ,OPERAND_SIZE) ;
 		}
 		else {
 			vm_error("bad operand [%s]  \n", operand_buf) ;
@@ -316,7 +316,7 @@ int parse_express_2node(char *textBuf, struct list_head *header)
 					return-1 ;		//input too much
 				}
 
-				strncpy(opUnit->operand, op_data,sizeof(opUnit->operand)) ;
+				ndstrncpy(opUnit->operand, op_data,sizeof(opUnit->operand)) ;
 				list_add_tail(&opUnit->lst, header) ;
 				bReadData = 0 ;		//下次读操作符号
 			}
@@ -331,7 +331,7 @@ int parse_express_2node(char *textBuf, struct list_head *header)
 					return-1 ;		//input too much
 				}
 
-				strncpy(opUnit->operand, op_data,sizeof(opUnit->operand)) ;
+				ndstrncpy(opUnit->operand, op_data,sizeof(opUnit->operand)) ;
 				list_add_tail(&opUnit->lst, header) ;
 				bReadData = 0 ;		//下次读操作符号
 
@@ -416,7 +416,7 @@ OPDATA_T calcNodeResult(struct list_head *curr_pos, struct list_head *lst_end,in
 				return -1 ;
 			}
 			asm_printf( "\t MOV REG2, REG1 \n") ;
-			strncpy(pOpNext->operand, "REG2", sizeof(pOpNext->operand));
+			ndstrncpy(pOpNext->operand, "REG2", sizeof(pOpNext->operand));
 			asm_printf( "\t POP REG1 \n" ) ;
 			pOpNext->is_function = 0 ;
 		}
@@ -572,7 +572,7 @@ size_t vm_parse_expression(const char *textbuf, char *code_buf,size_t buf_size,v
 #if 0
 	list_for_each(pos, &op_list) {
 		struct sOperateUnit *pOpUnit = list_entry(pos,struct sOperateUnit, lst) ;
-		printf("operand=%s, op = %c ,level=%d\n" AND pOpUnit->operand AND pOpUnit->op AND pOpUnit->level) ;	
+		ndprintf("operand=%s, op = %c ,level=%d\n" AND pOpUnit->operand AND pOpUnit->op AND pOpUnit->level) ;	
 	}
 #endif 
 
@@ -588,14 +588,14 @@ int asm_printf(const char *stm, ...)
 	char buf[128] ;
 	
 	va_start (arg, stm);
-	done = vsnprintf (buf,sizeof(buf), stm, arg);
+	done = ndvsnprintf (buf,sizeof(buf), stm, arg);
 	va_end (arg);
 	
 
 	if(TYPE_OP_BIN == __asm_out.type) {
 		struct vm_instruction_node  ins_node = {0};
 		int ret = vm_compiler_line(buf ,  &ins_node) ;
-//		fprintf(stdout, "%s", buf) ;
+//		ndfprintf(stdout, "%s", buf) ;
 		if(ret > 0 ) {
 			done = vm_instruct_2buf(&ins_node, buf) ;
 			if(done > 0 && done< sizeof(buf)) {
@@ -621,9 +621,9 @@ int asm_printf(const char *stm, ...)
 		}
 	}
 	else {
-		fprintf((FILE*)__asm_out.out_handle, "%s", buf) ;
+		ndfprintf((FILE*)__asm_out.out_handle, "%s", buf) ;
 	}
-	//fprintf(stdout, "%s", buf) ;
+	//ndfprintf(stdout, "%s", buf) ;
 	//int vm_compiler_line(char *text , struct vm_instruction_node *out_node)
 	return 0 ;
 }
@@ -778,9 +778,9 @@ int run_function(struct sOperateUnit *pOpUnit)
 			asm_printf( "\t POP \n" ) ;
 		}
 	}
-	//strncpy(pOpUnit->operand, "REG2", sizeof(pOpUnit->operand));
+	//ndstrncpy(pOpUnit->operand, "REG2", sizeof(pOpUnit->operand));
 	//asm_printf( "\t POP REG1 \n" ) ;
-	//snprintf(pOpUnit->operand, sizeof(pOpUnit->operand),)
+	//ndsnprintf(pOpUnit->operand, sizeof(pOpUnit->operand),)
 	return 0 ;
 	
 }

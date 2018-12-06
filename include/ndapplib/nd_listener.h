@@ -41,6 +41,7 @@ public:
 	
 	int CloseAllConnects() ;
 	void InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level=EPL_CONNECT, const char *msgname=NULL);
+	void setScriptEngine(void *script_engine, nd_msg_script_entry entry);
 	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
 	
 	NDBaseSession *ConstructSession(void *addr);

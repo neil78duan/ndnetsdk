@@ -60,23 +60,23 @@ endif
 all: $(ALL_PROJS)
 	
 $(ND_SRV_LIB): $(OBJS_SRV)
-	$(AR) $(ND_SRV_LIB)  $(OBJS_SRV) $(LibFLAGS)
+	$(AR) $(ND_SRV_LIB)  $(OBJS_SRV)
 
 $(ND_CLIENT_LIB): $(OBJ_CLIENT)
-	$(AR) $(ND_CLIENT_LIB)  $(OBJ_CLIENT) $(LibFLAGS)
+	$(AR) $(ND_CLIENT_LIB)  $(OBJ_CLIENT)
 
 $(ND_COMMON_LIB): $(OBJ_COMMON)
-	$(AR) $(ND_COMMON_LIB)  $(OBJ_COMMON) $(LibFLAGS)
+	$(AR) $(ND_COMMON_LIB)  $(OBJ_COMMON)
 
 # DLL
 $(ND_SRV_DLL): $(OBJS_SRV)
-	$(CPP_DLL) -fPIC -o $(ND_SRV_DLL)  $(OBJS_SRV) $(LibFLAGS) -liconv
+	$(CPP_DLL) -fPIC -o $(ND_SRV_DLL)  $(OBJS_SRV) $(LFLAGS) -liconv
 
 $(ND_CLIENT_DLL): $(OBJ_CLIENT)
-	$(CPP_DLL) -fPIC -o $(ND_CLIENT_DLL) $(OBJ_CLIENT) $(LibFLAGS) -liconv
+	$(CPP_DLL) -fPIC -o $(ND_CLIENT_DLL) $(OBJ_CLIENT) $(LFLAGS) -liconv
 
 $(ND_COMMON_DLL): $(OBJ_COMMON)
-	$(CPP_DLL) -fPIC -o $(ND_COMMON_DLL) $(OBJ_COMMON) $(LibFLAGS) -liconv
+	$(CPP_DLL) -fPIC -o $(ND_COMMON_DLL) $(OBJ_COMMON) $(LFLAGS) -liconv
 
 #clean:
 #	rm -f $(ALL_PROJS) $(DLL_OBJS)

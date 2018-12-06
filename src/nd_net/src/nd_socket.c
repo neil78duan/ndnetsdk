@@ -273,7 +273,7 @@ ndsocket_t nd_socket_connect(const char *host_name, short port, int sock_type, S
 	char port_buf[20];
 	//struct sockaddr_storage peer_addr;
 	//socklen_t peer_addr_len;
-	snprintf(port_buf, sizeof(port_buf), "%d", port);
+	ndsnprintf(port_buf, sizeof(port_buf), "%d", port);
 
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
@@ -330,7 +330,7 @@ const char *nd_inet_ntoa (ndip_t in, char *buffer, size_t size)
 			return inet_ntoa(inaddr);
 		}
 		else {
-			return strncpy(buffer, inet_ntoa(inaddr), size);
+			return ndstrncpy(buffer, inet_ntoa(inaddr), size);
 		}
 	}	
 }
@@ -353,7 +353,7 @@ int nd_sockadd_to_ndip(SOCKADDR_IN *sockaddr, ndip_t *ip)
 ndip_t nd_inet_aton(const char *ipaddr)
 {
 	ndip_t ipret = ND_IP_INIT;
-	if (strchr(ipaddr, ':')) {
+	if (ndstrchr(ipaddr, ':')) {
 		inet_pton(AF_INET6, ipaddr, &ipret.ip6);
 		ipret.sin_family = AF_INET6;
 	}

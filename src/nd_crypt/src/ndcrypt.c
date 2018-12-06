@@ -119,7 +119,7 @@ char* MD5ToString(unsigned char src[16], unsigned char desc[33])
 	char *p = desc ;
 	for(i=0; i<16; i++)
 	{
-		sprintf(p, "%02x",src[i]) ;
+		ndsprintf(p, "%02x",src[i]) ;
 		p += 2 ;
 	}
 	desc[32] = 0 ;
@@ -131,7 +131,7 @@ char* MD5ToString(unsigned char src[16], unsigned char desc[33])
 char *MD5CryptStr16(const char *input, char output[16]) 
 {
 	MD5_CTX context;
-	unsigned int len = (unsigned int) strlen (input);
+	unsigned int len = (unsigned int) ndstrlen (input);
 	
 	MD5Init (&context);
 	MD5Update (&context, input, len);
@@ -142,7 +142,7 @@ char *MD5CryptStr16(const char *input, char output[16])
 
 char *MD5CryptStr32(const char *in_text, char output[33])
 {
-	unsigned int len = (unsigned int)strlen(in_text);
+	unsigned int len = (unsigned int)ndstrlen(in_text);
 	char tmp[16];
 	MD5_CTX context;
 

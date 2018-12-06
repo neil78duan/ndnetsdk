@@ -528,7 +528,7 @@ int iocp_accept(struct nd_client_map_iocp *node)
 	else {
 		char buf[32] ;
 		char  *pszTemp = nd_inet_ntoa( remote_addr->sin_addr.s_addr ,buf);
-		printf(_NDT("Connect from %s:%d"), pszTemp, htons(remote_addr->sin_port));
+		ndprintf(_NDT("Connect from %s:%d"), pszTemp, htons(remote_addr->sin_port));
 		
 	}
 #endif

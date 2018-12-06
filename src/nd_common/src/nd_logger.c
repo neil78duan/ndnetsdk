@@ -13,6 +13,7 @@
 #include "nd_common/nd_logger.h"
 #include "nd_common/nddir.h"
 #include "nd_common/nd_str.h"
+#include "nd_common/ndstdstring.h"
 
 
 #include <time.h>
@@ -102,7 +103,7 @@ NDUINT32 nd_setlog_maxsize(NDUINT32 perfile_size)
 
 int nd_output(const char *text)
 {
-	return fprintf(stdout, "%s", text);
+	return ndfprintf(stdout, "%s", text);
 }
 
 #define ND_LOG_FILE get_log_file()
@@ -120,21 +121,21 @@ void set_log_file(const char *pathfile)
 		if (fileExt) {
 			char ch = 0;
 			char *tmp = fileExt - 1;
-			strncpy(__log_ext, fileExt, sizeof(__log_ext));
+			ndstrncpy(__log_ext, fileExt, sizeof(__log_ext));
 
 			ch = *tmp;
 			*tmp = 0;
-			strncpy(__log_filename, pathfile, sizeof(__log_filename));
+			ndstrncpy(__log_filename, pathfile, sizeof(__log_filename));
 			*tmp = ch;
 		}
 		else {
-			strncpy(__log_filename, pathfile, sizeof(__log_filename));
+			ndstrncpy(__log_filename, pathfile, sizeof(__log_filename));
 		}
 	}
 	else
 #endif 
 	{
-		strncpy(__log_filename, pathfile, sizeof(__log_filename));
+		ndstrncpy(__log_filename, pathfile, sizeof(__log_filename));
 	}
 }
 
@@ -158,10 +159,10 @@ char *get_log_file()
 				//localtime_r(&now, &tm1);
 
 				if (__log_ext[0]) {
-					snprintf(s_cur_path, sizeof(s_cur_path), "%s.%s.%s", __log_filename, nd_get_datestr(), __log_ext);
+					ndsnprintf(s_cur_path, sizeof(s_cur_path), "%s.%s.%s", __log_filename, nd_get_datestr(), __log_ext);
 				}
 				else {
-					snprintf(s_cur_path, sizeof(s_cur_path), "%s.%s", __log_filename, nd_get_datestr());
+					ndsnprintf(s_cur_path, sizeof(s_cur_path), "%s.%s", __log_filename, nd_get_datestr());
 				}
 				s_lastRePathTime = now;
 				nd_atomic_set(&s_atomic_using, 0);
@@ -195,7 +196,7 @@ int nd_default_filelog(const char* text)
 	if (!log_fp) {
 		return 0;
 	}
-	size = fprintf(log_fp, "%s", text);
+	size = ndfprintf(log_fp, "%s", text);
 	fclose(log_fp);
 
 	if (size <= 0) {
@@ -209,10 +210,10 @@ int nd_default_filelog(const char* text)
 		int i = 1;
 		char *p = aimFile;
 
-		size = snprintf(p, sizeof(aimFile), "%s.", logfile_name);
+		size = ndsnprintf(p, sizeof(aimFile), "%s.", logfile_name);
 		p += size;
 		do {
-			snprintf(p, sizeof(aimFile) - size, "%d", i);
+			ndsnprintf(p, sizeof(aimFile) - size, "%d", i);
 			++i;
 		} while (nd_existfile(aimFile));
 		nd_renfile(logfile_name, aimFile);
@@ -271,22 +272,22 @@ int _logmsg_screen(const char *filePath, int line, const char *stm, ...)
 	file = _getfilename(filePath);
 
 #ifdef	ND_LOG_WITH_DATE
-	p += snprintf(p, 4096, "%s ", nd_get_datestr());
+	p += ndsnprintf(p, 4096, "%s ", nd_get_datestr());
 #endif
 
 #ifdef	ND_LOG_WITH_TIME
-	p += snprintf(p, 4096 - (p - buf), "%s ", nd_get_timestr());
+	p += ndsnprintf(p, 4096 - (p - buf), "%s ", nd_get_timestr());
 #endif
 
 #ifdef	ND_LOG_WITH_SOURCE
-	p += snprintf(p, 4096 - (p - buf), "[%d:%s] ", line, file);
+	p += ndsnprintf(p, 4096 - (p - buf), "[%d:%s] ", line, file);
 #endif
 
 	va_start(arg, stm);
-	done = vsnprintf(p, sizeof(buf) - (p - buf), stm, arg);
+	done = ndvsnprintf(p, sizeof(buf) - (p - buf), stm, arg);
 	va_end(arg);
 
-	fprintf(stdout, "%s", buf);
+	ndfprintf(stdout, "%s", buf);
 
 	return done;
 }
@@ -298,7 +299,7 @@ int nd_logtext(const char *buf)
 
 #if defined(ND_OUT_LOG_2CTRL)
 	if (__close_screen_log == 0) {
-		ret = fprintf(stderr, "%s", buf);
+		ret = ndfprintf(stderr, "%s", buf);
 	}
 #endif
 
@@ -329,12 +330,12 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 
 	size = sizeof(buf);
 
-	p += snprintf(p, size, "[%s] ", log_level_str(level));
+	p += ndsnprintf(p, size, "[%s] ", log_level_str(level));
 	size = sizeof(buf) - (p - buf);
 
 #ifdef ND_LOG_WITH_ND_MARK
 
-	strncpy(p, "[nd-log]  ", sizeof(buf));
+	ndstrncpy(p, "[nd-log]  ", sizeof(buf));
 	p += 9;
 	size = sizeof(buf) - (p - buf);
 
@@ -342,27 +343,27 @@ int _logmsg(const char *func, const char *filePath, int line, int level, const c
 
 #ifdef ND_LOG_WITH_DATE
 	if (__witout_date == 0) {
-		p += snprintf(p, size, "%s ", nd_get_datestr());
+		p += ndsnprintf(p, size, "%s ", nd_get_datestr());
 		size = sizeof(buf) - (p - buf);
 	}
 #endif
 
 #ifdef	ND_LOG_WITH_TIME
 	if (__without_file_time == 0) {
-		p += snprintf(p, size, " %s ", nd_get_timestr());
+		p += ndsnprintf(p, size, " %s ", nd_get_timestr());
 		size = sizeof(buf) - (p - buf);
 	}
 #endif
 
 #ifdef	ND_LOG_WITH_SOURCE
 	if (__without_file_info == 0) {
-		p += snprintf(p, size, " %s() (%d:%s)", func, line, file);
+		p += ndsnprintf(p, size, " %s() (%d:%s)", func, line, file);
 		size = sizeof(buf) - (p - buf);
 	}
 #endif
 
 	va_start(arg, stm);
-	done = vsnprintf(p, size, stm, arg);
+	done = ndvsnprintf(p, size, stm, arg);
 	size -= done;
 	va_end(arg);
 
