@@ -172,8 +172,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(TargetPath)  ..\..\..\..\apolloBP\bin;
-copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
+      <Command>copy /Y $(TargetPath)  ..\..\..\..\nodeflow\bin;
+copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -227,8 +227,8 @@ copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(TargetPath)  ..\..\..\..\apolloBP\bin;
-copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
+      <Command>copy /Y $(TargetPath)  ..\..\..\..\nodeflow\bin;
+copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
