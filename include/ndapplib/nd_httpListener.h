@@ -65,8 +65,8 @@ public:
 	void Destroy(int flag);
 	bool installRequest_c(const char *pathName, http_reqeust_func func);
 	bool installRequest_script(const char *pathName, const char *script);
-	int onRequest(const char *reqPath, NDHttpSession *session, const NDHttpRequest &request);
 	SessionIdMgr *getSessionIdMgr() { return m_cookieSessionIds; }
+	virtual int onRequest(const char *reqPath, NDHttpSession *session, const NDHttpRequest &request);
 
 	void setSessionAge(int seconds) { m_sessionAge = seconds; }
 	int getSessionAge() { return m_sessionAge; }
