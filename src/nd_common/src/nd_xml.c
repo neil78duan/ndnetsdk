@@ -1854,7 +1854,7 @@ ndxml* ndxml_recursive_ref(ndxml *node, const char *xmlNodePath)
 	if (*p == '/') {
 		ndxml *root = NULL;
 		do {
-			root = ndxml_get_parent(root);
+			root = ndxml_get_parent(node);
 			if (root) {
 				node = root;
 			}
