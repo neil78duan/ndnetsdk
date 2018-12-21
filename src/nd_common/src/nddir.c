@@ -373,16 +373,21 @@ static int __is_equal_char(char a, char b)
 
 int __path_depth(const char *mypath)
 {
-	int ret = 1;
-	while (*mypath)	{
-		if (*mypath == '/' || *mypath == '\\') {
-			if (*(mypath + 1)){
-				++ret;
+	if (mypath && *mypath) {
+		int ret = 1;
+		while (*mypath) {
+			if (*mypath == '/' || *mypath == '\\') {
+				if (*(mypath + 1)) {
+					++ret;
+				}
 			}
+			++mypath;
 		}
-		++mypath;
+		return ret;
 	}
-	return ret;
+	else {
+		return 0;
+	}
 }
 
 const char *nd_relative_path(const char *fullPath, const char *workPath, char *buf, size_t bufsize)
@@ -403,6 +408,10 @@ const char *nd_relative_path(const char *fullPath, const char *workPath, char *b
 	while (*fullPath){
 
 		if (!__is_equal_char(*fullPath, *workPath))	{
+			if ((*fullPath == '/' || *fullPath == '\\') && *workPath == 0) {
+				++depth;
+				pos = fullPath + 1;
+			}
 			break; 
 		}
 
@@ -421,10 +430,15 @@ const char *nd_relative_path(const char *fullPath, const char *workPath, char *b
 
 	depth = __path_depth(workPath);
 
-	for (i = 0; i < depth; i++){
-		ndstrncat(p, "../", bufsize);
-		p += 3;
-		bufsize -= 3;
+	if (depth) {
+		for (i = 0; i < depth; i++) {
+			ndstrncat(p, "../", bufsize);
+			p += 3;
+			bufsize -= 3;
+		}
+	}
+	else {
+		ndstrncat(p, "./", bufsize);
 	}
 	if (*pos){
 		ndstrncat(p, pos, bufsize);
@@ -441,27 +455,36 @@ _EXIT:
 
 const char * nd_absolute_path(const char *relative_path, char *outbuf, size_t bufsize)
 {
-	char tmp_buf[ND_FILE_PATH_SIZE];
-	const char *wdir = nd_getcwd();
-	
-	ndstrncpy(tmp_buf, wdir, sizeof(tmp_buf));
-	if (-1 == nd_chdir(relative_path)) {
-		return NULL;
-	}
+	if (relative_path) {
+		char tmp_buf[ND_FILE_PATH_SIZE];
+		const char *wdir = nd_getcwd();
 
-	wdir = nd_getcwd();
-	ndstrncpy(outbuf, wdir, bufsize) ;
-	nd_chdir(tmp_buf);
+		ndstrncpy(tmp_buf, wdir, sizeof(tmp_buf));
+		if (-1 == nd_chdir(relative_path)) {
+			return NULL;
+		}
+
+		wdir = nd_getcwd();
+		ndstrncpy(outbuf, wdir, bufsize);
+		nd_chdir(tmp_buf);
+	}
+	else {
+		ndstrncpy(outbuf, nd_getcwd(), bufsize);
+	}
 	return outbuf;
 }
 
 const char * nd_absolute_filename(const char *relative_file, char *outbuf, size_t bufsize)
 {
+	char *pret;
 	char tmp_buf[ND_FILE_PATH_SIZE];
 	if (!nd_getpath(relative_file, tmp_buf,sizeof(tmp_buf)) ) {
-		return NULL;
+		pret =nd_absolute_path(NULL, tmp_buf, sizeof(tmp_buf));
 	}
-	if (!nd_absolute_path(tmp_buf, tmp_buf, sizeof(tmp_buf))) {
+	else {
+		pret = nd_absolute_path(tmp_buf, tmp_buf, sizeof(tmp_buf));
+	}
+	if (!pret) {
 		return NULL;
 	}
 	return nd_full_path(tmp_buf, nd_filename(relative_file), outbuf, bufsize);
@@ -544,4 +567,11 @@ int  nd_is_subpath(const char *parent_path, const char *input_path)
 		}
 	}
 	return 1;
+}
+int  nd_path_is_relative(const char *path)
+{
+	if (*path == ".") {
+		return 1;
+	}
+	return 0;
 }
