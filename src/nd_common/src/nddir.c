@@ -570,7 +570,7 @@ int  nd_is_subpath(const char *parent_path, const char *input_path)
 }
 int  nd_path_is_relative(const char *path)
 {
-	if (*path == ".") {
+	if (*path == '.') {
 		return 1;
 	}
 	return 0;
