@@ -172,7 +172,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(TargetPath)  ..\..\..\..\nodeflow\bin;
+      <Command>copy /Y $(TargetPath)  ..\..\..\..\nodeflow\bin\editor_d;
 copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -227,7 +227,7 @@ copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(TargetPath)  ..\..\..\..\nodeflow\bin;
+      <Command>copy /Y $(TargetPath)  ..\..\..\..\nodeflow\bin\editor;
 copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

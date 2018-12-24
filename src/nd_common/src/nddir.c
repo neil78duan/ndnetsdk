@@ -327,7 +327,7 @@ const char * nd_getpath(const char *filenamePath, char *pathbuf, size_t size)
 {
 	const char *end = nd_filename(filenamePath);
 	if (end != filenamePath){
-		int len = 0;
+		size_t len = 0;
 		--end;
 		if (*end == '/' || *end == '\\')	{
 			len = end - filenamePath;
@@ -476,7 +476,7 @@ const char * nd_absolute_path(const char *relative_path, char *outbuf, size_t bu
 
 const char * nd_absolute_filename(const char *relative_file, char *outbuf, size_t bufsize)
 {
-	char *pret;
+	const char *pret;
 	char tmp_buf[ND_FILE_PATH_SIZE];
 	if (!nd_getpath(relative_file, tmp_buf,sizeof(tmp_buf)) ) {
 		pret =nd_absolute_path(NULL, tmp_buf, sizeof(tmp_buf));
