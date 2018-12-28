@@ -297,7 +297,7 @@ void NDHttpSession::OnCreate()
 int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 {
 	ND_TRACE_FUNC();
-	ndprintf("%s\n", buf);
+	//ndprintf("%s\n", buf);
 	m_request.InData(buf, size);
 	if (m_request.CheckParseError()) {
 		nd_logerror("parse received data error\n");
