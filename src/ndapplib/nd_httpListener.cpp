@@ -123,7 +123,7 @@ void NDHttpSession::setDelayClosed(bool bRightnow)
 {
 	ND_TRACE_FUNC();
 	if (bRightnow) {
-		m_closedTime = nd_time();
+		m_closedTime = nd_time() + 5000;
 	}
 	else {
 		m_closedTime =nd_time() + getWaitTimeout() * 1000;
@@ -307,7 +307,7 @@ int NDHttpSession::onDataRecv(char *buf, int size, NDHttpListener *pListener)
 	SetPrivilege(EPL_LOGIN);
 
 	if (m_request.CheckRecvOk()) {
-		m_request.dump();
+		//m_request.dump();
 		m_request.m_userData = pListener;
 		//try to parse session id 
 		_preOnHandle();

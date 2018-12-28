@@ -1247,7 +1247,7 @@ void HttpConnector::onResponse(NDHttpResponse *response)
 
 	nd_logdebug("on response success \n");
 
-	response->dump();
+	//response->dump();
 	m_responseOk = true;
 }
 
