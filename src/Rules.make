@@ -43,13 +43,11 @@ ifeq ($(OS_kernel),linux)
 endif
 ifeq ($(OS_kernel),darwin)
     CFLAGS += -D__ND_MAC__
-	LFLAGS += -liconv
 	DLL_EXT_NAME := dylib
 endif
 
 CFLAGS += -c -w -O
-LFLAGS +=  -lpthread  -lm
-
+LFLAGS +=  -lpthread  -lm -ldl -liconv
 
 ifeq ($(DEBUG),y)
     CFLAGS +=  -g -DDEBUG  -DND_DEBUG
