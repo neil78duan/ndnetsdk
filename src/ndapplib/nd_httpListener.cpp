@@ -296,14 +296,14 @@ void NDHttpSession::OnCreate()
 	ND_TRACE_FUNC();
 	nd_hook_data(GetHandle(), _session_data_handler);
 
-
+	/*
 	NDUINT32 val = 1;
 	int size = sizeof(val);
-
 	Ioctl(NDIOCTL_UNLIMITED_SEND_WNDSIZE, &val, &size);
 	val = 1;
 	size = sizeof(val);
 	Ioctl(NDIOCTL_UNLIMITED_RECV_WNDSIZE, &val, &size);
+	*/
 }
 
 
