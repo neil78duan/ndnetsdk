@@ -73,6 +73,9 @@ enum ND_IOCTRL_CMD
 	NDIOCTL_LOG_SEND_STRAM_FILE, //write send-stream to bin-file
 	NDIOCTL_LOG_RECV_STRAM_FILE, //write recv-stream to bin-file
 
+	NDIOCTL_UNLIMITED_SEND_WNDSIZE ,
+	NDIOCTL_UNLIMITED_RECV_WNDSIZE,
+
 	NDIOCTL_NUMBER						//ÃüÁî¸öÊý
 };
 

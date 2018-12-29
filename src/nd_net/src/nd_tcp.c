@@ -196,7 +196,20 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 				}
 				return -1 ;
 			}
-			ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
+
+			space_len = ndlbuf_free_capacity(&(node->send_buffer));
+			if (space_len >= datalen) {
+				ret = ndlbuf_write(&(node->send_buffer), (void*)msg_buf, datalen, EBUF_SPECIFIED);
+				if (-1 == ret) {
+					node->myerrno = NDERR_LIMITED;
+				}
+			}
+			else {
+				if (ndlbuf_datalen(&(node->send_buffer)) == 0) {
+					ret = node->sock_write((nd_handle)node, msg_buf, datalen);
+				}
+			}
+			
 		}
 	}
 	else if(datalen>ALONE_SEND_SIZE) {
@@ -278,7 +291,27 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 
 int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int flag)
 {
-	return __tcpnode_send(node, (void*)data, len, flag);
+	int sendlen = 0;
+	do {
+		int ret = __tcpnode_send(node, (void*)data, len, flag);
+		if (ret == -1) {
+			if (node->myerrno != NDERR_LIMITED) {
+				break;
+			}
+		}
+		else if (ret == (int)len) {
+			return (sendlen + len);
+		}
+		else if (ret < (int)len) {
+			sendlen += ret;
+			len -= ret;
+			data = (void*)((char*)data + ret);
+			if (node->myerrno != NDERR_LIMITED) {
+				break;
+			}
+		}
+	} while (len > 0);
+	return sendlen;
 }
 
 int nd_tcpnode_read(struct nd_tcp_node *node)

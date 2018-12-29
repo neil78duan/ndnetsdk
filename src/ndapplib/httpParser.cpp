@@ -11,6 +11,7 @@
 
 char *parser_valid( char *src, int size)
 {
+	ND_TRACE_FUNC();
 	unsigned char *tmp = (unsigned char *)src ;
 	while(*tmp <=(unsigned char) 0x20) {
 		if(*tmp==0 || --size <=0 ) {
@@ -24,6 +25,7 @@ char *parser_valid( char *src, int size)
 
 bool parser_check_end(char *src, char **next, int size)
 {
+	ND_TRACE_FUNC();
 	unsigned char a ;
 	
 	while(*src && --size >= 0) {
@@ -314,21 +316,25 @@ int NDHttpParser::dump()
 
 void NDHttpParser::setBody(const char*body)
 {
+	ND_TRACE_FUNC();
 	ndlbuf_write(&m_bodyBuf, (void*)body, ndstrlen(body), 0);
 }
 const char *NDHttpParser::getBody()
 {
+	ND_TRACE_FUNC();
 	ndlbuf_set_zero_tail(&m_bodyBuf);
 	return (const char*) ndlbuf_data(&m_bodyBuf);
 }
 
 int NDHttpParser::getBodySize()
 {
+	ND_TRACE_FUNC();
 	return (int)ndlbuf_datalen(&m_bodyBuf);
 }
 
 const char *NDHttpParser::getHeader(const char *name)const
 {
+	ND_TRACE_FUNC();
 	httpHeaderNode *pNode = ((NDHttpParser*)this)->_getNode(name, (HttpHeader_t&)m_header);
 	if (pNode)	{
 		return pNode->value.c_str();
@@ -400,6 +406,7 @@ int NDHttpParser::ParseData()
 
 void NDHttpParser::_setParseEnd()
 {
+	ND_TRACE_FUNC();
 	if (m_parseStat != 3) {
 		m_parseStat = 3;
 		onParseEnd();
@@ -589,43 +596,6 @@ NDHttpRequest:: ~NDHttpRequest()
 {
 
 }
-// 
-// void NDHttpRequest::InData(const char *data, int size)
-// {
-// 	ndlbuf_write(&m_recvBuf, (char*)data, size, 0);
-// 	while (m_parseStat < 3 && ParseData() > 0) {
-// 		if (_getDataSize() == 0) {
-// 			break;
-// 		}
-// 	}
-// }
-// 
-// int NDHttpRequest::ParseData()
-// {
-// 	if (0 == m_parseStat) {
-// 		return _parseInit();
-// 	}
-// 	else if (1 == m_parseStat) {
-// 		return _parseHeader();
-// 	}
-// 	else if (2 == m_parseStat){
-// 		if (m_action == E_ACTION_GET){
-// 
-// 			m_parseStat = 3;
-// 			return 0;
-// 		}
-// 		return _parseBody();
-// 	}
-// 	return 0;
-// }
-// 
-// int NDHttpRequest::OnEnd()
-// {
-// 
-// 	return 0;
-// }
-
-
 
 int NDHttpRequest::_parsePathInfo(const char *path)
 {
@@ -998,6 +968,7 @@ int NDHttpRequest::_parse_x_form()
 
 int NDHttpRequest::_parseCookies()
 {
+	ND_TRACE_FUNC();
 	for (HttpHeader_t::const_iterator it = m_header.begin(); it != m_header.end(); ++it) {
 		if (ndstricmp(it->name.c_str(), "Cookie")) {
 			continue;
@@ -1179,6 +1150,7 @@ int HttpConnector::SendRequest(NDHttpRequest &request, const char *host, int por
 
 int HttpConnector::Recv(char *buf, int size, int timeout)
 {
+	ND_TRACE_FUNC();
 	return  nd_connector_raw_waitdata( m_objhandle,  buf, size, timeout) ;
 }
 

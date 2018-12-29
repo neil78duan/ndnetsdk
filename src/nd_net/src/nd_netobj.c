@@ -155,6 +155,28 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 			}
 		}
 		break ;
+	case NDIOCTL_UNLIMITED_SEND_WNDSIZE:
+		if (socket_node->type == NDHANDLE_TCPNODE || socket_node->type == NDHANDLE_UDPNODE) {
+			if (*(NDUINT32*)val) {
+				ndlbuf_auto_inc_enable(&socket_node->send_buffer);
+			}
+			else {
+				ndlbuf_auto_inc_disable(&socket_node->send_buffer);
+			}
+			ret = 0;
+		}
+		break;
+	case NDIOCTL_UNLIMITED_RECV_WNDSIZE:
+		if (socket_node->type == NDHANDLE_TCPNODE || socket_node->type == NDHANDLE_UDPNODE) {
+			if (*(NDUINT32*)val) {
+				ndlbuf_auto_inc_enable(&socket_node->recv_buffer);
+			}
+			else {
+				ndlbuf_auto_inc_disable(&socket_node->recv_buffer);
+			}
+			ret = 0;
+		}
+		break;
 
 	case NDIOCTL_GET_RECVBUF:
 		if (*size <4){

@@ -20,6 +20,7 @@ NDHttpListener::~NDHttpListener()
 
 void NDHttpListener::Destroy(int flag)
 {
+	ND_TRACE_FUNC();
 	m_entrys.clear();
 	delete m_cookieSessionIds;
 	m_cookieSessionIds = 0;
@@ -27,11 +28,13 @@ void NDHttpListener::Destroy(int flag)
 
 void NDHttpListener::OnInitilize()
 {
+	ND_TRACE_FUNC();
 	m_cookieSessionIds = new SessionIdMgr;
 }
 
 void NDHttpListener::updateSessionIds()
 {
+	ND_TRACE_FUNC();
 	if (m_cookieSessionIds) {
 		m_cookieSessionIds->Update();
 	}
@@ -150,6 +153,7 @@ NDHttpSession ::~NDHttpSession()
 
 int NDHttpSession::_getMyCookie(char *buf, size_t size)
 {
+	ND_TRACE_FUNC();
 	int age = getSessionAge();
 	if (age == -1) {
 		return ndsnprintf(buf, size, "%s=%s;path=/", ND_DFT_SESSION_ID_NAME,
@@ -291,6 +295,15 @@ void NDHttpSession::OnCreate()
 {
 	ND_TRACE_FUNC();
 	nd_hook_data(GetHandle(), _session_data_handler);
+
+
+	NDUINT32 val = 1;
+	int size = sizeof(val);
+
+	Ioctl(NDIOCTL_UNLIMITED_SEND_WNDSIZE, &val, &size);
+	val = 1;
+	size = sizeof(val);
+	Ioctl(NDIOCTL_UNLIMITED_RECV_WNDSIZE, &val, &size);
 }
 
 
@@ -463,6 +476,7 @@ SessionIdMgr::~SessionIdMgr()
 
 void SessionIdMgr::Update()
 {
+	ND_TRACE_FUNC();
 	LockHelper tmplock(&m_lock);
 
 	time_t now = app_inst_time(NULL);
