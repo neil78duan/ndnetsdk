@@ -305,11 +305,13 @@ int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int 
 			if (node->myerrno != NDERR_WOULD_BLOCK) {
 				++timeout_count;
 				if (timeout_count > 100) {
+					nd_logerror("send error : %s\n", nd_error_desc(node->myerrno)) ;
 					node->myerrno = NDERR_TIMEOUT;
 					return -1;
 				}
 				if (-1 == nd_socket_wait_writablity(node->fd, 100)) {
 					node->myerrno = NDERR_WRITE;
+					nd_logerror("send error : %s\n", nd_error_desc(node->myerrno)) ;
 					return -1;
 				}
 			}
@@ -318,7 +320,7 @@ int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int 
 			}
 		}
 		else if (ret == (int)len) {
-			return (sendlen + len);
+			return (int)(sendlen + len);
 		}
 		else if (ret < (int)len) {
 			timeout_count = 0;
