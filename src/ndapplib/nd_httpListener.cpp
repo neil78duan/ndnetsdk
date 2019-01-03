@@ -251,7 +251,7 @@ int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t d
 		ret += 4;
 	}
 
-	nd_tcpnode_flush_sendbuf_force((nd_netui_handle)GetHandle());
+	//nd_tcpnode_flush_sendbuf_force((nd_netui_handle)GetHandle());
 	return ret;
 }
 

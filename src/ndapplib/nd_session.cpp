@@ -112,6 +112,16 @@ int NDBaseSession::SendRawData(void *data, size_t size)
 	return ret;
 }
 
+bool NDBaseSession::FlushSendBuf(bool bForce)
+{
+	if (bForce) {
+		return nd_tcpnode_flush_sendbuf_force((nd_netui_handle)GetHandle()) > 0;
+	}
+	else {
+		return nd_tcpnode_flush_sendbuf((nd_netui_handle)GetHandle()) > 0;
+	}
+}
+
 void NDBaseSession::Initilize(nd_handle hsession, nd_handle listen)
 {
 	ND_TRACE_FUNC();
