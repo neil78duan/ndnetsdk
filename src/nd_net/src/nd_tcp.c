@@ -47,7 +47,7 @@ int _socket_send(struct nd_tcp_node *node,void *data , size_t len)
 	return ret ;
 };
 
-//发送一个完整的消息
+//send a completed package (using in ND protocol)
 int socket_send_one_msg(struct nd_tcp_node *node,void *data , size_t len)
 {
 	ENTER_FUNC()
@@ -218,7 +218,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 		}
 	}
 	else if(datalen>ALONE_SEND_SIZE) {
-		//数据需要单独发送,不适用缓冲too long
+		//data is too big , need to send right now ,not buffer
 		ret = node->sock_write((nd_handle)node,msg_buf,datalen) ;
 		if(-1==ret ) {
 			if(node->sys_error!=ESOCKETTIMEOUT){
@@ -226,7 +226,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 				return -1 ;
 			}
 			else {
-				//数据不能发送,尝试写入缓冲
+				//send error , wirte buffer 
 				if (flag & ESF_POST){
 					LEAVE_FUNC();
 					return 0 ;
@@ -272,7 +272,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 	LEAVE_FUNC();
 	return ret ;
 }
-//修改了发送方式,如果是session 发送失败将关闭连接
+//send api of tcp-node (fot nd protocol)
 int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 {
 	size_t datalen = node->get_pack_size((nd_handle)node, msg_buf); 
@@ -294,6 +294,7 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 	}
 }
 
+//send stream data (tcp data) 
 int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int flag)
 {
 	int sendlen = 0;
@@ -382,9 +383,9 @@ int nd_tcpnode_read(struct nd_tcp_node *node)
 	}
 }
 
-/*等待一个网络消息消息
-*如果有网络消息到了则返回消息的长度
-*超时,出错返回-1,need to be close,check error code
+/* wait a tcp-node income data 
+* return the data length received from the @node 
+* return -1 on error ,need to be close,check error code
 * RETURN 0 time out, NOT read data 
 */
 int tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout)
