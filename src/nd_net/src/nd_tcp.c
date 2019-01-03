@@ -189,20 +189,20 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 				LEAVE_FUNC();
 				return 0 ;
 			}
-			if( _tcpnode_push_sendbuf(node,1) <=0 ){ //Çå¿Õ»º³å
+			if( _tcpnode_push_sendbuf(node,1) <=0 ){ //clear send buffer
 				LEAVE_FUNC();
-				if (NDERR_WOULD_BLOCK == node->myerrno){
-					return 0 ;
-				}
+				//if (NDERR_WOULD_BLOCK == node->myerrno){
+				//	return 0 ;
+				//}
 				return -1 ;
 			}
 
 			space_len = ndlbuf_free_capacity(&(node->send_buffer));
 			if (space_len >= datalen) {
 				ret = ndlbuf_write(&(node->send_buffer), (void*)msg_buf, datalen, EBUF_SPECIFIED);
-				if (-1 == ret) {
-					node->myerrno = NDERR_LIMITED;
-				}
+				//if (-1 == ret) {
+				//	node->myerrno = NDERR_LIMITED;
+				//}
 			}
 			else {
 				if (ndlbuf_datalen(&(node->send_buffer)) == 0) {
@@ -299,25 +299,26 @@ int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int 
 {
 	int sendlen = 0;
 	int timeout_count = 0;
+	int ret ;
 	do {
-		int ret = __tcpnode_send(node, (void*)data, len, flag);
-		if (ret == -1) {
-			if (node->myerrno != NDERR_WOULD_BLOCK) {
+		node->myerrno = NDERR_SUCCESS;
+		ret = __tcpnode_send(node, (void*)data, len, flag);
+		if (ret <= 0) {
+			if (node->myerrno == NDERR_WOULD_BLOCK) {
 				++timeout_count;
 				if (timeout_count > 100) {
 					nd_logerror("send error : %s\n", nd_error_desc(node->myerrno)) ;
 					node->myerrno = NDERR_TIMEOUT;
 					return -1;
 				}
+				
 				if (-1 == nd_socket_wait_writablity(node->fd, 100)) {
 					node->myerrno = NDERR_WRITE;
 					nd_logerror("send error : %s\n", nd_error_desc(node->myerrno)) ;
 					return -1;
 				}
 			}
-			if (node->myerrno != NDERR_LIMITED) {
-				break;
-			}
+			
 		}
 		else if (ret == (int)len) {
 			return (int)(sendlen + len);
@@ -327,9 +328,12 @@ int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int 
 			sendlen += ret;
 			len -= ret;
 			data = (void*)((char*)data + ret);
-			if (node->myerrno != NDERR_LIMITED) {
-				break;
+			if (node->myerrno == NDERR_WOULD_BLOCK) {
+				nd_socket_wait_writablity(node->fd, 100) ;
 			}
+			//if (node->myerrno != NDERR_LIMITED) {
+			//	break;
+			//}
 		}
 	} while (len > 0);
 	return sendlen;
