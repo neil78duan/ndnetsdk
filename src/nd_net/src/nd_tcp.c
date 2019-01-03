@@ -297,9 +297,21 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int flag)
 {
 	int sendlen = 0;
+	int timeout_count = 0;
 	do {
 		int ret = __tcpnode_send(node, (void*)data, len, flag);
 		if (ret == -1) {
+			if (node->myerrno != NDERR_WOULD_BLOCK) {
+				++timeout_count;
+				if (timeout_count > 100) {
+					node->myerrno = NDERR_TIMEOUT;
+					return -1;
+				}
+				if (-1 == nd_socket_wait_writablity(node->fd, 100)) {
+					node->myerrno = NDERR_WRITE;
+					return -1;
+				}
+			}
 			if (node->myerrno != NDERR_LIMITED) {
 				break;
 			}
@@ -308,6 +320,7 @@ int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int 
 			return (sendlen + len);
 		}
 		else if (ret < (int)len) {
+			timeout_count = 0;
 			sendlen += ret;
 			len -= ret;
 			data = (void*)((char*)data + ret);
