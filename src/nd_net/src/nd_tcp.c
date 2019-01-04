@@ -189,7 +189,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 				LEAVE_FUNC();
 				return 0 ;
 			}
-			if( _tcpnode_push_sendbuf(node,1) <=0 ){ //clear send buffer
+			if( _tcpnode_push_force(node) <=0 ){ //clear send buffer
 				LEAVE_FUNC();
 				//if (NDERR_WOULD_BLOCK == node->myerrno){
 				//	return 0 ;
@@ -260,7 +260,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 				push_len =nd_tcpnode_tryto_flush_sendbuf(node) ;
 			}
 			else {
-				push_len = _tcpnode_push_sendbuf(node,0) ;
+				push_len = _tcpnode_push_sendbuf(node) ;
 			}
 			if (push_len == -1 && NDERR_WOULD_BLOCK != node->myerrno)	{
 				LEAVE_FUNC();
@@ -480,7 +480,7 @@ int nd_tcpnode_tryto_flush_sendbuf(struct nd_tcp_node *conn_node)
 		(nd_time() - conn_node->last_push) >= SENDBUF_TMVAL) {
 		int ret = 0 ;
 		nd_send_lock((nd_netui_handle)conn_node) ;
-		ret = _tcpnode_push_sendbuf(conn_node,0) ;
+		ret = _tcpnode_push_sendbuf(conn_node) ;
 		nd_send_unlock((nd_netui_handle)conn_node) ;
 		LEAVE_FUNC();
 		return ret ;
