@@ -560,7 +560,7 @@ int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thp
 			++sleep ;
 		}
 		else if (TCPNODE_IS_OK(client)){
-			if(_tcpnode_push_sendbuf(&client->connect_node,0) > 0)
+			if(_tcpnode_push_sendbuf(&client->connect_node) > 0)
 			++sleep ;
 			client->connect_node.update_entry((nd_handle)client) ;
 		}

@@ -189,7 +189,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 				LEAVE_FUNC();
 				return 0 ;
 			}
-			if( _tcpnode_push_sendbuf(node,1) <=0 ){ //clear send buffer
+			if( _tcpnode_push_force(node) <=0 ){ //clear send buffer
 				LEAVE_FUNC();
 				//if (NDERR_WOULD_BLOCK == node->myerrno){
 				//	return 0 ;
@@ -260,7 +260,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 				push_len =nd_tcpnode_tryto_flush_sendbuf(node) ;
 			}
 			else {
-				push_len = _tcpnode_push_sendbuf(node,0) ;
+				push_len = _tcpnode_push_sendbuf(node) ;
 			}
 			if (push_len == -1 && NDERR_WOULD_BLOCK != node->myerrno)	{
 				LEAVE_FUNC();
@@ -483,7 +483,7 @@ int nd_tcpnode_tryto_flush_sendbuf(struct nd_tcp_node *conn_node)
 		(nd_time() - conn_node->last_push) >= SENDBUF_TMVAL) {
 		int ret = 0 ;
 		nd_send_lock((nd_netui_handle)conn_node) ;
-		ret = _tcpnode_push_sendbuf(conn_node,0) ;
+		ret = _tcpnode_push_sendbuf(conn_node) ;
 		nd_send_unlock((nd_netui_handle)conn_node) ;
 		LEAVE_FUNC();
 		return ret ;
@@ -492,7 +492,43 @@ int nd_tcpnode_tryto_flush_sendbuf(struct nd_tcp_node *conn_node)
 	return 0;
 }
 
-int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node,int force) 
+int _tcpnode_push_force(struct nd_tcp_node *conn_node)
+{
+	ENTER_FUNC()
+	signed int ret = 0;
+
+	nd_netbuf_t *pbuf = &(conn_node->send_buffer);
+	size_t data_len = ndlbuf_datalen(pbuf);
+
+	if (data_len == 0 || !check_connect_valid(conn_node)) {
+		LEAVE_FUNC();
+		return 0;
+	}
+RESEND:
+	conn_node->myerrno = NDERR_SUCCESS;
+	ret = (signed int)_socket_send(conn_node, ndlbuf_data(pbuf), data_len);
+	if (ret <= 0) {
+		if (conn_node->myerrno && conn_node->myerrno != NDERR_WOULD_BLOCK) {
+			LEAVE_FUNC();
+			return -1;
+		}
+
+	}
+	else {
+		nd_assert(ret <= data_len);
+		ndlbuf_sub_data(pbuf, (size_t)ret);
+	}
+	data_len = ndlbuf_datalen(pbuf); 
+	if (data_len > 0) {
+		if (1 == nd_socket_wait_writablity(conn_node->fd, 1000)) {
+			goto RESEND;
+		}
+	}
+	LEAVE_FUNC();
+	return ret;
+}
+
+int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node) 
 {
 	ENTER_FUNC()
 	signed int ret = 0;
@@ -504,7 +540,6 @@ int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node,int force)
 		LEAVE_FUNC();
 		return 0;
 	}
-	
 	ret = (signed int)_socket_send(conn_node,ndlbuf_data(pbuf),data_len) ;
 	if(ret>0) {
 		nd_assert(ret<= data_len) ;

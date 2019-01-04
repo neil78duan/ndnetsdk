@@ -59,13 +59,14 @@ ND_NET_API int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf, 
 ND_NET_API int nd_tcpnode_read(struct nd_tcp_node *node);		//读取数据,0 timeout ,-1 error or closed ,else datalen
 ND_NET_API int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int flag);	//发送网络消息 flag ref send_flag
 
-ND_NET_API int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node, int force) ;	//发送缓冲中的数据
+ND_NET_API int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node) ;	//发送缓冲中的数据
+ND_NET_API int _tcpnode_push_force(struct nd_tcp_node *conn_node);	//发送缓冲中的数据
 ND_NET_API int nd_tcpnode_tryto_flush_sendbuf(struct nd_tcp_node *conn_node) ;	//发送缓冲中的数据
 static __INLINE__ int nd_tcpnode_flush_sendbuf(nd_netui_handle node)
 {
 	int ret = 0;
 	nd_send_lock(node);
-	ret = _tcpnode_push_sendbuf((struct nd_tcp_node *)node, 0);
+	ret = _tcpnode_push_sendbuf((struct nd_tcp_node *)node);
 	nd_send_unlock(node);
 	return ret;
 }
@@ -73,7 +74,7 @@ static __INLINE__ int nd_tcpnode_flush_sendbuf_force(nd_netui_handle node)
 {
 	int ret = 0;
 	nd_send_lock(node);
-	ret = _tcpnode_push_sendbuf((struct nd_tcp_node *)node, 1);
+	ret = _tcpnode_push_force((struct nd_tcp_node *)node);
 	nd_send_unlock(node);
 	return ret;
 

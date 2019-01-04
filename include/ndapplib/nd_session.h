@@ -29,6 +29,7 @@ public:
 	int BigDataSend(int maxID, int minID, void *data, size_t datalen);
 	int Close(int flag = 0);
 	int SendRawData(void *data, size_t size);
+	bool FlushSendBuf(bool bForce);
 	NDObject* GetParent();
 
 	void DecRefCount();
