@@ -99,9 +99,9 @@ int nd_session_flush_sendbuf(nd_session_handle cli_handle, int flag)
 	if(h_header->type==NDHANDLE_TCPNODE){
 		struct nd_client_map *cli_map =(struct nd_client_map *)cli_handle;
 		if(0== flag) 
-			ret = _tcpnode_push_sendbuf(&(cli_map->connect_node),0) ;
+			ret = _tcpnode_push_sendbuf(&(cli_map->connect_node)) ;
 		else if(1==flag)
-			ret = _tcpnode_push_sendbuf(&(cli_map->connect_node),1) ;
+			ret = _tcpnode_push_force(&(cli_map->connect_node)) ;
 		else if(2==flag)
 			ret = nd_tcpnode_tryto_flush_sendbuf(&(cli_map->connect_node)) ;
 		

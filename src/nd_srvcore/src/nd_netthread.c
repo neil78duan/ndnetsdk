@@ -103,7 +103,7 @@ int update_session_in_thread(struct cm_manager *pmanger, struct nd_netth_context
 		struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
 		
 		if (nd_connector_valid((nd_netui_handle)client)){
-			_tcpnode_push_sendbuf(&client->connect_node, 0);
+			_tcpnode_push_sendbuf(&client->connect_node);
 			client->connect_node.update_entry((nd_handle)client);
 		}
 	}
