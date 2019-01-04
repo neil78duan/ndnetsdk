@@ -101,6 +101,17 @@ static int _session_data_handler(nd_handle sessionHandler, void *data, size_t le
 }
 
 
+std::string s_serverInfo = "UserDefined" ;
+
+const char *NDHttpSession::getServerInfo()
+{
+	return s_serverInfo.c_str();
+}
+void NDHttpSession::setServerInfo(const char *info)
+{
+	s_serverInfo = info;
+}
+
 NDHttpSession::NDHttpSession() 
 {
 	m_closedTime = 0;

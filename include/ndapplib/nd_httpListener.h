@@ -118,8 +118,11 @@ public:
 	bool sessionIdGetInfo(sessionValInfo &info);
 	void setSessionAge(int seconds) { m_sessionAge = seconds; }
 	int getSessionAge();
+	static const char *getServerInfo();
+	static void setServerInfo(const char *info);
 
 protected:
+	static std::string s_serverInfo;
 	void _preOnHandle();
 	int _getMyCookie(char *buf, size_t size);
 	SessionIdMgr * _getSessoinIdMgr();
