@@ -203,6 +203,6 @@ protected:
 	std::string m_lastRequestPath;
 	NDHttpResponse m_response;
 };
-int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc);
+int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc,const char *serverInfo=NULL);
 
 #endif /* defined(__roborts__httpParser__) */

@@ -101,7 +101,7 @@ static int _session_data_handler(nd_handle sessionHandler, void *data, size_t le
 }
 
 
-std::string s_serverInfo = "UserDefined" ;
+std::string NDHttpSession::s_serverInfo = "UserDefined" ;
 
 const char *NDHttpSession::getServerInfo()
 {
@@ -187,7 +187,7 @@ int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 		_getMyCookie(buf, sizeof(buf));
 		response.addHeader("Set-Cookie", buf);
 	}
-	return _sendHttpResponse(GetHandle(), &response, errorDesc);
+	return _sendHttpResponse(GetHandle(), &response, errorDesc,getServerInfo());
 }
 
 int NDHttpSession::SendRedirect(const char *newUrl)
@@ -207,16 +207,16 @@ int NDHttpSession::SendRedirect(const char *newUrl)
 		_getMyCookie(cookie, sizeof(cookie));
 
 		len = ndsnprintf(buf, sizeof(buf), "HTTP/1.1 302 Found \r\n"
-			"Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
+			"Content-Type:text/html;charset=UTF-8\r\nServer:%s\r\n"
 			"Location:%s\r\n"
 			"Set-Cookie:%s\r\n"
-			"Content-Length:0\r\nConnection: close\r\n\r\n", newUrl, cookie);
+			"Content-Length:0\r\nConnection: close\r\n\r\n", getServerInfo(), newUrl, cookie);
 	}
 	else {
 		len = ndsnprintf(buf, sizeof(buf), "HTTP/1.1 302 Found \r\n"
-			"Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
+			"Content-Type:text/html;charset=UTF-8\r\nServer:%s\r\n"
 			"Location:%s\r\n"
-			"Content-Length:0\r\nConnection: close\r\n\r\n", newUrl);
+			"Content-Length:0\r\nConnection: close\r\n\r\n",  getServerInfo(),newUrl);
 	}
 	
 	len = nd_connector_send_stream(GetHandle(), buf,len, 0);
@@ -243,7 +243,8 @@ int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t d
 	len = (int)response.HeaderToBuf(p, sizeof(buf) - (p - buf));
 	p += len;
 
-	len = ndsnprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:%lld\r\n\r\n", datalen);
+	len = ndsnprintf(p, sizeof(buf) - (p - buf),
+					 "Server:%s\r\nContent-Length:%lld\r\n\r\n", getServerInfo(), datalen);
 	p += len;
 
 	len = nd_connector_send_stream(GetHandle(), buf, p - buf, 0);
@@ -287,13 +288,13 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 	p += len;
 
 	if (desc && *desc) {		
-		len = ndsnprintf(p, sizeof(buf) - (p - buf), "Content-Type:text/html;charset=UTF-8\r\nServer:userDefine\r\n"
-			"Content-Length:%d\r\nConnection: close\r\n\r\n", (int)ndstrlen(desc));
+		len = ndsnprintf(p, sizeof(buf) - (p - buf), "Content-Type:text/html;charset=UTF-8\r\nServer:%s\r\n"
+			"Content-Length:%d\r\nConnection: close\r\n\r\n", getServerInfo(), (int)ndstrlen(desc));
 		p += len;  
 		len = ndsnprintf(p, sizeof(buf) - (p - buf), "%s\r\n\r\n", desc);
 	}
 	else {
-		len = ndsnprintf(p, sizeof(buf) - (p - buf), "Server:userDefine\r\nContent-Length:0\r\nConnection: close\r\n\r\n" );
+		len = ndsnprintf(p, sizeof(buf) - (p - buf), "Server:%s\r\nContent-Length:0\r\nConnection: close\r\n\r\n" , getServerInfo());
 	}
 	p += len;
 	len = nd_connector_send_stream(GetHandle(), buf, p - buf,0);

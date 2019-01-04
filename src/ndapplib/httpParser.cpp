@@ -120,7 +120,7 @@ static int _sendHttpRequest(nd_handle h, NDHttpRequest *reques, const char *path
 	return 0;
 }
 
-int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc)
+int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc,const char *serverInfo)
 {
 	ND_TRACE_FUNC();
 	int ret = 0;
@@ -137,7 +137,7 @@ int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc
 	len =(int) reques->HeaderToBuf(p, sizeof(buf) -(p - buf));
 	p += len;
 
-	len = ndsnprintf(p, sizeof(buf) - (p - buf),"Server:userDefine\r\nContent-Length:%d\r\n\r\n", bodySize);
+	len = ndsnprintf(p, sizeof(buf) - (p - buf),"Server:%s\r\nContent-Length:%d\r\n\r\n",serverInfo, bodySize);
 	p += len;
 
 	len = nd_connector_send_stream(h, buf, p - buf, 0);
