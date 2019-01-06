@@ -40,6 +40,8 @@ int tcp_client_close(struct nd_client_map* cli_map, int force)
 		LEAVE_FUNC();
 		return ret ;
 	}
+	nd_client_map_destroy(cli_map) ;
+	
 	root->conn_manager.dealloc (cli_map, nd_srv_get_allocator(root));
 	LEAVE_FUNC();
 	return 0 ;

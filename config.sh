@@ -28,7 +28,7 @@ create_ndhome() {
 
 # create env
 
-if [ "x$NDHOME" == "x" ]; then
+if [ -z "$NDHOME" ]; then
     create_ndhome
 fi
 

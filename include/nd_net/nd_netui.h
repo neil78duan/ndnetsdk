@@ -129,6 +129,7 @@ ND_NET_API int nd_connector_update(nd_handle net_handle, ndtime_t timeout) ;
 
 /* 得到发送缓冲的空闲长度*/
 ND_NET_API size_t nd_connector_sendlen(nd_handle net_handle);
+ND_NET_API size_t nd_connector_data_in_window(nd_handle net_handle);
 
 ND_NET_API void nd_connector_set_crypt(nd_handle net_handle, void *key, int size);
 ND_NET_API void* nd_connector_get_crypt(nd_handle net_handle, int *size);

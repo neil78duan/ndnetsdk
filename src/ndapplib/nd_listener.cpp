@@ -132,6 +132,7 @@ static  void on_close_entry(nd_handle nethandle, nd_handle h_listen)
 	//newSession = NDGetSession(nethandle);
 	newSession->OnClose() ;
 
+	//nd_assert(NDERR_WOULD_BLOCK != nd_object_lasterror(nethandle));
 	nd_logmsg(("net CLOSED error =%s\tconnect_num=%d free=%d active=%d \n") AND 
 		nd_object_errordesc((nd_handle)nethandle) AND  __current_num AND 
 		pListener->GetAllocatorFreenum() AND cm_iterator.GetActiveNum()-1 );

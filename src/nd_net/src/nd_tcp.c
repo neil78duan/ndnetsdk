@@ -206,18 +206,45 @@ static int __tcpnode_send_and_save(struct nd_tcp_node *node, void *msg_buf, size
 	return ret ;
 }
 
+static int __tcpnode_push_buf_send(struct nd_tcp_node *node, void *msg_buf, size_t datalen)
+{
+	ENTER_FUNC();
+	size_t space_len = 0 ;
+	signed int ret =0;
+	if( _tcpnode_push_sendbuf(node) ==-1 ){ //clear send buffer
+		LEAVE_FUNC();
+		return -1 ;
+	}
+	
+	space_len = ndlbuf_free_capacity(&(node->send_buffer));
+	if (space_len >= datalen || ndlbuf_is_auto_inc(&(node->send_buffer))) {
+		ret = ndlbuf_write(&(node->send_buffer), (void*)msg_buf, datalen, EBUF_SPECIFIED);
+	}
+	else {
+		if (ndlbuf_datalen(&(node->send_buffer)) == 0) {
+			ret = __tcpnode_send_and_save(node, msg_buf, datalen) ;
+		}
+		else {
+			node->myerrno = NDERR_WOULD_BLOCK;
+			ret = -1;
+		}
+	}
+	
+	LEAVE_FUNC();
+	return ret ;
+}
+
 //static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datalen, int flag)
 {
 	ENTER_FUNC()
 	signed int ret =0;
-	//size_t datalen = node->get_pack_size(( nd_handle )node, msg_buf) ; //(size_t)nd_pack_len( msg_buf) ;
 	nd_assert(node) ;
 	nd_assert(msg_buf) ;
 	
 	if(ndlbuf_datalen(&(node->send_buffer))>0) {
 		size_t space_len = ndlbuf_free_capacity(&(node->send_buffer)) ;
-		if(space_len > datalen) {
+		if(space_len >= datalen) {
 			ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
 		}
 		else {
@@ -226,30 +253,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 				LEAVE_FUNC();
 				return 0 ;
 			}
-			if( _tcpnode_push_force(node) ==-1 ){ //clear send buffer
-				LEAVE_FUNC();
-				return -1 ;
-			}
-
-			space_len = ndlbuf_free_capacity(&(node->send_buffer));
-			if (space_len >= datalen) {
-				ret = ndlbuf_write(&(node->send_buffer), (void*)msg_buf, datalen, EBUF_SPECIFIED);
-				if (-1 == ret) {
-					node->myerrno = NDERR_WOULD_BLOCK;
-				}
-			}
-			else {
-				if (ndlbuf_datalen(&(node->send_buffer)) == 0) {
-					//ret = node->sock_write((nd_handle)node, msg_buf, datalen);
-					ret = __tcpnode_send_and_save(node, msg_buf, datalen) ;
-				}
-				else {
-					LEAVE_FUNC();
-					node->myerrno = NDERR_WOULD_BLOCK;
-					return -1;
-				}
-			}
-			
+			ret = __tcpnode_push_buf_send(node, msg_buf, datalen) ;
 		}
 	}
 	else if(datalen>ALONE_SEND_SIZE) {
@@ -281,6 +285,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 	LEAVE_FUNC();
 	return ret ;
 }
+
 //send api of tcp-node (fot nd protocol)
 int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 {
@@ -306,6 +311,8 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 //send stream data (tcp data) 
 int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int flag)
 {
+	return __tcpnode_send(node, (void*)data, len, flag);
+	/*
 	ENTER_FUNC()
 	int sendlen = 0;
 	int timeout_count = 0;
@@ -331,6 +338,9 @@ int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int 
 				}
 			}
 			else {
+				if(node->myerrno==0) {
+					node->myerrno = NDERR_WRITE ;
+				}
 				LEAVE_FUNC(); 
 				return ret;
 			}
@@ -338,21 +348,22 @@ int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int 
 		}
 		else if (ret == (int)len) {
 			LEAVE_FUNC();
-			return (int)(sendlen + len);
+			return (int)(sendlen + ret);
 		}
 		else if (ret < (int)len) {
 			timeout_count = 0;
 			sendlen += ret;
 			len -= ret;
 			data = (void*)((char*)data + ret);
-			if (node->myerrno == NDERR_WOULD_BLOCK) {
-				nd_socket_wait_writablity(node->fd, 100) ;
+			if(-1==nd_socket_wait_writablity(node->fd, 100) ) {
+				break ;
 			}
 		}
 	} while (len > 0);
 	
 	LEAVE_FUNC();
 	return sendlen;
+	 */
 }
 
 int nd_tcpnode_read(struct nd_tcp_node *node)

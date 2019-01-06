@@ -16,6 +16,8 @@
 #endif 
 
 #define INIT_SESSION_BUFF(session) \
+	(session)->connect_node.send_buffer.is_alloced = 0 ;	\
+	(session)->connect_node.recv_buffer.is_alloced = 0 ;	\
 	(session)->connect_node.send_buffer.__buf = (session)->__sendbuf ;	\
 	(session)->connect_node.recv_buffer.__buf = (session)->__recvbuf ;	\
 	(session)->connect_node.send_buffer.buf_capacity = sizeof((session)->__sendbuf );	\
@@ -41,6 +43,11 @@ void nd_tcpcm_init(struct nd_client_map *client_map, nd_handle h_listen)
 
 	client_map->connect_node.data_entry = ((struct nd_srv_node*)h_listen)->data_entry ;
 	client_map->connect_node.update_entry = (net_update_entry)_tcp_session_update ;
+}
+void nd_client_map_destroy(struct nd_client_map *client_map)
+{
+	ndlbuf_destroy(&client_map->connect_node.send_buffer) ;
+	ndlbuf_destroy(&client_map->connect_node.recv_buffer) ;
 }
 
 void udt_clientmap_init(struct nd_udtcli_map *node, nd_handle h_listen)
@@ -83,9 +90,7 @@ void udt_icmp_cm_init(struct nd_udtcli_map *node, nd_handle h_listen)
 
 	node->connect_node.msg_entry = ((struct nd_srv_node*)h_listen)->msg_entry ;
 
-	if (((struct nd_netsocket*)h_listen)->bindip) {	
-		ndstrncpy(node->connect_node.bindip ,((struct nd_netsocket*)h_listen)->bindip, sizeof(node->connect_node.bindip));
-	}
+	ndstrncpy(node->connect_node.bindip ,((struct nd_netsocket*)h_listen)->bindip, sizeof(node->connect_node.bindip));
 	node->connect_node.port = ((struct nd_netsocket*)h_listen)->port ;
 	node->connect_node.update_entry = (net_update_entry)_tcp_session_update ;
 }

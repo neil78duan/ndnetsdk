@@ -116,6 +116,7 @@ NDHttpSession::NDHttpSession()
 {
 	m_closedTime = 0;
 	m_sessionAge = -1;
+	//m_trytoClose = false;
 }
 
 
@@ -129,6 +130,7 @@ int NDHttpSession::UpdateSecond()
 			nd_logdebug("time out closed %d session\n", GetSessionID());
 			return 0;
 		}
+		
 	}
 	return 0;
 }
@@ -142,6 +144,7 @@ void NDHttpSession::setDelayClosed(bool bRightnow)
 	else {
 		m_closedTime =nd_time() + getWaitTimeout() * 1000;
 	}
+	
 }
 
 int NDHttpSession::getWaitTimeout()
@@ -180,7 +183,7 @@ int NDHttpSession::_getMyCookie(char *buf, size_t size)
 int NDHttpSession::SendResponse(NDHttpResponse &response, const char *errorDesc)
 {
 	ND_TRACE_FUNC();
-	setDelayClosed(!response.isLongConnect());
+	//setDelayClosed(!response.isLongConnect());
 	sessionValInfo sInfo;
 	if (sessionIdGetInfo(sInfo)) {
 		char buf[4096];
@@ -200,7 +203,7 @@ int NDHttpSession::SendRedirect(const char *newUrl)
 	if (!newUrl || !*newUrl) {
 		return -1;
 	}
-	setDelayClosed(true);
+	//setDelayClosed(true);
 	
 	sessionValInfo sInfo;
 	if (sessionIdGetInfo(sInfo)){
@@ -234,7 +237,7 @@ int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t d
 	char *p;
 	char buf[0x10000];
 
-	setDelayClosed(!response.isLongConnect()); 
+	//setDelayClosed(!response.isLongConnect()); 
 
 	p = buf;
 	len = ndsnprintf(p, sizeof(buf), "HTTP/1.1 %d %s \r\n", response.getStatus(), errorDesc);
@@ -275,7 +278,7 @@ int NDHttpSession::sendErrorResponse(int errorCdoe, const char *desc)
 	char *p;
 	char buf[4096];
 	
-	setDelayClosed(true);
+	//setDelayClosed(true);
 
 	p = buf;
 
@@ -308,14 +311,14 @@ void NDHttpSession::OnCreate()
 	ND_TRACE_FUNC();
 	nd_hook_data(GetHandle(), _session_data_handler);
 
-	/*
+	
 	NDUINT32 val = 1;
 	int size = sizeof(val);
 	Ioctl(NDIOCTL_UNLIMITED_SEND_WNDSIZE, &val, &size);
 	val = 1;
 	size = sizeof(val);
 	Ioctl(NDIOCTL_UNLIMITED_RECV_WNDSIZE, &val, &size);
-	*/
+	
 }
 
 

@@ -6,8 +6,7 @@
  */
 
 /*
- * 当用udp实现类tcp功能的时候需要这样的缓冲,所以重写一个代替
- * c++ 的class (ND_CRecyBuf)
+ * recircle binary buffer
  */
 
 #ifndef _CBUF_H_
@@ -24,14 +23,14 @@ typedef struct nd_recbuf
 }ndrecybuf_t ;	
 
 enum _eNDRecyRead{
-	EBUF_ALL=0,	//读取如果缓冲数据少于指定长度,则读取缓冲中所有数据.写入时缓冲不够则填满缓冲
-	EBUF_SPECIFIED	//读取(写入)指定长,如果数据(空间)不过返回
+	EBUF_ALL=0,	//try to read / wirte all data
+	EBUF_SPECIFIED	//try to read specified length data
 };
 
 static __INLINE__ size_t cbuf_capacity(ndrecybuf_t *pbuf) 
 {
 	return (size_t)C_BUF_SIZE;
-}	//得到容量
+}
 
 static __INLINE__ void ndcbuf_reset(ndrecybuf_t *pbuf)
 {
@@ -65,7 +64,7 @@ static __INLINE__ void ndcbuf_add_data(ndrecybuf_t *pbuf,size_t len)
 	pbuf->m_pend += len ;
 }
 
-//返回数据存放的顺序 0 start < end 
+//get the data store in buffer , in line or circle(begin > end)
 static __INLINE__ int cbuf_order(ndrecybuf_t *pbuf)	
 {
 	return (pbuf->m_pend>=pbuf->m_pstart) ;
@@ -86,7 +85,8 @@ ND_COMMON_API int ndcbuf_write(ndrecybuf_t *pbuf,void *data, size_t datalen,int 
 
 struct nd_linebuf
 {
-	int auto_inc;			//auto increase capacity 
+	int auto_inc:1;			//auto increase capacity
+	int is_alloced : 1 ;	// the __buf is alloc by this line buf 
 	size_t buf_capacity ;
 	char *__start, *__end ;	
 	char *__buf;
@@ -150,6 +150,11 @@ static __INLINE__ size_t _lbuf_freespace(struct nd_linebuf *pbuf)
 static __INLINE__ void ndlbuf_auto_inc_enable(struct nd_linebuf *pbuf)
 {
 	pbuf->auto_inc = 1;
+}
+
+static __INLINE__ int ndlbuf_is_auto_inc(struct nd_linebuf *pbuf)
+{
+	return pbuf->auto_inc ;
 }
 
 static __INLINE__ void ndlbuf_auto_inc_disable(struct nd_linebuf *pbuf)

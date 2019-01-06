@@ -188,6 +188,7 @@ int _lbuf_init(struct nd_linebuf *pbuf, size_t data_size)
 	}
 	pbuf->buf_capacity = data_size ;
 	pbuf->auto_inc = 0;
+	pbuf->is_alloced = 1 ;
 	_lbuf_reset(pbuf);
 	return 0;
 }
@@ -210,7 +211,10 @@ int _lbuf_realloc(struct nd_linebuf *pbuf, size_t newsize)
 	if (dl > 0){
 		dl = _lbuf_read(pbuf,newaddr,newsize, EBUF_ALL) ;		
 	}
-	free(pbuf->__buf) ;
+	if(pbuf->is_alloced) {
+		free(pbuf->__buf) ;
+	}
+	pbuf->is_alloced = 1 ;
 	pbuf->__buf = newaddr ;
 	pbuf->buf_capacity = newsize ;
 	_lbuf_reset(pbuf) ;
@@ -222,10 +226,13 @@ int _lbuf_realloc(struct nd_linebuf *pbuf, size_t newsize)
 void _lbuf_destroy(struct nd_linebuf *pbuf)
 {
 	if (ND_ALLOC_MM_VALID(pbuf) && ND_ALLOC_MM_VALID(pbuf->__buf)){
-		free(pbuf->__buf) ;
+		if(pbuf->is_alloced) {
+			free(pbuf->__buf) ;
+		}
 		pbuf->__buf = 0 ;
 		_lbuf_reset(pbuf);
 		pbuf->buf_capacity = 0 ;
+		pbuf->is_alloced = 0 ;
 	}
 }
 

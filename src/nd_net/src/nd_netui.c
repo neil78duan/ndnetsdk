@@ -453,9 +453,6 @@ int nd_connector_send_stream(nd_handle net_handle, void* data, size_t len, int f
 	}
 
 	ret = nd_tcpnode_stream_send((struct nd_tcp_node*)net_handle, data, len, flag);
-// 	if (ret != -1) {
-// 		nd_tcpnode_tryto_flush_sendbuf((struct nd_tcp_node*)net_handle);
-// 	}
 
 	LEAVE_FUNC();
 	return ret;

@@ -100,6 +100,7 @@ typedef struct netui_info *nd_climap_handle ;		//定义客户端连接镜像(客户端连接到
 ND_SRV_API struct list_head *get_self_list(nd_climap_handle cli_handle);	//得到client自己的链表节点
 
 ND_SRV_API  void nd_tcpcm_init(struct nd_client_map *client_map,nd_handle h_listen) ;
+ND_SRV_API void nd_client_map_destroy(struct nd_client_map *client_map) ;
 
 ND_SRV_API size_t nd_getclient_hdr_size(int iomod) ;
 

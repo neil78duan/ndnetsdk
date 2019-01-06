@@ -498,6 +498,10 @@ size_t nd_connector_sendlen(nd_netui_handle net_handle)
 	return ndlbuf_freespace(&net_handle->send_buffer);
 }
 
+size_t nd_connector_data_in_window(nd_handle net_handle)
+{
+	return ndlbuf_datalen(&net_handle->send_buffer);
+}
 
 int nd_connector_set_timeout(nd_netui_handle net_handle, int seconds) 
 {
