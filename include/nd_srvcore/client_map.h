@@ -80,10 +80,8 @@ typedef struct player_header{
 //typedef void *nd_cli_handle;
 typedef struct netui_info *nd_climap_handle ;		
 
-//从clienthandle中得到相关属性
-//ND_SRV_API struct nd_client_info* nd_get_client_info(nd_climap_handle cli_handle) ; 
 
-ND_SRV_API struct list_head *get_self_list(nd_climap_handle cli_handle);	//得到client自己的链表节点
+ND_SRV_API struct list_head *get_self_list(nd_climap_handle cli_handle);
 
 ND_SRV_API  void nd_tcpcm_init(struct nd_client_map *client_map,nd_handle h_listen) ;
 ND_SRV_API void nd_client_map_destroy(struct nd_client_map *client_map) ;

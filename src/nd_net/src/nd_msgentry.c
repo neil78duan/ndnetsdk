@@ -12,37 +12,37 @@ typedef struct netui_info *nd_handle;
 #include "nd_net/nd_netlib.h"
 #define NET_MSG_NAME_SIZE 64
  
-//消息入口函数节点
+
 struct msg_entry_node
 {
-	NDUINT32			level:16 ;	//权限等级
-	NDUINT32			sys_msg:1 ;	//是否是系统消息
+	NDUINT32			level:16 ;	//privilete
+	NDUINT32			sys_msg:1 ;	// is system message
     NDUINT32            is_log:1;   //log current message
 	NDUINT32			is_script : 1;// handle message with script
 	NDUINT32			is_print : 1;// print or log message
-	nd_usermsg_func		entry ;	//入口函数
+	nd_usermsg_func		entry ;	// entry
 
 	//char* name;
 	char name[NET_MSG_NAME_SIZE];
 };
 
-/*主消息结果*/
+/*main message node*/
 struct sub_msgentry 
 {
 	NDUINT32 is_close : 1;
 	struct msg_entry_node   msg_buf[SUB_MSG_NUM] ;
 };
 
-/* 消息处理结构入口节点 */
+/* message entry info */
 struct msgentry_root
 {
 	ND_OBJ_BASE;
-	NDUINT16	main_num ;			//包含多少个消息类别
-	NDUINT16	msgid_base ;		//主消息号起始地址
+	NDUINT16	main_num ;			//main message count
+	NDUINT16	msgid_base ;		//start index
 	NDUINT32	msg_node_size;
 	void		*script_engine;
 	nd_msg_script_entry script_entry;
-	nd_usermsg_func		def_entry ;	//默认入口函数
+	nd_usermsg_func		def_entry ;	//default function
 	nd_usermsg_func		print_entry;	//print message
 	struct sub_msgentry sub_buf[0] ;
 };
@@ -93,9 +93,9 @@ static void destroy_msgroot(nd_handle h)
 	}
 	free(root);
 }
-/* 为连接句柄创建消息入口表
- * @mainmsg_num 主消息的个数(有多数类消息
- * @base_msgid 主消息开始号
+/* create message table 
+ * @mainmsg_num  
+ * @base_msgid start-index
  * return value : 0 success on error return -1
  */
 int nd_msgtable_create(nd_handle handle, int mainmsg_num, int base_msgid) 
@@ -314,7 +314,7 @@ nd_usermsg_func nd_msgentry_get_def_func(nd_netui_handle handle)
 	return root_entry->def_entry ;
 	
 }
-/*在handle连接句柄上安装消息处理函数*/
+/* install message handle*/
 int nd_msgentry_install(nd_netui_handle handle, nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level, const char *name) 
 {
 	struct msg_entry_node * node ;
@@ -559,7 +559,7 @@ int nd_message_disable_group(nd_handle nethandle, int maxId, int disable )
 
 }
 
-//权限等级
+// privilege 
 void nd_connect_level_set(nd_netui_handle handle,NDUINT32 level) 
 {
 	handle->level = level ;

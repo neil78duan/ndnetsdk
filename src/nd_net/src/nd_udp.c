@@ -271,7 +271,7 @@ int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t o
 }
 
 
-//得到上次读取的数据源地址
+//get last read data address
 struct sockaddr_in* nd_udp_read_addr(struct nd_udp_node*node) 
 {
 	return &node->last_read ;

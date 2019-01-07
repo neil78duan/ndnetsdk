@@ -51,7 +51,7 @@ void net_release_sendlock(nd_netui_handle  socket_node)
 	}
 }
 
-//绑定到指定的IP
+//bind IP
 int nd_net_ipbind(nd_handle net_handle, const char* ip) 
 {
 // 	struct nd_netsocket *node =(struct nd_netsocket *)net_handle ;

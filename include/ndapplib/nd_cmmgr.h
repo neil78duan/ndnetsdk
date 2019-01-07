@@ -45,7 +45,7 @@ public:
 private:
 	struct thread_pool_info *m_tpi;
 };
-//每个线程池的会话管理器
+//
 class  ND_COMMON_CLASS NDThreadSessionMgr
 {
 public:

@@ -86,7 +86,7 @@ public :
 protected:
 	//void *  operator new(size_t size) ;//throw (std::bad_alloc) ;
 	NDUINT32 m_id ;				//id
-	NDUINT32 m_type ;			//¿‡–Õ
+	NDUINT32 m_type ;			//
 	bool m_bRedirctLog;
 public:
 	static NDSession *g_redirect_log_object;

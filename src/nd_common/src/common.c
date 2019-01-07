@@ -13,7 +13,7 @@
 #ifdef ND_UNIX
 #include <locale.h>
 #endif
-const char *__g_process_name = NULL;			//½ø³ÌÃû×Ö
+const char *__g_process_name = NULL;			//process name
 static int __s_common_init = 0 ;
 static ndtime_t __s_common_init_base_tick = 0;
 static time_t	__s_common_init_base_time = 0;

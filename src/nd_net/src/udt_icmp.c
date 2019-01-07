@@ -18,7 +18,7 @@ typedef struct _udt_icmp_hdr
 	u_8   icmp_type;
 	u_8   icmp_code;
 	u_16  icmp_checksum;
-	u_16  receive_id;				//Ω” ’’‚PROCESS id
+	u_16  receive_id;				// receiver PROCESS id
 	u_16  receive_port;				// port(like udp/tcp port)
 	u_16  send_id;
 	u_16  send_port;

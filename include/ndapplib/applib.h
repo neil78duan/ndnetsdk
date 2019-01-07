@@ -78,11 +78,11 @@ static inline int nd_check_coming_our_server(nd_usermsgbuf_t *msg)
 {
 	return ND_USERMSG_SYS_RESERVED(msg) ? 1: 0 ;
 }
-//定义消息处理函数
+//message function define 
 #define MSG_ENTRY_INSTANCE(name) \
 	int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen) 
 
-//申明消息处理函数
+//message function declare
 #define MSG_ENTRY_DECLARE(name) \
 	CPPAPI int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen)
 
