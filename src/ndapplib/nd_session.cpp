@@ -182,7 +182,7 @@ ndport_t NDBaseSession::GetPeerPort()
 
 int NDBaseSession::Ioctl(int cmd, void *val, int *size)
 {
-	if (m_objhandle && nd_connector_valid((nd_netui_handle)m_objhandle))	{
+	if (m_objhandle /*&& nd_connector_valid((nd_netui_handle)m_objhandle)*/)	{
 		return  nd_net_ioctl((nd_netui_handle)m_objhandle, cmd, val, size);
 	}
 	return -1;

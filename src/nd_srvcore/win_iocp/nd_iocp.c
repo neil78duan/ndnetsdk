@@ -583,7 +583,7 @@ int iocp_socket_write(struct nd_client_map_iocp *iocp_map, void *data, size_t se
 	nd_netbuf_t  *send_buf = iocp_send_buf(iocp_map) ;
 	size_t free_space = ndlbuf_freespace(send_buf) ;
 
-	if(send_len>ndlbuf_capacity(send_buf)){
+	if(send_len>ndlbuf_capacity(send_buf) && !ndlbuf_is_auto_inc(send_buf) ){
 		nd_assert(0);
 		return -1;
 	}
