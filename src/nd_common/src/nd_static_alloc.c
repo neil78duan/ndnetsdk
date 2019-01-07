@@ -10,7 +10,7 @@
 #include "nd_common/nd_common.h"
 
 /*
- * client map 分配器
+ * node manager-alloctor
  */
 typedef struct nd_static_alloc_t
 {
@@ -57,9 +57,9 @@ nd_sa_handle nd_sa_create(int node_num, size_t node_size, nd_handle mempool)
 		return NULL;
 	}
 
-	allocator->size = (NDUINT32) raw_len;						/*句柄的大小*/
-	allocator->type =NDHANDLE_STATICALLOCATOR;					/*句柄类型*/
-	allocator->close_entry =(nd_close_callback) nd_sa_destroy ;			/*句柄释放函数*/
+	allocator->size = (NDUINT32) raw_len;						
+	allocator->type =NDHANDLE_STATICALLOCATOR;					
+	allocator->close_entry =(nd_close_callback) nd_sa_destroy ;	
 	allocator->myerrno = NDERR_SUCCESS ;
 	allocator->capacity =node_num;	
 	allocator->node_size = node_size ;
@@ -142,7 +142,7 @@ int nd_sa_destroy(nd_sa_handle sa_handle, int flag)
 
 	nd_mutex_destroy(&alloc->list_lock);
 	
-	nd_pool_free(alloc->mem_pool ,alloc) ;		//释放一个内存
+	nd_pool_free(alloc->mem_pool ,alloc) ;	
 	//free(allocator) ;
 	
 	return 0 ;

@@ -146,11 +146,8 @@ int waitCondVar(NDCondVar *v , NDMutex *m)
 	leaveMutex(m) ;
 	
 	hr = nd_sem_wait(v->hSig , INFINITE) ;
-	//hr = WaitForSingleObject(v->hSig , INFINITE) ;	
 	hr = (0==hr)? 0:-1 ;
 	
-	//当broadcast的时候,这里可能会出现多个消费者竞争
-	//不是一个很好的解决办法
 	entryMutex(m) ;
 	return (int)hr ;
 }
@@ -169,8 +166,7 @@ int timewaitCondVar(NDCondVar *v, NDMutex *m, int mseconds)
 	nd_atomic_inc(&v->lockCount) ;
 	leaveMutex(m) ;
 	
-	hr = nd_sem_wait(v->hSig , mseconds);	
-//	nd_atomic_dec(&v->lockCount) ;
+	hr = nd_sem_wait(v->hSig , mseconds);
 	hr = (0==hr)? 0:-1 ;
 	
 	entryMutex(m) ;
@@ -201,8 +197,7 @@ int broadcastCondVar(NDCondVar *v)
 	return 0 ;
 	*/
 	/*NOTE!!!
-	 *这个实现并不好,可能会有问题
-	 *但现在我还没有别的好办法
+	 * maybe this is not a good way to post some times 
 	 */
 	register int oldval = nd_atomic_read(&v->lockCount) ;
 	//oldval =(int) InterlockedCompareExchange((LPVOID*)(&v->lockCount),(LPVOID)oldval,(LPVOID)oldval)  ;

@@ -32,8 +32,8 @@ static ndthread_t  _nd_node_get_owner(struct node_root *root, NDUINT16 node_id);
 
 struct srvnode_info
 {
-	ndatomic_t used;			//used status指示此节点是否使用
-	ndthread_t  owner;			//拥有者id
+	ndatomic_t used;			//used status 0 not used
+	ndthread_t  owner;			//owner id
 	void *node_addr;
 };
 
@@ -165,7 +165,7 @@ int _nd_node_deaccept(struct node_root *root, NDUINT16 node_id)
 	return 0;
 }
 
-//增加引用次数
+//inc reference 
 int _nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
 {
 	ndatomic_t tmp;
@@ -185,7 +185,7 @@ int _nd_node_inc_ref(struct node_root *root, NDUINT16 node_id)
 	}
 	return -1;
 }
-//减少引用次数
+//dec reference count
 void _nd_node_dec_ref(struct node_root *root, NDUINT16 node_id)
 {
 	int index = node_id - root->base_id;

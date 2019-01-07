@@ -46,7 +46,7 @@ time_t nd_sys_timegm(struct tm* _res_tm)
 	return ret + mytimezone * 3600;
 }
 
-//得到字符串形式的时间
+//get string format time
 const char *nd_get_timestr(void)
 {
 	static __ndthread  char timebuf[64];
@@ -60,7 +60,7 @@ const char *nd_get_timestr(void)
 		gtm->tm_min, gtm->tm_sec);
 	return (const char *)timebuf;
 }
-//得到字符串形式的日期
+//get string format date
 const char *nd_get_datestr(void)
 {
 	static __ndthread  char datebuf[64];
@@ -74,7 +74,7 @@ const char *nd_get_datestr(void)
 		gtm->tm_mday);
 	return (const char *)datebuf;
 }
-//得到字符串形式的时间和日期
+//get string format datetime
 const char *nd_get_datetimestr(void)
 {
 	static __ndthread  char timebuf[64];

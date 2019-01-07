@@ -200,7 +200,7 @@ const  char* nd_getsysdir()
 }
 
 #else 
-//得到工作目录
+//
 const char * nd_getcwd()
 {
 	if (_current_dir[0]) {
@@ -219,19 +219,19 @@ const char * nd_get_init_dir()
 	return _original_dir ;
 }
 
-//删除文件
+//
 int nd_rmfile(const char *file)
 {
 	return DeleteFile((LPCTSTR)file) ? 0 :-1 ;
 }
 
-//重命名文件
+//
 int nd_renfile(const char *oldfile,const  char *newfile)
 {
 	return MoveFile((LPTSTR)oldfile, (LPTSTR)newfile) ? 0 : -1;
 }
 
-//改变工作目录
+//
 int nd_chdir(const char *dir)
 {
 	if(SetCurrentDirectory((LPCTSTR)dir) ) {			
@@ -241,26 +241,26 @@ int nd_chdir(const char *dir)
 	return -1;
 }
 
-//copy 文件
+//copy 
 int nd_cpfile(const char *oldfile, const char *newfile)
 {
 	return CopyFile( (LPCTSTR) oldfile, (LPCTSTR) newfile,TRUE) ? 0 : -1;
 
 }
 
-//创建一个目录
+//
 int nd_mkdir(const char *dir)
 {
 	return CreateDirectory((LPCTSTR)dir,NULL) ? 0 : -1;
 }
 
-//删除一个目录
+//
 int nd_rmdir(const char *dir)
 {
 	return  RemoveDirectory((LPCTSTR)dir) ? 0 : -1;
 }
 
-//得到系统目录
+//
 const char* nd_getsysdir()
 {
 	static char _system_dir[ND_FILE_PATH_SIZE] ;
@@ -268,7 +268,7 @@ const char* nd_getsysdir()
 	return _system_dir ;
 }
 
-//查找指定的文件是否存在
+//
 int nd_existfile(const char *pachfilename)
 {
 	WIN32_FIND_DATAA FindFileData;
@@ -285,8 +285,7 @@ int nd_existfile(const char *pachfilename)
 }
 
 
-//创建一个新文件
-//可以读写,独占,如果存在则失败
+//
 int nd_mkfile(const char *file)
 {
 	HANDLE hfile= CreateFile(

@@ -92,7 +92,6 @@ int ndstr_read_utf8char(char **src, char** dest)
 	return _read_word((unsigned  char**)dest,(unsigned  char**)src) ;
 }
 
-/* 去掉字符串开头部分无用的字符（不可打印的字符）*/
 const char *ndstr_first_valid(const char *src)
 {
 	unsigned char *tmp = (unsigned char *)src ;
@@ -106,7 +105,6 @@ const char *ndstr_first_valid(const char *src)
 
 }
 
-/* 检测字符是否是有效的数字*/
 int ndstr_is_numerals(const char *src)
 {
 	if (*src == '0' && (src[1] == 'x' || src[1] == 'X')){
@@ -148,7 +146,6 @@ int ndstr_is_numerals(const char *src)
 	}
 }
 
-//检测字符串是否自然数
 int ndstr_is_naturalnumber(const char *src)
 {
 	int ret = 1 ;
@@ -181,7 +178,7 @@ int ndstr_is_naturalnumber(const char *src)
 }
 
 
-/* 读取有效数字,*isok == 0出错*/
+//read number , on error isok == 0
 const char *ndstr_read_numerals(const char *src, char *desc, int *isok)
 {
 	int dot = 0 ;
@@ -224,7 +221,6 @@ const char *ndstr_read_numerals(const char *src, char *desc, int *isok)
 }
 
 
-//分解一个单词,单词只能是数字,字母和下划线
 const char *ndstr_parse_word(const char *src, char *outstr)
 {
 	register unsigned char a ;
@@ -248,7 +244,6 @@ const char *ndstr_parse_word(const char *src, char *outstr)
 	return *src?src:NULL ;
 }
 
-//分解可显示的字符床
 const char *ndstr_parse_string(const char *src, char *outstr)
 {
 	register unsigned char a ;
@@ -469,7 +464,6 @@ int ndstr_get_ip(const char *src, NDUINT32 *ip)
 }
 
 
-/*读取一个字符串，知道遇到一个制定的结束字符为止*/
 const char *ndstr_str_end(const char *src, char *outstr, const char end)
 {
     *outstr = 0 ;
@@ -478,9 +472,6 @@ const char *ndstr_str_end(const char *src, char *outstr, const char end)
 			break ;
 		}
 		_read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
-// 		if((unsigned char)*src>(unsigned char)0x80)		//chinese
-// 			*outstr++ = *src++ ;
-// 		*outstr++ = *src++ ;
 	}
 	*outstr = 0 ;
 	return src ;
@@ -495,12 +486,6 @@ const char *ndstr_nstr_end(const char *src, char *outstr, const char end, int n)
 			int ret  = _read_word((unsigned char**)&outstr, (unsigned  char**)&src) ;
 			n -= ret ;
 		}
-// 		if((unsigned char)*src>(unsigned char)0x80){	//chinese
-// 			*outstr++ = *src++ ;
-// 			--n ;
-// 		}
-// 		*outstr++ = *src++ ;
-// 		--n ;
 	}
 	*outstr = 0 ;
 	return src ;
@@ -530,7 +515,7 @@ const char *ndstr_nstr_ansi(const char *src, char *outstr, const char end, int n
 	*outstr = 0;
 	return src;
 }
-/*不区分大小写,比较字符串*/
+
 int ndstricmp(const char *src, const char *desc)
 {
 	int ret ;
@@ -547,21 +532,6 @@ int ndstricmp(const char *src, const char *desc)
 		ret = a - b;
 		if (ret)
 			break;
-// 		ret = *src - *desc ;
-// 		if(ret){
-// 			char a ;
-// 			if(IS_BIG_LATIN(*src)) {
-// 				a= BIG_2_LITTLE(*src) ;
-// 			}
-// 			else if(IS_LITTLE_LATIN(*src)) {
-// 				a=LITTLE_2_BIG(*src) ;
-// 			}
-// 			else {
-// 				return ret ;
-// 			}
-// 			if(a!=*desc)
-// 				return ret ;
-// 		}
 		desc++ ;
 	}while (*src++) ;
 	return ret ;
@@ -591,7 +561,6 @@ int ndstricmp_n(const char *src, const char *desc, int n)
 	return ret;
 }
 
-//在src中查找desc 不区分大小写
 const char *ndstristr(const char *src, const char *desc)
 {
 	int ret=0 ;
@@ -629,8 +598,6 @@ const char *ndstristr(const char *src, const char *desc)
 	return NULL ;
 }
 
-//从src所指的方向向前查找字符ch,
-//如果找到end位置还没有找到则返回null
 const char *ndstr_reverse_chr(const char *src, char ch, const char *end)
 {
 	while(end <= src) {

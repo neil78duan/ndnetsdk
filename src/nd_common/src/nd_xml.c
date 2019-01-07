@@ -10,7 +10,7 @@
 
 //#define MAX_FILE_SIZE 4*4096
 #define XML_H_END   0x3e2f			// /> xml node end mark
-#define XML_T_END   0x2f3c			// </ xml end node mark,高字节在高地址 /地址高于 >
+#define XML_T_END   0x2f3c			// </ xml end node mark,big end  >
 static int  _is_mark_end(const char *p)
 {
 	if (*p == 0x2f && *(p+1)=='>') {

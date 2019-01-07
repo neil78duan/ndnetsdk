@@ -6,14 +6,14 @@
  */
 
 
-#define ND_IMPLETE_MEMPOOL	1		//实现内存池的文件
+#define ND_IMPLETE_MEMPOOL	1		//need implete memmory pool
 #define ND_IMPLEMENT_HANDLE 1
 
 #include "nd_common/nd_os.h"
 #include "nd_common/list.h"
 #include "nd_common/nd_logger.h"
 
-#ifdef ND_UNUSE_STDC_ALLOC	//使用内存池
+#ifdef ND_UNUSE_STDC_ALLOC	//not use std alloc
 typedef struct nd_mm_pool *nd_handle ;
 #include "nd_common/nd_handle.h"
 #include "nd_common/nd_mempool.h"
@@ -37,20 +37,20 @@ typedef struct nd_mm_pool *nd_handle ;
 
 #define SIZE_ALINE(s)			max(_ND_ALINE(s,ALIGN_SIZE), MIN_SIZE)
 
-#define BIG_SIZE				0x400			//超过这个上限的内存将被保存在大内存队列中
-#define LITTLE_CHUNK_NUM		((BIG_SIZE/ALIGN_SIZE)- MIN_SIZE/ALIGN_SIZE +1)	//小内存数组的个数 (16~256) 间隔16
-#define CHUNK_INDEX(size)		(((size)/ALIGN_SIZE) - MIN_SIZE/ALIGN_SIZE )	//得到索引
+#define BIG_SIZE				0x400			// if bigger than this ,is big data 
+#define LITTLE_CHUNK_NUM		((BIG_SIZE/ALIGN_SIZE)- MIN_SIZE/ALIGN_SIZE +1)	//little block list (16~256) step is 16
+#define CHUNK_INDEX(size)		(((size)/ALIGN_SIZE) - MIN_SIZE/ALIGN_SIZE )	//chunk index 
 #define GET_LITTLE_SIZE(index)	(((index)+1) *ALIGN_SIZE + MIN_SIZE-ALIGN_SIZE)
 #define LITTLE_ROUND_LOWWER(size)	((size) & ~(ALIGN_SIZE-1))
 
-#define BIG_CHUNK_NUM			64	//大块内存数组的个数 (1k , 2k ..., 16k)
+#define BIG_CHUNK_NUM			64	//big block chunk (1k , 2k ..., 16k)
 #define BIG_ALINE(size)			max(_ND_ALINE(size,BIG_SIZE), BIG_SIZE)
-#define BIG_INDEX(size)			(size /(BIG_SIZE) -1 )	//得到索引
+#define BIG_INDEX(size)			(size /(BIG_SIZE) -1 )	//
 #define GET_BIG_SIZE(index)		(((index)+1) *BIG_SIZE)
 #define BIG_ROUND_LOWWER(size)	((size) & ~(BIG_SIZE-1))
 
 #define ALLOCATOR_PAGE_BITMASK  0xFFF
-#define POOL_SIZE_BITS			16			//低16位不用
+#define POOL_SIZE_BITS			16			//lower 16 bits (not used)
 
 #define DEFAULT_PAGE_SIZE		getgranularity()  //(1024*32)
 #define MIN_PAGE_SIZE			getgranularity()
@@ -64,14 +64,13 @@ typedef size_t allocheader_t ;
 
 #pragma pack(push, ND_DEFAULT_ALINE_SIZE)
 
-
-//对外申请时使用的结果
+// alloced address info
 struct alloc_node {
 	allocheader_t size ;
 	char data[0];
 };
 
-//直接从系统中分配的大块内存
+//alloc from system info
 struct big_chunk_list
 {
 	void *pool ;
@@ -91,7 +90,7 @@ typedef struct mm_sub_allocator
 	allocheader_t size ;
 	NDUINT16 type ;
 	NDUINT16 myerrno;
-	allocheader_t allocated_size ;					//已经分配的内存大小
+	allocheader_t allocated_size ;					//already alloc size 
 	struct nd_mm_pool *parent ;					//
 	char *start, *end ;									//当前可以分配的内存起始地址
 	struct list_head self_list;							//在内存池中的列表(父级内存池使用)

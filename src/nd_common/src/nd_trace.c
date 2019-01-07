@@ -14,14 +14,14 @@
 #include <stdio.h>
 
 #ifdef _ND_MEMORY_H_
- //这里需要使用libc的malloc函数
+ //use malloc in libc
 #error do not include nd_alloc.h
 #endif
 
 #ifdef ND_SOURCE_TRACE
 
 #ifdef ND_MULTI_THREADED
- //使用多线程
+ //mutil-thread
 static nd_mutex __S_source_lock;
 static int __s_source_init = 0;
 nd_handle __s_srclog_pool;
@@ -40,7 +40,6 @@ static ND_LIST_HEAD(__s_source_head);
 static int _source_numbers = 0;
 #define SOURCE_DUMP nd_logfatal
 //ndfprintf(stderr,msg) 
-//定义资源记录器的数据结果
 struct _Source_loginfo {
 	void *__source;
 	int __line;			//line munber in file

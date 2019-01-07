@@ -33,7 +33,7 @@ struct timer_node
 };
 
 static void tryto_del_timer(struct nd_timer_root *root) ;
-/* 增加一个计时执行函数*/
+/* */
 ndtimer_t nd_timer_add(nd_handle handle,nd_timer_entry func,void *param,ndtime_t interval, int run_type )
 {
 	struct nd_timer_root * root ;
@@ -65,11 +65,6 @@ ndtimer_t nd_timer_add(nd_handle handle,nd_timer_entry func,void *param,ndtime_t
 	return node->timer_id;
 }
 
-/* 删除定时器,外部使用函数
- * 把计时器放倒被删除队列中,在update时删除
- * 这样做可以在定时器函数中增加和删除定时器函数,
- * 因为避免了圈套luck
- */
 int nd_timer_del(nd_handle handle, ndtimer_t id) 
 {
 	int i ,ret=-1;
@@ -90,7 +85,7 @@ int nd_timer_del(nd_handle handle, ndtimer_t id)
 
 }
 
-/* 销毁一个定时器对象*/
+/* */
 int  nd_timer_destroy(nd_handle timer_handle, int force) 
 {
 	struct timer_node *node ;
@@ -140,10 +135,10 @@ nd_handle nd_timer_create(nd_handle pallocator)
 		return NULL ;
 	}
 
-	root->size = sizeof(*root) ;					/*句柄的大小*/
-	root->type = NDHANDLE_TIMER ;					/*句柄类型*/	
+	root->size = sizeof(*root) ;					
+	root->type = NDHANDLE_TIMER ;					
 	root->myerrno = 0 ;
-	root->close_entry =(nd_close_callback )nd_timer_destroy;			/*句柄释放函数*/
+	root->close_entry =(nd_close_callback )nd_timer_destroy;
 	root->pallocator = pallocator;					//memory allocator 
 	root->start_id = 0 ;
 	root->num = 0 ;
@@ -153,7 +148,7 @@ nd_handle nd_timer_create(nd_handle pallocator)
 	return (nd_handle) root ;
 }
 
-/* 执行定时器函数*/
+/* run timer function*/
 int  nd_timer_update(nd_handle handle) 
 {
 	int ret = 0 ,run_ret =0 ;
