@@ -11,9 +11,7 @@
 //#include "nd_net/nd_iphdr.h"
 
 /*
- * 在windows xp sp2上已经不在支持IP_HDRINCL 发送tcp和UDP包了
- * 也就不能用他来发送syn包,以便检测主机端口是否打开.
- * 只能发送ICMP和IGMP协议包
+ * do not work in windows
  */
 #if  !defined(ND_UNIX) 
 
@@ -41,7 +39,7 @@
 int set_raw_sockopt(ndsocket_t fd, int is_hdrincl)
 {
 
-	/*设置接收和发送的超时*/
+	/* set time out */
 #if !defined(ND_UNIX) 
 	int opt = 1000;
 	if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&opt, sizeof(opt))==-1){

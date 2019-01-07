@@ -273,7 +273,7 @@ int _ndc_fflush(NDC_FILE *pf, int is_end)
 	if (!pf->iswrite){
 		return 0 ;
 	}
-	//缓冲中有数据,补齐缓冲
+	// there is data in buffer
 	buf_datalen = pf->size_inbuf - pf->page_pos ; 
 	if (buf_datalen ==0){
 		pf->page_pos = 0 ;
