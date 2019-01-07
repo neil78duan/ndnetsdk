@@ -58,7 +58,7 @@ ND_APPLIB_API int send_error_ack(nd_handle hconnect, int errcode);
 #endif
 
 ND_APPLIB_API int set_mp() ;
-//定义消息发送函数
+//session send function
 #define ND_SENDEX(nethandle, msg, flag, h_listen)	nd_sessionmsg_sendex(nethandle, msg, flag )
 #define ND_MSG_SEND(nethandle, msg,  h_listen)		nd_sessionmsg_send(nethandle, msg )
 #define ND_MSG_WRITEBUF(nethandle, msg,  h_listen)	nd_sessionmsg_writebuf(nethandle, msg )

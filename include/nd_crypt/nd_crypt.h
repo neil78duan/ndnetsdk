@@ -9,29 +9,29 @@
 /*
  * This module include MD5, tea and rsa.
 
-  MD5ToString 把加密好的MD5转换成可打印的字符
+  MD5ToString transfer MD5 key to printable text
  * char* MD5ToString(unsigned char src[16], unsigned char desc[33]);
 
-  把字符串加密成MD5
+  get md5 key from text
  * char *MD5CryptStr16(char *input, char output[16]) ;
 
-  把2进制加密成MD5
+  get md5 key from binary
  * char *MD5Crypt16(char *input, int inlen, char output[16]);
 
-  产生一个tea的密钥
+  generate a tea key
  * int tea_key(tea_k *k);
 
-  tea加密
+  tea encrypt
  * void tea_enc(tea_k *k, tea_v *v);
 
-  tea解密
+  tea decrypt
  * void  tea_dec(tea_k *k, tea_v *v);
 
-  rsa加密/解密
-  返回0成功
-	int nd_RSAcreate(RSA_HANDLE); 产生一对加密解密密钥
- void nd_RSAdestroy(RSA_HANDLE *h_rsa);	//销毁加密解密密钥
- //加密或者解密函数,公开密钥加密的只能用私人密钥解密,反之亦然
+  rsa
+  return 0 success
+	int nd_RSAcreate(RSA_HANDLE); generate rsa key set
+ void nd_RSAdestroy(RSA_HANDLE *h_rsa);	//destroy res key set
+ //rsa encrypt/decrypt
  int nd_RSAPublicEncrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa);
  int nd_RSAPrivateEncrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa);
  int nd_RSAPublicDecrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa);
@@ -54,7 +54,7 @@
 
 ND_CRYPT_API int nd_TEAencrypt(unsigned char *data, int data_len, tea_k *key) ;
 ND_CRYPT_API int nd_TEAdecrypt(unsigned char *data, int data_len, tea_k *key) ;
-ND_CRYPT_API int nd_TEAGenKey(tea_k *key, char *seed) ;		//使用种子生成一个密钥,返回密码长度
+ND_CRYPT_API int nd_TEAGenKey(tea_k *key, char *seed) ;		//create key by seed
 
 
 /* mix-in data */
@@ -66,17 +66,16 @@ ND_CRYPT_API char *crypt_stuff(char *src, int datalen, int stufflen ) ;	/*stuff 
  */
 ND_CRYPT_API char* MD5ToString(unsigned char src[16], unsigned char desc[33]);
 
-/*加密可打印的字符(\0的字符串)*/
 ND_CRYPT_API char *MD5CryptStr16(const char *in_text, char output[16]);
 ND_CRYPT_API char *MD5CryptStr32(const char *in_text, char output[33]);
 
-/* 输入二进制字符
+/* 
  * @inlen input length
  * @input data address of input
  * @output buffer address char[16]
  */
 ND_CRYPT_API char *MD5Crypt16(const void *inbuf, int inlen, char output[16]);
-/* 计算md5,输出可打印的字符*/
+
 ND_CRYPT_API char *MD5Crypt32(const void *in_buf, int inlen, char output[33]);
 ND_CRYPT_API int MD5cmp(char src[16], char desc[16]) ;
 
@@ -95,8 +94,8 @@ typedef struct  {
 }ND_RSA_CONTEX ;
 typedef ND_RSA_CONTEX *RSA_HANDLE ;
 
-#define RSA_KEY_BITS 2048					/* rsa 密钥长度*/
-#define RSA_CRYPT_BUF_SIZE 256				/* rsa每次加密需要的缓冲长度*/
+#define RSA_KEY_BITS 2048					/* rsa key length*/
+#define RSA_CRYPT_BUF_SIZE 256				/* rsa buffer data length , means rsa handle capacity once*/
 
 ND_CRYPT_API int RSAinit_random(R_RANDOM_STRUCT *rStruct);
 ND_CRYPT_API void RSAdestroy_random(R_RANDOM_STRUCT *rStruct);

@@ -14,19 +14,6 @@
 
 #define ND_NAME_SIZE 40
 
-
-//使用自定义的发送函数
-//typedef int (*snedmsg_ext_entry)(void *owner, nd_packhdr_t *msg_buf, int flag) ;	//define extend send function
-//client 状态
-/*
-enum eClientStatus{
-	ECS_NONE = 0 ,			//空闲
-	ECS_ACCEPTED ,			//accept
-	ECS_READY,				//login 
-	ESC_CLOSED				//connect closed
-} ;
-*/
-//nd_client_map 结果需要根据各种不同的服务器消息结构来定制
 /*client connect map on server*/
 struct nd_client_map
 {
@@ -90,9 +77,8 @@ typedef struct player_header{
 }player_header_t ;
 
 
-//定义client map handle
 //typedef void *nd_cli_handle;
-typedef struct netui_info *nd_climap_handle ;		//定义客户端连接镜像(客户端连接到服务器时需要建立这样一个镜像)
+typedef struct netui_info *nd_climap_handle ;		
 
 //从clienthandle中得到相关属性
 //ND_SRV_API struct nd_client_info* nd_get_client_info(nd_climap_handle cli_handle) ; 

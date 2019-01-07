@@ -28,45 +28,45 @@ typedef struct packet_hdr
 	NDUINT16	length ;				/*length of packet*/
 	NDUINT8		version ;				/*version of net protocol*/
 #if ND_BYTE_ORDER == ND_L_ENDIAN
-	NDUINT8		ndsys_msg:1;			/* nd模块自己处理的消息*/
-	NDUINT8		encrypt:1;				/* 是否加密*/
-	NDUINT8		stuff:1;				/* 是否为了加密而填充*/
-	NDUINT8		stuff_len:5;			/* 填充长度*/
+	NDUINT8		ndsys_msg:1;			/* system message*/
+	NDUINT8		encrypt:1;				/* the package is crypt */
+	NDUINT8		stuff:1;				/* is filled data on tail when crypt*/
+	NDUINT8		stuff_len:5;			/* fill length*/
 #else 
-	NDUINT8		stuff_len:5;			/* 填充长度*/
-	NDUINT8		stuff:1;				/* 是否为了加密而填充*/
-	NDUINT8		encrypt:1;				/* 是否加密*/
-	NDUINT8		ndsys_msg:1;			/* nd模块自己处理的消息*/
+	NDUINT8		stuff_len:5;			
+	NDUINT8		stuff:1;				
+	NDUINT8		encrypt:1;				
+	NDUINT8		ndsys_msg:1;			
 #endif
 	
 } nd_packhdr_t;
 
-//封包头长度
+//packet header size 
 #define ND_PACKET_HDR_SIZE  sizeof(nd_packhdr_t)
 #define ND_PACKET_DATA_SIZE (ND_PACKET_SIZE - ND_PACKET_HDR_SIZE)
 
-//消息包
+//packet header
 typedef struct nd_net_packet_buf
 {
 	nd_packhdr_t	hdr ;
 	char			data[ND_PACKET_DATA_SIZE] ;
 }nd_packetbuf_t;
 
-//nd模块自己的保留消息
+//nd common packet
 typedef struct nd_sysresv_pack
 {
 	nd_packhdr_t hdr ;
 	NDUINT16 msgid ;
 	NDUINT16 checksum;
 }nd_sysresv_pack_t;
-//预留消息号
+// the message id reserved 
 enum {
 	ERSV_ALIVE_ID = 0xfb0e,
 	ERSV_VERSION_ERROR = 0xfb0f
 };
 #pragma pack(pop)
 
-/* 定义消息发送类型 */
+/* send type , flag */
 enum send_flag {
 	ESF_NORMAL = 0 ,		//正常发送
 	ESF_WRITEBUF =1,		//写入发送缓冲
@@ -75,7 +75,6 @@ enum send_flag {
 	ESF_ENCRYPT = 8			//加密(可以和其他位连用|)
 };
 
-/*初始化头部*/
 static __INLINE__ void nd_hdr_init(nd_packhdr_t *hdr)
 {
 	*((NDUINT32*)hdr) = 0 ;
@@ -113,7 +112,7 @@ static __INLINE__ void nd_set_pack_len(nd_packhdr_t *hdr, NDUINT16 len)
 // hdrdest = hdrsrc
 #define ND_HDR_SET(hdrdest, hdrsrc) *((NDUINT32*)hdrdest) = *((NDUINT32*)hdrsrc)  
 
-typedef int (*NDNET_MSGENTRY)(void *connect, nd_packhdr_t *msg_hdr, void *param) ;	//消息处理函数
+typedef int (*NDNET_MSGENTRY)(void *connect, nd_packhdr_t *msg_hdr, void *param) ;	//packet handle function 
 
 static __INLINE__ void nd_make_alive_pack(nd_sysresv_pack_t *pack)
 {

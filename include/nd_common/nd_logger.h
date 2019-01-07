@@ -30,11 +30,11 @@ x:\yourdirect\xx.cpp:need to do someting
 #define ndpre_msg(desc) message(__FILE__ "(" ndpre_str(__LINE__) "):" #desc)
 
 typedef enum _error_ID {
-	ND_MSG = 0,			//正常信息
-	ND_MSGDEBUG,			//记录调试信息
-	ND_WARN,				//警告信息
-	ND_ERROR,				//错误信息
-	ND_FATAL_ERR 			//严重错误
+	ND_MSG = 0,			//common log message 
+	ND_MSGDEBUG,			//debug
+	ND_WARN,				//warning
+	ND_ERROR,				//error
+	ND_FATAL_ERR 			//fatal error
 }edg_ID;
 
 typedef int(*nd_log_entry)(const char* text);

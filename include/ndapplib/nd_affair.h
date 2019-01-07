@@ -14,7 +14,7 @@
 #include <vector>
 #include <map>
 
-//事务打开,保存,同步开关
+//affair switch helper
 template<class TAfair>
 class ND_COMMON_CLASS  EnableAffairHelper
 {

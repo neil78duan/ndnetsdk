@@ -8,13 +8,10 @@
 #ifndef _ND_SOCK_H_
 #define _ND_SOCK_H_
 
-//#define DONOT_CONVERT_BIGEND	//不要进行大小尾数转换
 #if  !defined(ND_UNIX) 
-//#include "nd_common/nd_win.h"
 #ifndef _WINDOWS_
 //#include <WINSOCK2.H>
 #endif 
-	//typedef SOCKET				ndsocket_t;				//socket id 
 	typedef signed int 				ndsocket_t;
 	typedef int						socklen_t ;
 	#ifndef ESOCKETTIMEOUT
@@ -38,7 +35,7 @@
 	typedef void* sock_opval_t ;
 #endif //win32
 
-//关闭一个连接
+//close socket
 ND_NET_API void nd_socket_close(ndsocket_t s) ;
 
 //send data from socket 
@@ -120,7 +117,7 @@ typedef void (*parse_ip) (char *buf, int len, SOCKADDR_IN *from) ;
 
 //send syn pocket 
 ND_NET_API int send_tcp_syn(ndsocket_t fd, SOCKADDR_IN *src, SOCKADDR_IN *dest);
-//向指定的地点发送IP包,并且把源地址设定位src
+
 ND_NET_API int send_raw_udp(ndsocket_t fd, char *data, int len, SOCKADDR_IN *src, SOCKADDR_IN *dest);
 ND_NET_API int set_raw_iphdr(ndsocket_t fd, int flag) ;
 ND_NET_API int send_ping(ndsocket_t fd,  SOCKADDR_IN *dest,int seq_no, char *data, int len) ;
@@ -172,7 +169,7 @@ ND_NET_API int nd_proxy_sendtoex(ndsocket_t fd, const char *data, size_t size, c
 
 ND_NET_API int nd_proxy_sendto(ndsocket_t fd, void *data, size_t size,  SOCKADDR_IN *remoteaddr,SOCKADDR_IN *proxy);
 
-//比较IP,如果是 192.168.0.1 和192.168.1.255,是相等的, 192.168.1.%将会转变成192.168.1.255
+//ip cmp, 192.168.1.% is EQ 192.168.0.1 because 192.168.1.255 is transfer to 192.168.1.% 
 //return 0 success
 ND_NET_API int nd_sock_cmp_ip(ndip_t src, ndip_t desc, NDUINT32 ipmask) ;
 #endif

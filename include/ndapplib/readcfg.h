@@ -29,7 +29,7 @@ struct listen_config
 	char listen_name[32] ;
 };
 
-//连接信息
+//connection info
 struct connect_config
 {
 	int port ;
@@ -50,11 +50,11 @@ struct nd_db_config
 	char db_password[32] ;
 };
 
-//实例配置信息
+//instant config info
 struct instance_config
 {
-	NDUINT8 open_dump ;				//是否打开dump
-	NDUINT8 single_thread;			//是否使用单线程逻辑
+	NDUINT8 open_dump ;				//is open dump
+	NDUINT8 single_thread;			//is single thread 
 	NDUINT8 log_filename_nodate;
 	NDUINT32 log_file_size ;
 	char inet_ip[ND_IP_TEXT_SIZE];
@@ -67,10 +67,10 @@ struct instance_config
 };
 
 #define MAX_RELIABLE_HOST 8
-//服务器配置信息
+//server listen- instant config 
 struct server_config
 {
-	NDUINT8 m_un_develop;	//是否是开发版本
+	NDUINT8 m_un_develop;	//is develop version 
 	NDUINT8 reliable_num;
 	struct listen_config   l_cfg ;
 	struct instance_config i_cfg ;
@@ -85,16 +85,16 @@ struct server_config
 // 	char host[ND_HOST_NAME_SIZE] ;
 // };
 
-//读取端口基数
+//
 ND_APPLIB_API int read_base_port(ndxml *xmlroot) ;
-//读取实例信息
+//
 ND_APPLIB_API int read_instance_info(ndxml *xmlroot, struct instance_config *icfg);
-//读取连接信息
+//
 ND_APPLIB_API int read_connect_cfg(ndxml *xmlroot, int base_port, struct connect_config *ccfg);
-//读取监听信息
+//
 ND_APPLIB_API int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg);
 
-//从xml读取配置信息
+//
 ND_APPLIB_API int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg) ;
 
 ND_APPLIB_API int read_dbconfig(const char *fileName, const char *dbCfgname ,struct nd_db_config *db_cfg) ;

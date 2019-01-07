@@ -22,8 +22,8 @@ typedef unsigned int	NDUINT32 ;
 
 typedef unsigned int	NDBOOL ;
 
-typedef unsigned int	ndtime_t ;	//时间 1/1000 s
-typedef long long		ndbigtime_t;	//超级时间，time_t*1000+tick
+typedef unsigned int	ndtime_t ;		// time type  1/1000 s
+typedef long long		ndbigtime_t;	//big time type，time_t*1000+tick
 
 #if defined(ND_UNICODE)
 typedef unsigned short  NDBYTE;
@@ -103,7 +103,7 @@ enum END_ERROR_TYPE
 {
 #undef ErrorElement 
 #define ErrorElement(_errId, _err_description) ND##_errId 
-	NDERR_SUCCESS = 0,	//正确
+	NDERR_SUCCESS = 0,	//success
 #include "_nderr.h"
 	NDERR_SYS_MAX_NUMBER
 #undef ErrorElement 

@@ -58,8 +58,6 @@ int listen_thread_create(struct thread_pool_info *ic, nd_threadsrv_entry th_func
 
 
 void init_netthread_msg( nd_handle  thhandle);
-//iocp 线程池
-//int thpoolex_create(struct listen_contex *handle, int pre_thnum, int session_num) ;
 int thpoolex_destroy(struct listen_contex *handle) ;
 
 int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_map) ;
@@ -71,7 +69,6 @@ int _nd_thpool_sub(struct thread_pool_info *listen_info);
 ND_SRV_API int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle,int encrypt) ;
 ND_SRV_API int nd_sendto_all_ex(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level,int encrypt);
 
-//通过SESSIONid把消息发送给客户端
 static __INLINE__ int nd_send_tocliet(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) 
 {
 	return nd_send_toclient_ex( sessionid,data, listen_handle, 0) ;
@@ -85,18 +82,13 @@ static __INLINE__ int nd_sendto_all(nd_usermsghdr_t *data, nd_handle listen_hand
 //close all session after delay rand ms(0~65536ms) for per-session
 ND_SRV_API int nd_rand_delay_cloase_all(nd_handle listen_info);
 
-//把消息交给session处理
 ND_SRV_API int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) ;
 
 ND_SRV_API int nd_netmsg_2all_handle(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level) ;
 
-//把session 添加到其他线程
 ND_SRV_API int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid);
 
-//为session找一个相对空闲的线程
 ND_SRV_API int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid);
-//打开
-//ND_SRV_API nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h) ;
 
 ND_SRV_API int nd_close_listen_thread(nd_listen_handle h,nd_thsrvid_t sid)  ;
 

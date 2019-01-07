@@ -10,11 +10,7 @@
 //#include "nd_common/nd_common.h"
 
 /*
- * 对线程的封装,使它看起来更像一个服务器
- * 服务器功能模块入口:
- * 服务器所执行的功能模块在这里被称为一个子服务.以下称为"线程服务器"
- * 每个服务启动一个线程,有自己的线程上下文,和消息队列,
- * 其他服务或者线程可以通过服务名字或者服务ID找到他们,并且发送消息.
+ * ND thread service 
  */
 #define MAX_LISTENNUM	2	
 #define ND_SRV_NAME 32 
@@ -28,11 +24,11 @@ typedef void (*nd_threadsrv_clean)(void) ;				//service terminal clean up fucnto
 /* thread message data*/
 typedef struct nd_thread_msg{
 	NDUINT32			msg_id ;
-	NDUINT32			data_len ;			//data length处理过
-	int					wait_handle;		//是否等待对方处理完
+	NDUINT32			data_len ;			//data length
+	int					wait_handle;		//is waiting untill message be handled
 	nd_thsrvid_t		from_id;	//,recv_id;	//message sender and receiver
-	nd_handle			recv_handle;		//接收者handle
-	void				*th_userdata ;		//对应 nd_thsrv_createinfo::data
+	nd_handle			recv_handle;		//receiver handle
+	void				*th_userdata ;		//user data. nd_thsrv_createinfo::data
 	struct list_head	list ;
 	char				data[0] ;			//data address
 }nd_thsrv_msg;
@@ -40,9 +36,9 @@ typedef struct nd_thread_msg{
 
 typedef int (*nd_thsrvmsg_func)(nd_thsrv_msg *msg) ;	//message handle function
 
-/* 服务函数类型
- * 如果使用SUBSRV_RUNMOD_STARTUP模式需要在自己的程序中处理消息
- * 用法: 
+/* type of thread service 
+ * SUBSRV_RUNMOD_STARTUP :
+ * usage: 
  *  
 		service_entry() {
 			//do some initilize
@@ -60,7 +56,7 @@ typedef int (*nd_thsrvmsg_func)(nd_thsrv_msg *msg) ;	//message handle function
 enum e_thsrv_runmod{
 	SUBSRV_RUNMOD_LOOP = 0,		//for(;;) srv_entry() ;
 	SUBSRV_RUNMOD_STARTUP,		//return srv_entry() ; 
-	SUBSRV_MESSAGE				//创建一个单独的消息处理线程(主要是可以实现一个线程池,只处理消息的线程)
+	SUBSRV_MESSAGE				// signle message module 
 };
 
 struct nd_thsrv_createinfo
@@ -99,7 +95,7 @@ ND_SRV_API  int nd_thsrv_destroy(nd_thsrvid_t srvid,int force);
 /*release all services in current host*/
 ND_SRV_API void nd_thsrv_release_all() ;
 
-/* 让所以线程的宿主退出,所以线程也退出*/
+/* notify all thread service exit */
 ND_SRV_API void nd_host_eixt() ;
 ND_SRV_API void nd_server_host_begin() ;
 ND_SRV_API int nd_host_check_exit() ;
@@ -120,8 +116,8 @@ ND_SRV_API int nd_thsrv_resumeall() ;		//suspend all service
 ND_SRV_API int nd_thsrv_wait(nd_thsrvid_t  srv_id) ;		//wait a service exit
 //ND_SRV_API struct nd_thread_msg *nd_thsrv_msgnode_create(int datalen) ;
 
-/* 发送消息 推荐使用nd_send_msg() 
- * 如果使用nd_send_msgex() 用法:
+/* send message to thread 
+ * 
 	msg = create_thmsg_node(datalen) ;
 	//set message id, receiver id, data, and datalen to nd_thread_msg.
 	nd_thsrv_sendex(msg);
@@ -131,9 +127,9 @@ ND_SRV_API int nd_thsrv_sendex(nd_thsrvid_t srvid,NDUINT32 msgid,void *data, NDU
 
 //ND_SRV_API int nd_thsrv_sendex(struct nd_thread_msg *msg);
 
-/* 处理用户消息
- * 如果是用SUBSRV_RUNMOD_STARTUP 模式来创建服务,则需要在服务程序中自行处理消息
- * 一般用法是在服务循环中调用nd_message_handler() ,参数中指定context是为了提高效率
+/* 
+ *  handle thread message 
+ * 
  * return -1 service(thread) exit 
  * else return numbers of message had been handled
  */
@@ -160,10 +156,10 @@ ND_SRV_API void nd_thsrv_setdata(nd_handle handle, void *data) ;
 ND_SRV_API ndtimer_t nd_thsrv_timer(nd_thsrvid_t srv_id,nd_timer_entry func,void *param,ndtime_t interval, int run_type ) ;
 ND_SRV_API void nd_thsrv_del_timer(nd_thsrvid_t srv_id, ndtimer_t timer_id ) ;
 
-//拦截线程消息处理函数
+//hook thread message data 
 ND_SRV_API nd_thsrvmsg_func nd_thsrv_hook(nd_handle handle,nd_thsrvmsg_func newfunc) ;
 ND_SRV_API nd_threadsrv_clean  nd_thsrv_set_clear(nd_handle handle,nd_threadsrv_clean clear_func);
-/*线程把自己挂起*/
+/* suspend thread self*/
 int nd_thsrv_suspend_self(nd_handle handle) ;
 
 #endif

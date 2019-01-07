@@ -317,7 +317,7 @@ ndsocket_t nd_socket_connect(const char *host_name, short port, int sock_type, S
 	return sfd;
 }
 
-//从ip地址int 到字符串形式
+//get ip-address from in
 const char *nd_inet_ntoa (ndip_t in, char *buffer, size_t size)
 {
 	if (in.sin_family == AF_INET6) {
@@ -402,7 +402,7 @@ NDUINT64 nd_ntoh64(NDUINT64 h)
 }
 
 /*
- * 等待socket可写
+ * wait socket writable
  * return value : 0 time out , -1 error ,else writablity
  */
 int nd_socket_wait_writablity(ndsocket_t fd,int timeval)
@@ -501,7 +501,7 @@ ndport_t nd_sock_getpeerport(ndsocket_t fd)
 	return saddr.sin6_port ;
 }
 /*
- * 等待socket可读
+ * wait socket readable
  * return value : 0 time out , -1 error ,else readable
  */
 int nd_socket_wait_read(ndsocket_t fd,int timeval)
@@ -538,7 +538,7 @@ int nd_socket_nonblock(ndsocket_t fd, int cmd)
 	return ioctlsocket(fd,FIONBIO ,&val) ;
 }
 
-//校验和计算
+//get checksum
 NDUINT16 nd_checksum(NDUINT16 *buf,size_t length)
 {
 	ENTER_FUNC()
@@ -549,8 +549,7 @@ NDUINT16 nd_checksum(NDUINT16 *buf,size_t length)
 		sum += *buf++;
 	}
 	if(length&1){
-		//sum+= (*buf&0xff00);		//这里出错了,这个程序是大尾数的,哈哈浪费了我很多时间啊
-		sum += *(NDUINT8*)buf ;		//这个好一点,不过大小通吃
+		sum += *(NDUINT8*)buf ;	
 	}
 	sum=(sum>>16)+(sum&0xffff);
 	sum+=(sum>>16);

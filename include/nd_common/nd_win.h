@@ -122,7 +122,7 @@ __INLINE__ void ND_ASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
 #define NDSEM_TIMEOUT		WAIT_TIMEOUT
 
 //single operate
-typedef HANDLE 				ndsem_t ;		//信号变量
+typedef HANDLE 				ndsem_t ;		//sem tyep
 static __INLINE__ int _init_event(HANDLE *h)
 {
 	*h = CreateEvent(NULL,FALSE,FALSE,NULL) ;
@@ -134,24 +134,24 @@ static __INLINE__ HANDLE _sem_init_nanme(const char *name)
 	return CreateEventA(NULL, FALSE, FALSE, name);
 }
 
-#define nd_sem_wait(s,t)	WaitForSingleObject(s,t)			//等待信号
-#define nd_sem_post(s)		SetEvent(s)							//发送信号
+#define nd_sem_wait(s,t)	WaitForSingleObject(s,t)			//wait sem
+#define nd_sem_post(s)		SetEvent(s)							//
 #define nd_sem_init(s)		_init_event(&(s))  //(s)=CreateEvent(NULL,FALSE,FALSE,NULL)	//initilize semahpore resource
 #define nd_sem_destroy(s)   CloseHandle(s) 						//destroy semahpore resource
 #define nd_sem_open(name)  _sem_init_nanme(name) 
 
-#define nd_sleep(ms)	Sleep(ms) 			//睡眠1/1000 second
+#define nd_sleep(ms)	Sleep(ms) 			// sleep 1/1000 second
 
 //thread operate
-#define nd_thread_self()	GetCurrentThreadId()				//得到现成自己的id
-#define nd_processid()		GetCurrentProcessId()				//得到进程ID
+#define nd_thread_self()	GetCurrentThreadId()		
+#define nd_processid()		GetCurrentProcessId()	
 
 ND_COMMON_API  DWORD _ErrBox(char *file, int line) ;
 //last error 
 #define nd_last_errno() GetLastError() 
-ND_COMMON_API const char *nd_last_error() ;		//得到系统的最后一个错误描述(不是nd_common模块的)
-ND_COMMON_API const char *nd_str_error(int errcode) ; //把系统错误号转变成描述
-#define nd_showerror()	_ErrBox(__FILE__,__LINE__)		//弹出错误描述的对话框
+ND_COMMON_API const char *nd_last_error() ;				// get system last error id
+ND_COMMON_API const char *nd_str_error(int errcode) ; //get system error descript 
+#define nd_showerror()	_ErrBox(__FILE__,__LINE__)		//error message box 
 
 #ifndef __FUNC__
 #ifndef  __FUNCTION__ 
@@ -161,10 +161,10 @@ ND_COMMON_API const char *nd_str_error(int errcode) ; //把系统错误号转变成描述
 #endif 
 #endif
 
-// 定义messagebox
+// windows messagebox
 #define nd_msgbox(msg,title) MessageBoxA(GetActiveWindow(), msg, title, MB_OK)
 
-//定义TRACK
+//vs TRACK function
 #ifdef ND_OPEN_TRACE
 ND_COMMON_API int MyDbgReport(const char *file, int line, const char *stm, ...);
 #define NDTRACF(msg,...)  MyDbgReport(__FILE__, __LINE__,msg,__VA_ARGS__) 

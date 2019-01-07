@@ -9,17 +9,17 @@
 #ifndef _ND_THREADMSG_H_
 #define _ND_THREADMSG_H_
 
-//线程通讯消息编号
+//net thread message id define
 enum eThreadMsgID 
 {
-	E_THMSGID_ADDTO_THREAD,		//把session添加到目标线程
-	E_THMSGID_NETMSG_HANDLE,	//把消息让目标线程作为网络消息处理
-	E_THMSGID_SENDTO_CLIENT ,	//把消息发送给目标session
-	E_THMSGID_DELFROM_THREAD,	//把session从线程中删除
-	E_THMSGID_CLOSE_SESSION,	//关闭session
-	E_THMSGID_DELAY_CLOSE_RAND,	//等待随机的时间后关闭
+	E_THMSGID_ADDTO_THREAD,		//session add to thread 
+	E_THMSGID_NETMSG_HANDLE,	//send net message to aim session
+	E_THMSGID_SENDTO_CLIENT ,	//send message to client
+	E_THMSGID_DELFROM_THREAD,	//delete session from thread
+	E_THMSGID_CLOSE_SESSION,	//close session
+	E_THMSGID_DELAY_CLOSE_RAND,	// close session after waiting rand() ms
 	E_THMSG_NUMBER
 };
 
-#define THMSGID_USER_START 128	//用户消息起始编号
+#define THMSGID_USER_START 128	//user define message id start-index
 #endif 

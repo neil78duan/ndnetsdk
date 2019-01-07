@@ -23,14 +23,9 @@ ND_COMMON_API char* nd_full_path(const char*in_path, const char *in_file, char *
 #ifdef _MSC_VER
 #include <io.h>
 
-//删除文件
 ND_COMMON_API int nd_rmfile(const char *file);
-//重命名文件
 ND_COMMON_API int nd_renfile(const char *oldfile,const  char *newfile);
-
-//创建一个目录
 ND_COMMON_API int nd_mkdir(const char *dir);
-//删除一个目录
 ND_COMMON_API int nd_rmdir(const char *dir);
 
 #else 
@@ -45,18 +40,19 @@ ND_COMMON_API int nd_rmdir(const char *dir);
 
 #endif
 
-//得到工作目录
+// get current working path
 ND_COMMON_API const char * nd_getcwd();
+//change working path
 ND_COMMON_API int nd_chdir(const char *dir);
-//得到工作目录
+//get init start path
 ND_COMMON_API const char * nd_get_init_dir();
-//copy 文件
+//copy file
 ND_COMMON_API int nd_cpfile(const char *oldfile,const  char *newfile);
-//得到系统目录
+//get system path
 ND_COMMON_API const  char* nd_getsysdir();
-//查找指定的文件是否存在
+
 ND_COMMON_API int nd_existfile(const char *pachfilename);
-//创建一个新文件
+//create file
 ND_COMMON_API int nd_mkfile(const char *file);
 
 

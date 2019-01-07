@@ -8,23 +8,23 @@
 #ifndef _ND_NODE_MGR_H_
 #define _ND_NODE_MGR_H_
 
-/*活动连接的管理节点
- *支持多线程的节点管理器
- * 节点管理器支持[1,65535]
+/*
+ * resource node manager 
+ * node id is [1,65535]
  */
 struct node_root;
 
-typedef void *(*node_alloc)(nd_handle alloctor) ;							//从特定分配器上分配一个连接块内存
-typedef void (*node_init)(void *node_addr, nd_handle owner) ;				//初始化一个节点owner:节点拥有者
-typedef void (*node_dealloc)(void *node_addr,nd_handle alloctor) ;		//从分配器上释放连接块内存
-typedef int (*node_freenum)(struct node_root *root) ;											//空闲节点个数
-typedef int (*node_capacity)(struct node_root *root) ;											//容量
+typedef void *(*node_alloc)(nd_handle alloctor) ;							//alloc node 
+typedef void (*node_init)(void *node_addr, nd_handle owner) ;				//init node
+typedef void (*node_dealloc)(void *node_addr,nd_handle alloctor) ;		// free node 
+typedef int (*node_freenum)(struct node_root *root) ;											//get free number
+typedef int (*node_capacity)(struct node_root *root) ;											//get capacity
 
 typedef void(*node_walk_callback)(struct node_root *root, NDUINT16 node_id, void *param);
 typedef NDUINT16 (*node_accept)(struct node_root *root, void *node_addr);
-typedef int (*node_deaccept)(struct node_root *root, NDUINT16 node_id);	//返回0成功，－1失败如果没有返回成功，很可能是引用计数不为0
-typedef int (*node_inc_ref)(struct node_root *root, NDUINT16 node_id);	//增加引用次数 返回0成功，－1失败
-typedef void (*node_dec_ref)(struct node_root *root, NDUINT16 node_id);	//减少引用次数
+typedef int (*node_deaccept)(struct node_root *root, NDUINT16 node_id);	//accept a node , like register 
+typedef int (*node_inc_ref)(struct node_root *root, NDUINT16 node_id);	//add reference count 
+typedef void (*node_dec_ref)(struct node_root *root, NDUINT16 node_id);	//decement reference count
 typedef void *(*node_lock)(struct node_root *root, NDUINT16 node_id);
 typedef void *(*node_trylock)(struct node_root *root, NDUINT16 node_id);
 typedef void (*node_unlock)(struct node_root *root, NDUINT16 node_id);
@@ -41,8 +41,8 @@ typedef struct node_iterator
 	NDUINT16 total ;
 }node_iterator ;
 
-typedef void* (*node_lock_first)(struct node_root *root,node_iterator *it);	//所住队列中第一个,输入node_id 0
-typedef void* (*node_lock_next)(struct node_root *root, node_iterator *it);	//所住下一个,同时释放但前输入node_id但前被锁住的ID,输出node_id已经被所住的下一个ID,并且释放当前被锁住的对象
+typedef void* (*node_lock_first)(struct node_root *root,node_iterator *it);	//get first node 
+typedef void* (*node_lock_next)(struct node_root *root, node_iterator *it);	//get next node 
 typedef void (*node_unlock_iterator)(struct node_root *root, node_iterator *it) ;
 
 
@@ -51,18 +51,18 @@ typedef void(*node_destroy_func)(struct node_root *);
 
 struct node_info
 {
-	ndatomic_t used;			//used status指示此节点是否使用
-	ndthread_t  owner;			//拥有者id
+	ndatomic_t used;			//used status flag
+	ndthread_t  owner;			//owner thread id
 	void *node_addr;
 };
 
 struct node_root
 {
-	int					max_conn_num;	//最大连接个数
-	ndatomic_t			connect_num;	//当前连接数量
-	int					base_id;		//节点起始编号,(可以让多个管理器协同工作)
+	int					max_conn_num;	//capacity
+	ndatomic_t			connect_num;	//current number
+	int					base_id;		//start index
 	int					param;			//user define patam
-	nd_sa_handle		node_alloctor;	//连接分配器(提供连接块内存的分配
+	nd_sa_handle		node_alloctor;	//alloctor
 	struct node_info	*connmgr_addr;	
 	nd_handle			mm_pool ;
 	size_t				node_size ;
@@ -71,7 +71,7 @@ struct node_root
 	node_destroy_func	root_destroy;
 
 	node_alloc			alloc;
-	node_init			init ;		//初始化函数
+	node_init			init ;		
 	node_dealloc		dealloc ;
 	
 	node_freenum		free_num;

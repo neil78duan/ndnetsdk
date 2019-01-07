@@ -13,12 +13,12 @@ typedef int (*nd_timer_entry)( void *param) ;
 
 enum eTimeType
 {
-	ETT_LOOP = 0 ,			//循环执行的定时器
-	ETT_ONCE ,				//执行一次的定时器
-	ETT_DESTROY				//定时器被销毁时执行
+	ETT_LOOP = 0 ,			//loop timer
+	ETT_ONCE ,				//only run once timer
+	ETT_DESTROY				//run on destroied 
 };
 
-/* 增加一个计时执行函数*/
+/* add / delete timer*/
 ND_COMMON_API ndtimer_t nd_timer_add(nd_handle handle,nd_timer_entry func,void *param,ndtime_t interval, int run_type );
 ND_COMMON_API int nd_timer_del(nd_handle handle, ndtimer_t id) ;
 

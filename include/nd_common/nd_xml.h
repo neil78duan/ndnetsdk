@@ -10,10 +10,10 @@
 #include "nd_common/list.h"
 #define MAX_XMLNAME_SIZE 64
 
-typedef int (*xml_errlog) (const char *errdesc) ;		//错误描述函数
+typedef int (*xml_errlog) (const char *errdesc) ;		//outpur error in parser xml text
 //typedef struct tagxml ndxml ;
 typedef struct tagxml ndxml_root;
-//xml 节点,可以单独操作
+//xml node
 typedef struct tagxml 
 {
 	struct list_head  lst_self ;
@@ -30,21 +30,7 @@ typedef struct tagxml
 	
 } ndxml;
 
-//xml的根节点,保存多个ndxml,
-//主要是在文件加载和保存时使用
-// typedef struct tagxmlroot
-// {
-// 	int num ;
-// 	struct list_head lst_xml ;	
-// }ndxml_root;
 
-//xml属性节点
-/*struct ndxml_attr {
-	char *name ;
-	char *value ;
-	struct list_head lst; 
-};
-*/
 struct ndxml_attr {
 	unsigned short name_size ;
 	unsigned short value_size ;
@@ -55,8 +41,6 @@ static __INLINE__ void init_xml_attr(struct ndxml_attr *attr)
 {
 	attr->name_size = 0 ;
 	attr->value_size = 0 ;
-	//attr->name = 0 ;
-	//attr->value = 0 ;
 	INIT_LIST_HEAD(&attr->lst);
 }
 
@@ -81,15 +65,15 @@ static __INLINE__ void ndxml_initroot(ndxml_root *root)
 // 	INIT_LIST_HEAD(&root->lst_xml) ;
 }
 
-//设置xml解析出错时的log函数,返回默认函数
+//set error callback 
 ND_COMMON_API xml_errlog nd_setxml_log(xml_errlog logfunc) ;
 
 ND_COMMON_API int ndxml_is_empty(ndxml *node);
-//从文件中加载一个xml列表
+//load 
 ND_COMMON_API int ndxml_load(const char *file,ndxml_root *xmlroot) ;
 ND_COMMON_API int ndxml_load_ex(const char *file, ndxml_root *xmlroot,const char*encodeType);
 ND_COMMON_API int ndxml_load_from_buf(const char *fileName, const char *buf, size_t size, ndxml_root *xmlroot, const char *toEncodeType);
-//查找到一个xml接点
+//get node 
 ND_COMMON_API ndxml *ndxml_getnode(ndxml_root *xmlroot, const char *name) ;
 ND_COMMON_API ndxml *ndxml_getnodei(ndxml_root *xmlroot, int index) ;
 
@@ -98,18 +82,18 @@ ND_COMMON_API ndxml* ndxml_little_brother(ndxml *node);
 
 
 ND_COMMON_API int ndxml_merge(ndxml_root *host, ndxml_root *merged) ;
-//添加一个xml节点
+//add node 
 ND_COMMON_API ndxml *ndxml_addnode(ndxml_root *xmlroot, const char *name,const char *value) ;
 
 //create a node from text
 ND_COMMON_API ndxml *ndxml_from_text(const char *text);
 ND_COMMON_API size_t ndxml_to_buf(ndxml *node, char *buf, size_t size);
 
-//删除一个XML节点
-ND_COMMON_API int ndxml_delnode(ndxml_root *xmlroot, const char *name) ;
+//delete node 
+ND_COMMON_API int ndxml_delnode(ndxml_root *xmlroot, const char *name) ; //delete and free node 
 ND_COMMON_API int ndxml_delnodei(ndxml_root *xmlroot, int index);
 ND_COMMON_API int ndxml_delxml(ndxml *delnode, ndxml *xmlParent);
-ND_COMMON_API int ndxml_unlink(ndxml *node, ndxml *xmlParent);
+ND_COMMON_API int ndxml_unlink(ndxml *node, ndxml *xmlParent);		//unlink from parent , and not free memory
 //ND_COMMON_API int ndxml_remove(ndxml *node, ndxml *xmlParent); //unlink node without dealloc-memory
 ND_COMMON_API void ndxml_delall_children(ndxml* xml);
 ND_COMMON_API void ndxml_delall_attrib(ndxml* xml);
@@ -127,10 +111,10 @@ static __INLINE__ ndxml *ndxml_get_parent(ndxml *xmlnode)
 }
 
 ND_COMMON_API void ndxml_free(ndxml *xmlnode);
-//销毁这个xml集合
+//destroy 
 ND_COMMON_API void ndxml_destroy(ndxml_root *xmlroot) ; //destroy xmlroot's children and attributes but not free xmlroot self
 
-//把xml保存到文件中
+
 ND_COMMON_API int ndxml_save(ndxml_root *xmlroot, const char *file) ;
 
 ND_COMMON_API int ndxml_save_ex(ndxml_root *xmlroot, const char *file, const char*header);
@@ -147,42 +131,37 @@ ND_COMMON_API int ndxml_insert_before(ndxml *parent, ndxml*insertNode, ndxml*bro
 ND_COMMON_API int ndxml_get_index(ndxml *parent, ndxml*child);
 ND_COMMON_API int ndxml_get_myindex(ndxml*xml);
 
-//引用一个子节点
+//get node 
 ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;
-
-//引用一个子节点
-ND_COMMON_API ndxml *ndxml_refsub(ndxml *root, const char *name) ;
-
-//通过下标引用一个子节点
 ND_COMMON_API ndxml *ndxml_refsubi(ndxml *root, int index) ;
 
-//得到xml的值
+//get value
 ND_COMMON_API const char *ndxml_getval(ndxml *node);
 ND_COMMON_API char *ndxml_getval_buf(ndxml *node, char *buf, size_t size);
 ND_COMMON_API int ndxml_getval_int(ndxml *node);
 ND_COMMON_API float ndxml_getval_float(ndxml *node);
-//得到属性节点
+//get attribute value
 ND_COMMON_API struct ndxml_attr *ndxml_getattrib(ndxml *node , const char *name);
 ND_COMMON_API struct ndxml_attr  *ndxml_getattribi(ndxml *node, int index);
 
 //////////////////////////////////////////////////////////////////////////
-//给xml增加一个属性,
+
 ND_COMMON_API struct ndxml_attr  *ndxml_addattrib(ndxml *parent, const char *name, const char *value) ;
 
-//设置xml属性值
+//set attribute value 
 ND_COMMON_API int ndxml_setattrval(ndxml *parent, const char *name,const char *value) ;
 ND_COMMON_API int ndxml_setattrvali(ndxml *parent, int index, const char *value) ;
 
-//给xml增加一个子节点需要输入新节点的名字和值,返回新节点地址
+//create a sub-node
 ND_COMMON_API ndxml *ndxml_addsubnode(ndxml *parent, const char *name, const char *value) ;
-//设置XML的值
+//set value
 ND_COMMON_API int ndxml_setval(ndxml *node, const char *val);
 ND_COMMON_API int ndxml_setval_int(ndxml *node, int val);
 ND_COMMON_API int ndxml_setval_float(ndxml *node, float val);
-//删除一个属性节点
+//del attribute node 
 ND_COMMON_API int ndxml_delattrib(ndxml *parent, const char *name) ;
 ND_COMMON_API int ndxml_delattribi(ndxml *parent, int index) ;
-//删除一个子节点
+//delete sub node 
 ND_COMMON_API int ndxml_delsubnode(ndxml *parent, const char *name);
 ND_COMMON_API int ndxml_delsubnodei(ndxml *parent, int index) ;
 ND_COMMON_API int ndxml_del_all_children(ndxml *parent);

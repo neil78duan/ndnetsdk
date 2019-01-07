@@ -7,7 +7,7 @@
  */
 
 /*
- * 实现一个在nd_engine中所以网络协议都统一的一个运用层接口
+ * net session/connector api
  */
 #define ND_IMPLEMENT_HANDLE
 typedef struct netui_info *nd_handle;
@@ -16,12 +16,12 @@ typedef struct netui_info *nd_handle;
 #include "nd_net/nd_netlib.h"
 //#include "nd_common/nd_alloc.h"
 
-static int _crypt_unit_len ;		//加密单元长度
+static int _crypt_unit_len ;		//crypt unit length
 static nd_netcrypt __net_encrypt, __net_decrypt ;
 static int _min_packet_len = sizeof(nd_usermsghdr_t) ;
 static int nd_net_message_version_error(nd_netui_handle node) ;
 
-/* 更新客户端的网络连接 */
+/* connector tick  */
 int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout) 
 {
 	ENTER_FUNC()
@@ -34,11 +34,8 @@ int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout)
 		return -1;
 	}
 
-	if(net_handle->type==NDHANDLE_TCPNODE){
-		//把tcp的流式协议变成消息模式
+	if(net_handle->type==NDHANDLE_TCPNODE){		
 		struct nd_tcp_node *socket_node = (struct nd_tcp_node *) net_handle ;
-		
-		
 		read_len = nd_tcpnode_read(socket_node) ;
 		if (timeout ){
 			if (read_len == 0)	{
@@ -137,7 +134,7 @@ RE_UDTREAD:
 	return ret;	
 }
 
-//处理接收到的数据
+//data handler
 int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 {
 	ENTER_FUNC()
@@ -175,7 +172,7 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 		
 		nd_hdr_init(&pack_buf.hdr) ;
 
-		//把数据拷贝出来在处理,防止迭代
+		//get received data
 		while((read_len = nd_net_fetch_msg(node, &pack_buf.hdr) ) > 0){
 			if (read_len != pack_buf.hdr.length){
 				nd_assert(0);
@@ -226,7 +223,7 @@ int _packet_handler(nd_netui_handle node,nd_packhdr_t *msg, nd_handle h_listen)
 	return ret;
 }
 
-//处理ND格式的网络消息
+
 //default net message handle , parse data to ND_PROTOCOL
 int nd_dft_packet_handler(nd_netui_handle node,void *data , size_t data_len , nd_handle h_listen)
 {
@@ -350,7 +347,7 @@ int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
 	return readlen;
 }
 
-//发送tcp封包
+// send packet by tcp
 static int _tcp_connector_send(struct nd_tcp_node* socket_addr, nd_packhdr_t *msg_buf, int flag) 
 {
 	ENTER_FUNC()
@@ -361,25 +358,14 @@ static int _tcp_connector_send(struct nd_tcp_node* socket_addr, nd_packhdr_t *ms
 		return -1 ;
 	}
 	socket_addr->myerrno = NDERR_SUCCESS ;
-	nd_send_lock((nd_netui_handle)socket_addr) ;	//注意在这里如果用的时IOCP模式将不能使用metux lock
+	nd_send_lock((nd_netui_handle)socket_addr) ;	
 	ret = nd_tcpnode_send( socket_addr,	msg_buf, flag) ;
 	nd_send_unlock((nd_netui_handle)socket_addr) ;
 
-// 	if (ret != nd_pack_len(msg_buf)){
-// 		nd_logmsg("send data error datalen=%d send len=%d\n" AND 
-// 			msg_buf->length AND ret);
-// 	}
 	LEAVE_FUNC();
 	return ret ;
 }
 
-/* 发送网络消息 
- * @net_handle 网络连接的句柄,指向struct nd_tcp_node(TCP连接)
- *		或者ndudt_socket(UDT)节点
- * @nd_msgui_buf 发送消息内容
- * @flag ref send_flag
- */
-//int nd_connector_send(nd_netui_handle net_handle,nd_msgui_buf *msg_buf, int flag) 
 int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int flag) 
 {
 	ENTER_FUNC()
@@ -394,7 +380,6 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 		return -1;
 	}
 
-//#ifdef ND_TRACE_MESSAGE
 	if (msg_buf->ndsys_msg == 0 && net_handle->save_send_stream) {
 		if ((flag & ESF_ENCRYPT)) {
 			msg_buf->encrypt = 1 ;
@@ -405,7 +390,6 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 			nd_netobj_send_stream_save(net_handle, msg_buf, (int)nd_pack_len(msg_buf));
 		}
 	}
-//#endif 
 
     msg_buf->version = NDNETMSG_VERSION ;
 	if((flag & ESF_ENCRYPT) && !msg_buf->encrypt) {
@@ -472,7 +456,7 @@ int nd_connector_raw_write(nd_handle net_handle , void *data, size_t size)
 }
 
 /*
- * 重新连接到一个新的服务器
+ * reconnect to server , not change connector status 
  */
 int nd_reconnect(nd_netui_handle net_handle, ndip_t ip, int port, struct nd_proxy_info *proxy)
 {
@@ -493,7 +477,7 @@ int nd_reconnect(nd_netui_handle net_handle, ndip_t ip, int port, struct nd_prox
 }
 
 /*
- * 重新连接到一个新的服务器
+ * 
  */
 int nd_reconnectex(nd_netui_handle net_handle, const char *host, int port, struct nd_proxy_info *proxy)
 {
@@ -639,7 +623,7 @@ int nd_connector_close(nd_netui_handle net_handle, int flag)
 }
 
 /* reset connector
- * 关闭网络连接并重新初始化连接状态,但保留用户设置信息(消息处理函数,加密密钥)
+ * reset connector ,but do not change message-table, crypt-info
  */
 int nd_connector_reset(nd_handle net_handle) 
 {
@@ -666,8 +650,7 @@ ndsocket_t nd_connector_fd(nd_handle net_handle)
 	
 }
 
-/* 销毁连接器
- * 通过nd_object_destroy调用此函数
+/* 
  */
 int _connector_destroy(nd_handle net_handle, int force) 
 {
@@ -729,11 +712,10 @@ static int fetch_udp_message(nd_handle  node, nd_packhdr_t *msg , nd_handle list
 }
 
 
-/* 等待网络消息,功能同nd_connect_waitmsg,
- * 使用这个函数的好处是直接把消息放到msgbuf中,
- * 无需再使用nd_connect_getmsg和nd_connect_delmsg
- * 出错时返回-1 网络需要关闭
- * 否则返回等待来的数据长度(0表示没有数据)
+/* wait message , if the message income, read to message buf , untill timeout
+ * return 0 timeout
+ * on error return -1 
+ * else return data length
  */
 int nd_connector_waitmsg(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf, ndtime_t tmout)
 {
@@ -846,8 +828,6 @@ RE_WAIT:
 
 }
 
-//设置数据处理完毕
-//@size 被处理的数据长度
 int nd_connector_handled_data(nd_netui_handle net_handle, size_t size) 
 {
 	
@@ -952,55 +932,15 @@ void nd_net_set_crypt(nd_netcrypt encrypt_func, nd_netcrypt decrypt_func,int cry
 	_crypt_unit_len = crypt_unit ;
 	LEAVE_FUNC();
 }
-
-/*加密数据包,返回加密后的实际长度,并且修改了封包的实际长度*/
+//crypt packet , the data length would be modified 
 int nd_packet_encrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 {
 	nd_assert(net_handle) ;
 	nd_assert(msgbuf);
 
-	return nd_packet_encrypt_key(&(net_handle->crypt_key ), msgbuf) ;
-
-	/*
-	ENTER_FUNC() 
-	int datalen ;
-	nd_cryptkey *pcrypt_key ;
-
-	nd_assert(net_handle) ;
-	nd_assert(msgbuf);
-
-	datalen = (int) nd_pack_len(&msgbuf->hdr) - ND_PACKET_HDR_SIZE;	
-	if(datalen<=0 || datalen> (ND_PACKET_DATA_SIZE - _crypt_unit_len)) {
-		LEAVE_FUNC();
-		return 0;
-	}
-	//get net handle
-	pcrypt_key = &(net_handle->crypt_key );
-	
-	//crypt 
-	if(__net_encrypt && is_valid_crypt(pcrypt_key)) {
-
-		int new_len  ;
-		
-		new_len = __net_encrypt(msgbuf->data, datalen, pcrypt_key->key) ;
-		if(0==new_len) {
-			LEAVE_FUNC();
-			return 0 ;
-		}
-
-		msgbuf->hdr.encrypt = 1 ;
-		if(new_len> datalen) {
-			msgbuf->hdr.stuff =1 ;
-			msgbuf->hdr.stuff_len = (new_len -datalen) ; 
-			msgbuf->hdr.length += msgbuf->hdr.stuff_len ;
-		}
-		LEAVE_FUNC();
-		return new_len ;
-	}
-	LEAVE_FUNC();
-	return 0 ;
-	 */
+	return nd_packet_encrypt_key(&(net_handle->crypt_key ), msgbuf) ;	
 }
+
 int nd_packet_encrypt_key(nd_cryptkey *pcrypt_key, nd_packetbuf_t *msgbuf)
 {
 	ENTER_FUNC() 
@@ -1037,7 +977,7 @@ int nd_packet_encrypt_key(nd_cryptkey *pcrypt_key, nd_packetbuf_t *msgbuf)
 	LEAVE_FUNC();
 	return 0 ;
 }
-/*解密数据包,返回解密后的实际长度,但是不修改封包的实际长度*/
+
 int nd_packet_decrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 {
 	int ret = nd_packet_decrypt_key(&(net_handle->crypt_key ), msgbuf) ;
@@ -1048,48 +988,6 @@ int nd_packet_decrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 		return 0;
 	}
 	return ret;
-	
-	/*
-	ENTER_FUNC()
-	int datalen ;
-	nd_cryptkey *pcrypt_key ;
-
-	nd_assert(net_handle) ;
-	nd_assert(msgbuf);
-	nd_assert(msgbuf->hdr.encrypt);
-
-	datalen = (int) nd_pack_len(&msgbuf->hdr) - ND_PACKET_HDR_SIZE;	
-	if(datalen<=0 || datalen> (ND_PACKET_DATA_SIZE - _crypt_unit_len)){
-		LEAVE_FUNC();
-		return 0;
-	}
-	//get net handle
-	pcrypt_key = &(net_handle->crypt_key );
-	//decrypt 
-	if(__net_decrypt && is_valid_crypt(pcrypt_key)) {
-
-		int new_len = __net_decrypt(msgbuf->data, datalen, pcrypt_key->key) ;
-		if(new_len <= 0 || new_len!=datalen) {
-			char buf[20] ;
-			SOCKADDR_IN *addr =& (net_handle->remote_addr );
-			nd_logdebug("[%s] send data error :unknow crypt data\n" AND nd_inet_ntoa( addr->sin_addr.s_addr, buf )) ;
-			LEAVE_FUNC();
-			return 0 ;
-		}
-		msgbuf->hdr.encrypt = 0 ;
-
-		if(msgbuf->hdr.stuff) {
-			LEAVE_FUNC();
-			nd_assert(msgbuf->hdr.stuff_len==msgbuf->data[datalen-1]) ;
-			if(nd_pack_len(&msgbuf->hdr) > msgbuf->data[datalen-1]) 
-				return (nd_pack_len(&msgbuf->hdr) - msgbuf->data[datalen-1]) ;
-			else 
-				return 0;
-		}
-	}
-	LEAVE_FUNC();
-	return nd_pack_len(&msgbuf->hdr) ;
-	 */
 }
 
 int nd_packet_decrypt_key(nd_cryptkey *pcrypt_key,nd_packetbuf_t *msgbuf)

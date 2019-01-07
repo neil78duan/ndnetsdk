@@ -62,7 +62,7 @@ typedef unsigned short u_16;
 typedef unsigned int u_32;
 #endif 
 
-//得到当前字节顺序return 0 bigend 
+//get byte order , return 0 bigend 
 static __inline int nd_byte_order() 
 {
 	int a = 1 ;
@@ -70,7 +70,7 @@ static __inline int nd_byte_order()
 	return (int)p[0] ;
 }
 
-//大尾数转换小尾数
+//big endian to little endian
 #define nd_btols(_a)    ((unsigned short)( \
 	(((unsigned short)(_a) & (unsigned short)0x00ff) << 8) | \
 	(((unsigned short)(_a) & (unsigned short)0xff00) >> 8) ))
@@ -106,7 +106,7 @@ static __inline unsigned long long  nd_btolll(unsigned long long val)
 
 }
 
-//小尾数 转换大尾数
+//little to big
 #define nd_ltobs(x) 	nd_btols(x)
         
 #define nd_ltobl(x) 	nd_btoll(x) 

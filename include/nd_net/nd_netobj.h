@@ -33,20 +33,20 @@ struct nd_netsocket
 
 typedef void *nd_userdata_t ;
 
-//发送数据函数
+//send raw-data function 
 typedef int (*socket_write_entry)(nd_handle node,void *data , size_t len) ; 
 
 typedef int (*socket_read_entry)(nd_handle node,void *data , size_t size, ndtime_t tmout) ; 
 
-//封包发送函数
+//send *ND-protocol* package function 
 typedef int (*packet_write_entry)(nd_handle net_handle, nd_packhdr_t *msg_buf, int flag) ;	//define extend send function
 
-/*网络原始数据接收处理
- * @node连接节点
- * @data 需要处理的数据
- * @len 数据长度
- * @listen_h node所属的监听器
- * return value : 返回实际被处理的数据长度,被处理的数据将被删除, -1出错,连接被关闭
+/* raw-net-data handle function 
+ * @node net handle
+ * @data input data
+ * @len data length
+ * @listen_h node listener
+ * return value : the data length real handled 
  */
 typedef int (*data_in_entry)(nd_handle node,void *data , size_t len,nd_handle listen_h) ;
 
@@ -101,21 +101,13 @@ union {									\
 	nd_netbuf_t 		recv_buffer, send_buffer
 
 #define ND_NETBUF_SIZE	0x10000
-#define ND_ALIVE_TIMEOUT 30000		//发送alive包时间间隔
-#define ND_DFT_DISSCONN_TIMEOUT	(30*60*1000)	//默认规定时间内么有收到对方的包就断开连接
+#define ND_ALIVE_TIMEOUT 30000					//send alive package time interval
+#define ND_DFT_DISSCONN_TIMEOUT	(30*60*1000)	//default timeout 
 
-//定义网络缓冲
-/*typedef struct nd_netbuf 
-{	
-	unsigned int buf_capacity ;
-	char *__start, *__end ;	
-	char buf[ND_NETBUF_SIZE] ;
-}nd_netbuf_t;
-*/
 typedef struct nd_linebuf nd_netbuf_t ;
 
 
-/*网络连接或绘话句柄,成员内容只读*/
+/*net handle*/
 typedef struct netui_info
 {
 	ND_OBJ_BASE ;
@@ -155,44 +147,36 @@ void net_release_sendlock(nd_netui_handle  socket_node);
 size_t nd_net_getpack_size(nd_handle  handle, void *data) ;
 void _release_send_stream();
 
-//设置每个网络封包长度最小值,如果小于这个值,认为接收网络数据错误
+//set net send recv threshold 
 ND_NET_API int nd_net_set_packet_minsize(int minsize) ;
 
 /*
- * 设置网络接口相关参数
- * @cmd 命令参考ND_IOCTRL_CMD 
- * @val 变量值 输入/输出
- * @val 变量长度 输入/输出
+ * net handle ioctl
+ * @cmd ref ND_IOCTRL_CMD 
+ * @val input/output value address
+ * @val input/output value length
 */
 ND_NET_API int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size) ;
 
-/*  如果成功等待一个网络消息,
-* 那么现在可以使用nd_net_get_msg函数从消息缓冲中提取一个消息
+/*  get message from recv window
+* only get message address ,not copy
 */
 ND_NET_API nd_packhdr_t* nd_net_get_msg(nd_netui_handle node) ;
 
-/*删除已经处理过的消息*/
+/*remove a message */
 ND_NET_API void nd_net_del_msg(nd_netui_handle node, nd_packhdr_t *msgaddr) ;
 
 
-/*从udt-stream的缓冲中提取一个完整的udt消息
- *此函数用在等待消息的模块中
- *在等待消息之前提取一次,防止上次的遗漏,
- *等待网络数据到了以后在提取一次
+/* fetch message from RECV-WINDOW
+ * and copy message to msgbuf
  */
 ND_NET_API int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf) ;
 
-/*从udt-stream的缓冲中提取一个完整的udt消息
-*此函数用在等待消息的模块中
-*在等待消息之前提取一次,防止上次的遗漏,
-*等待网络数据到了以后在提取一次
-*/
-ND_NET_API int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf) ;
-
+// bind to port
 ND_NET_API int nd_net_bind(int isipv6, int port, int listen_nums,nd_handle net_handle) ;
 
 ND_NET_API int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN *to) ;
-//绑定到指定的IP
+//bind to spacifed IP
 ND_NET_API int nd_net_ipbind(nd_handle net_handle, const char* ip) ;
 ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
 

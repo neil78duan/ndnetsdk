@@ -14,7 +14,7 @@
 #include "nd_os.h"
 #include "nd_bintree.h"
 
- //定义句柄类型
+ //predefine handle type 
 enum END_OBJECT_TYPE
 {
 	NDHANDLE_UNKNOW = 0,
@@ -33,14 +33,13 @@ enum END_OBJECT_TYPE
 
 
 /*
- * 如果需要实现自己的handle类型,请在包含当前文件前 定义 ND_IMPLEMENT_HANDLE
- * 为了避免自定义类型和当前文件中的类型冲突
+ * if you need implemention yourself objec-handle you need to define macro : ND_IMPLEMENT_HANDLE
  */
 
-typedef int(*nd_close_callback)(void* handle, int flag) ;			//对象关闭函数
-typedef void (*nd_init_func)(void*)  ;								//对象初始化函数
+typedef int(*nd_close_callback)(void* handle, int flag) ;			//handle close call back
+typedef void (*nd_init_func)(void*)  ;								//handle initilize function
 
-//对象关闭方式
+//close flag
 enum eObjectClose{
 	COMMON_CLOSE,
 	FORCE_CLOSE
@@ -75,45 +74,42 @@ struct tag_nd_handle
 {
 	ND_OBJ_BASE ;
 	/*
-	unsigned int size ;						//句柄的大小
-	unsigned int type  ;					//句柄类型	
+	unsigned int size ;						//object size 
+	unsigned int type  ;					//object type 	
 	NDUINT32	myerrno;
-	nd_close_callback close_entry ;			//句柄释放函数
+	nd_close_callback close_entry ;			// close/release callback
 	*/
 } ;
 
 #ifndef ND_IMPLEMENT_HANDLE
-	/* 定义一个通用的句柄类型*/
+	/* a common handler , you can see it was a handle base class*/
 	typedef struct tag_nd_handle *nd_handle ;
 #else 
 #endif
 
-/* 创建一个对象实例,在nd_create_object() 函数之前注册一个名字叫name的对象类型,就可以用create函数创建
- * 返回对象的句柄
- * nd_object_create() 使用malloc函数申请了一块内存,但是并没有在
+/*
+ * create object , before create call ,you need register create function by nd_object_register
  */
 ND_COMMON_API nd_handle _object_create(const char *name) ;
 
 /* 
- * 销毁一个句柄, 如果是用nd_object_create 函数创建的对象,则不需要自己释放内存
- * 否则需要手动释放内存
- * force = 0 正常释放,等等所占用的资源释放后返回
- * force = 1强制释放,不等待 ref eObjectClose
+ * if the object is create by nd_object_create , you needn't free the memory .
+ * force = 0 common release 
+ * force = 1 release whatever 
  */
 ND_COMMON_API int _object_destroy(nd_handle handle, int force) ;
 
 #define OBJECT_NAME_SIZE		40
-/*句柄注册信息*/
+/* register info */
 struct nd_handle_reginfo
 {
-	unsigned int object_size ;		//句柄对象的大小
-	nd_close_callback close_entry ;	//关闭函数
-	nd_init_func	init_entry ;	//初始化函数
-	char name[OBJECT_NAME_SIZE] ;	//对象名字
+	unsigned int object_size ;		//
+	nd_close_callback close_entry ;	//
+	nd_init_func	init_entry ;	//
+	char name[OBJECT_NAME_SIZE] ;	//object class name 
 };
 
-/* 注册一个对象类型,类似于windows窗口类型的注册
- * 注册完成之后就可以使用创建函数创建一个对于的实例
+/* register a object class 
  */
 ND_COMMON_API int nd_object_register(struct nd_handle_reginfo *reginfo) ;
 
@@ -175,10 +171,10 @@ static __INLINE__ void nd_object_seterror(nd_handle h, NDUINT32 errcode)
 
 ND_COMMON_API int nd_object_get_type(nd_handle h);
 ND_COMMON_API const char *nd_object_errordesc(nd_handle h) ;
-ND_COMMON_API int nd_object_check_error(nd_handle h) ;//检测句柄是否出错无效
+ND_COMMON_API int nd_object_check_error(nd_handle h) ;//
 ND_COMMON_API int nd_tryto_clear_err(nd_handle h) ;
 
-//登记一个创建好的句柄
+//register a object that already created by other way 
 ND_COMMON_API int nd_reg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_unreg_handle(nd_handle hobj) ;
 ND_COMMON_API int nd_handle_checkvalid(nd_handle hobj, NDUINT16 objtype);

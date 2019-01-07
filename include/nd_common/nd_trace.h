@@ -16,16 +16,9 @@
 #include "nd_common/nd_comcfg.h"
 
 
- //记录资源的使用情况
- //在程序退出以后可以确定那些资源没有释放
+ //syste resource trace and log
+ //when the program exit , it will get which source is not release 
  // 
- // nd_source_log 记录资源source 被函数operate函数获得 给出使用情况msg
- // int nd_sourcelog(void *source, char *operate, char *msg) ;
- // 释放资源source
- // it nd_source_release(void *source) ;
- // 程序退出,dump 出未释放的资源,不需要手动释放
- // void nd_sourcelog_dump() ; 
-
 #if defined(ND_FILE_TRACE) && defined(ND_SOURCE_TRACE)
 
 #undef  fopen

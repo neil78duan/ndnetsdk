@@ -24,8 +24,8 @@
 #if !defined(ND_UNIX) 
 #include "nd_common/nd_win.h"
 
-	typedef HANDLE			ndth_handle ;	//线程句柄
-	typedef DWORD 			ndthread_t;	//线程id
+	typedef HANDLE			ndth_handle ;	//handle of thread
+	typedef DWORD 			ndthread_t;	// thread id type
 	__INLINE__ int nd_thread_equal(ndthread_t t1, ndthread_t t2){return (t1==t2) ;}
 	
 	//typedef volatile long atomic_t ;
@@ -37,8 +37,8 @@
 
 #else //if __LINUX__		//UNIX OR linux platform
 #include "nd_common/nd_unix.h"	
-	typedef pthread_t		ndth_handle ;	//线程句柄
-	typedef pthread_t 		ndthread_t;		//线程ID
+	typedef pthread_t		ndth_handle ;	//
+	typedef pthread_t 		ndthread_t;		//
 	#define  nd_thread_equal	pthread_equal
 	ND_COMMON_API size_t set_maxopen_fd(size_t max_fd) ;
 	ND_COMMON_API size_t get_maxopen_fd();
@@ -52,19 +52,19 @@
 
 #include "nd_common/nd_atomic.h"
 
-typedef void* (*NDTH_FUNC)(void* param) ;		//线程函数
+typedef void* (*NDTH_FUNC)(void* param) ;		//thread entry
 enum {
 	NDT_PRIORITY_NORMAL,
 	NDT_PRIORITY_HIGHT,
 	NDT_PRIORITY_LOW
 };
-//创建线程函数
+//create thread 
 ND_COMMON_API ndth_handle nd_createthread(NDTH_FUNC func, void* param,ndthread_t *thid,int priority);
-//强迫线程让出执行时间
+//force current thread schedule 
 ND_COMMON_API int nd_threadsched(void) ;
-//强迫线程退出
+//exit current thread
 ND_COMMON_API void nd_threadexit(int exitcode);
-//等待一个线程的结束
+//wait another thread exit
 ND_COMMON_API int nd_waitthread(ndth_handle handle) ;
 
 ND_COMMON_API int nd_terminal_thread(ndth_handle handle,int exit_code);
@@ -116,14 +116,14 @@ ND_COMMON_API int broadcastCondVar(NDCondVar *v) ;
 typedef NDMutex					nd_mutex ;
 typedef NDCondVar 				nd_cond ;
 
-//定义互斥接口
-#define nd_mutex_init(m)	initNDMutex(m)	//初始化互斥
+//mutex 
+#define nd_mutex_init(m)	initNDMutex(m)	//
 #define nd_mutex_lock(m) 	entryMutex(m)	//lock
 #define nd_mutex_trylock(m) tryEntryMutex(m) 
 #define nd_mutex_unlock(m) 	leaveMutex(m) 
 #define nd_mutex_destroy(m) destoryMutex(m) 
 
-//定义条件变量接口
+//cond
 #define nd_cond_init(c)				initNDCondVar(c)
 #define nd_cond_destroy(c)			destoryCondVar(c)
 #define nd_cond_wait(c, m)			waitCondVar(c, m)

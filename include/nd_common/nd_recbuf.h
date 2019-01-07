@@ -17,7 +17,7 @@ typedef struct nd_recbuf
 {
 	char *m_pstart, *m_pend ;	
 #ifdef ND_DEBUG
-	int m_nInit ;		//是否初始化
+	int m_nInit ;		//is init
 #endif
 	char m_buf[C_BUF_SIZE] ;
 }ndrecybuf_t ;	
@@ -71,10 +71,10 @@ static __INLINE__ int cbuf_order(ndrecybuf_t *pbuf)
 }
 
 ND_COMMON_API void ndcbuf_sub_data(ndrecybuf_t *pbuf,size_t len);
-ND_COMMON_API size_t ndcbuf_datalen(ndrecybuf_t *pbuf); //返回数据的长度
-ND_COMMON_API size_t ndcbuf_freespace(ndrecybuf_t *pbuf);//得到空闲缓冲长度
+ND_COMMON_API size_t ndcbuf_datalen(ndrecybuf_t *pbuf); //get data length
+ND_COMMON_API size_t ndcbuf_freespace(ndrecybuf_t *pbuf);//get free space
 
-//读写数据
+//read/write
 //return value -1error else return data length of  read/write 
 ND_COMMON_API int ndcbuf_read(ndrecybuf_t *pbuf,void *buf, size_t size,int flag);
 ND_COMMON_API int ndcbuf_write(ndrecybuf_t *pbuf,void *data, size_t datalen,int flag);
@@ -92,7 +92,7 @@ struct nd_linebuf
 	char *__buf;
 };
 
-//定义线性缓冲头
+//linear buffer
 struct line_buf_hdr
 {
 	int auto_inc;			//auto increase capacity 
@@ -102,7 +102,7 @@ struct line_buf_hdr
 static __INLINE__ size_t _lbuf_capacity(struct nd_linebuf *pbuf) 
 {
 	return (size_t)pbuf->buf_capacity;
-}	//得到容量
+}	//total capacity
 
 
 static __INLINE__ size_t _lbuf_datalen(struct nd_linebuf *pbuf)
@@ -113,7 +113,7 @@ static __INLINE__ size_t _lbuf_datalen(struct nd_linebuf *pbuf)
 static __INLINE__ size_t _lbuf_free_capacity(struct nd_linebuf *pbuf) 
 {
 	return _lbuf_capacity(pbuf) - _lbuf_datalen(pbuf);
-}	//得到容量
+}	//
 
 
 static __INLINE__ void _lbuf_reset(struct nd_linebuf *pbuf)
@@ -168,12 +168,12 @@ static __INLINE__ void ndlbuf_set_zero_tail(struct nd_linebuf *pbuf)
 }
 
 ND_COMMON_API void _lbuf_add_data(struct nd_linebuf *pbuf,size_t len);
-//读写数据
+//read/write
 ND_COMMON_API int _lbuf_read(struct nd_linebuf *pbuf,void *buf, size_t size,int flag);
 ND_COMMON_API int _lbuf_write(struct nd_linebuf *pbuf,void *data, size_t datalen,int flag);
 
 ND_COMMON_API void _lbuf_sub_data(struct nd_linebuf *pbuf,size_t len);
-//把数据移动到buf head
+//move data to buffer head
 ND_COMMON_API void _lbuf_move_ahead(struct nd_linebuf *pbuf) ;
 ND_COMMON_API void _lbuf_tryto_move_ahead(struct nd_linebuf *pbuf) ;
 ND_COMMON_API int _lbuf_init(struct nd_linebuf *pbuf, size_t data_size) ;
@@ -181,16 +181,7 @@ ND_COMMON_API  void _lbuf_destroy(struct nd_linebuf *pbuf);
 ND_COMMON_API  int _lbuf_realloc(struct nd_linebuf *pbuf, size_t newsize);
 //////////////////////////////////////////////////////////////////////////
 
-/*
-定义一下宏的目的是为了能够操作任意大小的缓冲。
-只要符合一下格式即可
-struct nd_linebuf_xx
-{
-	struct line_buf_hdr  hdr ;
-	char __buf[xx] ;	
-};
 
-*/
 #define ndlbuf_capacity(pbuf)		_lbuf_capacity((struct nd_linebuf*) (pbuf))
 #define ndlbuf_datalen(pbuf)		_lbuf_datalen((struct nd_linebuf*) (pbuf))  
 #define ndlbuf_free_capacity(pbuf)	_lbuf_free_capacity((struct nd_linebuf*) (pbuf))

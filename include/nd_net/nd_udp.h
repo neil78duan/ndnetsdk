@@ -35,11 +35,11 @@ enum endudt_protocol{
 typedef struct ndudp_header
 {
 #  if ND_BYTE_ORDER == ND_L_ENDIAN
-	u_8		version:4;			//版本信息(没有使用,主要是为了保留对齐而以)
-	u_8		protocol:4;			//协议类型
+	u_8		version:4;			//protocl version
+	u_8		protocol:4;			//protocol tyep
 #else 
-	u_8		protocol:4;			//协议类型
-	u_8		version:4;			//版本信息(没有使用,主要是为了保留对齐而以)
+	u_8		protocol:4;			
+	u_8		version:4;			
 #endif 
 
 	u_8		reserved ;
@@ -58,7 +58,7 @@ typedef int (*udp_protocol_entry)( nd_handle h, ndudp_header *data, size_t read_
 
 struct udp_proxy_info
 {
-	ndsocket_t proxy_fd ;					//连接代理的fd
+	ndsocket_t proxy_fd ;					//proxy socket fd
 	short remote_port ;	
 	SOCKADDR_IN proxy_addr;					//proxy address
 	char remote_name[256] ;
@@ -89,7 +89,7 @@ ND_NET_API int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size,
 
 ND_NET_API int nd_udp_parse(nd_handle net_handle, char *buf,size_t len );
 
-//得到上次读取的数据源地址
+//get addr
 ND_NET_API struct sockaddr_in* nd_udp_read_addr(nd_handle net_handle) ;
 
 void udp_node_init(struct nd_udp_node* node)  ;
