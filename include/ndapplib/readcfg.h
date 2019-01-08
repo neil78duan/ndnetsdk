@@ -78,24 +78,10 @@ struct server_config
 	ndip_t reliable_hosts[MAX_RELIABLE_HOST] ;
 	NDUINT32 reliable_ipmask[MAX_RELIABLE_HOST] ;
 };
-// 
-// struct connect_in_server
-// {
-// 	int port ;
-// 	char host[ND_HOST_NAME_SIZE] ;
-// };
-
-//
 ND_APPLIB_API int read_base_port(ndxml *xmlroot) ;
-//
 ND_APPLIB_API int read_instance_info(ndxml *xmlroot, struct instance_config *icfg);
-//
 ND_APPLIB_API int read_connect_cfg(ndxml *xmlroot, int base_port, struct connect_config *ccfg);
-//
 ND_APPLIB_API int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg);
-
-//
 ND_APPLIB_API int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg) ;
-
 ND_APPLIB_API int read_dbconfig(const char *fileName, const char *dbCfgname ,struct nd_db_config *db_cfg) ;
 #endif

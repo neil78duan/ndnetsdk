@@ -92,31 +92,30 @@ typedef struct mm_sub_allocator
 	NDUINT16 myerrno;
 	allocheader_t allocated_size ;					//already alloc size 
 	struct nd_mm_pool *parent ;					//
-	char *start, *end ;									//当前可以分配的内存起始地址
-	struct list_head self_list;							//在内存池中的列表(父级内存池使用)
-	struct free_node *big_list[BIG_CHUNK_NUM];			// 大于BIG_SIZE
-	struct free_node *free_littles[LITTLE_CHUNK_NUM] ;	//小内存数组(最低2个没有被使用,所以把free_littles[0]作为保存超过BIG_SIZE的列表)
+	char *start, *end ;									//alloced memory start address 
+	struct list_head self_list;							//self_list in parent-list
+	struct free_node *big_list[BIG_CHUNK_NUM];			// big-block list [BIG_SIZE]
+	struct free_node *free_littles[LITTLE_CHUNK_NUM] ;	//little-block list (the first two elemets not used,so I store *BIG_SIZE* list in free_littles[0])
 }nd_sub_allocator;
 
-//内存池结构
+//memory pool info
 typedef struct nd_mm_pool
 {
 	ND_OBJ_BASE ;
-	allocheader_t capacity ;							//内存池容量(原始页面大小)
-	allocheader_t allocated_size ;						//已经分配的内存大小(记录原始页面大小,限制过渡使用内存)
+	allocheader_t capacity ;							//original capacity
+	allocheader_t allocated_size ;						//allocated memory size 
 //#ifdef ND_MEM_CHECK
-	unsigned int alloc_granularity:16;					//每个子分配器的分配粒度 *64k
-	unsigned int free_allocator_num:8 ;					//空闲的分配器个数
-	//unsigned int trace_mem:1 ;							//跟踪每个被申请的内存
-	unsigned int in_used:1 ;							//没有申请过内存
+	unsigned int alloc_granularity:16;					//sub allocator granularity  *64k
+	unsigned int free_allocator_num:8 ;					// free-allocator numbers	
+	unsigned int in_used:1 ;							//state is in used 
 //#endif
-	memdestruct_entry destruct_func ;					//内存虚构函数
-	struct list_head self_list;							//在内存池中的列表(父级内存池使用)
+	memdestruct_entry destruct_func ;					//destruct function when memory free
+	struct list_head self_list;							//list node 
 	struct list_head allocator_list;					//using sub allocator
 	struct list_head free_allocator;					//sub allocator
 	struct list_head page_list;							//mem page size > 64k -sizeof(nd_sub_allocator)
-	nd_sub_allocator *cur_allocator;					//当前使用的
-	nd_mutex lock ;										//内存池类型
+	nd_sub_allocator *cur_allocator;					//current allocator
+	nd_mutex lock ;										//lock
 
 	nd_sub_allocator _allocator[0] ;
 }nd_mmpool_t;
@@ -126,13 +125,12 @@ typedef struct nd_mm_pool
 
 struct pool_root_allocator{
 	int init ;
-	nd_mutex lock ;										//是否初始化
+	nd_mutex lock ;										//lock
 	size_t free_size ;
-	struct list_head inuser_list;						//使用中的内存池
+	struct list_head inuser_list;						//active memory pool
 } ;
-nd_mmpool_t *s_common_mmpool ;						//公共内存池
-static struct pool_root_allocator  __mem_root ;		//内存分配器,系统分配内存的函数
-//nd_mmpool_t *s_pool_for_static;						//如果程序还没有进入main 也就是没有调用nd_common_init之前使用的内存池
+nd_mmpool_t *s_common_mmpool ;						// default global memory pool
+static struct pool_root_allocator  __mem_root ;		//root of pools system
 
 #ifdef ND_MEM_STATICS
 void _erase_mmstatics(void *addr) ;
@@ -158,11 +156,11 @@ nd_mmpool_t *nd_global_mmpool()
 typedef void (*walk_trunk_node) (nd_mmpool_t *pool, void *startaddr, size_t size) ;
 static void _walk_alloced_inpool(nd_mmpool_t *pool, walk_trunk_node func ) ;
 
-//调用所有内存块的析构函数
+//destruct all memory
 //static void safe_destruct(nd_mmpool_t *pool) ;
 static void destruct_mm_entry(nd_mmpool_t *pool, void *startaddr, size_t size) ;
 #define safe_destruct(_pool) _walk_alloced_inpool(_pool,destruct_mm_entry)
-//输出内存泄露
+//dump mem leak
 static void _dump_trunk_leak(nd_mmpool_t *pool, void *startaddr, size_t size) ;
 #define dump_memleak(_pool) _walk_alloced_inpool(_pool,_dump_trunk_leak)
 
@@ -288,7 +286,6 @@ static void __sys_page_free(void *addr)
 }
 
 
-//内存池初始化
 int nd_mempool_root_init()
 {
 	if(	__mem_root.init )
@@ -314,7 +311,6 @@ int nd_mempool_root_init()
 	return 0 ;
 }
 
-//内存池销毁
 void nd_mempool_root_release()
 {
 	struct list_head *pos, *next ;
@@ -413,7 +409,7 @@ static __INLINE__ size_t _get_max_free_chunk(nd_sub_allocator *sub)
 {
 	return sub->end - sub->start ;
 }
-/*创建一个内存池,返回内存池地址*/
+
 nd_handle nd_pool_create(size_t maxsize ,const char *name )
 {
 	unsigned int _gran = 1;
@@ -459,7 +455,7 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 	pool->alloc_granularity = _gran ;
 	pool->free_allocator_num = 0;
 //#ifdef ND_MEM_CHECK
-	//pool->trace_mem =1 ;										//跟踪每个被申请的内存
+	//pool->trace_mem =1 ;					
 	pool->in_used = 0 ;
 //#endif
 	nd_object_set_instname(pool,name? name: "unknow_pool") ;
@@ -482,7 +478,6 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 	return pool ;
 }
 
-//销毁一个内存缓冲池
 int nd_pool_destroy(nd_mmpool_t *pool, int flag)
 {
 	allocheader_t size ;
@@ -531,7 +526,6 @@ void* nd_pool_realloc(nd_mmpool_t *pool ,void *oldaddr, size_t newsize)
 	return NULL ;
 }
 
-//重新初始化一个内存池
 void nd_pool_reset(nd_mmpool_t *pool)
 {
 	struct list_head *pos, *list_next ;
@@ -593,7 +587,6 @@ void nd_pool_reset(nd_mmpool_t *pool)
 }
 
 
-//把一内存块添加到空闲队列
 static void pool_add_free(nd_sub_allocator *pool , struct free_node *insert_node)
 {
 	size_t index ;
@@ -618,7 +611,6 @@ static void pool_add_free(nd_sub_allocator *pool , struct free_node *insert_node
 	}
 }
 
-//把空闲内存块添加到空闲队列中
 static void add_freeto_list(nd_sub_allocator *pool)
 {
 	size_t free_size = pool->end - pool->start ;
@@ -640,7 +632,6 @@ static void add_freeto_list(nd_sub_allocator *pool)
 }
 
 
-//找一块空闲内存
 static struct free_node *_find_free_chunk(nd_sub_allocator *pool , size_t min_size)
 {
 	int i;
@@ -783,7 +774,7 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 	}
 
 	free_size = pool->end - pool->start ;
-	if(free_size < size){			//剩余未分配内存块不够大
+	if(free_size < size){			//left memory not enough
 
 		struct free_node *chunk = _find_free_chunk(pool,size) ;
 		if(chunk) {
@@ -807,7 +798,7 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 
 	free_size = pool->end - pool->start ;
 // 	if(free_size<MIN_SIZE) {
-// 		alloc_addr->size += free_size ; //直接丢弃
+// 		alloc_addr->size += free_size ; 
 // 		pool->start = pool->end;
 // 	}
 	nd_assert(alloc_addr->size >= size) ;
@@ -815,7 +806,6 @@ static struct alloc_node *__allocator_alloc(nd_sub_allocator *sub_allocator, siz
 	return alloc_addr ;
 }
 
-//释放一个内存块
 static void __allocator_free(nd_sub_allocator *pool , struct free_node *chunk)
 {
 	allocheader_t free_size ;
@@ -894,7 +884,7 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 	}
 
 	if ((size + sizeof(struct alloc_node) ) > DIRECT_ALLOC_SIZE ){
-		//大块内存直接从系统分配
+		//directly alloc from system for big-request
 		size_t alloc_size ;
 		struct big_chunk_list *alloc_addr ;
 		struct alloc_node *new_chunk = __sys_page_alloc(size + sizeof(struct big_chunk_list ) ) ;
@@ -957,7 +947,6 @@ void *_pool_alloc_real(nd_mmpool_t *pool , size_t size)
 	return addr ;
 }
 
-/*释放一个内存*/
 void _pool_free_real(/*nd_mmpool_t *pool ,*/void *addr)
 {
 	nd_mmpool_t *pool = NULL;
@@ -1026,7 +1015,7 @@ void nd_pool_free_real(nd_mmpool_t *pool ,void *addr)
 }
 
 //////////////////////////////////////////////////////////////////////////
-//测试内存释放越界
+//border test
 #ifdef ND_MEM_CHECK
 struct __alloc_header {
 	NDUINT32 __magic: 16;
@@ -1041,7 +1030,7 @@ enum { __pad=8, __magic=0xdeba, __deleted_magic = 0xdebd,
 };
 enum { __extra_before = 64, __extra_after = 8 };
 
-// nd_alloc_check nd_free_check  主要是检查allocfn函数分配的内存内存有没有越界
+// nd_alloc_check nd_free_check  check allocfn return addr is overflow
 void *nd_alloc_check(nd_handle _pool,size_t __n,const char *file, int line, nd_alloc_func allocfn)
 {
 	size_t filesize ;
@@ -1070,7 +1059,7 @@ void *nd_alloc_check(nd_handle _pool,size_t __n,const char *file, int line, nd_a
 	}
 }
 
-//debug 版本的 _destroy_chunkpool
+// _destroy_chunkpool for debug
 void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 {
 	unsigned char* __tmp;
@@ -1111,7 +1100,7 @@ void nd_free_check(nd_handle _pool,void *__p, nd_free_func freefn)
 	freefn(_pool, __real_p);
 }
 /*
-//带有日志跟踪的分配函数
+//alloc with trace
 void *nd_pool_alloc_trace(nd_mmpool_t *pool , size_t size, char *file, int line)
 {
 	char *paddr ;
@@ -1165,7 +1154,7 @@ void nd_pool_free_trace(nd_mmpool_t *pool , void *p)
 	nd_pool_free_real(pool,paddr) ;
 }
 */
-//得到分配给用户的内存地址
+//get the user address from a memory 
 void *_get_user_addr(nd_mmpool_t *pool, void *p)
 {
 	//NDUINT32 fill_size ;
@@ -1177,7 +1166,7 @@ void *_get_user_addr(nd_mmpool_t *pool, void *p)
 	return user_addr + __extra_before;
 }
 
-//通过用户输入地址获得实际申请地址
+//from user address fetch real-alloced address
 struct alloc_node *_user_addr_2sys( void *useraddr, size_t *user_len, size_t *alloc_len)
 {
 	struct alloc_node *ret = (struct alloc_node *)((char*)useraddr-__extra_before);
@@ -1294,7 +1283,7 @@ void destruct_mm_entry(nd_mmpool_t *pool, void *startaddr, size_t size)
 	pool->destruct_func(pool,_get_user_addr(pool, startaddr)) ;
 }
 
-//迭代每一块分配过的内存
+//walk memory trunk
 void _walk_trunk(void *start, void *end,nd_sub_allocator *pool, walk_trunk_node cb_func)
 {
 	struct alloc_node *header = (struct alloc_node *)start ;
@@ -1315,7 +1304,7 @@ void _walk_trunk(void *start, void *end,nd_sub_allocator *pool, walk_trunk_node 
 	}
 }
 
-//访问每一块申请的内存
+//walk memory
 void _walk_alloced_inpool(nd_mmpool_t *pool, walk_trunk_node func )
 {
 	struct list_head *pos, *list_next ;
@@ -1367,8 +1356,6 @@ void _walk_alloced_inpool(nd_mmpool_t *pool, walk_trunk_node func )
 
 #ifdef ND_MEM_STATICS
 #include "nd_common/nd_bintree.h"
-//内测申请统计
-//内测统计
 struct mmstatics_header
 {
 	//struct list_head list ;
@@ -1560,7 +1547,7 @@ void remove_statics(nd_mmpool_t *pool)
 #endif
 
 #if  defined(ND_SOURCE_TRACE) && defined(ND_UNUSE_STDC_ALLOC)
-//输出所有内存池的使用记录
+//dump all memory used info in memory-pool-system
 void nd_mmpool_dump()
 {
 	struct list_head *pos ;
@@ -1574,7 +1561,7 @@ void nd_mmpool_dump()
 #endif
 
 
-#else //不使用内存池
+#else //do not use memory pool system
 
 typedef struct nd_mm_pool *nd_handle ;
 #include "nd_common/nd_handle.h"
@@ -1582,7 +1569,7 @@ typedef struct nd_mm_pool *nd_handle ;
  struct nd_mm_pool
 {
 	ND_OBJ_BASE ;
-	memdestruct_entry destruct_func ;					//内存虚构函数
+	memdestruct_entry destruct_func ;					//
 	struct list_head used_list;
 	nd_mutex lock ;
 };

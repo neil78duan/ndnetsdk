@@ -66,7 +66,7 @@ public:
 	struct list_head *getlist() {	return _node ? &_node->hdr : _header ;	}
 	value_node *_getaddr() {return _node;}
 	value_node *_node ;
-	struct list_head *_next,*_prev ;//保存临时指针,这样可以在迭代时删除下一个
+	struct list_head *_next,*_prev ;//save pointer of to delete next druing iterate
 	struct list_head *_header;
 };
 

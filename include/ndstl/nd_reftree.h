@@ -16,7 +16,7 @@
 #include "nd_utility.h"
 
 //////////////////////////////////////////////////////////////////////////
-//特殊的RB树,对每个节点支持reference count
+//rb-tree with reference count
 
 template<class _Ty>
 struct nd_rbnode_empty_cleanup

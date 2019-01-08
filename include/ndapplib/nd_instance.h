@@ -59,7 +59,7 @@ public :
 
     int WaitServer();
 	
-	NDListener *GetDeftListener() {return pListen ;	}	//µÃµ½Ä¬ÈÏ¼àÌıÆ÷
+	NDListener *GetDeftListener() {return pListen ;	}	//get default listener
 	
 	NDInstanceBase() ;
 	virtual ~NDInstanceBase() ;

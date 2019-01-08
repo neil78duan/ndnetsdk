@@ -42,7 +42,7 @@ public:
 	int CloseAllConnects() ;
 	void InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level=EPL_CONNECT, const char *msgname=NULL);
 	void setScriptEngine(void *script_engine, nd_msg_script_entry entry);
-	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
+	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//accept callback
 	
 	NDBaseSession *ConstructSession(void *addr);
 	void DestructSession(NDBaseSession *psession);
@@ -68,21 +68,21 @@ public:
 	int GetClientsInThreads(ndthread_t *threadid_buf, int *count_buf, int size) ;
 
 	NDBaseSession *htoSession(nd_handle h_session);
-	void SetEmptyConnTimeout(int seconds) ;		//设置空连接超时时间
+	void SetEmptyConnTimeout(int seconds) ;		//set time out value before reveived a first packet
 	NDListener(nd_fectory_base *sf=NULL ) ;	
 	//void SetFectory(nd_ifectory *sf) ;
 	virtual ~NDListener() ;
 	NDListener &operator = (nd_handle)  ;
 	void SetAccept(int bClose=0) ;
 	
-	size_t m_total_send ;		//总发送长度
-	size_t m_total_recv;		//总接收长度
-	ndtime_t m_total_online ;	//总在线时间
-	int m_max_onlines ;			//最大在线人数
+	size_t m_total_send ;		
+	size_t m_total_recv;		
+	ndtime_t m_total_online ;	
+	int m_max_onlines ;			
 	NDInstanceBase *m_inst ;
 protected :	
-	int m_msg_kinds ;			//主消息数量
-	int m_msg_base ;			//主消息起始号
+	int m_msg_kinds ;			//
+	int m_msg_base ;			//
 	nd_fectory_base *session_fectory ;
 	NDObjectMgrBase m_session_mgr ;
 } ;
@@ -93,7 +93,7 @@ public:
 	NDSafeListener(nd_fectory_base *sf=NULL ) ;	
 	void Destroy(int flag) ;
 protected:
-	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//连接进入回调函数
+	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			
 };
 ND_APPLIB_API NDListener *NDGetListener(nd_handle h_listen) ;
 ND_APPLIB_API NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener = NULL);

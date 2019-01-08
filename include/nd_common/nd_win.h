@@ -73,7 +73,7 @@ ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 #define ndsnprintf  sprintf_s
 #endif
 
-#define bzero(pstr,size) 	memset((pstr),0,(size))		//定义bzero 兼容gcc bzero
+#define bzero(pstr,size) 	memset((pstr),0,(size))		//define bzero in windows
 
 //define assert
 //only for x86
@@ -107,7 +107,6 @@ __INLINE__ void ND_ASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
 }
 
 // Put up a message box if an assertion fails in a debug build.
-//定义NDASSERT()代替assert()
 
 #ifdef _DEBUG
 #define nd_assert(x) if (!(x)) ND_ASSERTFAIL(__FILE__, __LINE__, #x)

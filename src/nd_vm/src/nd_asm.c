@@ -93,7 +93,7 @@ int vm_print( const char *stm,...)
 	
 }
 
-//解析指令
+//parse instruct
 vm_ins get_ins(char * ins) 
 {
 	int i ;
@@ -114,7 +114,7 @@ char *get_ins_name(vm_ins ins)
 
 }
 
-//读取指令
+//
 char *read_instruction(char *src,  vm_ins *instruction)
 {
 	char buf[128]; 
@@ -132,7 +132,7 @@ char *read_instruction(char *src,  vm_ins *instruction)
 	return ret_addr ;
 }
 
-//读取一个操作数和数据描述
+//
 int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **ret_addr)
 {
 	char *_start_addr ;
@@ -146,7 +146,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 		vm_adddress mm_addr ;
 
 		if((addr[1]=='s'|| addr[1]=='S') && (addr[2]=='p' || addr[2]=='P')) {
-			//读取堆栈地址
+			//read stack address
 			*data_desc = EDS_STACK ;
 			addr += 3 ;
 
@@ -159,7 +159,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 
 		}
 		else {
-			//读取内存地址
+			//read memory address
 			*data_desc = EDS_ADDRESS ;
 			++addr ;
 		}
@@ -202,7 +202,7 @@ int asm_read_operand(char *addr, vm_data_src *data_desc, vm_value *val, char **r
 	return 0 ;
 }
 /*
- * 解析一行指令
+ * parse a line of asm
  * return -1 error 
  *		0 nothing to be done 
 		else numbers of instruction 
@@ -318,7 +318,7 @@ size_t _filesize(FILE *stream)
 	return length;
 } 
 
-//反汇编
+//disasm
 int vm_file_rcompile(/*struct vm_instruction_node *out_node,*/ FILE *infp, FILE *outfile)
 {
 	char *p, *buf ;
@@ -359,7 +359,7 @@ int vm_file_rcompile(/*struct vm_instruction_node *out_node,*/ FILE *infp, FILE 
 
 }
 
-//把指令输出为汇编(反汇编)
+//output dis asm 
 int vm_output_asm(struct vm_instruction_node *node, void *outstream, int type)
 {
 	int num , len;

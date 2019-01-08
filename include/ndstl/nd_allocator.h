@@ -8,7 +8,7 @@
 #ifndef _ND_ALLOCATOR_H_
 #define _ND_ALLOCATOR_H_
 
-//在stl中使用nd_stlalloc
+//implemention of nd_stdallocate
 #define USE_ND_ALLOCATOR 
 
 
@@ -25,8 +25,7 @@ void _free_pool(void *p,void *pool=NULL) ;
 
 #define _ND_ROUNTD(size) 	(((size)+7) & (~7)) 
 
-/* 实现一个从静态数组中分配内存的分配器
- * 虽然长的很像stl::allocator但是不能在stl模板中使用
+/* static allocator* 
  */
 template<class T ,  int _numbers>
 class static_alloc {
@@ -113,7 +112,7 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////
-/*用内存池代替标准的stl allocator*/
+/* use nd-mempool replace stl allocator*/
 template <class T> 
 class nd_stlalloc
 {

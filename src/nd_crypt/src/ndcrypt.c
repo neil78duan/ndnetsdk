@@ -44,19 +44,19 @@ char *crypt_stuff(char *src, int datalen, int stufflen )
 }
 
 
-/* 加密/解密函数
- * input : @data 被加密的数据
- *			@len 被加密数据的长度
- *			@key加密密钥
- * output : @data 加密后的数据
- * 加密时如果数据长度不够加密的要求,则在被加密的数据后面补充空格,最后一个字符记录填充数据的长度
- * 如果数据刚好,则不需要填充任何东西.
+/* encrypt/decrypt
+ * input : @data input data
+ *			@len data length
+ *			@key crypt key
+ * output : @data crypted data 
+ * if the data length is not match with crypt unity size , it will  fill the spaces (ansi-code = 0x20) to the tail of data.
+ * 
  * return value :on error return 0, else return data length of encrypted
- * 注意:解密后数据不会比解密前长
+ * 
  */
 int nd_TEAencrypt(unsigned char *data, int data_len, tea_k *key) 
 {
-	int vlen = sizeof(tea_v) ;			/*加密单元的长度*/
+	int vlen = sizeof(tea_v) ;			
 	int stuff_len ,i,n,new_len;
 	
 	tea_v *v = (tea_v *)data;
@@ -81,7 +81,7 @@ int nd_TEAencrypt(unsigned char *data, int data_len, tea_k *key)
 
 int nd_TEAdecrypt(unsigned char *data, int data_len, tea_k *key) 
 {
-	int vlen = sizeof(tea_v) ;			/*加密单元的长度*/
+	int vlen = sizeof(tea_v) ;			
 	int i,n;
 	
 	tea_v *v = (tea_v *)data;
@@ -127,7 +127,6 @@ char* MD5ToString(unsigned char src[16], unsigned char desc[33])
 }
 
 
-/*加密可打印的字符(\0的字符串)*/
 char *MD5CryptStr16(const char *input, char output[16]) 
 {
 	MD5_CTX context;
@@ -155,7 +154,7 @@ char *MD5CryptStr32(const char *in_text, char output[33])
 
 }
 
-/* 输入字符是二进制字符
+/* 
  * @inlen input length
  * @input data address of input
  * @output buffer address char[16]
@@ -306,10 +305,10 @@ int base64_encode( const char * source, int len, char * destination_string )
 
 		if ( ( number_of_bytes_encoded % BASE64_NUMBER_OF_CHARACTERS_PER_LINE ) == 0 )
 		{
-			destination[ number_of_bytes_encoded ] = 13;		//回车return
+			destination[ number_of_bytes_encoded ] = 13;		//return
 			number_of_bytes_encoded++;
 
-			destination[ number_of_bytes_encoded ] = 10;		//换行
+			destination[ number_of_bytes_encoded ] = 10;		//new line
 			number_of_bytes_encoded++;
 		}
 	}

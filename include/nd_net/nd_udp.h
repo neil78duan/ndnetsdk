@@ -31,7 +31,7 @@ enum endudt_protocol{
 #pragma pack(push)
 #pragma pack(1)
 
-//UDP协议包头
+//UDP protocol header
 typedef struct ndudp_header
 {
 #  if ND_BYTE_ORDER == ND_L_ENDIAN

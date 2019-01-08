@@ -28,7 +28,7 @@
 #ifdef ND_DEBUG
 #define WAIT_WRITABLITY_TIME	-1		/*wait infinite*/
 #else 
-#define WAIT_WRITABLITY_TIME    1000	/*等待socke可写的时间*/
+#define WAIT_WRITABLITY_TIME    1000	/*wait socket writable timeout value*/
 #endif
 
 //TCP connect statu 

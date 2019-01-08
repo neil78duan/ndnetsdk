@@ -20,8 +20,8 @@
 #define ND_ROUNDUP8(_size) _ND_ALINE(_size, 8)
 #define ND_ROUNDUP16(_size) _ND_ALINE(_size, 16)
 
-//内存池类型
-enum emem_pool_type{
+//mempool tyep enum
+enum enem_pool_type{
 	EMEMPOOL_TINY =  64*1024,		//mini memory pool
 	EMEMPOOL_NORMAL = 256*1024,		//common pool
 	EMEMPOOL_HUGE	= 1024*1024,		//huge pool
@@ -47,7 +47,7 @@ ND_COMMON_API void nd_pool_set_trace(nd_handle pool, int flag) ;					//reset a m
 ND_COMMON_API size_t nd_pool_freespace(nd_handle pool) ;	//get free space 
 ND_COMMON_API void nd_pool_destruct_entry(nd_handle pool , memdestruct_entry func) ;
 
-/*得到全局默认的内存池*/
+/*get default global pool*/
 ND_COMMON_API nd_handle nd_global_mmpool() ;
 
 ND_COMMON_API void* nd_pool_realloc(nd_handle pool ,void *oldaddr, size_t newsize) ;

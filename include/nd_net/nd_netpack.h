@@ -68,11 +68,11 @@ enum {
 
 /* send type , flag */
 enum send_flag {
-	ESF_NORMAL = 0 ,		//正常发送
-	ESF_WRITEBUF =1,		//写入发送缓冲
-	ESF_URGENCY = 2,		//紧急发送
-	ESF_POST	= 4,		//不可靠的发送(可能回丢失)
-	ESF_ENCRYPT = 8			//加密(可以和其他位连用|)
+	ESF_NORMAL = 0 ,		//normal send data
+	ESF_WRITEBUF =1,		//write data to send buffer
+	ESF_URGENCY = 2,		//send data right now
+	ESF_POST	= 4,		//post 
+	ESF_ENCRYPT = 8			//crypt send
 };
 
 static __INLINE__ void nd_hdr_init(nd_packhdr_t *hdr)

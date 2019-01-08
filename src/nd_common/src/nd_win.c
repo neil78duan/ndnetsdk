@@ -34,7 +34,7 @@ const char *nd_get_sys_username()
 	return s_username ;
 }
 
-//如果错误弹出错误提示窗口
+//message box for error 
 DWORD _ErrBox(char *file, int line)
 {
 	const char *perrdesc=nd_last_error() ;
@@ -184,7 +184,7 @@ void nd_threadexit(int exitcode)
 {
 	ExitThread(exitcode) ;
 }
-//等待一个线程的结束
+//wait a thread exit
 int nd_waitthread(ndth_handle handle) 
 {
 	DWORD dwRet = WaitForSingleObject(handle,INFINITE) ;
@@ -263,7 +263,7 @@ int close_filemap(nd_filemap_t *mapinfo)
 	return 0;
 }
 
-//打开一个内存映像文件
+//
 int open_filemap(char *map_name, nd_filemap_t *out_handle) 
 {
 	out_handle->hFile = INVALID_HANDLE_VALUE ;
@@ -285,7 +285,7 @@ int open_filemap(char *map_name, nd_filemap_t *out_handle)
 }
 
 
-//打开一个内存映像文件
+//
 int open_filemap_r(char *map_name, nd_filemap_t *out_handle)
 {
 	out_handle->hFile = INVALID_HANDLE_VALUE;

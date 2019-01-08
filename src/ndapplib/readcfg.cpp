@@ -31,7 +31,7 @@
 		}													\
 	} while (0)	
 
-//读取监听信息
+//read listener info
 int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg)
 {	
 	//read port
@@ -69,7 +69,7 @@ int read_listen_cfg(ndxml *xmlroot, int base_port, struct listen_config *lcfg)
 	return 0 ;
 
 }
-//读取连接信息
+//read connector info
 int read_connect_cfg(ndxml *xmlroot, int base_port, struct connect_config *ccfg)
 {
 	ndxml *xml_sub ;
