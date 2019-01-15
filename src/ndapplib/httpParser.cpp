@@ -502,6 +502,9 @@ int NDHttpParser::_parseHeader()
 
 	++p;
 	p = parser_valid(p, datasize - (int)(p - p_start));
+	if(!p || !*p) {
+		return 0;
+	}
 	char *_st = p;
 	if (parser_check_end(p, &p, datasize - (int)(p - p_start))) {
 		int len = (int)(p - _st);
