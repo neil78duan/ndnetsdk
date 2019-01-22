@@ -56,8 +56,9 @@
 #include "nd_common/nd_iconv.h"
 
 ND_COMMON_API int nd_common_init();
-ND_COMMON_API void nd_common_release();
-ND_COMMON_API int nd_common_isinit() ;
+ND_COMMON_API void nd_common_release_ex(int force);
+ND_COMMON_API int nd_common_isinit();
+#define nd_common_release()		nd_common_release_ex(0) 
 
 ND_COMMON_API const char * nd_common_machine_info(char buf[], size_t size);
 

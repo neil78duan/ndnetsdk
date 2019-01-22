@@ -19,15 +19,11 @@ int nd_unhandler_except(struct _EXCEPTION_POINTERS *lpExceptionInfo) ;
 #include "nd_net/nd_netlib.h"
 #include "nd_srvcore/nd_srvlib.h"
 
-//#include "ndapplib/applib.h"
-
 #include "ndapplib/nd_instance.h"
 
 #include "ndapplib/nd_cmmgr.h"
 #include "ndapplib/nd_listener.h"
 #include "ndapplib/nd_session.h"
-//#include "ndapplib/nd_allocator.h"
-//#include "pg_config.h"
 
 extern int create_stl_allocator() ;
 extern  void destroy_stl_allocator() ;
@@ -36,17 +32,10 @@ static int applib_exit_callback(int flag) ;
 int instance_tick_entry(void *param) ;
 static NDInstanceBase *g_base_inst = NULL ;
 
-//srv_config NDInstanceBase::srvcfg ={0};
-
-//#define HANDLE_UNIX_SIGNAL 1        //handle unix signal
-
 class NDStaticInitHelper{
 public:
 	NDStaticInitHelper() 
 	{
-// #if defined( ND_USE_GPERF)
-// 		__tcmalloc() ;
-// #endif 
 		nd_common_init() ;
 		nd_net_init() ;
 		nd_srvcore_init() ;
@@ -54,6 +43,7 @@ public:
 		_init_pool_for_new() ;
 		create_stl_allocator() ;
 		nd_log_screen("init common lib end\n") ;
+		isInited = true;
 	}
 
 	~NDStaticInitHelper()
@@ -63,20 +53,29 @@ public:
 
 		destroy_stl_allocator() ;
 		_destroy_pool_for_new() ;
-		nd_common_release() ;
+		nd_common_release_ex(1) ;
 		nd_log_screen("RELEASE common lib end\n") ;
+		isInited = false;
 	}
+private:
+	bool isInited;
 };
+
 #ifdef _MSC_VER
-#pragma init_seg(".CRT$XCB")
+#pragma data_seg(push, stack_nd, ".CRT$XCB")
 #define __initdata__ 
 #elif defined(__ND_LINUX__)
 #define __initdata__ __attribute__ (( section(".init.data")))
 #else
 #define __initdata__
 #endif
+
 __initdata__ NDStaticInitHelper _g_static_init_helper ;
 
+
+#ifdef _MSC_VER
+#pragma data_seg(pop, stack_nd)
+#endif
 
 
 extern const char * __g_version_desc ;

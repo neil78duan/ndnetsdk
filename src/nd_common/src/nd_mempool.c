@@ -146,7 +146,7 @@ void remove_statics(nd_mmpool_t *pool) ;
 
 nd_mmpool_t *nd_global_mmpool()
 {
-	if (!s_common_mmpool){
+	if (!__mem_root.init){
 		nd_mempool_root_init() ;
 	}
     
@@ -318,6 +318,11 @@ void nd_mempool_root_release()
 	if (__mem_root.init==0){
 		return ;
 	}
+	if (s_common_mmpool) {
+		nd_pool_destroy(s_common_mmpool,1);
+		s_common_mmpool = NULL;
+	}
+
 	list_for_each_safe(pos,next,&__mem_root.inuser_list) {
 		pool = list_entry(pos,struct nd_mm_pool, self_list ) ;
 		list_del_init(&pool->self_list);

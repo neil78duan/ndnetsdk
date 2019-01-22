@@ -93,12 +93,14 @@ int nd_common_init()
 	return 0 ;
 }
 
-void nd_common_release()
+void nd_common_release_ex(int force)
 {
 	destroy_object_register_manager() ;
 	nd_sourcelog_dump();
 
-	nd_mempool_root_release();
+	if (force) {
+		nd_mempool_root_release();
+	}
 	//nd_memory_destroy() ;
 	__s_common_init = 0;
 }
