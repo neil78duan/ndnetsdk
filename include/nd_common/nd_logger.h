@@ -83,31 +83,31 @@ ND_COMMON_API int nd_log_check(edg_ID logType);
 #ifdef ND_OPEN_LOG_COMMON
 #define nd_logmsg(...) _logmsg(__FUNC__ , __FILE__ , __LINE__ , ND_MSG  AND __VA_ARGS__)
 #else 
-#define nd_logmsg(msg) //(void) 0
+#define nd_logmsg(...) //(void) 0
 #endif
 
 #ifdef ND_OPEN_LOG_DEBUG
 #define nd_logdebug(...) _logmsg(__FUNC__ , __FILE__ , __LINE__  , ND_MSGDEBUG  AND __VA_ARGS__)
 #else 
-#define nd_logdebug(msg) //(void)0
+#define nd_logdebug(...) //(void)0
 #endif
 
 #ifdef ND_OPEN_LOG_WARN
 #define nd_logwarn(...) _logmsg(__FUNC__ , __FILE__ , __LINE__ ,  ND_WARN  AND __VA_ARGS__)
 #else 
-#define nd_logwarn(msg) //(void) 0
+#define nd_logwarn(...) //(void) 0
 #endif
 
 #ifdef ND_OPEN_LOG_ERROR
 #define nd_logerror(...) _logmsg(__FUNC__ , __FILE__ , __LINE__ , ND_ERROR AND __VA_ARGS__)
 #else 
-#define nd_logerror(msg) //(void) 0
+#define nd_logerror(...) //(void) 0
 #endif
 
 #ifdef ND_OPEN_LOG_FATAL
 #define nd_logfatal(...) _logmsg(__FUNC__ , __FILE__ , __LINE__ ,  ND_FATAL_ERR  AND __VA_ARGS__)
 #else 
-#define nd_logfatal(msg) //(void) 0
+#define nd_logfatal(...) //(void) 0
 #endif
 
 #if defined(ND_OUT_LOG_2CTRL) && defined(ND_DEBUG) 

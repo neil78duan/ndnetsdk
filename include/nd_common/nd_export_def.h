@@ -36,48 +36,38 @@
 
 #if  defined(ND_COMPILE_AS_DLL)
 
-#ifdef ND_CLI_EXPORTS
-# define ND_CONNCLI_API 			CPPAPI DLL_EXPORT
-# define ND_CONNCLI_CLASS 			DLL_EXPORT
-#else 
-# define ND_CONNCLI_API 			CPPAPI DLL_IMPORT
-# define ND_CONNCLI_CLASS 			DLL_IMPORT
-#endif
-
-#if  defined(ND_COMMON_EXPORTS) 
+#if defined(ND_COMMON_EXPORTS)
 # define ND_COMMON_API 				CPPAPI DLL_EXPORT
 # define ND_CRYPT_API 				CPPAPI DLL_EXPORT
+# define ND_COMMON_CLASS			DLL_EXPORT
+
+#elif defined(ND_APPLIB_EXPORTS) || defined(ND_CLI_EXPORTS)
+
+# define ND_CONNCLI_API 			CPPAPI DLL_EXPORT
+# define ND_COMMON_API 				CPPAPI DLL_EXPORT
+# define ND_CRYPT_API 				CPPAPI DLL_EXPORT
+# define ND_APPLIB_API				CPPAPI DLL_EXPORT
+# define ND_NET_API 				CPPAPI DLL_EXPORT
+# define ND_SRV_API 				CPPAPI DLL_EXPORT
+# define ND_VM_API 					CPPAPI DLL_EXPORT
+
+# define ND_CONNCLI_CLASS 			DLL_EXPORT
+# define ND_COMMON_CLASS			DLL_EXPORT
+# define ND_SRV_CLASS	 			DLL_EXPORT
+
 #else
+# define ND_CONNCLI_API 			CPPAPI DLL_IMPORT
 # define ND_COMMON_API 				CPPAPI DLL_IMPORT
 # define ND_CRYPT_API 				CPPAPI DLL_IMPORT
-#endif
-
-#ifdef ND_APPLIB_EXPORTS
-# define ND_COMMON_CLASS			DLL_EXPORT
-# define ND_APPLIB_API				CPPAPI DLL_EXPORT
-#else 
-# define ND_COMMON_CLASS			DLL_IMPORT
 # define ND_APPLIB_API				CPPAPI DLL_IMPORT
-#endif
-
-#if  defined(ND_NET_EXPORTS) 
-# define ND_NET_API 				CPPAPI DLL_EXPORT
-#else
 # define ND_NET_API 				CPPAPI DLL_IMPORT
-#endif
-
-#if  defined(ND_SRV_EXPORTS) 
-# define ND_SRV_API 				CPPAPI DLL_EXPORT
-# define ND_SRV_CLASS	 			DLL_EXPORT
-#else
 # define ND_SRV_API 				CPPAPI DLL_IMPORT
-# define ND_SRV_CLASS	 			DLL_IMPORT
-#endif
+# define ND_VM_API 					CPPAPI DLL_IMPORT
 
-#if  defined(ND_VM_EXPORTS) 
-# define ND_VM_API 				CPPAPI  DLL_EXPORT
-#else
-# define ND_VM_API 				CPPAPI  DLL_IMPORT
+# define ND_CONNCLI_CLASS 			DLL_IMPORT
+# define ND_COMMON_CLASS			DLL_IMPORT
+# define ND_SRV_CLASS	 			DLL_IMPORT
+
 #endif
 
 

@@ -86,20 +86,20 @@ typedef  LONG ndatomic_t ;
 __INLINE__ int nd_compare_swap(ndatomic_t *lpDest,ndatomic_t lComp,ndatomic_t lExchange)
 {
 #if _MSC_VER < 1300 // 1200 == VC++ 6.0
-	return (int) (lComp==(LONG)InterlockedCompareExchange((PVOID*)lpDest, (PVOID)lExchange,(PVOID)lComp) );
+	return (int) (lComp==(LONG)_InterlockedCompareExchange((PVOID*)lpDest, (PVOID)lExchange,(PVOID)lComp) );
 #else 
-	return (int) (lComp==(LONG)InterlockedCompareExchange(lpDest, lExchange, lComp) );
+	return (int) (lComp==(LONG)_InterlockedCompareExchange(lpDest, lExchange, lComp) );
 #endif
 //#endif
 }
-#define nd_atomic_inc(p)	InterlockedIncrement(p) 
-#define nd_atomic_dec(p)	InterlockedDecrement(p) 
-#define nd_atomic_add(p,step)	InterlockedExchangeAdd((long*)(p),step) 
-#define nd_atomic_sub(p,step)	InterlockedExchangeAdd((long*)(p),-(step))
-#define nd_atomic_swap(p, val)	InterlockedExchange(p,val) 
-#define nd_testandset(p)	InterlockedExchange(p,1) 
+#define nd_atomic_inc(p)	_InterlockedIncrement(p) 
+#define nd_atomic_dec(p)	_InterlockedDecrement(p) 
+#define nd_atomic_add(p,step)	_InterlockedExchangeAdd((long*)(p),step) 
+#define nd_atomic_sub(p,step)	_InterlockedExchangeAdd((long*)(p),-(step))
+#define nd_atomic_swap(p, val)	_InterlockedExchange(p,val) 
+#define nd_testandset(p)	_InterlockedExchange(p,1) 
 
-#define nd_atomic_set(p, val)    InterlockedExchange((p), val)
+#define nd_atomic_set(p, val)    _InterlockedExchange((p), val)
 #define nd_atomic_read(p)        (*(p))
 
 

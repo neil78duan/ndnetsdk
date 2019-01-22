@@ -53,6 +53,7 @@
 
 #pragma  warning(disable: 4996)
 #pragma  warning(disable: 4819)
+#pragma  warning(disable: 4828)
 
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
