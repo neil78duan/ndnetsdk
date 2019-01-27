@@ -164,7 +164,7 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 	else {
 		int read_len = 0;
 		
-#if defined(__ND_IOS__) || defined(__ND_ADNROID__)
+#if defined(__ND_IOS__) || defined(__ND_ANDROID__)
 		nd_packetbuf_t pack_buf ;
 #else 
 		static __ndthread  nd_packetbuf_t pack_buf ;

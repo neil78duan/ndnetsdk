@@ -157,33 +157,42 @@ static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 typedef int ndatomic_t ;
 //define for xcode
 #define nd_compare_swap(p,compare,exchange) OSAtomicCompareAndSwapInt(compare, exchange,p)
+//static inline int nd_compare_swap(ndatomic_t *desc, ndatomic_t cmp, ndatomic_t exch)
+//{
+//	if (*desc == cmp) {
+//		*desc = exch;
+//		return 1;
+//	}
+//
+//	return 0;
+//}
 
-static inline  int nd_testandset(volatile ndatomic_t *p) {return !nd_compare_swap(p,0,1);}
-static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
+static inline  int nd_testandset( ndatomic_t *p) {return !nd_compare_swap(p,0,1);}
+static inline int nd_atomic_swap( ndatomic_t *p ,ndatomic_t exch)
 {
-    int oldval;
+	ndatomic_t oldval;
     do {
         oldval = *p ;
     }while (!nd_compare_swap(p, oldval, exch)) ;
-    return oldval ;
+    return (int)oldval ;
 }
 
-static inline int nd_atomic_add(volatile ndatomic_t *p, int nstep)
+static inline int nd_atomic_add( ndatomic_t *p, int nstep)
 {
     ndatomic_t oldval;
     do {
         oldval = *p ;
     }while (!nd_compare_swap(p, oldval, oldval+nstep)) ;
-    return oldval;
+    return (int)oldval;
 }
 
-static inline int nd_atomic_sub(volatile ndatomic_t *p, int nstep)
+static inline int nd_atomic_sub( ndatomic_t *p, int nstep)
 {
     ndatomic_t oldval;
     do {
         oldval = *p ;
     }while (!nd_compare_swap(p, oldval, oldval-nstep)) ;
-    return oldval;
+    return (int)oldval;
 }
 //#define nd_atomic_add(p, val)  OSAtomicAdd32(val, p)
 //#define nd_atomic_sub(p,val)  OSAtomicAdd32(-val, p)
@@ -192,7 +201,7 @@ static inline int nd_atomic_sub(volatile ndatomic_t *p, int nstep)
 #define nd_atomic_inc(p) OSAtomicIncrement32(p)
 #define nd_atomic_dec(p) OSAtomicDecrement32(p)
 
-static inline void nd_atomic_set(volatile ndatomic_t *p, ndatomic_t val)
+static inline void nd_atomic_set( ndatomic_t *p, ndatomic_t val)
 {
     *p = val ;
 }

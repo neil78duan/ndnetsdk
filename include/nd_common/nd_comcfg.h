@@ -74,7 +74,7 @@
 
  */
 
-#if defined(__ND_IOS__)	|| defined(__ND_ADNROID__)	// define IOS Android
+#if defined(__ND_IOS__)	|| defined(__ND_ANDROID__)	// define IOS Android
 
 #define ND_PLATFORM "ARM"
 
