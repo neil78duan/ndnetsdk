@@ -157,7 +157,6 @@ static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 typedef int ndatomic_t ;
 //define for xcode
 #define nd_compare_swap(p,compare,exchange) OSAtomicCompareAndSwapInt(compare, exchange,p)
-
 static inline  int nd_testandset(volatile ndatomic_t *p) {return !nd_compare_swap(p,0,1);}
 static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 {
