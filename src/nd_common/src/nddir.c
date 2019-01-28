@@ -554,7 +554,7 @@ const char * nd_file_name_without_ext(const char *fullPath, char *outbuf, size_t
 int  nd_is_subpath(const char *parent_path, const char *input_path)
 {
 	char tmp_path[ND_FILE_PATH_SIZE];
-	char *p = nd_absolute_path(input_path, tmp_path, sizeof(tmp_path));
+	const char *p = nd_absolute_path(input_path, tmp_path, sizeof(tmp_path));
 	const char *r = parent_path;
 
 	while (*r) {

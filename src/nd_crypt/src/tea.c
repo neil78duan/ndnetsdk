@@ -56,7 +56,7 @@ static void tea_init_rnd()
 	
 	
 	//long time();
-	short seed[3];
+	unsigned short seed[3];
 	int _getpid( void );
 	
 	if(1==rnd_inited){

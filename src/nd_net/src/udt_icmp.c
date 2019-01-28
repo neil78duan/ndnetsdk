@@ -168,7 +168,8 @@ int udt_icmp_write(nd_udt_node* node,char *data, size_t len)
 int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport)
 {
 	static NDUINT16 s_pid ;
-	int ret , sock_len;
+	int ret ;
+	socklen_t sock_len;
 	char recv_buf[RAW_SYSTEM_BUF] ;
 
 	if(s_pid==0)

@@ -69,7 +69,7 @@ ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
 typedef const char* (*nd_error_convert)(int errcode);
 
-static int nd_error_max_sys_number()
+static int __INLINE__ nd_error_max_sys_number()
 {
 	return NDERR_SYS_MAX_NUMBER;
 }

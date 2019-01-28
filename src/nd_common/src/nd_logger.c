@@ -109,7 +109,9 @@ int nd_output(const char *text)
 #define ND_LOG_FILE get_log_file()
 
 
+#if defined(ND_LOG_PATH_WITH_DATE)
 static char  __log_ext[10];
+#endif
 
 void set_log_file(const char *pathfile)
 {

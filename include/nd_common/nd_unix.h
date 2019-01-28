@@ -10,6 +10,7 @@
 #define _ND_UINX_H_
 
 #include "nd_common/nd_comcfg.h"
+#include "nd_common/nd_export_def.h"
 
 #if defined(ND_UNIX) 
 #include <stdlib.h>
@@ -29,7 +30,7 @@
 #include <sys/stat.h>
 #include <stdarg.h>
 
-#define ND_COMMON_API CPPAPI
+//#define ND_COMMON_API CPPAPI
 
 #ifndef __INLINE__
 	#define __INLINE__			inline

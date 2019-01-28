@@ -221,7 +221,7 @@ void NDBigDataTransfer::Destroy(int errorCode)
 	m_SendIndex = 0;
 }
 ////////////////////////////////////////////
-NDBigDataReceiver::NDBigDataReceiver(data_recv_callback cb, void *receiver) : m_recv_ok_callback(cb), m_receiver(receiver)
+NDBigDataReceiver::NDBigDataReceiver(data_recv_callback cb, void *receiver) :  m_receiver(receiver),m_recv_ok_callback(cb)
 {
 	
 	memset(&m_buf, 0 ,sizeof(m_buf)) ;

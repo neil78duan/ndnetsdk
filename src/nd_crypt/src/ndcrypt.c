@@ -67,7 +67,7 @@ int nd_TEAencrypt(unsigned char *data, int data_len, tea_k *key)
 	if(stuff_len){
 		++n ;
 		new_len = n * vlen;
-		crypt_stuff(data, data_len, new_len ) ;
+		crypt_stuff((char*)data, data_len, new_len ) ;
 	}
 	else {
 		new_len = data_len ;
@@ -116,14 +116,14 @@ int nd_TEAGenKey(tea_k *key, char *seed)
 char* MD5ToString(unsigned char src[16], unsigned char desc[33])
 {
 	unsigned int i ;
-	char *p = desc ;
+	unsigned char *p = desc ;
 	for(i=0; i<16; i++)
 	{
-		ndsprintf(p, "%02x",src[i]) ;
+		ndsprintf((char*)p, "%02x",src[i]) ;
 		p += 2 ;
 	}
 	desc[32] = 0 ;
-	return desc ;
+	return (char*)desc ;
 }
 
 
@@ -133,8 +133,8 @@ char *MD5CryptStr16(const char *input, char output[16])
 	unsigned int len = (unsigned int) ndstrlen (input);
 	
 	MD5Init (&context);
-	MD5Update (&context, input, len);
-	MD5Final (output, &context);
+	MD5Update (&context, (unsigned char*)input, len);
+	MD5Final ((unsigned char*)output, &context);
 	
 	return output ;
 }
@@ -146,10 +146,10 @@ char *MD5CryptStr32(const char *in_text, char output[33])
 	MD5_CTX context;
 
 	MD5Init(&context);
-	MD5Update(&context, in_text, len);
-	MD5Final(tmp, &context);
+	MD5Update(&context, (unsigned char*)in_text, len);
+	MD5Final((unsigned char*)tmp, &context);
 
-	MD5ToString(tmp, output);
+	MD5ToString((unsigned char*)tmp,(unsigned char*) output);
 	return output;
 
 }
@@ -164,8 +164,8 @@ char *MD5Crypt16(const void *input, int inlen, char output[16])
 	MD5_CTX context;
 	
 	MD5Init (&context);
-	MD5Update (&context, input, inlen);
-	MD5Final (output, &context);
+	MD5Update (&context, (unsigned char*)input, inlen);
+	MD5Final ((unsigned char*)output, &context);
 	
 	return output ;
 }
@@ -176,10 +176,10 @@ char *MD5Crypt32(const void *input, int inlen, char output[33])
 	MD5_CTX context;
 	
 	MD5Init (&context);
-	MD5Update (&context, input, inlen);
-	MD5Final (tmp, &context);
+	MD5Update (&context, (unsigned char*)input, inlen);
+	MD5Final ((unsigned char*)tmp, &context);
 	
-	MD5ToString(tmp, output);
+	MD5ToString((unsigned char*)tmp, (unsigned char*)output);
 	return output ;
 }
 
@@ -329,8 +329,8 @@ int base64_decode( unsigned char *input, unsigned int input_len, unsigned char *
 	unsigned int output_idx = 0;
 	
 	for (i = (sizeof _nd_alphabet) - 1; i >= 0 ; i--) {
-		inalphabet[_nd_alphabet[i]] = 1;
-		decoder[_nd_alphabet[i]] = i;
+		inalphabet[(int)_nd_alphabet[i]] = 1;
+		decoder[(int)_nd_alphabet[i]] = i;
 	}
 	
 	char_count = 0;

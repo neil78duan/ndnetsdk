@@ -153,49 +153,51 @@ static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 #define nd_atomic_read(p)        (*(p))
 
 #elif defined(__ND_MAC__) || defined(__ND_IOS__)
+#define OSATOMIC_USE_INLINED 1
 #include <libkern/OSAtomic.h>
 typedef int ndatomic_t ;
 //define for xcode
-#define nd_compare_swap(p,compare,exchange) OSAtomicCompareAndSwapInt(compare, exchange,p)
+#define nd_compare_swap(p,compare,exchange) OSAtomicCompareAndSwapIntBarrier(compare, exchange,p)
 static inline  int nd_testandset(volatile ndatomic_t *p) {return !nd_compare_swap(p,0,1);}
 static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 {
-    int oldval;
-    do {
-        oldval = *p ;
-    }while (!nd_compare_swap(p, oldval, exch)) ;
-    return oldval ;
+	ndatomic_t oldval;
+	do {
+		oldval = *p ;
+	}while (!nd_compare_swap(p, oldval, exch)) ;
+	return (int)oldval ;
 }
+//
+//static inline int nd_atomic_add( ndatomic_t *p, int nstep)
+//{
+//    ndatomic_t oldval;
+//    do {
+//        oldval = *p ;
+//    }while (!nd_compare_swap(p, oldval, oldval+nstep)) ;
+//    return (int)oldval;
+//}
+//
+//static inline int nd_atomic_sub( ndatomic_t *p, int nstep)
+//{
+//    ndatomic_t oldval;
+//    do {
+//        oldval = *p ;
+//    }while (!nd_compare_swap(p, oldval, oldval-nstep)) ;
+//    return (int)oldval;
+//}
+#define nd_atomic_add(p,val)  OSAtomicAdd32Barrier(val, p)
+#define nd_atomic_sub(p,val)  OSAtomicAdd32Barrier(-val, p)
 
-static inline int nd_atomic_add(volatile ndatomic_t *p, int nstep)
+
+#define nd_atomic_inc(p) OSAtomicIncrement32Barrier(p)
+#define nd_atomic_dec(p) OSAtomicIncrement32Barrier(p)
+
+static inline void nd_atomic_set( ndatomic_t *p, ndatomic_t val)
 {
-    ndatomic_t oldval;
-    do {
-        oldval = *p ;
-    }while (!nd_compare_swap(p, oldval, oldval+nstep)) ;
-    return oldval;
-}
-
-static inline int nd_atomic_sub(volatile ndatomic_t *p, int nstep)
-{
-    ndatomic_t oldval;
-    do {
-        oldval = *p ;
-    }while (!nd_compare_swap(p, oldval, oldval-nstep)) ;
-    return oldval;
-}
-//#define nd_atomic_add(p, val)  OSAtomicAdd32(val, p)
-//#define nd_atomic_sub(p,val)  OSAtomicAdd32(-val, p)
-
-
-#define nd_atomic_inc(p) OSAtomicIncrement32(p)
-#define nd_atomic_dec(p) OSAtomicDecrement32(p)
-
-static inline void nd_atomic_set(volatile ndatomic_t *p, ndatomic_t val)
-{
-    *p = val ;
+	*p = val ;
 }
 #define nd_atomic_read(p)        (*(p))
+
 
 #else 
 #error unknow platform!

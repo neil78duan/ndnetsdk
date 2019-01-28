@@ -81,7 +81,7 @@ ND_COMMON_API void* nd_dll_entry(HINSTANCE hdll, const char *name);
 
 typedef struct _sND_mutex
 {
-	int _spinCount ;	//spin
+	ndatomic_t _spinCount ;	//spin
 	ndatomic_t lockCount ;		//lock
 	int used ;			//used times 
 	ndthread_t ownerID ;		//owner thread id 
@@ -91,7 +91,7 @@ typedef struct _sND_mutex
 
 typedef struct _sND_condvar
 {
-	int lockCount ;		//lock
+	ndatomic_t lockCount ;		//lock
 	ndsem_t hSig ;
 }NDCondVar ;
 

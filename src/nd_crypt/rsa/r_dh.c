@@ -35,7 +35,7 @@ R_RANDOM_STRUCT *randomStruct;                          /* random structure */
   NN_Sub (v, t, v, pDigits);
   NN_Add (u, u, v, pDigits);
   NN_ASSIGN_DIGIT (v, 2, pDigits);
-  if (status = GeneratePrime (q, t, u, v, pDigits, randomStruct))
+  if ((status = GeneratePrime (q, t, u, v, pDigits, randomStruct)))
     return (status);
   
   /* Generate prime p between 2^(primeBits-1) and 2^primeBits-1,
@@ -47,7 +47,7 @@ R_RANDOM_STRUCT *randomStruct;                          /* random structure */
   NN_Sub (v, t, v, pDigits);
   NN_Add (u, u, v, pDigits);
   NN_LShift (v, q, 1, pDigits);
-  if (status = GeneratePrime (p, t, u, v, pDigits, randomStruct))
+  if ((status = GeneratePrime (p, t, u, v, pDigits, randomStruct)))
     return (status);
   
   /* Generate generator g for subgroup as 2^((p-1)/q) mod p.
@@ -85,7 +85,7 @@ R_RANDOM_STRUCT *randomStruct;                          /* random structure */
 
   /* Generate private value.
    */
-  if (status = R_GenerateBytes (privateValue, privateValueLen, randomStruct))
+  if ((status = R_GenerateBytes (privateValue, privateValueLen, randomStruct)))
     return (status);
   NN_Decode (x, pDigits, privateValue, privateValueLen);
   xDigits = NN_Digits (x, pDigits);

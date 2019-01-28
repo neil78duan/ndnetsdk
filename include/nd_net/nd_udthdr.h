@@ -65,8 +65,9 @@ struct ndudt_header
 	//16~31 bits
 	u_16	checksum;
 };
-
+#ifdef _MSC_VER
 #pragma warning (disable: 4200)
+#endif
 //16 bytes
 //udt·â°üÍ·²¿
 struct ndudt_pocket

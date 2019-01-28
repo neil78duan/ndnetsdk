@@ -201,7 +201,7 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		if (socket_node->type ==NDHANDLE_TCPNODE|| socket_node->type ==NDHANDLE_UDPNODE ){
 			if (socket_node->fd){
 				inputVal = *(NDUINT32*)val ;
-				ret = getsockopt(socket_node->fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)val, size) ;
+				ret = getsockopt(socket_node->fd, SOL_SOCKET, SO_RCVBUF, (sock_opval_t)val, (socklen_t*)size) ;
 			}		
 		}
 		break ;
@@ -217,7 +217,7 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		if (socket_node->type ==NDHANDLE_TCPNODE|| socket_node->type ==NDHANDLE_UDPNODE ){
 			if (socket_node->fd){
 				inputVal = *(NDUINT32*)val ;
-				ret = getsockopt(socket_node->fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)val, size) ;
+				ret = getsockopt(socket_node->fd, SOL_SOCKET, SO_SNDBUF, (sock_opval_t)val, (socklen_t*)size) ;
 			}		
 		}
 		break ;

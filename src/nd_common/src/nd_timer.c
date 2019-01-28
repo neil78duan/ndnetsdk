@@ -16,7 +16,7 @@ struct nd_timer_root
 	nd_handle pallocator ;					//memory allocator 
 	nd_mutex	list_lock ;
 	struct list_head list ;					//node list
-	ndtimer_t	del_buf[DELBUF_SIZE] ;
+	ndatomic_t	del_buf[DELBUF_SIZE] ;
 } ;
 
 

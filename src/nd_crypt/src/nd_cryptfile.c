@@ -78,7 +78,7 @@ int load_page( NDC_FILE *pf )
 		return 0 ;
 	}
 
-	nd_TEAdecrypt(pf->page_buf,(int) pf->size_inbuf, &pf->passwd)  ;
+	nd_TEAdecrypt((unsigned char*)pf->page_buf,(int) pf->size_inbuf, &pf->passwd)  ;
 	pf->isload = 1 ;
 	pf->cur_file_pos = ftell(pf->pf);
 // 

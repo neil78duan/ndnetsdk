@@ -188,7 +188,7 @@ static __INLINE__ int nd_netobj_is_ipv6(nd_netui_handle net_handle)
 {
 	return net_handle->is_ipv6;
 }
-static void nd_netobj_set_ipv6(nd_netui_handle net_handle)
+static __INLINE__ void nd_netobj_set_ipv6(nd_netui_handle net_handle)
 {
 	net_handle->is_ipv6 = 1;
 }

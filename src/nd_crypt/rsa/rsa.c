@@ -67,7 +67,7 @@ R_RANDOM_STRUCT *randomStruct;                          /* random structure */
 	// I need crypt more than MAX_RSA_MODULUS_LEN
 	int steps;
 	unsigned int needLen , stepLen,cryptLen ;
-	char *pOut = output, *pIn=input ;
+	unsigned char *pOut = output, *pIn=input ;
 
 	modulusLen = GET_MODULUS_LEN(publicKey) ;
 	steps = (inputLen + 4 + modulusLen -1)/modulusLen ;
@@ -166,7 +166,7 @@ R_RSA_PUBLIC_KEY *publicKey;                              /* RSA public key */
 #else
 	unsigned int steps;
 	unsigned int  stepLen ;
-	char *pOut = output, *pIn=input ;
+	unsigned char *pOut = output, *pIn=input ;
 
 	modulusLen = GET_MODULUS_LEN(publicKey);
 	steps = inputLen / modulusLen ;
@@ -358,7 +358,7 @@ R_RSA_PRIVATE_KEY *privateKey;                           /* RSA private key */
 #else 
 	int steps;
 	unsigned int  stepLen ;
-	char *pOut = output, *pIn=input ;
+	unsigned char *pOut = output, *pIn=input ;
 
 	modulusLen = GET_MODULUS_LEN(privateKey);
 	steps = inputLen / modulusLen ;

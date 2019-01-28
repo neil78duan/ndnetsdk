@@ -211,7 +211,8 @@ int send_ping(ndsocket_t fd,  SOCKADDR_IN *dest,int seq_no, char *data, int data
 int test_remote_host(char *host)
 {
 	unsigned short pid ;
-	int ret =-1,i, sock_len;
+	int ret =-1,i;
+	socklen_t sock_len;
 	ndsocket_t raw_fd;
 	SOCKADDR_IN dest, from  ;
 	char recv_buf[RAW_SYSTEM_BUF];
@@ -239,7 +240,7 @@ int test_remote_host(char *host)
 				nd_logmsg("test host %s time out.\n" AND host);
 				break;
 			}
-			sock_len = sizeof(from) ;
+			sock_len = (socklen_t)sizeof(from) ;
 			ret=(int)recvfrom(raw_fd,recv_buf,RAW_SYSTEM_BUF,0,(struct sockaddr *) &from, &sock_len);
 			if(ret >= (int)sizeof(icmp_hdr)) {
 				int icmp_len = 0 ;
@@ -274,7 +275,8 @@ EXIT_PING :
 //return 0 success
 int test_remote_tcp_port(char *host, short port)
 {
-	int ret =0,i, sock_len;
+	int ret =0,i;
+	socklen_t sock_len;
 	int timeout ;
 	ndsocket_t raw_fd;
 	SOCKADDR_IN dest, from  ;
@@ -319,7 +321,7 @@ int test_remote_tcp_port(char *host, short port)
 				ret = -1 ;
 				break;
 			}
-			sock_len = sizeof(from) ;
+			sock_len = (socklen_t)sizeof(from) ;
 			if(nd_socket_wait_read(raw_fd, 1000) <=0)
 				continue ;
 			ret=(int)recvfrom(raw_fd,recv_buf,RAW_SYSTEM_BUF,0,(struct sockaddr *) &from, &sock_len);

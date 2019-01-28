@@ -52,7 +52,7 @@ int nd_socket_udp_read(ndsocket_t fd ,char *buf, size_t size, SOCKADDR_IN* from_
 {
 	int read_len;
 	
-	int sock_len = sizeof(struct sockaddr_in6);
+	socklen_t sock_len = (socklen_t) sizeof(struct sockaddr_in6);
 	struct sockaddr_in6 remote_addr = { 0 };
 
 	nd_assert(buf && size > 0) ;

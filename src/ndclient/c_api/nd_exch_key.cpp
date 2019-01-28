@@ -152,9 +152,8 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 	tea_key(&newKey) ;
 	
 	MD5Crypt16((char*)&newKey,	sizeof(tea_k) , mykey.md5);
-	int len = nd_TEAencrypt((unsigned char*)mykey.md5, 16, &newKey) ;
-	nd_assert(len == 16) ;
-
+	nd_TEAencrypt((unsigned char*)mykey.md5, 16, &newKey) ;
+	
 	nd_teaKeyToNetorder(&mykey.k, &newKey) ;
 
 	NDUINT8  key_crypt[1024];
@@ -213,7 +212,8 @@ int nd_exchange_key(netObject netObject,void *out_public_key)
 	struct {
 		char keymd5[16] ;
 		R_RSA_PUBLIC_KEY pub_key ;
-	} key = {0} ;
+	} key ;//= {0} ;
+	memset(&key,0,sizeof(key)) ;
 	if (-1== _get_public_key( nethandle,key.pub_key, key.keymd5)) {
 		nd_logdebug("get public key md5 error\n") ;
 		return -1;

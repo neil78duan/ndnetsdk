@@ -185,7 +185,9 @@ int nd_udp_sendtoex(struct nd_udp_node*node,const char *data, size_t len, char *
 int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t outval) 
 {
 
-	int ret , readlen = 0,sock_len;
+	int ret ;
+	size_t readlen = 0;
+	socklen_t sock_len;
 
 	nd_assert(buf && buf_size>0);
 
@@ -200,7 +202,7 @@ int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t o
 	}
 
 	//read data
-	sock_len = sizeof(SOCKADDR_IN) ;
+	sock_len = (socklen_t) sizeof(SOCKADDR_IN) ;
 	readlen = (int)recvfrom(node->fd,buf, (int)buf_size, 0, (LPSOCKADDR)&node->last_read, &sock_len )  ;
 	if(readlen <= 0 || readlen>=ND_UDP_PACKET_SIZE){
 		node->myerrno = NDERR_READ ;
@@ -212,7 +214,7 @@ int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t o
 	node->recv_len += readlen ;
 
 	if (node->prox_info){
-		struct udp_proxy_info *prox = node->prox_info ;
+		//struct udp_proxy_info *prox = node->prox_info ;
 		if(buf[0]!=0 || buf[1]!=0 || buf[2]!=0) {
 			node->myerrno = NDERR_BADPACKET ;
 			return -1;

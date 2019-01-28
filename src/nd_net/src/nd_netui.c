@@ -19,7 +19,7 @@ typedef struct netui_info *nd_handle;
 static int _crypt_unit_len ;		//crypt unit length
 static nd_netcrypt __net_encrypt, __net_decrypt ;
 static int _min_packet_len = sizeof(nd_usermsghdr_t) ;
-static int nd_net_message_version_error(nd_netui_handle node) ;
+//static int nd_net_message_version_error(nd_netui_handle node) ;
 
 /* connector tick  */
 int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout) 
@@ -164,7 +164,7 @@ int handle_recv_data(nd_netui_handle node, nd_handle h_listen)
 	else {
 		int read_len = 0;
 		
-#if defined(__ND_IOS__) || defined(__ND_ADNROID__)
+#if defined(__ND_IOS__) || defined(__ND_ANDROID__)
 		nd_packetbuf_t pack_buf ;
 #else 
 		static __ndthread  nd_packetbuf_t pack_buf ;
@@ -370,7 +370,6 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 {
 	ENTER_FUNC()
 	int ret ;
-	int maxId = ND_USERMSG_MAXID(msg_buf), minId = ND_USERMSG_MINID(msg_buf), msgLen = ND_USERMSG_LEN(msg_buf);
 	nd_assert(net_handle) ;
 	nd_assert(msg_buf) ;
 	nd_assert(net_handle->write_entry) ;
@@ -411,6 +410,8 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
     
 #ifdef ND_TRACE_MESSAGE
 	if (ret > 0 && msg_buf->ndsys_msg==0) {
+		int maxId =(int) ND_USERMSG_MAXID(msg_buf), minId = (int)ND_USERMSG_MINID(msg_buf), msgLen =(int) ND_USERMSG_LEN(msg_buf);
+		
 		if (net_handle->is_log_send || nd_message_is_log(net_handle, maxId, minId)) {
 			nd_logmsg("TRACE Message SEND (%d,%d) data-lenght=%d SUCCESS!!\n", maxId,minId, msgLen);
 		}
@@ -959,7 +960,7 @@ int nd_packet_encrypt_key(nd_cryptkey *pcrypt_key, nd_packetbuf_t *msgbuf)
 		
 		int new_len  ;
 		
-		new_len = __net_encrypt(msgbuf->data, datalen, pcrypt_key->key) ;
+		new_len = __net_encrypt((unsigned char*)msgbuf->data, datalen, pcrypt_key->key) ;
 		if(0==new_len) {
 			LEAVE_FUNC();
 			return 0 ;
@@ -980,14 +981,16 @@ int nd_packet_encrypt_key(nd_cryptkey *pcrypt_key, nd_packetbuf_t *msgbuf)
 
 int nd_packet_decrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 {
-	int ret = nd_packet_decrypt_key(&(net_handle->crypt_key ), msgbuf) ;
-	if (-1==ret ) {
-		char buf[64] ;
-		SOCKADDR_IN *addr =& (net_handle->remote_addr );
-		nd_logdebug("[%s] send data error :unknow crypt data\n" AND inet_ntop(addr->sin_family, &addr->sin_addr, buf ,sizeof(buf)) );
-		return 0;
-	}
-	return ret;
+	return nd_packet_decrypt_key(&(net_handle->crypt_key ), msgbuf) ; 
+//	int ret = nd_packet_decrypt_key(&(net_handle->crypt_key ), msgbuf) ;
+//	if (-1==ret ) {
+//		char buf[64] ;
+//		buf[0]= 0 ;
+//		SOCKADDR_IN *addr =& (net_handle->remote_addr );
+//		nd_logdebug("[%s] send data error :unknow crypt data\n" AND inet_ntop(addr->sin_family, &addr->sin_addr, buf ,sizeof(buf)) );
+//		return 0;
+//	}
+//	return ret;
 }
 
 int nd_packet_decrypt_key(nd_cryptkey *pcrypt_key,nd_packetbuf_t *msgbuf)
@@ -1006,7 +1009,7 @@ int nd_packet_decrypt_key(nd_cryptkey *pcrypt_key,nd_packetbuf_t *msgbuf)
 	//decrypt 
 	if(__net_decrypt && is_valid_crypt(pcrypt_key)) {
 		
-		int new_len = __net_decrypt(msgbuf->data, datalen, pcrypt_key->key) ;
+		int new_len = __net_decrypt((unsigned char *)msgbuf->data, datalen, pcrypt_key->key) ;
 		if(new_len <= 0 || new_len!=datalen) {
 			//char buf[20] ;
 			//SOCKADDR_IN *addr =& (net_handle->remote_addr );
@@ -1098,23 +1101,23 @@ int nd_net_sysmsg_hander(nd_netui_handle node, nd_sysresv_pack_t *pack)
 	}
 	return 0;	
 }
-
-int nd_net_message_version_error(nd_netui_handle node)
-{
-	nd_sysresv_pack_t packdata ;
-	nd_sysresv_pack_t *pack = &packdata ;
-	nd_hdr_init(&pack->hdr) ;
-	pack->hdr.length = sizeof(nd_sysresv_pack_t) ;
-	pack->hdr.ndsys_msg = 1;
-	pack->hdr.stuff_len = 5 ;
-	pack->msgid = ERSV_VERSION_ERROR ;
-	pack->checksum = 0;
-	pack->checksum = nd_checksum((NDUINT16 *)pack,sizeof(nd_sysresv_pack_t) ) ;
-	nd_connector_send(node, &pack->hdr, ESF_URGENCY) ;
-
-	node->myerrno = NDERR_VERSION ;
-
-	return 0;
-}
+//
+//int nd_net_message_version_error(nd_netui_handle node)
+//{
+//	nd_sysresv_pack_t packdata ;
+//	nd_sysresv_pack_t *pack = &packdata ;
+//	nd_hdr_init(&pack->hdr) ;
+//	pack->hdr.length = sizeof(nd_sysresv_pack_t) ;
+//	pack->hdr.ndsys_msg = 1;
+//	pack->hdr.stuff_len = 5 ;
+//	pack->msgid = ERSV_VERSION_ERROR ;
+//	pack->checksum = 0;
+//	pack->checksum = nd_checksum((NDUINT16 *)pack,sizeof(nd_sysresv_pack_t) ) ;
+//	nd_connector_send(node, &pack->hdr, ESF_URGENCY) ;
+//
+//	node->myerrno = NDERR_VERSION ;
+//
+//	return 0;
+//}
 
 #undef  ND_IMPLEMENT_HANDLE

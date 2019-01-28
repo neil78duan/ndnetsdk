@@ -16,8 +16,10 @@
 #include <assert.h>
 #include <string.h>
 
-#pragma warning(push)
+#ifdef _MSC_VER
 #pragma warning(disable : 4305)
+#endif
+
 extern int tea_key(tea_k *k) ;
 
 int RSAinit_random(R_RANDOM_STRUCT *rStruct)
@@ -39,7 +41,6 @@ int RSAinit_random(R_RANDOM_STRUCT *rStruct)
 	
 	return 0;
 }
-#pragma warning(pop)
 
 void RSAdestroy_random(R_RANDOM_STRUCT *rStruct)
 {
@@ -86,22 +87,22 @@ void nd_RSAdestroy(RSA_HANDLE h_rsa)
 
 int nd_RSAPublicEncrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa)
 {
-	return RSAPublicEncrypt(outbuf, outlen, inbuf, inlen, &(h_rsa->publicKey) , &(h_rsa->randomStruct)) ;
+	return RSAPublicEncrypt((unsigned char*)outbuf,(unsigned int*) outlen, (unsigned char*)inbuf, (unsigned int)inlen, &(h_rsa->publicKey) , &(h_rsa->randomStruct)) ;
 }
 
 int nd_RSAPrivateEncrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa)
 {
-	return RSAPrivateEncrypt(outbuf, outlen, inbuf, inlen, &h_rsa->privateKey) ;
+	return RSAPrivateEncrypt((unsigned char*)outbuf, (unsigned int*)outlen, (unsigned char*)inbuf, (unsigned int)inlen, &h_rsa->privateKey) ;
 }
 
 int nd_RSAPublicDecrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa)
 {
-	return RSAPublicDecrypt(outbuf, outlen, inbuf, inlen, &h_rsa->publicKey) ;
+	return RSAPublicDecrypt((unsigned char*)outbuf, (unsigned int*)outlen, (unsigned char*)inbuf, (unsigned int)inlen, &h_rsa->publicKey) ;
 }
 
 int nd_RSAPrivateDecrypt(char *outbuf, int *outlen, char *inbuf, int inlen,RSA_HANDLE h_rsa)
 {
-	return RSAPrivateDecrypt(outbuf, outlen, inbuf, inlen, &h_rsa->privateKey ) ;
+	return RSAPrivateDecrypt((unsigned char*)outbuf, (unsigned int*)outlen, (unsigned char*)inbuf, (unsigned int)inlen, &h_rsa->privateKey ) ;
 }
 
 
@@ -110,22 +111,22 @@ int rsa_pub_encrypt(char *outbuf, int *outlen, char *inbuf, int inlen,R_RSA_PUBL
 	R_RANDOM_STRUCT randomStruct; 
 	RSAinit_random(&randomStruct) ;
 
-	return RSAPublicEncrypt(outbuf, outlen, inbuf, inlen,key ,&randomStruct) ;
+	return RSAPublicEncrypt((unsigned char*)outbuf, (unsigned int*)outlen, (unsigned char*)inbuf, (unsigned int)inlen,key ,&randomStruct) ;
 }
 
 int rsa_priv_encrypt(char *outbuf, int *outlen, char *inbuf, int inlen,R_RSA_PRIVATE_KEY *key)
 {
 
-	return RSAPrivateEncrypt(outbuf, outlen, inbuf, inlen, key) ;
+	return RSAPrivateEncrypt((unsigned char*)outbuf, (unsigned int*)outlen, (unsigned char*)inbuf, (unsigned int)inlen, key) ;
 }
 
 int rsa_pub_decrypt(char *outbuf, int *outlen, char *inbuf, int inlen,R_RSA_PUBLIC_KEY *key)
 {
-	return RSAPublicDecrypt(outbuf, outlen, inbuf, inlen, key) ;
+	return RSAPublicDecrypt((unsigned char*)outbuf, (unsigned int*)outlen, (unsigned char*)inbuf, inlen, key) ;
 }
 int rsa_priv_decrypt(char *outbuf, int *outlen, char *inbuf, int inlen,R_RSA_PRIVATE_KEY *key)
 {
-	return RSAPrivateDecrypt(outbuf, outlen, inbuf, inlen, key ) ;
+	return RSAPrivateDecrypt((unsigned char*)outbuf, (unsigned int*)outlen, (unsigned char*)inbuf, (unsigned int)inlen, key ) ;
 }
 
 
@@ -444,7 +445,8 @@ int nd_rsa_test(R_RSA_PRIVATE_KEY *priv_key, R_RSA_PUBLIC_KEY *pub_key)
 	char *p = "hello world" ;
 	char buf1[1024] ,buf2[1024];
 
-	ND_RSA_CONTEX rsa_contex = {0} ;
+	ND_RSA_CONTEX rsa_contex ;//= {0} ;
+	memset(&rsa_contex,0,sizeof(rsa_contex)) ;
 	memcpy((void*)&rsa_contex.privateKey, priv_key, sizeof(rsa_contex.privateKey) );
 	memcpy((void*)&rsa_contex.publicKey, pub_key, sizeof(rsa_contex.publicKey) );
 	RSAinit_random(&rsa_contex.randomStruct);

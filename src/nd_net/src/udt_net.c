@@ -203,8 +203,8 @@ int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, s
 		//notify client program
 		if (ndlbuf_datalen(recvbuf) > 0){
 			int ret = 0 ;
-			size_t w_len = ndlbuf_write(recvbuf,data, data_len,EBUF_ALL) ;
-			nd_assert(w_len == data_len) ;
+			//size_t w_len = ndlbuf_write(recvbuf,data, data_len,EBUF_ALL) ;
+			//nd_assert(w_len == data_len) ;
 			ret = socket_node->data_entry((nd_handle)socket_node, ndlbuf_data(recvbuf), ndlbuf_datalen(recvbuf),(nd_handle) socket_node->srv_root) ;
 			if(ret > 0) {
 				ndlbuf_sub_data(recvbuf,ret) ;

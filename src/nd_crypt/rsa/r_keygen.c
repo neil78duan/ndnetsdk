@@ -55,7 +55,7 @@ R_RANDOM_STRUCT *randomStruct;                          /* random structure */
   NN_Add (u, u, v, pDigits);
   NN_ASSIGN_DIGIT (v, 2, pDigits);
   do {
-    if (status = GeneratePrime (p, t, u, v, pDigits, randomStruct))
+    if ((status = GeneratePrime (p, t, u, v, pDigits, randomStruct)))
       return (status);
   }
   while (! RSAFilter (p, pDigits, e, 1));
@@ -71,7 +71,7 @@ R_RANDOM_STRUCT *randomStruct;                          /* random structure */
   NN_Add (u, u, v, pDigits);
   NN_ASSIGN_DIGIT (v, 2, pDigits);
   do {
-    if (status = GeneratePrime (q, t, u, v, pDigits, randomStruct))
+    if ((status = GeneratePrime (q, t, u, v, pDigits, randomStruct)))
       return (status);
   }
   while (! RSAFilter (q, pDigits, e, 1));

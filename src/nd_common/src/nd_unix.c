@@ -420,7 +420,9 @@ int nd_threadsched(void)
 
 void nd_threadexit(int exitcode)
 {
-    void *param = (void*) exitcode ;
+    //void *param = (void*)（ exitcode ）;
+	void *param = 0 ;
+	memcpy(&param, &exitcode, sizeof(exitcode)) ;
 	pthread_exit( param );
 }
 //µ»¥˝“ª∏ˆœﬂ≥ÃµƒΩ· ¯
