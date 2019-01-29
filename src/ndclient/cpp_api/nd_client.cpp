@@ -62,8 +62,8 @@ public :
 
 	void Destroy(int flag = 0);
 	int Create(const char *protocol_name=NULL) ;
-	int Open(const char*host, int port,const char *protocol_name, nd_proxy_info *proxy=NULL);
-	int Open(ndip_t& ip, int port,const char *protocol_name, nd_proxy_info *proxy=NULL) ;
+	int Open(const char*host, int port,const char *protocol_name, void *proxy=NULL);
+	int Open(ndip_t& ip, int port,const char *protocol_name, void *proxy=NULL) ;
 	int Close(int force=0);
 
 	int Send(int maxid, int minid, void *data, size_t size) ;
@@ -89,7 +89,7 @@ public :
 	void SetMsgNum(int maxmsg_num , int maxid_start=ND_MSG_BASE_ID) ;
 	virtual~NDConnector() ;
     
-	int Reconnect(ndip_t& IP, int port,nd_proxy_info *proxy=NULL) ;//connect to another host
+	int Reconnect(ndip_t& IP, int port,void *proxy=NULL) ;//connect to another host
 
 	nd_handle GetHandle() {return m_objhandle;}
 	int ExchangeKey(void *output_key) ;
@@ -204,7 +204,7 @@ void NDConnector::SetMsgNum(int maxmsg_num , int maxid_start)
 	msg_base = maxid_start;
 }
 
-int NDConnector::Open(const char *host, int port,const char *protocol_name,nd_proxy_info *proxy)
+int NDConnector::Open(const char *host, int port,const char *protocol_name,void *proxy)
 {
 	if(!m_objhandle) {
 		//return -1 ;
@@ -226,13 +226,13 @@ int NDConnector::Open(const char *host, int port,const char *protocol_name,nd_pr
 
 }
 
-int NDConnector::Open(ndip_t& ip, int port,const char *protocol_name, nd_proxy_info *proxy) 
+int NDConnector::Open(ndip_t& ip, int port,const char *protocol_name, void *proxy) 
 {
 	char iptext[64];
 	return Open(ND_INET_NTOA(ip, iptext), port, protocol_name, proxy) ;
 }
 
-int NDConnector::Reconnect(ndip_t& IP, int port,nd_proxy_info *proxy)
+int NDConnector::Reconnect(ndip_t& IP, int port,void *proxy)
 {
 	return ::nd_reconnect(m_objhandle,  IP,  port, (nd_proxy_info*)proxy) ;
 }
@@ -269,8 +269,8 @@ int NDConnector::Create(const char *protocol_name)
 		}
 		nd_hook_packet(m_objhandle,(net_msg_entry )cliconn_translate_message);
 	}
-	//int val = 1;
-	//int size = sizeof(val);
+	int val = 1;
+	int size = sizeof(val);
 	//nd_net_ioctl((nd_netui_handle)m_objhandle, NDIOCTL_LOG_RECV_MSG, &val, &size);
 	return 0 ;
 

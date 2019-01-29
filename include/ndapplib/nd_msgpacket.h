@@ -11,8 +11,11 @@
 #include "nd_net/nd_netlib.h"
 #include "nd_common/nd_common.h"
 #include "ndcli/nd_api_c.h"
+#else
+#include "nd_net/byte_order.h"
+#include "nd_net/nd_netbyte.h"
 #endif
-#include "nd_common/nd_export_def.h"
+#include "nd_net/nd_netpack.h"
 
 #define NET_STREAM_WITH_FORMAT_MARKER 1		//do not user format marker in net message stream
 #define NET_STREAM_STRUCT_END_MARK 0xff

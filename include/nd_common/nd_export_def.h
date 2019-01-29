@@ -29,6 +29,18 @@
 #if  defined(_MSC_VER )
 #define DLL_EXPORT __declspec(dllexport)
 #define DLL_IMPORT __declspec(dllimport)
+
+#pragma warning (disable:  4018)	
+#pragma warning (disable:  4251)	
+#pragma warning(disable:4001)	
+#pragma warning(disable:4100)	
+#pragma warning(disable:4699)	
+#pragma warning(disable:4710)	
+#pragma warning(disable:4514)	
+#pragma warning(disable:4512)
+#pragma  warning(disable: 4996)
+#pragma  warning(disable: 4819)
+#pragma  warning(disable: 4828)
 #else 
 #define DLL_EXPORT 
 #define DLL_IMPORT 
