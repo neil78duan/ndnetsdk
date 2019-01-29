@@ -269,8 +269,8 @@ int NDConnector::Create(const char *protocol_name)
 		}
 		nd_hook_packet(m_objhandle,(net_msg_entry )cliconn_translate_message);
 	}
-	int val = 1;
-	int size = sizeof(val);
+	//int val = 1;
+	//int size = sizeof(val);
 	//nd_net_ioctl((nd_netui_handle)m_objhandle, NDIOCTL_LOG_RECV_MSG, &val, &size);
 	return 0 ;
 
