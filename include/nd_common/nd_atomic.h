@@ -153,11 +153,43 @@ static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 #define nd_atomic_read(p)        (*(p))
 
 #elif defined(__ND_MAC__) || defined(__ND_IOS__)
-#define OSATOMIC_USE_INLINED 1
-#include <libkern/OSAtomic.h>
+//#define OSATOMIC_USE_INLINED 1
+//#include <libkern/OSAtomic.h>
 typedef int ndatomic_t ;
+#ifdef __cplusplus
+#include <atomic>
+typedef std::atomic<int32_t> _OSAtomic_int32_t;
+static __INLINE__ bool NDAtomicCompareAndSwap32(int32_t __oldValue, int32_t __newValue,
+						 volatile int32_t *__theValue)
+{
+	return (std::atomic_compare_exchange_strong_explicit)(
+			(volatile _OSAtomic_int32_t*)__theValue, &__oldValue, __newValue, std::memory_order_relaxed,std::memory_order_relaxed);
+}
+static __INLINE__ int32_t NDAtomicAdd32Barrier(int32_t __theAmount, volatile int32_t *__theValue)
+{
+	return std::atomic_fetch_add_explicit((volatile _OSAtomic_int32_t*) __theValue, __theAmount,
+										  std::memory_order_seq_cst) + __theAmount;
+}
+
+#else
+#include <stdatomic.h>
+typedef _Atomic(int32_t) _OSAtomic_int32_t;
+static __INLINE__ int NDAtomicCompareAndSwap32(int32_t __oldValue, int32_t __newValue,
+												volatile int32_t *__theValue)
+{
+	return (int)atomic_compare_exchange_strong_explicit((volatile _OSAtomic_int32_t*)__theValue, &__oldValue, __newValue, memory_order_relaxed, memory_order_relaxed);
+}
+static __INLINE__ int32_t NDAtomicAdd32Barrier(int32_t __theAmount, volatile int32_t *__theValue)
+{
+	return atomic_fetch_add_explicit((volatile _OSAtomic_int32_t*) __theValue, __theAmount,
+										  memory_order_seq_cst) + __theAmount;
+}
+#endif
+
+
+
 //define for xcode
-#define nd_compare_swap(p,compare,exchange) OSAtomicCompareAndSwapIntBarrier(compare, exchange,p)
+#define nd_compare_swap(p,compare,exchange) NDAtomicCompareAndSwap32(compare, exchange,p)
 static inline  int nd_testandset(volatile ndatomic_t *p) {return !nd_compare_swap(p,0,1);}
 static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 {
@@ -167,30 +199,12 @@ static inline int nd_atomic_swap(volatile ndatomic_t *p ,ndatomic_t exch)
 	}while (!nd_compare_swap(p, oldval, exch)) ;
 	return (int)oldval ;
 }
-//
-//static inline int nd_atomic_add( ndatomic_t *p, int nstep)
-//{
-//    ndatomic_t oldval;
-//    do {
-//        oldval = *p ;
-//    }while (!nd_compare_swap(p, oldval, oldval+nstep)) ;
-//    return (int)oldval;
-//}
-//
-//static inline int nd_atomic_sub( ndatomic_t *p, int nstep)
-//{
-//    ndatomic_t oldval;
-//    do {
-//        oldval = *p ;
-//    }while (!nd_compare_swap(p, oldval, oldval-nstep)) ;
-//    return (int)oldval;
-//}
-#define nd_atomic_add(p,val)  OSAtomicAdd32Barrier(val, p)
-#define nd_atomic_sub(p,val)  OSAtomicAdd32Barrier(-val, p)
+#define nd_atomic_add(p,val)  NDAtomicAdd32Barrier(val, p)
+#define nd_atomic_sub(p,val)  NDAtomicAdd32Barrier(-val, p)
 
 
-#define nd_atomic_inc(p) OSAtomicIncrement32Barrier(p)
-#define nd_atomic_dec(p) OSAtomicIncrement32Barrier(p)
+#define nd_atomic_inc(p) NDAtomicAdd32Barrier(1,p)
+#define nd_atomic_dec(p) NDAtomicAdd32Barrier(-1,p)
 
 static inline void nd_atomic_set( ndatomic_t *p, ndatomic_t val)
 {
