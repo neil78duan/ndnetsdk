@@ -74,7 +74,12 @@
 
  */
 
-#if defined(__ND_IOS__)	|| defined(__ND_ANDROID__)	// define IOS Android
+#if defined(__ND_IOS__)	
+
+#define ND_PLATFORM "ARM"
+#define WITHOUT_ICONV		1
+
+#elif defined(__ND_ANDROID__)	// define IOS Android
 
 #define ND_PLATFORM "ARM"
 
@@ -86,7 +91,6 @@
 #define ND_OPEN_LOG_WARN	1
 #define ND_OPEN_LOG_ERROR	1
 #define ND_OPEN_LOG_FATAL	1
-//#define ND_OUT_LOG_2CTRL	1
 
 #else  	
 
