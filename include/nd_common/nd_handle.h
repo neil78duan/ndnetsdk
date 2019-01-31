@@ -113,7 +113,7 @@ struct nd_handle_reginfo
  */
 ND_COMMON_API int nd_object_register(struct nd_handle_reginfo *reginfo) ;
 
-int destroy_object_register_manager(void) ;
+CPPAPI int destroy_object_register_manager(void) ;
 
 static __INLINE__ int nd_object_set_instname(nd_handle handle, const char *name)
 {
@@ -136,14 +136,14 @@ static __INLINE__ nd_handle  object_create(const char *name,const char *file, in
 	nd_handle p = _object_create(name )  ;
 	if(p) {
 		nd_object_set_instname(p,name) ;
-		_source_log(p,"nd_object_create","object not release!", file,line) ;
+		_source_log((void*)p,"nd_object_create","object not release!", file,line) ;
 	}
 	return p ;
 }
 static __INLINE__ int object_destroy(nd_handle handle, int force) 
 {
 	if(handle){
-		_source_release(handle) ;
+		_source_release((void*)handle) ;
 		//nd_assert(0==ret) ;
 		return _object_destroy(handle, force) ;
 	}

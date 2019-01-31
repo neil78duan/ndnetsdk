@@ -26,7 +26,7 @@ ND_CRYPT_API int tea_key(tea_k *k);
 			v[2]    64-bit plaintext block
    Output values:	v[2]    64-bit ciphertext block 
  **********************************************************/
-ND_CRYPT_API void tean(TEAint32 *k, TEAint32 *v, long N) ;
+ND_CRYPT_API void tean(TEAint32 *k, TEAint32 *v, int N) ;
 
 /* tea enctypt data 
  * input :  k 128bit encryptKEY 

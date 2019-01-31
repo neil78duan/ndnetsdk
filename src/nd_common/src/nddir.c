@@ -112,7 +112,7 @@ void* nd_load_file(const char *file, size_t *size)
 
 #if defined(ND_UNIX) 
 
-const char * nd_getcwd()
+const char * nd_getcwd(void)
 {
 	if (_current_dir[0]) {
 		return _current_dir ;
@@ -128,7 +128,7 @@ int nd_chdir(const char *dir)
 	}
 	return -1;
 }
-const char * nd_get_init_dir()
+const char * nd_get_init_dir(void)
 {
 	if (_original_dir[0]==0)	{
 		return getcwd(_original_dir, ND_FILE_PATH_SIZE);
@@ -139,7 +139,7 @@ const char * nd_get_init_dir()
 int nd_cpfile(const char *oldfile,const  char *newfile)
 {
 	int ret = 0 ;
-	int readsize;
+	size_t readsize;
 	FILE *fp1, *fp2 ;
 	char buf[1024] ;
 	fp1 = fopen(oldfile,"rb");
@@ -194,14 +194,14 @@ int nd_existfile(const char *pachfilename)
 	return 1;
 }
 
-const  char* nd_getsysdir()
+const  char* nd_getsysdir(void)
 {
 	return "/" ;
 }
 
 #else 
 //
-const char * nd_getcwd()
+const char * nd_getcwd(void)
 {
 	if (_current_dir[0]) {
 		return _current_dir ;
@@ -210,7 +210,7 @@ const char * nd_getcwd()
 	return _current_dir ;
 }
 
-const char * nd_get_init_dir()
+const char * nd_get_init_dir(void)
 {
 	if (_original_dir[0]==0)	{
 		
@@ -261,7 +261,7 @@ int nd_rmdir(const char *dir)
 }
 
 //
-const char* nd_getsysdir()
+const char* nd_getsysdir(void)
 {
 	static char _system_dir[ND_FILE_PATH_SIZE] ;
 	GetSystemDirectory((LPTSTR)_system_dir,sizeof(_system_dir));

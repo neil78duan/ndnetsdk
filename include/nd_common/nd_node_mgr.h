@@ -8,6 +8,9 @@
 #ifndef _ND_NODE_MGR_H_
 #define _ND_NODE_MGR_H_
 
+#include "nd_common/nd_export_def.h"
+#include "nd_common/nd_static_alloc.h"
+
 /*
  * resource node manager 
  * node id is [1,65535]

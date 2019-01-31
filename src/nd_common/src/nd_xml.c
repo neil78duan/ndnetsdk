@@ -201,7 +201,7 @@ static size_t _xml_get_value_size(const char *p)
 }
 
 ndxml *parse_xmlbuf(const char *xmlbuf, int size, const char **parse_end, const char **error_addr) ;
-ndxml *alloc_xml();
+ndxml *alloc_xml(void);
 void _release_xml(ndxml *node);
 void  dealloc_xml(ndxml *node );
 struct ndxml_attr *alloc_attrib_node(const char *name, const char *value);
@@ -1522,7 +1522,7 @@ READ_END :
 }
 
 //申请一个节点内存
-ndxml *alloc_xml()
+ndxml *alloc_xml(void)
 {
 	ndxml *node = malloc(sizeof(ndxml)) ;
 	if(node) {

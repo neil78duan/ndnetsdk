@@ -45,24 +45,24 @@
 
 #include "nd_common/nd_atomic.h"
 
-#include "nd_common/nd_static_alloc.h"
+//#include "nd_common/nd_static_alloc.h"
 
-#include "nd_common/nd_node_mgr.h"
+//#include "nd_common/nd_node_mgr.h"
 
 #include "nd_common/nddir.h"
 
-#include "nd_common/nd_cmdline.h"
+//#include "nd_common/nd_cmdline.h"
 
-#include "nd_common/nd_iconv.h"
+//#include "nd_common/nd_iconv.h"
 
-ND_COMMON_API int nd_common_init();
+ND_COMMON_API int nd_common_init(void);
 ND_COMMON_API void nd_common_release_ex(int force);
-ND_COMMON_API int nd_common_isinit();
+ND_COMMON_API int nd_common_isinit(void);
 #define nd_common_release()		nd_common_release_ex(0) 
 
 ND_COMMON_API const char * nd_common_machine_info(char buf[], size_t size);
 
-ND_COMMON_API const char *nd_process_name() ;
+ND_COMMON_API const char *nd_process_name(void) ;
 //ND_COMMON_API char *process_name();
 ND_COMMON_API int nd_arg(int argc, const char *argv[]);
 
@@ -76,7 +76,7 @@ static int __INLINE__ nd_error_max_sys_number()
 
 
 ND_COMMON_API const char *nd_error_desc(int errcode);
-ND_COMMON_API int nd_error_get_user_number();
+ND_COMMON_API int nd_error_get_user_number(void);
 ND_COMMON_API void nd_error_set_user_number(int max_user_number);
 ND_COMMON_API nd_error_convert nd_register_error_convert(nd_error_convert func);
 

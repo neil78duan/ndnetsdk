@@ -12,6 +12,7 @@
 #include "nd_common/nd_os.h"
 #include "nd_common/list.h"
 #include "nd_common/nd_logger.h"
+#include "nd_common/_source_trace.h"
 
 #ifdef ND_UNUSE_STDC_ALLOC	//not use std alloc
 typedef struct nd_mm_pool *nd_handle ;
@@ -144,7 +145,7 @@ void remove_statics(nd_mmpool_t *pool) ;
 #endif
 
 
-nd_mmpool_t *nd_global_mmpool()
+nd_mmpool_t *nd_global_mmpool(void)
 {
 	if (!__mem_root.init){
 		nd_mempool_root_init() ;
@@ -191,7 +192,7 @@ static __INLINE__ void freeFillMem(void *p, size_t size)
 #ifdef _MSC_VER
 #define nd_mmap(s)     VirtualAlloc(NULL, (s) ,MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE) ;
 #define nd_munmap(p,s)	VirtualFree((p),0, MEM_RELEASE);
-int getgranularity()
+int getgranularity(void)
 {
 	static int granularity = 0;
 	if (granularity == 0) {
@@ -201,7 +202,7 @@ int getgranularity()
 	}
 	return granularity;
 }
-int getpagesize()
+int getpagesize(void)
 {
 	static int pagesize = 0;
 	if (pagesize == 0) {
@@ -286,7 +287,7 @@ static void __sys_page_free(void *addr)
 }
 
 
-int nd_mempool_root_init()
+int nd_mempool_root_init(void)
 {
 	if(	__mem_root.init )
 		return 0 ;
@@ -311,7 +312,7 @@ int nd_mempool_root_init()
 	return 0 ;
 }
 
-void nd_mempool_root_release()
+void nd_mempool_root_release(void)
 {
 	struct list_head *pos, *next ;
 	nd_mmpool_t *pool;
@@ -1381,7 +1382,7 @@ struct mmstatics_root
 
 static ndatomic_t _s_mmstatic_created =0 ;
 static struct mmstatics_root *_s_mmstatics ;
-int nd_mm_statics_start()
+int nd_mm_statics_start(void)
 {
 	struct mmstatics_root *proot ;
 	if (0!=nd_testandset(&_s_mmstatic_created)){
@@ -1400,7 +1401,7 @@ int nd_mm_statics_start()
 	return 0;
 }
 
-int nd_mm_statics_end()
+int nd_mm_statics_end(void)
 {
 	struct mmstatics_root *proot ;
 
@@ -1553,7 +1554,7 @@ void remove_statics(nd_mmpool_t *pool)
 
 #if  defined(ND_SOURCE_TRACE) && defined(ND_UNUSE_STDC_ALLOC)
 //dump all memory used info in memory-pool-system
-void nd_mmpool_dump()
+void nd_mmpool_dump(void)
 {
 	struct list_head *pos ;
 	nd_mutex_lock(&__mem_root.lock) ;
@@ -1594,7 +1595,7 @@ nd_handle __pool_create(size_t size,const char *name,struct nd_mm_pool *pool )
 }
 
 static struct nd_mm_pool  _static_pool  ;
-nd_handle nd_global_mmpool()
+nd_handle nd_global_mmpool(void)
 {
 	if (!_static_pool.__created){
 		__pool_create(-1,"global_mmpool",&_static_pool ) ;
@@ -1702,7 +1703,7 @@ void nd_pool_destruct_entry(nd_handle pool , memdestruct_entry func)
 }
 
 #if  defined(ND_SOURCE_TRACE) && defined(ND_UNUSE_STDC_ALLOC)
-void nd_mmpool_dump()
+void nd_mmpool_dump(void)
 {
 }
 #endif

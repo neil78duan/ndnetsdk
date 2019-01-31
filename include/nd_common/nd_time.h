@@ -26,7 +26,7 @@ static __INLINE__  void app_inst_set_hm(int _h, int _m) {	nd_gmtime_set_offset(_
 ND_COMMON_API int nd_time_day_interval(time_t end_tm, time_t start_tm);	//get interval of days (local time)
 ND_COMMON_API int nd_time_day_interval_ex(time_t end_tm, time_t start_tm, int tm_zone);
 
-ND_COMMON_API int nd_time_zone();
+ND_COMMON_API int nd_time_zone(void);
 ND_COMMON_API time_t  nd_time_from_str(const char *pInput, time_t* pOutTm); //convert localtime (2016-10-1 10:00:08) to time_t
 ND_COMMON_API time_t  nd_time_from_str_ex(const char *pInput,int tm_zone, time_t* pOutTm); //convert localtime (2016-10-1 10:00:08) to time_t
 
@@ -53,6 +53,6 @@ ND_COMMON_API const char *nd_get_datetimestr(void);		//get time and date in stri
 
 ND_COMMON_API const char *nd_get_datetimestr_ex(time_t in_tm, char *buf, int size);
 ND_COMMON_API const char *nd_get_datetimestr_gm(time_t in_tm, char *timebuf, int size);
-ND_COMMON_API int nd_time_weekday();
+ND_COMMON_API int nd_time_weekday(void);
 
 #endif

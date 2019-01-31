@@ -60,7 +60,7 @@ int nd_callstack_init(const char *filename)
 
 }
 
-int nd_callstack_end() 
+int nd_callstack_end(void)
 {
 	if (g_callstack_map.paddr){
 		return close_filemap(&g_callstack_map) ;
@@ -74,7 +74,7 @@ int nd_callstack_monitor_init(const char *filename)
 }
 
 
-int nd_callstack_monitor_end() 
+int nd_callstack_monitor_end(void) 
 {
 	if (g_monitor.paddr){
 		return close_filemap(&g_monitor) ;
