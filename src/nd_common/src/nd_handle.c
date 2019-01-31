@@ -277,7 +277,7 @@ int nd_tryto_clear_err(nd_handle h)
 
 static struct nd_rb_root _g_rb_handler_root  ;
 static ndatomic_t _g_is_init = 0;
-static NDUINT32 _g_objindex = 1 ;
+static ndatomic_t _g_objindex = 1 ;
 static nd_mutex _g_handle_lock ;
 static ndatomic_t _g_handle_num ;
 
@@ -387,7 +387,7 @@ int nd_unreg_handle(nd_handle hobj)
 	nd_mutex_unlock(&_g_handle_lock) ;
 
 	rb_init_node(&handle->__self_rbnode);
-	nd_atomic_set(&handle->__objid,0) ;
+	handle->__objid = 0 ;
 	
 	_tryto_deinit_handle_mgr() ;
 	return 0;

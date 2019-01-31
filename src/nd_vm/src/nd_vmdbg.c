@@ -172,7 +172,7 @@ vm_value * get_mm(vm_adddress index,struct vm_cpu*vcpu)
 	return &(__memory[index] );
 }
 
-void vm_start_debug() 
+void vm_start_debug(void)
 {
 	vm_machine_init(&__dbg_vm, 0, 0) ;
 	vm_set_mmfunc(&__dbg_vm,get_mm, VM_DFT_MMSIZE);
@@ -221,7 +221,7 @@ void run_debuger(struct vm_cpu *vm)
 	
 }
 
-void vm_end_debug()
+void vm_end_debug(void)
 {
 	exit(0) ;
 }

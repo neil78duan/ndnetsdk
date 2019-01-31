@@ -178,7 +178,7 @@ unsigned char *quantum;
 unsigned int quantumLen;                                       /* 1, 2 or 3 */
 {
   UINT4 temp;
-  unsigned int a, b, c, d;
+  unsigned int a=0, b=0, c=0, d=0;
 
   temp = ((UINT4)quantum[0]) << 16;
   if (quantumLen >= 2)
@@ -216,7 +216,7 @@ unsigned int *quantumLen;                                      /* 1, 2 or 3 */
 unsigned char encodedQuantum[4];
 {
   UINT4 temp;
-  unsigned int a, b, c, d;
+  unsigned int a=0, b=0, c=0, d=0;
   
   if (! IS_ENCODING (encodedQuantum[0]) ||
       ! IS_ENCODING (encodedQuantum[1]) ||

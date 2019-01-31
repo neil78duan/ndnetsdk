@@ -470,14 +470,14 @@ static void Pack (into, outof)
 UINT4 *into;
 unsigned char *outof;
 {
-  *into    = (*outof++ & 0xffL) << 24;
-  *into   |= (*outof++ & 0xffL) << 16;
-  *into   |= (*outof++ & 0xffL) << 8;
-  *into++ |= (*outof++ & 0xffL);
-  *into    = (*outof++ & 0xffL) << 24;
-  *into   |= (*outof++ & 0xffL) << 16;
-  *into   |= (*outof++ & 0xffL) << 8;
-  *into   |= (*outof   & 0xffL);
+  *into    = (*outof++ & (UINT4)0xff) << 24;
+  *into   |= (*outof++ & (UINT4)0xff) << 16;
+  *into   |= (*outof++ & (UINT4)0xff) << 8;
+  *into++ |= (*outof++ & (UINT4)0xff);
+  *into    = (*outof++ & (UINT4)0xff) << 24;
+  *into   |= (*outof++ & (UINT4)0xff) << 16;
+  *into   |= (*outof++ & (UINT4)0xff) << 8;
+  *into   |= (*outof   & (UINT4)0xff);
 }
 
 static void Unpack (into, outof)
@@ -557,14 +557,14 @@ int encrypt;
 
   for (i = 0; i < 16; i++, raw1++) {
     raw0 = raw1++;
-    *cooked    = (*raw0 & 0x00fc0000L) << 6;
-    *cooked   |= (*raw0 & 0x00000fc0L) << 10;
-    *cooked   |= (*raw1 & 0x00fc0000L) >> 10;
-    *cooked++ |= (*raw1 & 0x00000fc0L) >> 6;
-    *cooked    = (*raw0 & 0x0003f000L) << 12;
-    *cooked   |= (*raw0 & 0x0000003fL) << 16;
-    *cooked   |= (*raw1 & 0x0003f000L) >> 4;
-    *cooked   |= (*raw1 & 0x0000003fL);
+    *cooked    = (*raw0 & (UINT4)0x00fc0000) << 6;
+    *cooked   |= (*raw0 & (UINT4)0x00000fc0) << 10;
+    *cooked   |= (*raw1 & (UINT4)0x00fc0000) >> 10;
+    *cooked++ |= (*raw1 & (UINT4)0x00000fc0) >> 6;
+    *cooked    = (*raw0 & (UINT4)0x0003f000) << 12;
+    *cooked   |= (*raw0 & (UINT4)0x0000003f) << 16;
+    *cooked   |= (*raw1 & (UINT4)0x0003f000) >> 4;
+    *cooked   |= (*raw1 & (UINT4)0x0000003f);
     cooked += increment;
   }
 }

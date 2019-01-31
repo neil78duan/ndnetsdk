@@ -23,7 +23,7 @@
 			v[2]    64-bit plaintext block
    Output values:	v[2]    64-bit ciphertext block 
  **********************************************************/
-void tean(TEAint32 *k, TEAint32 *v, long N) 
+void tean(TEAint32 *k, TEAint32 *v, int N)
 {
 	register TEAint32 y=v[0], z=v[1];
 	register TEAint32 limit,sum=0;
@@ -111,15 +111,15 @@ int tea_key(tea_k *k)
 	tea_init_rnd() ;
 	
 	gettimeofday(&tv, NULL);
-	np[0] = lrand48() ^ tv.tv_usec ;
+	np[0] =(int) lrand48() ^ tv.tv_usec ;
 	
 	gettimeofday(&tv, NULL);
-	np[2] = lrand48() & tv.tv_usec ;
+	np[2] =(int) lrand48() & tv.tv_usec ;
 	
-	np[1] = (lrand48() * tv.tv_sec) | tv.tv_usec;
+	np[1] = (int)(lrand48() * tv.tv_sec) | tv.tv_usec;
 	
 	gettimeofday(&tv, NULL);
-	np[3] = (lrand48() * tv.tv_usec) & tv.tv_sec ;
+	np[3] =(int) (lrand48() * tv.tv_usec) & tv.tv_sec ;
 	return 0 ;
 }
 #endif 

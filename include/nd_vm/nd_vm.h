@@ -234,8 +234,8 @@ ND_VM_API size_t vm_parse_expression(const char *textbuf, char *code_buf,size_t 
 ND_VM_API size_t _filesize(FILE *stream);
 
 //ต๗สิ
-ND_VM_API void vm_start_debug() ;
-ND_VM_API void vm_end_debug() ;
+ND_VM_API void vm_start_debug(void) ;
+ND_VM_API void vm_end_debug(void) ;
 
 #endif
 

@@ -8,6 +8,7 @@
 //#define ND_IMPLEMENT_HANDLE
 
 #include "nd_common/nd_common.h"
+#include "nd_common/nd_static_alloc.h"
 
 /*
  * node manager-alloctor

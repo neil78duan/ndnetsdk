@@ -8,6 +8,9 @@
 #define _ND_SRV_H_
 
 #include "nd_net/nd_sock.h"
+#include "nd_common/nd_static_alloc.h"
+#include "nd_common/nd_node_mgr.h"
+
 //#include "nd_common/nd_common.h"
 
 //#define TCP_SERVER_TYPE ('t'<<8 | 's' )		//tcp session hander type 

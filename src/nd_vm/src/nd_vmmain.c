@@ -13,8 +13,8 @@
 
 //#pragma comment(lib, "nd_vmlib.lib")
 
-extern void vm_start_debug() ;
-extern void vm_end_debug() ;
+extern void vm_start_debug(void) ;
+extern void vm_end_debug(void) ;
 
 #define NDVM_BIN_HDR 0x4e44564d 
 //ÎÄ¼þÍ·

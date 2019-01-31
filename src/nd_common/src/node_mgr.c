@@ -7,6 +7,9 @@
 
 #include "nd_common/nd_common.h"
 
+#include "nd_common/nd_static_alloc.h"
+#include "nd_common/nd_node_mgr.h"
+
 //////////////////////////////////////////////////////////////////////////
 // define session nodes manager
 static void _nd_node_init(void *socket_node, nd_handle h);

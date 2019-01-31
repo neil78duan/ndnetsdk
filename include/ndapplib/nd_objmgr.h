@@ -11,6 +11,7 @@
 
 //#include "nd_common/nd_common.h"
 #include "ndapplib/nd_object.h"
+#include "nd_common/nd_node_mgr.h"
 
 //INSTANCE ID / objectID CLASSID
 typedef NDUINT16 OBJECTID_T;

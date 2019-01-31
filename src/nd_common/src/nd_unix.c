@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #include <dlfcn.h>
 
-const char *nd_get_sys_username()
+const char *nd_get_sys_username(void)
 {
 	struct passwd *pwd = getpwuid(getuid());
 	if(pwd){
@@ -535,7 +535,7 @@ size_t set_maxopen_fd(size_t max_fd)
     setrlimit(RLIMIT_NOFILE, &rt) ;    
     return  get_maxopen_fd() ;
 }
-size_t get_maxopen_fd()
+size_t get_maxopen_fd(void)
 {
 	struct rlimit rt={0};
 	if(0==getrlimit(RLIMIT_NOFILE, &rt) ) {
@@ -724,9 +724,9 @@ int nd_mem_share_close( nd_filemap_t *map_handle)
 	return close_filemap(map_handle) ;
 }
 
-int nd_getcpu_num() 
+int nd_getcpu_num(void) 
 {
-	return sysconf(_SC_NPROCESSORS_ONLN);
+	return (int)sysconf(_SC_NPROCESSORS_ONLN);
 }
 
 #ifndef __ND_ANDROID__

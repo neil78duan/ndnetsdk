@@ -135,10 +135,10 @@ int nd_time_week_index(time_t now, int tm_zone)
 		tm64 = 0;
 	}
 	tm64 /= 3600 * 24 * 7;
-	return tm64 ;
+	return (int)tm64 ;
 }
 
-int nd_time_zone()
+int nd_time_zone(void)
 {
 	time_t stamp = 12 * 3600;
 	struct  tm loca_tm = { 0 };
@@ -326,7 +326,7 @@ time_t  nd_time_from_str_ex(const char *pInput, int tm_zone, time_t* pOutTm)
 	return ret;
 }
 //get weekday for nowtime (1-7)
-int nd_time_weekday()
+int nd_time_weekday(void)
 {
 	time_t nowtm;
 	struct tm *gtm, tm1;

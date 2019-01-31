@@ -85,7 +85,7 @@ static int code_convert(const char *from_charset,const char *to_charset, char *i
 
 char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf)
 {
-	int inlen = ndstrlen(input_text) ;
+	int inlen =(int) ndstrlen(input_text) ;
 	int ret = code_convert("GBK","UTF-8",(char*)input_text,inlen,output_buf,size_buf);
 	if (0==ret) {
 		return output_buf ;
@@ -95,7 +95,7 @@ char * nd_gbk_to_utf8(const char *input_text, char *output_buf, int size_buf)
 
 char * nd_utf8_to_gbk(const char *input_text, char *output_buf, int size_buf)
 {
-	int inlen = ndstrlen(input_text) ;
+	int inlen = (int) ndstrlen(input_text) ;
 	int ret = code_convert("UTF-8","GBK",(char*)input_text,inlen,output_buf,size_buf);
 	if (0==ret) {
 		return output_buf ;

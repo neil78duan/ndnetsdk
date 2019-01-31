@@ -18,7 +18,7 @@ static int __s_common_init = 0 ;
 static ndtime_t __s_common_init_base_tick = 0;
 static time_t	__s_common_init_base_time = 0;
 
-const char *nd_process_name()
+const char *nd_process_name(void)
 {
 	static char s_proname[128] = {0};
 
@@ -63,7 +63,7 @@ ndbigtime_t	nd_bigtime(void)
 	return ret;
 }
 
-int nd_common_init()
+int nd_common_init(void)
 {
 	if (__s_common_init){
 		return 0 ;
@@ -104,7 +104,7 @@ void nd_common_release_ex(int force)
 	//nd_memory_destroy() ;
 	__s_common_init = 0;
 }
-int nd_common_isinit() 
+int nd_common_isinit(void) 
 {
 	return __s_common_init  ;
 }
@@ -185,7 +185,7 @@ const char *nd_error_desc(int in_err)
 
 
 static int _S_max_user_define_error_id = NDERR_USERDEFINE;
-int nd_error_get_user_number()
+int nd_error_get_user_number(void)
 {
 	return _S_max_user_define_error_id;
 }

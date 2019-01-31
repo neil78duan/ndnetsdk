@@ -41,15 +41,15 @@ ND_COMMON_API int nd_rmdir(const char *dir);
 #endif
 
 // get current working path
-ND_COMMON_API const char * nd_getcwd();
+ND_COMMON_API const char * nd_getcwd(void);
 //change working path
 ND_COMMON_API int nd_chdir(const char *dir);
 //get init start path
-ND_COMMON_API const char * nd_get_init_dir();
+ND_COMMON_API const char * nd_get_init_dir(void);
 //copy file
 ND_COMMON_API int nd_cpfile(const char *oldfile,const  char *newfile);
 //get system path
-ND_COMMON_API const  char* nd_getsysdir();
+ND_COMMON_API const  char* nd_getsysdir(void);
 
 ND_COMMON_API int nd_existfile(const char *pachfilename);
 //create file

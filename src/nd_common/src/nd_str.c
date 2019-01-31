@@ -323,7 +323,7 @@ int ndstr_parse_variant_n(const char *src, char *outstr, int n)
 		}
 	}
 	*outstr = 0;
-	return src - p;
+	return (int)(src - p);
 }
 
 

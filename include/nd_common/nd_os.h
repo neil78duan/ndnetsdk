@@ -41,7 +41,7 @@
 	typedef pthread_t 		ndthread_t;		//
 	#define  nd_thread_equal	pthread_equal
 	ND_COMMON_API size_t set_maxopen_fd(size_t max_fd) ;
-	ND_COMMON_API size_t get_maxopen_fd();
+	ND_COMMON_API size_t get_maxopen_fd(void);
 	#define nd_close_handle(h)	(void)0
 	ND_COMMON_API int enable_core_dump(void);
 	ND_COMMON_API char* get_rlimit_info(char *buf, int buf_size) ;
@@ -69,11 +69,11 @@ ND_COMMON_API int nd_waitthread(ndth_handle handle) ;
 
 ND_COMMON_API int nd_terminal_thread(ndth_handle handle,int exit_code);
 
-ND_COMMON_API int nd_getcpu_num() ;
+ND_COMMON_API int nd_getcpu_num(void) ;
 
 ND_COMMON_API int nd_get_sys_callstack(char *buf, size_t size) ;
 
-ND_COMMON_API const char *nd_get_sys_username() ;//get system user name
+ND_COMMON_API const char *nd_get_sys_username(void) ;//get system user name
 
 ND_COMMON_API HINSTANCE nd_dll_load(const char *dllpath);
 ND_COMMON_API void nd_dll_unload(HINSTANCE hdll);
@@ -143,7 +143,7 @@ typedef struct ndfast_lock
 #define nd_funlock(l) nd_atomic_swap(&((l)->locked),0)
 #define nd_flock_init(l) nd_atomic_set(&((l)->locked),0) ;
 
-static  __INLINE__ int nd_key_esc() 
+static  __INLINE__ int nd_key_esc(void)
 {
 	if(kbhit()) {
 		if(ND_ESC==getch())

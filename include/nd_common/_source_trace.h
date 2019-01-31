@@ -14,10 +14,10 @@
 
 #ifdef ND_SOURCE_TRACE 
 
-ND_COMMON_API int nd_sourcelog_init();
+ND_COMMON_API int nd_sourcelog_init(void);
 ND_COMMON_API int _source_log(void *p, const char *operate, const char *msg, const char *file, int line);
 ND_COMMON_API int _source_release(void *source);
-CPPAPI void nd_sourcelog_dump();
+CPPAPI void nd_sourcelog_dump(void);
 #define nd_sourcelog(source, operatename,msg) _source_log(source,operatename,msg,__FILE__,__LINE__)
 #define nd_source_release(source) 	_source_release(source) 
 //define file open
@@ -44,9 +44,9 @@ static __INLINE__  int _source_release(void *source) { return 0; }
 
 //function call stack trace
 ND_COMMON_API int nd_callstack_init(const char *filename);
-ND_COMMON_API int nd_callstack_end();
+ND_COMMON_API int nd_callstack_end(void);
 ND_COMMON_API int nd_callstack_monitor_init(const char *filename);
-ND_COMMON_API int nd_callstack_monitor_end();
+ND_COMMON_API int nd_callstack_monitor_end(void);
 ND_COMMON_API int push_func(const char *funcname);
 ND_COMMON_API void pop_func(const char *funcname);
 ND_COMMON_API char *nd_get_callstack_desc(char *buf, size_t size);
