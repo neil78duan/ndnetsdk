@@ -31,7 +31,7 @@
 
 #include "nd_common/nd_mempool.h"
 
-#include "nd_common/nd_timer.h"
+//#include "nd_common/nd_timer.h"
 
 #include "nd_common/nd_recbuf.h"
 

@@ -6,6 +6,7 @@
  */
 
 #include "nd_common/nd_common.h"
+#include "nd_common/nd_timer.h"
 
 #define DELBUF_SIZE 16
 struct nd_timer_root
