@@ -48,6 +48,46 @@ class NDListener ;
 class NDConnector;
 class NDSafeListener;
 
+extern int create_stl_allocator();
+extern  void destroy_stl_allocator();
+
+template< class T>
+class NDAppInstantHelper
+{
+public:
+	typedef T inst_type;
+	NDAppInstantHelper()
+	{
+		nd_common_init();
+		nd_net_init();
+		nd_srvcore_init();
+
+		_init_pool_for_new();
+		create_stl_allocator();
+		nd_log_screen("init common lib end\n");
+
+		__inst = new T();
+	}
+
+	~NDAppInstantHelper()
+	{
+		delete __inst;
+		nd_srvcore_destroy();
+		nd_net_destroy();
+
+		destroy_stl_allocator();
+		_destroy_pool_for_new();
+		nd_common_release_ex(1);
+		nd_log_screen("RELEASE common lib end\n");
+	}
+
+	T* getInstant() {
+		return __inst;
+	}
+protected:
+	inst_type *__inst;
+};
+
 class  ND_COMMON_CLASS NDInstanceBase : public NDAlarm
 {
 public :
