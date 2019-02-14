@@ -109,6 +109,7 @@ typedef struct nd_mm_pool
 	unsigned int alloc_granularity:16;					//sub allocator granularity  *64k
 	unsigned int free_allocator_num:8 ;					// free-allocator numbers	
 	unsigned int in_used:1 ;							//state is in used 
+	unsigned int permament : 1;							//it would be release untill all memeory in this pool is dealloc
 //#endif
 	memdestruct_entry destruct_func ;					//destruct function when memory free
 	struct list_head self_list;							//list node 
@@ -126,11 +127,12 @@ typedef struct nd_mm_pool
 
 struct pool_root_allocator{
 	int init ;
+	int is_destroied;
 	nd_mutex lock ;										//lock
 	size_t free_size ;
 	struct list_head inuser_list;						//active memory pool
 } ;
-nd_mmpool_t *s_common_mmpool ;						// default global memory pool
+nd_mmpool_t *s_common_mmpool = NULL;						// default global memory pool
 static struct pool_root_allocator  __mem_root ;		//root of pools system
 
 #ifdef ND_MEM_STATICS
@@ -147,7 +149,7 @@ void remove_statics(nd_mmpool_t *pool) ;
 
 nd_mmpool_t *nd_global_mmpool(void)
 {
-	if (!__mem_root.init){
+	if (!s_common_mmpool){
 		nd_mempool_root_init() ;
 	}
     
@@ -170,6 +172,17 @@ static void *_get_user_addr(nd_mmpool_t *pool, void *p) ;
 struct alloc_node *_user_addr_2sys( void *useraddr, size_t *user_len, size_t *alloc_len) ;
 static size_t __get_real_size(struct alloc_node *alloc_addr) ;
 static size_t __get_need_size(size_t user_size);
+
+static __INLINE__ struct alloc_node * __user_addr_2allocated(void *addr)
+{
+	return  (((struct alloc_node *)addr) - 1);
+}
+
+static __INLINE__ void* __allocated_2user_addr(struct alloc_node *alloc_addr)
+{
+	return (void*)(alloc_addr->data);
+}
+
 
 #ifdef ND_DEBUG
 static __INLINE__ void freeFillMem(void *p, size_t size)
@@ -295,9 +308,9 @@ int nd_mempool_root_init(void)
     //nd_logdebug("nd_mempool_root_init : page size = %d getgranularity=%d \n", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
     
 	INIT_LIST_HEAD(&__mem_root.inuser_list) ;
-	//INIT_LIST_HEAD(&__mem_root.free_page);
 	nd_mutex_init(&__mem_root.lock) ;
 	__mem_root.init = 1 ;
+	__mem_root.is_destroied = 0;
 
 	s_common_mmpool = nd_pool_create(EMEMPOOL_UNLIMIT,"nd_global_pool") ;
 	nd_assert(s_common_mmpool) ;
@@ -309,7 +322,13 @@ int nd_mempool_root_init(void)
 		return -1 ;
 	}
 	nd_pool_set_trace(s_common_mmpool,1) ;
+	s_common_mmpool->permament = 1;
 	return 0 ;
+}
+
+void nd_pool_set_parmament(nd_mmpool_t *pool)
+{
+	pool->permament = 1;
 }
 
 void nd_mempool_root_release(void)
@@ -320,18 +339,22 @@ void nd_mempool_root_release(void)
 		return ;
 	}
 	if (s_common_mmpool) {
-		nd_pool_destroy(s_common_mmpool,1);
-		s_common_mmpool = NULL;
+		if (_tryto_desctroy(s_common_mmpool)) {
+			s_common_mmpool = NULL;
+		}
 	}
 
 	list_for_each_safe(pos,next,&__mem_root.inuser_list) {
 		pool = list_entry(pos,struct nd_mm_pool, self_list ) ;
 		list_del_init(&pool->self_list);
-		nd_pool_destroy(pool,0) ;
+		_tryto_desctroy(pool);
+		//nd_pool_destroy(pool,0) ;
 	}
 
 	nd_mutex_destroy(&__mem_root.lock) ;
 	__mem_root.init = 0 ;
+
+	__mem_root.is_destroied = 1;
 }
 
 static __INLINE__ void __adjust_freeaddr(nd_sub_allocator *sub_allocator)
@@ -484,6 +507,13 @@ nd_handle nd_pool_create(size_t maxsize ,const char *name )
 	return pool ;
 }
 
+int _tryto_desctroy(nd_mmpool_t *pool)
+{
+	if (pool->permament == 0) {
+		return nd_pool_destroy(pool, 0);
+	}
+	return -1;
+}
 int nd_pool_destroy(nd_mmpool_t *pool, int flag)
 {
 	allocheader_t size ;
@@ -962,7 +992,8 @@ void _pool_free_real(/*nd_mmpool_t *pool ,*/void *addr)
 		return ;
 	}
 
-	free_addr = ((struct alloc_node *)addr ) -1 ;
+	//free_addr = ((struct alloc_node *)addr ) -1 ;
+	free_addr = __user_addr_2allocated(addr);
 
 	if (free_addr->size & 2){
 		size_t size = free_addr->size & ~3;

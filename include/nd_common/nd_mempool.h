@@ -39,10 +39,12 @@ ND_COMMON_API void nd_mempool_root_release(void);
 //alloc / free functions 
 ND_COMMON_API nd_handle nd_pool_create(size_t size,const char *name ) ;	//on error return NULL
 ND_COMMON_API int nd_pool_destroy(nd_handle pool, int flag);		//
+
 ND_COMMON_API void *nd_pool_alloc_real(nd_handle pool , size_t size);	//alloc
 ND_COMMON_API void nd_pool_free_real(nd_handle pool ,void *addr) ;		//free
 ND_COMMON_API void nd_pool_reset(nd_handle pool) ;					//reset a memory pool
 ND_COMMON_API void nd_pool_set_trace(nd_handle pool, int flag) ;					//reset a memory pool
+ND_COMMON_API void nd_pool_set_parmament(nd_handle pool);
 
 ND_COMMON_API size_t nd_pool_freespace(nd_handle pool) ;	//get free space 
 ND_COMMON_API void nd_pool_destruct_entry(nd_handle pool , memdestruct_entry func) ;
@@ -105,6 +107,8 @@ ND_COMMON_API  void *nd_pool_alloc_real(nd_handle pool , size_t size);
 ND_COMMON_API void nd_pool_free_real(nd_handle pool ,void *addr) ;
 
 ND_COMMON_API void nd_pool_reset(nd_handle pool) ;
+
+static __INLINE__   void nd_pool_set_parmament(nd_handle pool) {}
 static __INLINE__  void nd_pool_set_trace(nd_handle pool, int flag)
 {
 
