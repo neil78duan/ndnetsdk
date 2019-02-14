@@ -32,52 +32,50 @@ static int applib_exit_callback(int flag) ;
 int instance_tick_entry(void *param) ;
 static NDInstanceBase *g_base_inst = NULL ;
 
-
-class NDStaticInitHelper{
-public:
-	NDStaticInitHelper() 
-	{
-		nd_common_init() ;
-		nd_net_init() ;
-		nd_srvcore_init() ;
-
-		//_init_pool_for_new() ;
-		//create_stl_allocator() ;
-		nd_log_screen("init common lib end\n") ;
-		isInited = true;
-	}
-
-	~NDStaticInitHelper()
-	{
-		nd_srvcore_destroy() ;
-		nd_net_destroy() ;
-
-		//destroy_stl_allocator() ;
-		//_destroy_pool_for_new() ;
-		nd_common_release_ex(1) ;
-		nd_log_screen("RELEASE common lib end\n") ;
-		isInited = false;
-	}
-private:
-	bool isInited;
-};
-
-#ifdef _MSC_VER
-#pragma data_seg(push, stack_nd, ".CRT$XIA")
-#define __initdata__ 
-#elif defined(__ND_LINUX__)
-#define __initdata__ __attribute__ (( section(".init.data")))
-#else
-#define __initdata__
-#endif
-
-__initdata__ NDStaticInitHelper _g_static_init_helper ;
-
-
-#ifdef _MSC_VER
-#pragma data_seg(pop, stack_nd)
-#endif
-
+// 
+// class NDStaticInitHelper{
+// public:
+// 	NDStaticInitHelper() 
+// 	{
+// 		nd_common_init() ;
+// 		nd_net_init() ;
+// 		nd_srvcore_init() ;
+// 
+// 		//_init_pool_for_new() ;
+// 		//create_stl_allocator() ;
+// 		nd_log_screen("init common lib end\n") ;
+// 		isInited = true;
+// 	}
+// 
+// 	~NDStaticInitHelper()
+// 	{
+// 		nd_srvcore_destroy() ;
+// 		nd_net_destroy() ;
+// 
+// 		//destroy_stl_allocator() ;
+// 		//_destroy_pool_for_new() ;
+// 		nd_common_release_ex(1) ;
+// 		nd_log_screen("RELEASE common lib end\n") ;
+// 		isInited = false;
+// 	}
+// private:
+// 	bool isInited;
+// };
+// 
+// #ifdef _MSC_VER
+// #pragma data_seg(push, stack_nd, ".CRT$XIA")
+// #define __initdata__ 
+// #elif defined(__ND_LINUX__)
+// #define __initdata__ __attribute__ (( section(".init.data")))
+// #else
+// #define __initdata__
+// #endif
+//
+//__initdata__ NDStaticInitHelper _g_static_init_helper ;
+// 
+// #ifdef _MSC_VER
+// #pragma data_seg(pop, stack_nd)
+// #end
 
 extern const char * __g_version_desc ;
 extern int __g_version_id ; 
@@ -383,14 +381,14 @@ const char *NDInstanceBase::GetVersionDesc()
 
 void NDInstanceBase::StartStaticsMem2()
 {
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	GetProcessMemoryInfo(GetCurrentProcess(), &m_Stat, sizeof(m_Stat));
 #endif
 }
 
 void NDInstanceBase::EndStaticsMem2()
 {
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	_PROCESS_MEMORY_COUNTERS   Stat; 
 
 	GetProcessMemoryInfo(GetCurrentProcess(), &Stat, sizeof(Stat));
@@ -411,7 +409,7 @@ void NDInstanceBase::EndStaticsMem()
 {
 	VLDReportLeaks();
 }
-#elif !defined(ND_UNIX) 
+#elif defined(_MSC_VER) 
 void NDInstanceBase::StartStaticsMem() 
 {
 	_CrtMemDumpAllObjectsSince( NULL );

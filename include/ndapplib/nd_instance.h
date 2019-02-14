@@ -51,7 +51,7 @@ class NDSafeListener;
 extern int create_stl_allocator();
 extern  void destroy_stl_allocator();
 
-/*
+
 
 template< class T>
 class NDAppInstanCreator
@@ -64,9 +64,7 @@ public:
 		nd_net_init();
 		nd_srvcore_init();
 
-		//_init_pool_for_new();
-		//create_stl_allocator();
-		nd_log_screen("init common lib end\n");
+		nd_logmsg("init common lib end\n");
 
 		__inst = new T();
 	}
@@ -77,10 +75,8 @@ public:
 		nd_srvcore_destroy();
 		nd_net_destroy();
 
-		//destroy_stl_allocator();
-		//_destroy_pool_for_new();
 		nd_common_release_ex(1);
-		nd_log_screen("RELEASE common lib end\n");
+		nd_logmsg("RELEASE common lib end\n");
 	}
 
 	T* getInstant() {
@@ -89,7 +85,7 @@ public:
 protected:
 	inst_type *__inst;
 };
-*/
+
 
 
 class  ND_COMMON_CLASS NDInstanceBase : public NDAlarm
@@ -154,10 +150,8 @@ public:
 	void StartStaticsMem2();
 	void EndStaticsMem2();
 
-#ifdef _WIN32
-	_PROCESS_MEMORY_COUNTERS   m_Stat; 
-#endif
-#ifndef ND_UNIX
+#ifdef _MSC_VER
+	_PROCESS_MEMORY_COUNTERS   m_Stat;
 #ifdef ND_DEBUG
 	_CrtMemState m_s1;
 #endif
