@@ -12,8 +12,8 @@
 #define _ND_NETIOCTL_H_
 
 //command of 
-// 主要给 int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size) 使用
-// 每个命令参数 val和size意义不一样, 一般用法如下
+// define fro function int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size) 
+// usage:
 /*
 	NDUINT32 val = 1024*1024;
 	int size = sizeof(val) ;
