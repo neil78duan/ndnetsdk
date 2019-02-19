@@ -18,7 +18,7 @@
 #include <stdio.h>
 //#include "nd_common/nd_common.h"
 
-//版本2 把 typedef NDUINT16	ndmsgid_t  该成 typedef NDUINT8	ndmsgid_t 
+//version 2
 #define NDNETMSG_VERSION		2
 
 #define ND_PACKET_SIZE 0x10000
@@ -26,7 +26,7 @@
 #pragma pack(push)
 #pragma pack(1)
 
-/*定义消息包头部*/
+/* package header struct define */
 typedef struct packet_hdr
 {
 	NDUINT16	length ;				/*length of packet*/

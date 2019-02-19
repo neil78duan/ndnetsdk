@@ -95,7 +95,7 @@ public :
 	int CreateEx(int argc, ...);
 	void Destroy(int flag) ;
 	virtual int Close(int flag=0) ;
-	virtual int Open(int session_size) ;
+	virtual int Open(int session_size=0) ;
 
     int WaitServer();
 	
@@ -130,6 +130,7 @@ protected :
 	virtual NDListener*ConstructListener() ;
 	virtual void DestructListener() ;
 	virtual void OnListenerCreate() {} ;
+	virtual size_t getSessionAllocSize() { return 0; }
 	
 	NDListener *pListen ;
 	
@@ -188,6 +189,8 @@ public:
 			delete pListen;	 pListen = 0 ;
 		} 
 	}
+
+	size_t getSessionAllocSize() { return sizeof(TSession); }
 	TListener* GetMyListener() {return (TListener*)pListen;}
 };
 

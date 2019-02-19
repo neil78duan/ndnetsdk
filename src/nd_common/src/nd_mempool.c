@@ -302,27 +302,24 @@ static void __sys_page_free(void *addr)
 
 int nd_mempool_root_init(void)
 {
-	if(	__mem_root.init )
-		return 0 ;
-    
-    //nd_logdebug("nd_mempool_root_init : page size = %d getgranularity=%d \n", SYS_PAGE_SIZE,DEFAULT_PAGE_SIZE);
-    
-	INIT_LIST_HEAD(&__mem_root.inuser_list) ;
-	nd_mutex_init(&__mem_root.lock) ;
-	__mem_root.init = 1 ;
-	__mem_root.is_destroied = 0;
-
-	s_common_mmpool = nd_pool_create(EMEMPOOL_UNLIMIT,"nd_global_pool") ;
-	nd_assert(s_common_mmpool) ;
-
-	if(!s_common_mmpool) {
-		nd_mutex_destroy(&__mem_root.lock) ;
-		__mem_root.init = 0 ;
-		nd_logerror("Init memory pool error \n") ;
-		return -1 ;
+	if (__mem_root.init==0) {
+		INIT_LIST_HEAD(&__mem_root.inuser_list);
+		nd_mutex_init(&__mem_root.lock);
+		__mem_root.init = 1;
+		__mem_root.is_destroied = 0;
 	}
-	nd_pool_set_trace(s_common_mmpool,1) ;
-	s_common_mmpool->permament = 1;
+
+	if (!s_common_mmpool) {
+		s_common_mmpool = nd_pool_create(EMEMPOOL_UNLIMIT, "nd_global_pool");
+		nd_assert(s_common_mmpool);
+		if (!s_common_mmpool) {
+			nd_logerror("Init memory pool error \n");
+		}
+		else {
+			nd_pool_set_trace(s_common_mmpool, 1);
+			s_common_mmpool->permament = 1;
+		}
+	}
 	return 0 ;
 }
 

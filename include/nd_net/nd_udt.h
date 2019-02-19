@@ -15,8 +15,8 @@
 #include "nd_net/nd_netobj.h"
 #include "nd_net/nd_netioctl.h"
 
-#define MAX_ATTEMPT_SEND	5 	//最大重传次数
-//#define LISTEN_BUF_SIZE		16	//一次最多可以有16个连接在等待建立连接
+#define MAX_ATTEMPT_SEND	5 	//tryto retranslate times 
+//#define LISTEN_BUF_SIZE		16	//listen number 
 
 //#define UDT_MAX_PACKET		32	//最多可以发送32个未被确认的封包
 
