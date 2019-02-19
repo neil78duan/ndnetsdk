@@ -241,6 +241,8 @@ int NDListener::Create(const char *listen_name, int session_num, size_t session_
 
 	((struct listen_contex *)m_objhandle)->user_data = this ;
 	m_session_mgr.SetMgr(nd_listensrv_get_cmmamager(listen_handle));
+	
+	nd_logmsg("Create %s listen object success %d sessions in buffer list \n", listen_name, session_num);
 	return 0 ;
 }
 

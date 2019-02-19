@@ -104,6 +104,7 @@ int nd_net_bind(int isipv6, int port, int listen_nums,nd_handle net_handle)
 	node->fd = fd ;
 	node->port = htons(port) ;
 	node->status = 1 ;
+	nd_logmsg("Bind socket success PORT = %d\n", port);
 	return 0 ;
 
 }

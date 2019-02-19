@@ -244,6 +244,9 @@ int NDInstanceBase::Open(int session_size )
 {
 	ND_TRACE_FUNC() ;
 	size_t size = session_size ;
+	if (session_size == 0) {
+		size = getSessionAllocSize();
+	}
 	if (pListen){
 		Close(1) ;
 	}
