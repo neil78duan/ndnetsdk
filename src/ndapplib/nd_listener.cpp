@@ -77,11 +77,9 @@ static int on_accept_entry(nd_handle nethandle, SOCKADDR_IN *addr, nd_handle h_l
 	NDListener *pListener ;
 	NDBaseSession *newSession = NULL;
 	char buf[64] ;
-	//char  *pszTemp = ND_INET_NTOA( addr->sin_addr.s_addr ,buf);
 	const char  *pszTemp= inet_ntop(addr->sin_family, &addr->sin_addr, buf, sizeof(buf));
 
 	pListener =NDGetListener( h_listen)  ;
-	//pListener =(NDListener *) (((struct listen_contex *)h_listen)->user_data)  ;
 
 	int old_num ;
 	((nd_netui_handle )nethandle)->level = EPL_CONNECT ;		//set privilage
@@ -105,7 +103,7 @@ static int on_accept_entry(nd_handle nethandle, SOCKADDR_IN *addr, nd_handle h_l
 		pListener->m_max_onlines = __current_num ;
 	}
 
-	nd_logmsg(("Connect from [%s:%d]\t connection_num=%d free=%d active=%d\n") AND
+	nd_logdebug(("Connect from [%s:%d]\t connection_num=%d free=%d active=%d\n") AND
 		pszTemp AND htons(addr->sin_port) AND __current_num AND
 		pListener->GetAllocatorFreenum() AND cm_iterator.GetActiveNum() );
 	
@@ -133,7 +131,7 @@ static  void on_close_entry(nd_handle nethandle, nd_handle h_listen)
 	newSession->OnClose() ;
 
 	//nd_assert(NDERR_WOULD_BLOCK != nd_object_lasterror(nethandle));
-	nd_logmsg(("net CLOSED error =%s\tconnect_num=%d free=%d active=%d \n") AND 
+	nd_logdebug(("net CLOSED error =%s\tconnect_num=%d free=%d active=%d \n") AND 
 		nd_object_errordesc((nd_handle)nethandle) AND  __current_num AND 
 		pListener->GetAllocatorFreenum() AND cm_iterator.GetActiveNum()-1 );
 	
