@@ -72,6 +72,7 @@ typedef size_t(*net_get_packet_size)(nd_handle  handle, void *data);
 	NDUINT8 	save_recv_stream:1;\
 	NDUINT8 	user_def_data_hook:1;\
 	NDUINT8 	is_ipv6:1;\
+	NDUINT8 	without_alive:1;\
 	NDUINT16	session_id;		\
 	ndtime_t	start_time ;	\
 	ndtime_t	last_recv ;		\
@@ -192,4 +193,14 @@ static __INLINE__ void nd_netobj_set_ipv6(nd_netui_handle net_handle)
 {
 	net_handle->is_ipv6 = 1;
 }
+
+static __INLINE__ void nd_netobj_close_keep_alive(nd_netui_handle net_handle)
+{
+	net_handle->without_alive = 1;
+}
+static __INLINE__ int nd_netobj_is_alive(nd_netui_handle net_handle)
+{
+	return net_handle->without_alive==0;
+}
+
 #endif

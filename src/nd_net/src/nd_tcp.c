@@ -30,6 +30,7 @@ int _socket_send(struct nd_tcp_node *node,void *data , size_t len)
 	ENTER_FUNC()
 	int ret ;
 	ret = (int) send(node->fd, data, len, 0) ;
+	//ndfprintf(stderr,"!!!!!----- send data %d, return length =%d\n", len, ret);
 	if(ret > 0) {
 		node->send_len += ret ; 
 		node->last_push = nd_time() ;
@@ -286,7 +287,7 @@ static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datale
 	return ret ;
 }
 
-//send api of tcp-node (fot nd protocol)
+//send api of tcp-node (not nd protocol)
 int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 {
 	size_t datalen = node->get_pack_size((nd_handle)node, msg_buf); 
@@ -576,6 +577,7 @@ int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node)
 		nd_assert(ret<= data_len) ;
 		ndlbuf_sub_data(pbuf,(size_t)ret) ;
 	}
+	
 	LEAVE_FUNC();
 	return ret ;
 }
