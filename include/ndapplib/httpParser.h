@@ -69,6 +69,8 @@ public:
 
 	static std::string URLcodeTotext(const char *urlCode);
 
+	static bool getFileRange(const char *range, size_t &offset, size_t &length, size_t fileSize);
+
 	typedef std::vector<httpHeaderNode>HttpHeader_t;
 	void setParseStepIndex(int stepIndex) { m_parseStat = stepIndex; }
 protected:
