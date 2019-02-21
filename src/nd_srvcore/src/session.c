@@ -165,18 +165,16 @@ int tryto_close_tcpsession(nd_session_handle nethandle, ndtime_t connect_tmout )
 
 int _tcp_session_update(nd_session_handle handle)
 {
-	int ret = 0 ;
-	ndtime_t now = nd_time() ;
-	
-	TCPNODE_TRY_CALLBACK_WRITE(handle) ;
-	if (now - handle->last_push > ND_ALIVE_TIMEOUT ){
-		nd_sysresv_pack_t alive ;
-		nd_make_alive_pack(&alive) ;
-// 		nd_packhdr_t pack_hdr = {ND_USERMSG_HDRLEN,NDNETMSG_VERSION,0,0,0} ;
-// 		pack_hdr.ndsys_msg = 1 ;
-		ret = nd_connector_send(handle, &alive.hdr, ESF_URGENCY) ;
+	int ret = 0;
+	if (nd_netobj_is_alive((nd_netui_handle)handle)) {
+		ndtime_t now = nd_time();
+		TCPNODE_TRY_CALLBACK_WRITE(handle);
+		if (now - handle->last_push > ND_ALIVE_TIMEOUT) {
+			nd_sysresv_pack_t alive;
+			nd_make_alive_pack(&alive);
+			ret = nd_connector_send(handle, &alive.hdr, ESF_URGENCY);
+		}
 	}
-	
 	return ret ;
 }
 

@@ -47,7 +47,7 @@ public:
 	int SetDelayClose();
 	int LoadBalance();
 
-	void baseUpdate();
+	virtual void baseUpdate();
 
 	int CryptPackage(nd_usermsgbuf_t *msgBuf);
 private:

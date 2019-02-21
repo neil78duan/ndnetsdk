@@ -233,6 +233,48 @@ std::string NDHttpParser::URLcodeTotext(const char *urlCode)
 	return strTemp;
 }
 
+
+bool NDHttpParser::getFileRange(const char *range, size_t &offset, size_t &length, size_t fileSize)
+{
+	ND_TRACE_FUNC();
+	const char *rangeData = ndstristr(range, "bytes=");
+	if (!rangeData) {
+		return false;
+	}
+	
+	char *p = (char*) rangeData + 6;
+	NDINT64 start = strtoll(p, &p, 10);
+	if (start < 0) {
+		length = (size_t)(-start);
+		offset = fileSize - length;
+		return true;
+	}
+	else {
+		offset = start;
+	}
+
+	size_t end = fileSize;
+
+	p =(char*) ndstrchr(p, '-');
+	if (p && *p == '-') {
+		++p;
+	}
+	else {
+		return false;
+	}
+
+	if (p && *p) {
+		end = (size_t)strtoll(p, &p, 10);
+		length = end - offset + 1;
+	}
+	else {
+		length = fileSize - offset;
+	}
+	
+
+	return true;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 NDHttpParser::NDHttpParser()

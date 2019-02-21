@@ -25,14 +25,67 @@ int nd_get_wait_writablity_time()
 {
 	return __wait_writablity ;
 }
-int _socket_send(struct nd_tcp_node *node,void *data , size_t len)
+
+//connect remote host
+int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node *node, struct nd_proxy_info *proxy)
+{
+	ENTER_FUNC()
+		nd_assert(node);
+	nd_assert(host);
+
+	node->sys_error = 0;
+	node->last_push = nd_time();
+	ndlbuf_reset(&(node->recv_buffer));		/* buffer store data recv from net */
+	ndlbuf_reset(&(node->send_buffer));		/* buffer store data send from net */
+
+	if (proxy && proxy->proxy_type != ND_PROXY_NOPROXY) {
+		node->fd = nd_proxy_connect(host, port, &(node->remote_addr), proxy, 0);
+	}
+	else {
+		node->fd = nd_socket_tcp_connect(host, (short)port, &(node->remote_addr));
+	}
+
+	if (node->fd <= 0) {
+		node->myerrno = NDERR_OPENFILE;
+		LEAVE_FUNC();
+		return -1;
+	}
+	TCPNODE_SET_OK(node);
+	nd_socket_nonblock(node->fd, 1);
+	_set_ndtcp_conn_dft_option(node->fd);
+	node->start_time = nd_time();
+	if (node->remote_addr.sin_family == AF_INET6) {
+		node->is_ipv6 = 1;
+	}
+	LEAVE_FUNC();
+	return 0;
+}
+
+int nd_tcpnode_close(struct nd_tcp_node *node, int force)
+{
+	ENTER_FUNC()
+		//nd_assert(0);
+		nd_assert(node);
+	node->status = ETS_DEAD;
+	if (node->fd == 0) {
+		LEAVE_FUNC();
+		return 0;
+	}
+	nd_socket_close(node->fd);
+	node->fd = 0;
+
+	LEAVE_FUNC();
+	return 0;
+}
+
+int _sys_socket_write(struct nd_tcp_node *node,void *data , size_t len)
 {
 	ENTER_FUNC()
 	int ret ;
 	ret = (int) send(node->fd, data, len, 0) ;
 	if(ret > 0) {
-		node->send_len += ret ; 
-		node->last_push = nd_time() ;
+		node->send_len += ret;
+		node->last_push = nd_time();
 	}
 	else if(-1==ret)  {
 		node->sys_error = nd_socket_last_error() ;
@@ -50,130 +103,9 @@ int _socket_send(struct nd_tcp_node *node,void *data , size_t len)
 	return ret ;
 };
 
-//send a completed package (using in ND protocol)
-int socket_send_one_msg(struct nd_tcp_node *node,void *data , size_t len)
-{
-	ENTER_FUNC()
-	int times = 0 ;
-	int ret ,send_ok = 0;
-	
-RE_SEND:
-	nd_assert(node);
-	nd_assert(node->sock_write) ;
-	if (times>3){
-		LEAVE_FUNC();
-		return 0 ;
-	}
-	times++ ;
-	ret = node->sock_write((nd_handle)node, data,len) ;
-	if(-1==ret ) {
-		if(node->sys_error==ESOCKETTIMEOUT && node->is_session){
-			int wait_ret = nd_socket_wait_writablity(node->fd,__wait_writablity);
-			if( wait_ret > 0)
-				goto RE_SEND ;
-			else if(wait_ret==0) {
-				LEAVE_FUNC();
-				return 0 ;
-			}
-			else { 
-				node->myerrno = NDERR_WRITE ;
-				TCPNODE_SET_RESET(node);
-				LEAVE_FUNC();
-				return -1;
-			}
-		}
-		else {
-			node->myerrno = NDERR_IO ;
-			TCPNODE_SET_RESET(node) ;
-			LEAVE_FUNC();
-			return -1 ;
-		}
-	}
-	else if(ret>0 && ret < len) {
-		int wait_ret = nd_socket_wait_writablity(node->fd,__wait_writablity);
-		if(wait_ret < 0 ){
-			node->sys_error = nd_socket_last_error() ;
-			if (node->sys_error == ESOCKETTIMEOUT) {
-				node->myerrno = NDERR_WOULD_BLOCK;
-			}
-			else {
-				TCPNODE_SET_RESET(node) ;
-				node->myerrno = NDERR_IO ;
-			}
-			LEAVE_FUNC();
-			return -1;
-		}
-		else if(0==wait_ret) {
-			LEAVE_FUNC();
-			return 0 ;
-		}
 
-		data = (char*)data + ret ;
-		len -= ret ;
-		send_ok += ret ;
-
-		node->last_push = nd_time() ;
-		goto RE_SEND ;
-	}
-	else {
-		send_ok += ret ;
-		LEAVE_FUNC();
-		return send_ok ;
-	}
-}
-//connect remote host
-int nd_tcpnode_connect(const char *host, int port, struct nd_tcp_node *node,struct nd_proxy_info *proxy)
-{
-	ENTER_FUNC()
-	nd_assert(node ) ;
-	nd_assert(host) ;
-
-	node->sys_error = 0;
-	node->last_push = nd_time();
-	ndlbuf_reset(&(node->recv_buffer));		/* buffer store data recv from net */
-	ndlbuf_reset(&(node->send_buffer));		/* buffer store data send from net */
-
-	if(proxy && proxy->proxy_type != ND_PROXY_NOPROXY ) {
-		node->fd = nd_proxy_connect(host, port, &(node->remote_addr), proxy,0)  ;
-	}
-	else {
-		node->fd = nd_socket_tcp_connect(host, (short)port,&(node->remote_addr)) ;
-	}
-
-	if(node->fd<=0){
-		node->myerrno = NDERR_OPENFILE;
-		LEAVE_FUNC();
-		return -1 ;
-	}
-	TCPNODE_SET_OK(node) ;
-	nd_socket_nonblock(node->fd,1);
-	_set_ndtcp_conn_dft_option(node->fd);	
-	node->start_time = nd_time() ;
-	if (node->remote_addr.sin_family == AF_INET6) {
-		node->is_ipv6 = 1;
-	}
-	LEAVE_FUNC();
-	return 0 ;
-}
-
-int nd_tcpnode_close(struct nd_tcp_node *node,int force)
-{
-	ENTER_FUNC()
-	//nd_assert(0);
-	nd_assert(node);
-	node->status = ETS_DEAD;
-	if(node->fd==0) {
-		LEAVE_FUNC();
-		return 0 ;
-	}
-	nd_socket_close(node->fd) ;
-	node->fd = 0 ;
-
-	LEAVE_FUNC();
-	return 0 ;
-}
 //send data ,and save the left data
-static int __tcpnode_send_and_save(struct nd_tcp_node *node, void *msg_buf, size_t datalen)
+static int __tcpnode_send_with_save(struct nd_tcp_node *node, void *msg_buf, size_t datalen)
 {
 	ENTER_FUNC() ;
 	int ret = node->sock_write((nd_handle)node,msg_buf,datalen) ;
@@ -206,87 +138,69 @@ static int __tcpnode_send_and_save(struct nd_tcp_node *node, void *msg_buf, size
 	return ret ;
 }
 
-static int __tcpnode_push_buf_send(struct nd_tcp_node *node, void *msg_buf, size_t datalen)
+static int __tcpnode_push_and_send(struct nd_tcp_node *node, void *msg_buf, size_t datalen, int is_write_all)
 {
 	ENTER_FUNC();
-	size_t space_len = 0 ;
 	signed int ret =0;
-	if( _tcpnode_push_sendbuf(node) ==-1 ){ //clear send buffer
-		LEAVE_FUNC();
-		return -1 ;
-	}
 	
-	space_len = ndlbuf_free_capacity(&(node->send_buffer));
-	if (space_len >= datalen || ndlbuf_is_auto_inc(&(node->send_buffer))) {
-		ret = ndlbuf_write(&(node->send_buffer), (void*)msg_buf, datalen, EBUF_SPECIFIED);
+	nd_netbuf_t *pbuf = &(node->send_buffer);
+	size_t length_in_buff = ndlbuf_datalen(pbuf);
+
+	if (length_in_buff) {
+		int flushlen = node->sock_write(node, ndlbuf_data(pbuf), length_in_buff);
+		if (flushlen > 0) {
+			nd_assert(flushlen <= length_in_buff);
+			ndlbuf_sub_data(pbuf, (size_t)flushlen);
+		}
+		length_in_buff = ndlbuf_datalen(pbuf);
+
+	}
+	if (length_in_buff == 0) {
+		ret = __tcpnode_send_with_save(node, msg_buf, datalen);
 	}
 	else {
-		if (ndlbuf_datalen(&(node->send_buffer)) == 0) {
-			ret = __tcpnode_send_and_save(node, msg_buf, datalen) ;
-		}
-		else {
+		size_t space_len = ndlbuf_free_capacity(pbuf);
+		if(is_write_all && space_len < datalen) {
 			node->myerrno = NDERR_WOULD_BLOCK;
 			ret = -1;
 		}
+		else {
+			ret = ndlbuf_write(pbuf, (void*)msg_buf, datalen, EBUF_SPECIFIED);
+		}
 	}
-	
 	LEAVE_FUNC();
 	return ret ;
 }
 
 //static int __tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
-static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datalen, int flag)
+static int __tcpnode_send(struct nd_tcp_node *node, void *msg_buf, size_t datalen, int flag, int is_write_all)
 {
 	ENTER_FUNC()
 	signed int ret =0;
 	nd_assert(node) ;
 	nd_assert(msg_buf) ;
 	
-	if(ndlbuf_datalen(&(node->send_buffer))>0) {
-		size_t space_len = ndlbuf_free_capacity(&(node->send_buffer)) ;
-		if(space_len >= datalen) {
-			ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
-		}
-		else {
-			if (flag & ESF_POST){
-				node->myerrno = NDERR_WOULD_BLOCK;
-				LEAVE_FUNC();
-				return 0 ;
-			}
-			ret = __tcpnode_push_buf_send(node, msg_buf, datalen) ;
-		}
-	}
-	else if(datalen>ALONE_SEND_SIZE) {
-		//data is too big , need to send right now ,not buffer
-		ret = __tcpnode_send_and_save(node,msg_buf, datalen) ;
+	if (ndlbuf_datalen(&(node->send_buffer)) ==0) {
+		//send buff is free
+		ret = __tcpnode_send_with_save(node, msg_buf, datalen);
 	}
 	else {
-		ret = ndlbuf_write(&(node->send_buffer),(void*)msg_buf,datalen,EBUF_SPECIFIED) ;
-	}
-
-	//try to flush send buffer
-	if (ret> 0 ) {
-		size_t data_len = ndlbuf_datalen(&(node->send_buffer)) ;
-		if ( flag & ESF_URGENCY || data_len > ALONE_SEND_SIZE){
-			int push_len ;
-			if (node->is_session) {
-				push_len =nd_tcpnode_tryto_flush_sendbuf(node) ;
-			}
-			else {
-				push_len = _tcpnode_push_sendbuf(node) ;
-			}
-			if (push_len == -1 && NDERR_WOULD_BLOCK != node->myerrno)	{
+		if (flag & ESF_POST) {
+			size_t space_len = ndlbuf_free_capacity(&(node->send_buffer));
+			if (datalen > space_len) {
+				node->myerrno = NDERR_WOULD_BLOCK;
 				LEAVE_FUNC();
-				return -1;
+				return 0;
 			}
 		}
+		ret = __tcpnode_push_and_send(node, msg_buf, datalen, is_write_all);
 	}
-	
+
 	LEAVE_FUNC();
 	return ret ;
 }
 
-//send api of tcp-node (fot nd protocol)
+//send api of tcp-node (send nd-protocol)
 int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 {
 	size_t datalen = node->get_pack_size((nd_handle)node, msg_buf); 
@@ -294,7 +208,7 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 	if (node->is_session){
 		int ret ;
 		flag  &= ~ESF_URGENCY ; //can not use
-		ret = __tcpnode_send(node, (void*)msg_buf,datalen, flag) ;
+		ret = __tcpnode_send(node, (void*)msg_buf,datalen, flag,1) ;
 		if (-1==ret){
 			node->myerrno = NDERR_WRITE ;
 			TCPNODE_SET_RESET(node);
@@ -304,68 +218,17 @@ int nd_tcpnode_send(struct nd_tcp_node *node, nd_packhdr_t *msg_buf,int flag)
 		return ret ;
 	}
 	else {
-		return __tcpnode_send(node, (void*)msg_buf, datalen, flag) ;
+		return __tcpnode_send(node, (void*)msg_buf, datalen, flag,1) ;
 	}
 }
 
 //send stream data (tcp data) 
 int nd_tcpnode_stream_send(struct nd_tcp_node *node, void*data, size_t len, int flag)
 {
-	return __tcpnode_send(node, (void*)data, len, flag);
-	/*
-	ENTER_FUNC()
-	int sendlen = 0;
-	int timeout_count = 0;
-	int ret ;
-	do {
-		node->myerrno = NDERR_SUCCESS;
-		ret = __tcpnode_send(node, (void*)data, len, flag);
-		if (ret <= 0) {
-			if (node->myerrno == NDERR_WOULD_BLOCK) {
-				++timeout_count;
-				if (timeout_count > 100) {
-					nd_logerror("send error : %s\n", nd_error_desc(node->myerrno)) ;
-					node->myerrno = NDERR_TIMEOUT;
-					LEAVE_FUNC();
-					return -1;
-				}
-				
-				if (-1 == nd_socket_wait_writablity(node->fd, 100)) {
-					node->myerrno = NDERR_WRITE;
-					nd_logerror("send error : %s\n", nd_error_desc(node->myerrno)) ;
-					LEAVE_FUNC();
-					return -1;
-				}
-			}
-			else {
-				if(node->myerrno==0) {
-					node->myerrno = NDERR_WRITE ;
-				}
-				LEAVE_FUNC(); 
-				return ret;
-			}
-			
-		}
-		else if (ret == (int)len) {
-			LEAVE_FUNC();
-			return (int)(sendlen + ret);
-		}
-		else if (ret < (int)len) {
-			timeout_count = 0;
-			sendlen += ret;
-			len -= ret;
-			data = (void*)((char*)data + ret);
-			if(-1==nd_socket_wait_writablity(node->fd, 100) ) {
-				break ;
-			}
-		}
-	} while (len > 0);
-	
-	LEAVE_FUNC();
-	return sendlen;
-	 */
+	return __tcpnode_send(node, (void*)data, len, flag,0);	
 }
 
+//read nd-protocol
 int nd_tcpnode_read(struct nd_tcp_node *node)
 {
 	ENTER_FUNC()
@@ -535,7 +398,7 @@ int _tcpnode_push_force(struct nd_tcp_node *conn_node)
 	}
 RESEND:
 	conn_node->myerrno = NDERR_SUCCESS;
-	ret = (signed int)_socket_send(conn_node, ndlbuf_data(pbuf), data_len);
+	ret = (signed int)conn_node->sock_write(conn_node, ndlbuf_data(pbuf), data_len);
 	if (ret <= 0) {
 		LEAVE_FUNC() ;
 		return ret ;
@@ -571,11 +434,12 @@ int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node)
 		LEAVE_FUNC();
 		return -1;
 	}
-	ret = (signed int)_socket_send(conn_node,ndlbuf_data(pbuf),data_len) ;
+	ret = (signed int)conn_node->sock_write(conn_node,ndlbuf_data(pbuf),data_len) ;
 	if(ret>0) {
 		nd_assert(ret<= data_len) ;
 		ndlbuf_sub_data(pbuf,(size_t)ret) ;
 	}
+	
 	LEAVE_FUNC();
 	return ret ;
 }
@@ -586,16 +450,15 @@ int _tcp_node_update(struct nd_tcp_node *node)
 	ndtime_t now = nd_time() ;
 	int ret = 0;
 
-#if 1
 	int alive_timeout = node->disconn_timeout >> 1;
 	if (!node->fd || nd_object_check_error((nd_handle)node) || !TCPNODE_CHECK_OK(node)) {
 		LEAVE_FUNC();
 		return -1;
 	}
 
-	alive_timeout = alive_timeout? alive_timeout:ND_ALIVE_TIMEOUT;
 
-	if (nd_tcpnode_flush_sendbuf((nd_netui_handle)node) == 0) {		
+	if (nd_tcpnode_flush_sendbuf((nd_netui_handle)node) == 0 && node->without_alive ==0 ) {
+		alive_timeout = alive_timeout ? alive_timeout : ND_ALIVE_TIMEOUT;
 		if ((now - node->last_push) > alive_timeout){
 			nd_sysresv_pack_t alive;
 			nd_make_alive_pack(&alive);
@@ -605,41 +468,6 @@ int _tcp_node_update(struct nd_tcp_node *node)
 	}
 	TCPNODE_TRY_CALLBACK_WRITE(node);
 	
-#else 
-	if(0==nd_send_trytolock((nd_netui_handle)node)) {
-		nd_netbuf_t *pbuf = &(node->send_buffer) ;
-		size_t data_len = ndlbuf_datalen(pbuf) ;
-		
-		int alive_timeout = node->disconn_timeout >> 1 ;
-		alive_timeout = alive_timeout? alive_timeout:ND_ALIVE_TIMEOUT;
-
-		if(data_len > 0) {
-			ret = (signed int)_socket_send(node, ndlbuf_data(pbuf),data_len) ;
-			if(ret>0) {
-				nd_assert(ret<= data_len) ;
-				ndlbuf_sub_data(pbuf,(size_t)ret) ;
-			}
-			else if(ret < 0) {
-				if (node->myerrno == NDERR_WOULD_BLOCK){
-					ret = 0;
-				}
-			}
-		}
-		
-		if ((now - node->last_push) > alive_timeout ){
-			nd_sysresv_pack_t alive ;
-			nd_make_alive_pack(&alive) ;
-            packet_hton(&alive);
-			//nd_packhdr_t pack_hdr = {ND_USERMSG_HDRLEN,NDNETMSG_VERSION,0,0,0} ;
-			//pack_hdr.ndsys_msg = 1 ;
-			ret =nd_tcpnode_send(node, &alive.hdr,ESF_URGENCY) ;
-		}
-		
-		TCPNODE_TRY_CALLBACK_WRITE(node) ;
-		nd_send_unlock((nd_netui_handle)node) ;
-	}
-	
-#endif
 	if (now - node->last_recv > node->disconn_timeout) {
 		node->myerrno = NDERR_TIMEOUT ;
 		LEAVE_FUNC();
@@ -671,8 +499,8 @@ void _tcp_connector_init(struct nd_tcp_node *conn_node)
 	ENTER_FUNC()
 	nd_assert(conn_node) ;
 	conn_node->size = sizeof(struct nd_tcp_node) ;
-	conn_node->write_entry =(packet_write_entry ) nd_tcpnode_send ;
-	conn_node->sock_write = (socket_write_entry) _socket_send ;
+	conn_node->packet_write =(packet_write_entry ) nd_tcpnode_send ;
+	conn_node->sock_write = (socket_write_entry)_sys_socket_write;
 	conn_node->sock_read = NULL;
 	conn_node->update_entry = (net_update_entry)_tcp_node_update ;
 	conn_node->data_entry = (data_in_entry) nd_dft_packet_handler ;

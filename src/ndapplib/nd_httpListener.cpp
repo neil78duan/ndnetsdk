@@ -317,8 +317,8 @@ void NDHttpSession::OnCreate()
 	Ioctl(NDIOCTL_UNLIMITED_SEND_WNDSIZE, &val, &size);
 	val = 1;
 	size = sizeof(val);
-	Ioctl(NDIOCTL_UNLIMITED_RECV_WNDSIZE, &val, &size);
-	
+	Ioctl(NDIOCTL_UNLIMITED_RECV_WNDSIZE, &val, &size);	
+	nd_netobj_close_keep_alive((nd_netui_handle)GetHandle());
 }
 
 
