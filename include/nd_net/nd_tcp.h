@@ -81,8 +81,8 @@ static __INLINE__ int nd_tcpnode_flush_sendbuf_force(nd_netui_handle node)
 ND_NET_API void nd_tcpnode_init(struct nd_tcp_node *conn_node) ;	
 
 ND_NET_API void nd_tcpnode_deinit(struct nd_tcp_node *conn_node)  ;
-ND_NET_API int nd_tcpnode_sendlock_init(struct nd_tcp_node *conn_node) ;
-ND_NET_API void nd_tcpnode_sendlock_deinit(struct nd_tcp_node *conn_node) ;
+//ND_NET_API int nd_tcpnode_sendlock_init(struct nd_tcp_node *conn_node) ;
+//ND_NET_API void nd_tcpnode_sendlock_deinit(struct nd_tcp_node *conn_node) ;
 
 ND_NET_API void nd_tcpnode_reset(struct nd_tcp_node *conn_node)  ;
 ND_NET_API int nd_socket_wait_writablity(ndsocket_t fd,int timeval) ;
@@ -140,6 +140,6 @@ ND_NET_API int nd_get_wait_writablity_time() ;
  */
 ND_NET_API int tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout);
 
-ND_NET_API int _socket_send(struct nd_tcp_node *node,void *data , size_t len) ;
+ND_NET_API int _sys_socket_write(struct nd_tcp_node *node,void *data , size_t len) ;
 #endif
 

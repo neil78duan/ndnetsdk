@@ -82,7 +82,7 @@ typedef size_t(*net_get_packet_size)(nd_handle  handle, void *data);
 	nd_handle 	srv_root;		\
 	nd_userdata_t 		user_data ;	\
 	nd_mutex			*send_lock;		\
-	packet_write_entry	write_entry;	\
+	packet_write_entry	packet_write;	\
 	socket_write_entry	sock_write;		\
 	socket_read_entry	sock_read;		\
 	data_in_entry		data_entry;		\

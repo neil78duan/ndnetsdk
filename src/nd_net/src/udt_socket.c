@@ -542,7 +542,7 @@ void _udt_connector_init(nd_udt_node *socket_node)
 	socket_node->type = NDHANDLE_UDPNODE ;
 	socket_node->size = sizeof(nd_udt_node) ;
 
-	socket_node->write_entry = (packet_write_entry )udt_connector_send;
+	socket_node->packet_write = (packet_write_entry )udt_connector_send;
 	socket_node->sock_write = (socket_write_entry) nd_udp_send;
 	socket_node->sock_read = (socket_read_entry)nd_udp_read;
 
@@ -589,7 +589,7 @@ void nd_udtnode_reset(nd_udt_node *socket_node)
 	SET_VAL(msg_handle) ;
 	SET_VAL(srv_root) ;
 	SET_VAL(user_data) ;
-	SET_VAL(write_entry) ;
+	SET_VAL(packet_write) ;
 	SET_VAL(sock_write) ;
 	SET_VAL(data_entry) ;
 	SET_VAL(msg_entry) ;

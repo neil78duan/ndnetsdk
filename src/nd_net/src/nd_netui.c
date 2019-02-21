@@ -372,7 +372,7 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 	int ret ;
 	nd_assert(net_handle) ;
 	nd_assert(msg_buf) ;
-	nd_assert(net_handle->write_entry) ;
+	nd_assert(net_handle->packet_write) ;
 
 	if(!nd_connector_valid(net_handle)|| nd_tryto_clear_err(net_handle)) {
 		LEAVE_FUNC();
@@ -398,13 +398,13 @@ int nd_connector_send(nd_netui_handle net_handle, nd_packhdr_t *msg_buf, int fla
 		nd_atomic_inc(&net_handle->send_pack_times) ;
         
         packet_hton(&crypt_buf) ;
-		ret =net_handle->write_entry(net_handle,&crypt_buf.hdr, flag) ;
+		ret =net_handle->packet_write(net_handle,&crypt_buf.hdr, flag) ;
 	}
 	else {
 		nd_atomic_inc(&net_handle->send_pack_times) ;
         
         packet_hton(msg_buf) ;
-		ret =net_handle->write_entry(net_handle,msg_buf, flag) ;
+		ret =net_handle->packet_write(net_handle,msg_buf, flag) ;
         packet_ntoh(msg_buf) ;
 	}
     
@@ -430,7 +430,7 @@ int nd_connector_send_stream(nd_handle net_handle, void* data, size_t len, int f
 	int ret;
 	nd_assert(net_handle);
 	nd_assert(data);
-	nd_assert(net_handle->write_entry);
+	nd_assert(net_handle->packet_write);
 
 	if (!nd_connector_valid(net_handle) || nd_tryto_clear_err(net_handle)) {
 		LEAVE_FUNC();
@@ -451,7 +451,6 @@ int nd_connector_raw_write(nd_handle net_handle , void *data, size_t size)
 	nd_assert(net_handle->sock_write) ;
 		
 	ret = net_handle->sock_write(net_handle , data,  size);
-	//ret = net_handle->write_entry(net_handle , (nd_packhdr_t *)data,  size);
 	LEAVE_FUNC() ;
 	return ret ;
 }
@@ -527,7 +526,7 @@ int nd_connector_open(nd_netui_handle net_handle,const char *host, int port,stru
 		}else {
 			nd_connect_level_set(net_handle, EPL_CONNECT);
 			net_init_sendlock(net_handle) ;
-			socket_addr->write_entry = (packet_write_entry)_tcp_connector_send ;
+			socket_addr->packet_write = (packet_write_entry)_tcp_connector_send ;
 		}
 	}
 	else if(net_handle->protocol==PROTOCOL_UDT) {
