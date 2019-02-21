@@ -78,16 +78,12 @@ int nd_tcpnode_close(struct nd_tcp_node *node, int force)
 	return 0;
 }
 
-//#include "nd_crypt/nd_crypt.h"
 int _sys_socket_write(struct nd_tcp_node *node,void *data , size_t len)
 {
 	ENTER_FUNC()
 	int ret ;
 	ret = (int) send(node->fd, data, len, 0) ;
 	if(ret > 0) {
-		//char md5[33];
-		//ndfprintf(stderr, "!!!!!----- send data %d, return length =%d md5 = %s\n", len, ret, MD5Crypt32(data, ret, md5));
-
 		node->send_len += ret;
 		node->last_push = nd_time();
 	}
@@ -107,77 +103,6 @@ int _sys_socket_write(struct nd_tcp_node *node,void *data , size_t len)
 	return ret ;
 };
 
-//send a completed package (using in ND protocol)
-// int socket_send_one_msg(struct nd_tcp_node *node,void *data , size_t len)
-// {
-// 	ENTER_FUNC()
-// 	int times = 0 ;
-// 	int ret ,send_ok = 0;
-// 	
-// RE_SEND:
-// 	nd_assert(node);
-// 	nd_assert(node->sock_write) ;
-// 	if (times>3){
-// 		LEAVE_FUNC();
-// 		return 0 ;
-// 	}
-// 	times++ ;
-// 	ret = node->sock_write((nd_handle)node, data,len) ;
-// 	if(-1==ret ) {
-// 		if(node->sys_error==ESOCKETTIMEOUT && node->is_session){
-// 			int wait_ret = nd_socket_wait_writablity(node->fd,__wait_writablity);
-// 			if( wait_ret > 0)
-// 				goto RE_SEND ;
-// 			else if(wait_ret==0) {
-// 				LEAVE_FUNC();
-// 				return 0 ;
-// 			}
-// 			else { 
-// 				node->myerrno = NDERR_WRITE ;
-// 				TCPNODE_SET_RESET(node);
-// 				LEAVE_FUNC();
-// 				return -1;
-// 			}
-// 		}
-// 		else {
-// 			node->myerrno = NDERR_IO ;
-// 			TCPNODE_SET_RESET(node) ;
-// 			LEAVE_FUNC();
-// 			return -1 ;
-// 		}
-// 	}
-// 	else if(ret>0 && ret < len) {
-// 		int wait_ret = nd_socket_wait_writablity(node->fd,__wait_writablity);
-// 		if(wait_ret < 0 ){
-// 			node->sys_error = nd_socket_last_error() ;
-// 			if (node->sys_error == ESOCKETTIMEOUT) {
-// 				node->myerrno = NDERR_WOULD_BLOCK;
-// 			}
-// 			else {
-// 				TCPNODE_SET_RESET(node) ;
-// 				node->myerrno = NDERR_IO ;
-// 			}
-// 			LEAVE_FUNC();
-// 			return -1;
-// 		}
-// 		else if(0==wait_ret) {
-// 			LEAVE_FUNC();
-// 			return 0 ;
-// 		}
-// 
-// 		data = (char*)data + ret ;
-// 		len -= ret ;
-// 		send_ok += ret ;
-// 
-// 		node->last_push = nd_time() ;
-// 		goto RE_SEND ;
-// 	}
-// 	else {
-// 		send_ok += ret ;
-// 		LEAVE_FUNC();
-// 		return send_ok ;
-// 	}
-// }
 
 //send data ,and save the left data
 static int __tcpnode_send_with_save(struct nd_tcp_node *node, void *msg_buf, size_t datalen)
