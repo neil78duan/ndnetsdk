@@ -172,16 +172,16 @@ static void *_get_user_addr(nd_mmpool_t *pool, void *p) ;
 struct alloc_node *_user_addr_2sys( void *useraddr, size_t *user_len, size_t *alloc_len) ;
 static size_t __get_real_size(struct alloc_node *alloc_addr) ;
 static size_t __get_need_size(size_t user_size);
-
+static int _tryto_desctroy(nd_mmpool_t *pool) ;
 static __INLINE__ struct alloc_node * __user_addr_2allocated(void *addr)
 {
 	return  (((struct alloc_node *)addr) - 1);
 }
 
-static __INLINE__ void* __allocated_2user_addr(struct alloc_node *alloc_addr)
-{
-	return (void*)(alloc_addr->data);
-}
+//static __INLINE__ void* __allocated_2user_addr(struct alloc_node *alloc_addr)
+//{
+//	return (void*)(alloc_addr->data);
+//}
 
 
 #ifdef ND_DEBUG
