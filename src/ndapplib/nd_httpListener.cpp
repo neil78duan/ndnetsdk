@@ -262,9 +262,9 @@ int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t d
 			return len;
 		}
 		ret += len;
-		nd_connector_send_stream(GetHandle(), (void*)"\r\n\r\n", 4, 0);
-		ret += 4;
 	}
+	nd_connector_send_stream(GetHandle(), (void*)"\r\n\r\n", 4, 0);
+	ret += 4;
 
 	//nd_tcpnode_flush_sendbuf_force((nd_netui_handle)GetHandle());
 	return ret;
