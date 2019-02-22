@@ -183,6 +183,31 @@ char *MD5Crypt32(const void *input, int inlen, char output[33])
 	return output ;
 }
 
+char *MD5file(const char *filepath, char output[33])
+{
+	char tmp[16];
+	MD5_CTX context;
+	unsigned char buf[4096];
+	FILE *pf = fopen(filepath, "rb");
+	if (!pf) {
+		return NULL;
+	}
+
+	MD5Init(&context);
+	do 	{
+		size_t readlen = fread(buf, 1, sizeof(buf), pf);
+		if (readlen > 0) {
+			MD5Update(&context, buf, (unsigned int)readlen);
+		}
+	} while (0==feof(pf));	
+
+	MD5Final((unsigned char*)tmp, &context);
+	MD5ToString((unsigned char*)tmp, (unsigned char*)output);
+	fclose(pf);
+	return output;
+}
+
+
 int MD5cmp(char src[16], char desc[16])
 {
 	int ret = 0 ;

@@ -77,13 +77,16 @@ int nd_tcpnode_close(struct nd_tcp_node *node, int force)
 	LEAVE_FUNC();
 	return 0;
 }
-
+//#include "nd_crypt/nd_crypt.h"
 int _sys_socket_write(struct nd_tcp_node *node,void *data , size_t len)
 {
-	ENTER_FUNC()
+	ENTER_FUNC();
 	int ret ;
 	ret = (int) send(node->fd, data, len, 0) ;
 	if(ret > 0) {
+		//char md5[33];
+		//ndfprintf(stderr, "!!!!!----- send data %d, return length =%d md5 = %s\n", len, ret, MD5Crypt32(data, ret, md5));
+
 		node->send_len += ret;
 		node->last_push = nd_time();
 	}

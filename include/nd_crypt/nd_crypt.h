@@ -79,6 +79,8 @@ ND_CRYPT_API char *MD5Crypt16(const void *inbuf, int inlen, char output[16]);
 ND_CRYPT_API char *MD5Crypt32(const void *in_buf, int inlen, char output[33]);
 ND_CRYPT_API int MD5cmp(char src[16], char desc[16]) ;
 
+ND_CRYPT_API char *MD5file(const char *filepath, char output[33]);
+
 ND_CRYPT_API int base64_encode( const char * source, int len, char * destination_string );
 
 ND_CRYPT_API int base64_decode( unsigned char *input, unsigned int input_len, unsigned char *output, unsigned int *output_len ) ;
