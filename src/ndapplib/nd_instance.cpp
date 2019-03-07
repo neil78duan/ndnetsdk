@@ -552,13 +552,58 @@ int NDInstanceBase::ReadConfig(const char *configname)
 
 }
 
-int NDInstanceBase::connectServer(const char *name,NDConnector *inconnect)
+bool NDInstanceBase::createConnect(const char*name, NDConnector &connector)
+{
+	ND_TRACE_FUNC();
+	NDListener *pl = GetDeftListener();
+	nd_assert(pl);
+	//ndthread_t thid = pl->GetListenThid();
+
+	//create not connect 
+	connect_config *connmgr_cfg = getConnectorInfo(name);
+	if (!connmgr_cfg) {
+		nd_logerror("can not get  %s connector config\n", name);
+		return false;
+	}
+	if (-1 == connector.Create(connmgr_cfg->protocol_name)) {
+		nd_logerror("create %s connector error\n", name);
+		return false;
+	}
+	connector.setName(name);
+	pl->Attach(connector);
+	return true;
+}
+
+int NDInstanceBase::connectServer(const char *connectorName, NDConnector &connector, NDOStreamMsg *firstMsg)
+{
+	ND_TRACE_FUNC();
+
+	if (-1 == _openConnector(connectorName, &connector)) {
+		return -1;
+	}
+	pListen->Attach(connector);
+
+	int isRegisterOk = 0;
+	int size = sizeof(int);
+
+	connector.Ioctl(NDIOCTL_SET_LEVEL, &isRegisterOk, &size);
+
+	if (firstMsg) {
+		if (connector.SendMsg(*firstMsg) == -1) {
+			return -1;
+		}
+	}
+	onConnecteServer(connector);
+	return 0;
+}
+
+
+int NDInstanceBase::_openConnector(const char *name,NDConnector *inconnect)
 {
 	connect_config *pcof = getConnectorInfo(name) ;
 	if (!pcof) {
 		return -1;
-	}
-	
+	}	
 	
 	if(0 !=inconnect->Open(pcof->host, pcof->port, pcof->protocol_name) ) {
 		return -1 ;

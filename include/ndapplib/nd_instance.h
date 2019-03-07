@@ -124,13 +124,17 @@ public :
 	const char *Getcfgfile() { return config_file; }
 protected :
 	int _create();
-	int connectServer(const char *name,NDConnector *inconnect);
+
+	int _openConnector(const char *name, NDConnector *inconnect);
+	int connectServer(const char *connectorName, NDConnector &connector, NDOStreamMsg *firstMsg=NULL);
+	bool createConnect(const char*name, NDConnector &connector);
 	connect_config *getConnectorInfo(const char *name) ;
 	int ReadConfig(const char *configname) ;		//read config from file
 	virtual NDListener*ConstructListener() ;
 	virtual void DestructListener() ;
 	virtual void OnListenerCreate() {} ;
 	virtual size_t getSessionAllocSize() { return 0; }
+	virtual	void onConnecteServer(NDConnector &connector) {}
 	
 	NDListener *pListen ;
 	
