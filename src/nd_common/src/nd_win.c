@@ -52,9 +52,19 @@ ndpid_t nd_createprocess(const char *path, ...)
 			return NULL;
 		}
 		nd_logdebug("create process %s success \n", path);
-		return pi.hProcess;
+		return pi.dwProcessId;
 	}
-	return NULL;
+	return 0;
+}
+
+
+void nd_terminate_process(ndpid_t pid)
+{
+	HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
+	if (hProcess) {
+		TerminateProcess(hProcess, 0);
+		CloseHandle(hProcess);
+	}
 }
 
 const char *nd_get_sys_username()

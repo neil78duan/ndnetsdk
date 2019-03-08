@@ -26,7 +26,7 @@
 
 	typedef HANDLE			ndth_handle ;	//handle of thread
 	typedef DWORD 			ndthread_t;	// thread id type
-	typedef HANDLE 			ndpid_t;
+	typedef DWORD 			ndpid_t;
 	__INLINE__ int nd_thread_equal(ndthread_t t1, ndthread_t t2){return (t1==t2) ;}
 	
 	//typedef volatile long atomic_t ;
@@ -53,6 +53,7 @@
 
 
 ND_COMMON_API ndpid_t nd_createprocess(const char *path, ...);
+ND_COMMON_API void nd_terminate_process(ndpid_t pid);
 
 #define ND_INFINITE		0xffffffff
 

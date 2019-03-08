@@ -58,6 +58,12 @@ ndpid_t nd_createprocess(const char *path, ...)
 	
 }
 
+void nd_terminate_process(ndpid_t pid)
+{
+	kill(pid, SIGINT);
+
+}
+
 const char *nd_get_sys_username(void)
 {
 	struct passwd *pwd = getpwuid(getuid());
