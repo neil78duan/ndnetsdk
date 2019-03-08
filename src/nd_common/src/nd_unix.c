@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #include <dlfcn.h>
 
-ndpid_t nd_createprocess(const char *path, const char *args,...)
+ndpid_t nd_createprocess(const char *path, ...)
 {
 	// get args
 	int i = 0 ;
@@ -30,8 +30,11 @@ ndpid_t nd_createprocess(const char *path, const char *args,...)
 	ndpid_t pid = 0 ;
 	va_list va;
 	char *plist[32] ;
+
+	plist[0] = nd_filename(path);
+	i = 1;
 	
-	va_start(va, args);
+	va_start(va, path);
 	while((p = va_arg(va, const char*) )) {
 		plist[i++] = (char*) p ;
 		if(i>= 31 ){

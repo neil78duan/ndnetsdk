@@ -18,6 +18,45 @@
 #endif
 
 
+ndpid_t nd_createprocess(const char *path, ...)
+{
+	// get args
+	BOOL ret;
+	const char *p;
+	ndpid_t pid = 0;
+	va_list va;
+
+	char cmdbuf[1024];
+	char *pstr = cmdbuf;
+
+	int len = snprintf(cmdbuf, sizeof(cmdbuf), "%s", path);
+	pstr += len;
+
+	va_start(va, path);
+	while ((p = va_arg(va, const char*))) {
+		len = snprintf(pstr, sizeof(cmdbuf) - (pstr - cmdbuf), " %s", p);
+		pstr += len;
+	}
+	va_end(va);
+
+	if (path || cmdbuf[0]) {
+		STARTUPINFO si = { 0 };
+		PROCESS_INFORMATION pi = { 0 };
+		si.cb = sizeof(si);
+
+		//si.dwFlags = STARTF_USESHOWWINDOW;
+		si.wShowWindow = TRUE;
+
+		ret = CreateProcessA(path, cmdbuf, NULL, NULL, FALSE,  CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi);
+		if (FALSE == ret) {
+			return NULL;
+		}
+		nd_logdebug("create process %s success \n", path);
+		return pi.hProcess;
+	}
+	return NULL;
+}
+
 const char *nd_get_sys_username()
 {
 	DWORD length ;

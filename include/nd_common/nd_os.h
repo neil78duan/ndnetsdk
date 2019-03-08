@@ -52,7 +52,7 @@
 #endif
 
 
-ND_COMMON_API ndpid_t nd_createprocess(const char *path, const char *arg,...);
+ND_COMMON_API ndpid_t nd_createprocess(const char *path, ...);
 
 #define ND_INFINITE		0xffffffff
 
