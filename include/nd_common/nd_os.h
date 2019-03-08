@@ -26,6 +26,7 @@
 
 	typedef HANDLE			ndth_handle ;	//handle of thread
 	typedef DWORD 			ndthread_t;	// thread id type
+	typedef HANDLE 			ndpid_t;
 	__INLINE__ int nd_thread_equal(ndthread_t t1, ndthread_t t2){return (t1==t2) ;}
 	
 	//typedef volatile long atomic_t ;
@@ -39,6 +40,8 @@
 #include "nd_common/nd_unix.h"	
 	typedef pthread_t		ndth_handle ;	//
 	typedef pthread_t 		ndthread_t;		//
+	typedef pid_t 			ndpid_t;
+
 	#define  nd_thread_equal	pthread_equal
 	ND_COMMON_API size_t set_maxopen_fd(size_t max_fd) ;
 	ND_COMMON_API size_t get_maxopen_fd(void);
@@ -47,6 +50,9 @@
 	ND_COMMON_API char* get_rlimit_info(char *buf, int buf_size) ;
 
 #endif
+
+
+ND_COMMON_API ndpid_t nd_createprocess(const char *path, const char *arg,...);
 
 #define ND_INFINITE		0xffffffff
 
@@ -58,7 +64,7 @@ enum {
 	NDT_PRIORITY_HIGHT,
 	NDT_PRIORITY_LOW
 };
-//create thread 
+//create thread
 ND_COMMON_API ndth_handle nd_createthread(NDTH_FUNC func, void* param,ndthread_t *thid,int priority);
 //force current thread schedule 
 ND_COMMON_API int nd_threadsched(void) ;

@@ -22,6 +22,39 @@
 #include <sys/stat.h>
 #include <dlfcn.h>
 
+ndpid_t nd_createprocess(const char *path, const char *args,...)
+{
+	// get args
+	int i = 0 ;
+	const char *p ;
+	ndpid_t pid = 0 ;
+	va_list va;
+	char *plist[32] ;
+	
+	va_start(va, args);
+	while((p = va_arg(va, const char*) )) {
+		plist[i++] = (char*) p ;
+		if(i>= 31 ){
+			break ;
+		}
+	}
+	va_end(va);
+	
+	plist[i] = NULL ;
+	
+	pid = fork() ;
+	
+	if(pid== 0) {
+		execv(path, plist) ;
+		nd_logerror("create process %s error %s\n", path, nd_last_error()) ;
+		exit(errno) ;
+	}
+	else {
+		return  pid ;
+	}
+	
+}
+
 const char *nd_get_sys_username(void)
 {
 	struct passwd *pwd = getpwuid(getuid());
