@@ -68,7 +68,7 @@ $(PROJ_CLIENT):$(OBJDIR)/nd_msgpack.o $(OBJDIR)/nd_datatransfer.o
 	$(CC) $(INCLUDE) $(LOCAL_CFLAG) -o $(OBJDIR)/$*.o $<
 
 .cpp.o:
-	$(CPP) $(INCLUDE) $(LOCAL_CFLAG) -o $(OBJDIR)/$*.o $<
+	$(CPP) $(INCLUDE) $(LOCAL_CFLAG) $(CPPFLAGS) -o $(OBJDIR)/$*.o $<
 
 clean:
 	rm -f $(PROJS) $(DLLPROJS) $(PathOBJS)  $(PathOBJS:.o=.d)

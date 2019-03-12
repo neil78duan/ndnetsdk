@@ -12,6 +12,7 @@
 #if defined(ND_UNIX)
 #include <time.h>  
 #include <sys/mman.h>
+#include<sys/param.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <pwd.h>
@@ -22,6 +23,21 @@
 #include <sys/stat.h>
 #include <dlfcn.h>
 
+ndpid_t run_exec(const char *path, char *plist[])
+{
+	int i = 0 ;
+	for(i=0;i<NOFILE;i++)
+		close(i);
+	//umask(0);
+	
+	setsid() ;
+	//nd_logerror("CHINDREN process start by fork\n") ;
+	execv(path, plist) ;
+	nd_logerror("create process %s error %s [%s]\n", path, nd_last_error(),nd_getcwd()) ;
+	exit(errno) ;
+	return  0;
+}
+
 ndpid_t nd_createprocess(const char *path, ...)
 {
 	// get args
@@ -31,7 +47,7 @@ ndpid_t nd_createprocess(const char *path, ...)
 	va_list va;
 	char *plist[32] ;
 
-	plist[0] = nd_filename(path);
+	plist[0] = (char*)nd_filename(path);
 	i = 1;
 	
 	va_start(va, path);
@@ -48,9 +64,7 @@ ndpid_t nd_createprocess(const char *path, ...)
 	pid = fork() ;
 	
 	if(pid== 0) {
-		execv(path, plist) ;
-		nd_logerror("create process %s error %s\n", path, nd_last_error()) ;
-		exit(errno) ;
+		return run_exec(path, plist) ;
 	}
 	else {
 		return  pid ;
