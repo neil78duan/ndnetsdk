@@ -23,11 +23,16 @@
 #include <sys/stat.h>
 #include <dlfcn.h>
 
-ndpid_t run_exec(const char *path, char *plist[])
+ndpid_t run_exec(const char * working_path,const char *path, char *plist[])
 {
 	int i = 0 ;
-	for(i=0;i<NOFILE;i++)
+	for (i = 0; i < NOFILE; i++) {
 		close(i);
+	}
+
+	if (working_path && *working_path) {
+		nd_chdir(working_path);
+	}
 	//umask(0);
 	
 	setsid() ;
@@ -38,7 +43,7 @@ ndpid_t run_exec(const char *path, char *plist[])
 	return  0;
 }
 
-ndpid_t nd_createprocess(const char *path, ...)
+ndpid_t nd_createprocess(const char *working_path, const char *path, ...)
 {
 	// get args
 	int i = 0 ;
@@ -64,7 +69,7 @@ ndpid_t nd_createprocess(const char *path, ...)
 	pid = fork() ;
 	
 	if(pid== 0) {
-		return run_exec(path, plist) ;
+		return run_exec(working_path,path, plist) ;
 	}
 	else {
 		return  pid ;

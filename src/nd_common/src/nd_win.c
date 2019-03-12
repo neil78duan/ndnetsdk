@@ -18,7 +18,7 @@
 #endif
 
 
-ndpid_t nd_createprocess(const char *path, ...)
+ndpid_t nd_createprocess(const char *working_path, const char *path,...)
 {
 	// get args
 	BOOL ret;
@@ -47,7 +47,7 @@ ndpid_t nd_createprocess(const char *path, ...)
 		//si.dwFlags = STARTF_USESHOWWINDOW;
 		si.wShowWindow = TRUE;
 
-		ret = CreateProcessA(path, cmdbuf, NULL, NULL, FALSE,  CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi);
+		ret = CreateProcessA(path, cmdbuf, NULL, NULL, FALSE,  CREATE_NEW_CONSOLE, NULL, working_path, &si, &pi);
 		if (FALSE == ret) {
 			return NULL;
 		}
