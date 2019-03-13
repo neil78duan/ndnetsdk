@@ -36,9 +36,8 @@ ndpid_t run_exec(const char * working_path,const char *path, char *plist[])
 	//umask(0);
 	
 	setsid() ;
-	//nd_logerror("CHINDREN process start by fork\n") ;
 	execv(path, plist) ;
-	nd_logerror("create process %s error %s [%s]\n", path, nd_last_error(),nd_getcwd()) ;
+	nd_logerror("create process %s error %s [%s] working_path=[%s]\n", path, nd_last_error(),nd_getcwd(), working_path? working_path:"NULL") ;
 	exit(errno) ;
 	return  0;
 }
@@ -69,6 +68,10 @@ ndpid_t nd_createprocess(const char *working_path, const char *path, ...)
 	pid = fork() ;
 	
 	if(pid== 0) {
+		char tmp_path[ND_FILE_PATH_SIZE];
+		if (nd_path_is_relative(path)) {
+			path = nd_absolute_filename(path,tmp_path,sizeof(tmp_path)) ;
+		}
 		return run_exec(working_path,path, plist) ;
 	}
 	else {

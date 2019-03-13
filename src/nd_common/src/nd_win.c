@@ -27,6 +27,8 @@ ndpid_t nd_createprocess(const char *working_path, const char *path,...)
 	va_list va;
 
 	char cmdbuf[1024];
+	char tmp_path[ND_FILE_PATH_SIZE];
+
 	char *pstr = cmdbuf;
 
 	int len = snprintf(cmdbuf, sizeof(cmdbuf), "%s", path);
@@ -46,6 +48,10 @@ ndpid_t nd_createprocess(const char *working_path, const char *path,...)
 
 		//si.dwFlags = STARTF_USESHOWWINDOW;
 		si.wShowWindow = TRUE;
+
+		if (nd_path_is_relative(path)) {
+			path = nd_absolute_filename(path, tmp_path, sizeof(tmp_path));
+		}
 
 		ret = CreateProcessA(path, cmdbuf, NULL, NULL, FALSE,  CREATE_NEW_CONSOLE, NULL, working_path, &si, &pi);
 		if (FALSE == ret) {
