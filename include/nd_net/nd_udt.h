@@ -102,14 +102,6 @@ typedef struct nd_srv_node nd_udtsrv;
 #define UDTSO_SET_RESET(udt_socket)  (udt_socket)->is_reset = 1
 #define UDTSO_IS_RESET(udt_socket)  (udt_socket)->is_reset
 
-/*
-//得到超时重传的时间,绝对时间
-static __INLINE__ ndtime_t retrans_time(nd_udt_node *nct)
-{
-	return nd_time() + nct->retrans_timeout * TIME_OUT_BETA ;
-}
-*/
-
 static __INLINE__ size_t send_window(nd_udt_node *socket_node)
 {
 	return ndlbuf_free_capacity(&socket_node->recv_buffer) ;
