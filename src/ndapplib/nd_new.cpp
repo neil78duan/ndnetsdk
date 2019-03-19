@@ -77,11 +77,11 @@ void _destroy_pool_for_new()
 
 #ifdef ND_OVER_RIDE_NEW
 
-void *operator new(size_t size) /*__new_throw*/
+void *operator new(size_t size) __new_throw
 {
 	return _alloc_new( size, NULL);
 }
-void *operator new[](size_t size)  /*__new_throw*/
+void *operator new[](size_t size)  __new_throw
 {
 	return _alloc_new( size, NULL);
 }
