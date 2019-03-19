@@ -44,11 +44,11 @@ static inline void  operator delete(void *, void *)
 #endif 
 
 #ifdef ND_OVER_RIDE_NEW
-inline void *operator new(size_t size,nd_handle pool) __new_throw
+inline void *operator new(size_t size,nd_handle pool) /*__new_throw*/
 {
 	return _alloc_new( size, pool);
 }
-inline void *operator new[](size_t size,nd_handle pool)  __new_throw
+inline void *operator new[](size_t size,nd_handle pool)  /*__new_throw*/
 {
 	return _alloc_new( size, pool);
 }
@@ -65,8 +65,8 @@ inline void operator delete[](void *p,nd_handle pool) throw()
 #pragma auto_inline (on)
 #pragma optimize( "", on ) 
 
-void *operator new(size_t size) __new_throw;
-void *operator new[](size_t size)  __new_throw;
+void *operator new(size_t size) /*__new_throw*/;
+void *operator new[](size_t size)  /*__new_throw*/;
 
 void operator delete(void *p) throw();
 void operator delete[](void *p) throw();
