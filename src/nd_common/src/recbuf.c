@@ -247,7 +247,11 @@ void _lbuf_move_ahead(struct nd_linebuf *pbuf)
 		memcpy((void*)(pbuf->__buf),pbuf->__start, len) ;
 		pbuf->__start = pbuf->__buf; 
 		pbuf->__end = pbuf->__buf + len ;
-		*(pbuf->__end) = 0;
+
+		if (pbuf->__end < (pbuf->__buf + pbuf->buf_capacity)) {
+			*(pbuf->__end) = 0;
+
+		}
 	}
 	
 }
@@ -345,6 +349,9 @@ int _lbuf_write(struct nd_linebuf *pbuf,void *data, size_t datalen,int flag)
 void _lbuf_add_data(struct nd_linebuf *pbuf,size_t len)
 {
 	pbuf->__end += len ;
-	*(pbuf->__end) = 0;
+	if (pbuf->__end < (pbuf->__buf + pbuf->buf_capacity)) {
+		*(pbuf->__end) = 0;
+
+	}
 	nd_assert(pbuf->__end <= pbuf->__buf +_lbuf_capacity(pbuf) ) ;
 }

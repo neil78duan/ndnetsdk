@@ -328,8 +328,9 @@ void NDHttpParser::InData(const char *data, int size)
 {
 	ND_TRACE_FUNC();
 	//ndprintf("%s\n", data);
-	
+	char end = 0;
 	ndlbuf_write(&m_bodyBuf, (void*)data, size, 0);
+	//ndlbuf_write(&m_bodyBuf, (void*)&end, 1, 0); //write end char
 	ndlbuf_set_zero_tail(&m_bodyBuf);
 
 	while (m_parseStat < 3 && ParseData() > 0) {
