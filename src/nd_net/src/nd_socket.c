@@ -310,7 +310,7 @@ ndsocket_t nd_socket_connect(const char *host_name, short port, int sock_type, S
 
 	freeaddrinfo(result);           /* No longer needed */
 	if (sfd == -1) {               /* No address succeeded */
-		nd_logfatal("create socket and bind error\n");
+		nd_logfatal("create socket and connected error\n");
 		return -1;
 	}
 	nd_logmsg("   CONNECTED --> %s : %d SUCCESS!!!\n", host_name, port);
