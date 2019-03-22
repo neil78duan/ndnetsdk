@@ -55,7 +55,8 @@ ndpid_t nd_createprocess(const char *working_path, const char *path,...)
 
 		ret = CreateProcessA(path, cmdbuf, NULL, NULL, FALSE,  CREATE_NEW_CONSOLE, NULL, working_path, &si, &pi);
 		if (FALSE == ret) {
-			return NULL;
+			nd_logerror("create process error %s\n", nd_last_error());
+			return 0;
 		}
 		nd_logdebug("create process %s success \n", path);
 		return pi.dwProcessId;
