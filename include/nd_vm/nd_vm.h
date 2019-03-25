@@ -57,6 +57,8 @@ enum e_vm_op
 	EOP_PROB ,
 	EOP_SQRT ,
 	EOP_ROUND,
+	EOP_CEIL,
+	EOP_FLOOR,
 	EOP_NUMBERS 
 };
 

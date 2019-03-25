@@ -128,7 +128,8 @@ int get_operand_num(vm_ins instruction)
 		return 0 ;
 	}
 	else if(EOP_POP==instruction || EOP_PUSH==instruction || 
-		EOP_LTZERO==instruction|| EOP_PROB==instruction || EOP_SQRT==instruction|| EOP_ROUND==instruction) {
+		EOP_LTZERO==instruction|| EOP_PROB==instruction || EOP_SQRT==instruction|| EOP_ROUND==instruction ||
+		EOP_CEIL == instruction||EOP_FLOOR == instruction) {
 		return 1 ;
 	}
 	else {
@@ -437,10 +438,32 @@ int vm_run_insnode(struct vm_instruction_node *node,struct vm_cpu *vm)
 	case EOP_ROUND :
 	{
 		val2 = vm_getvalue(node->ds1, node->val1, vm);
-		vm->reg1 = (vm_value) ((int) val2);
+		if (val2 > 0) {
+			vm->reg1 = (vm_value)((int)(val2 + 0.5f));
+		}
+		else if (val2 == 0) {
+			vm->reg1 = 0;
+		}
+		else {
+			vm->reg1 = (vm_value)((int)(val2 - 0.5f));
+		}
+		break;
+	}
+	case EOP_CEIL:
+	{
+		val2 = vm_getvalue(node->ds1, node->val1, vm);
+		vm->reg1 = (vm_value)(ceil(val2));
 
 		break;
 	}
+	case EOP_FLOOR:
+	{
+		val2 = vm_getvalue(node->ds1, node->val1, vm);
+		vm->reg1 = (vm_value)(floor(val2));
+
+		break;
+	}
+
 	case EOP_SQRT:
 		{
 			//¿ª·½
@@ -602,6 +625,8 @@ int vm_echo_res(struct vm_instruction_node *node,struct vm_cpu *vm)
 	case EOP_PROB:
 	case EOP_SQRT:
 	case EOP_ROUND:
+	case EOP_CEIL:
+	case EOP_FLOOR:
 		vm_print("\t REG1 =%f\n", vm->reg1) ;
 		break ;
 	case EOP_NOP:

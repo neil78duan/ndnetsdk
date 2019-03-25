@@ -634,7 +634,7 @@ int asm_printf(const char *stm, ...)
 
 char *__inter_func[] = 
 {
-	"MAX", "MIN", "RAND", "LTZERO", "PROB", "SET", "SQRT", "ROUND"
+	"MAX", "MIN", "RAND", "LTZERO", "PROB", "SET", "SQRT", "ROUND","CEIL","FLOOR"
 } ;
 
 //检测是否是内部函数
@@ -656,8 +656,9 @@ int get_fun_params(char *func_name)
 	if(0==ndstricmp(func_name, "LTZERO") || 
 		0==ndstricmp(func_name, "PROB") ||
 		0==ndstricmp(func_name, "SQRT") ||
-		0 == ndstricmp(func_name, "ROUND") 
-		)  {
+		0 == ndstricmp(func_name, "ROUND") ||
+		0 == ndstricmp(func_name, "CEIL") ||
+		0 == ndstricmp(func_name, "FLOOR") 		)  {
 		return 1 ;
 	}
 	else 
