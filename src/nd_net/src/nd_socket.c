@@ -86,9 +86,17 @@ void nd_socket_close(ndsocket_t s)
 int get_sockaddr_in(const char *host_name, short port, SOCKADDR_IN* sock_addr)
 {
 	struct addrinfo *rp;
-	
-	if (getaddrinfo(host_name, NULL, NULL, &rp) != 0) {
-		//nd_logfatal("getaddrinfo: %s\n" AND gai_strerror(s));
+	struct addrinfo hints;
+	char port_buf[20];
+	ndsnprintf(port_buf, sizeof(port_buf), "%d", port);
+
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_family = sock_addr->sin_family;    /* Allow IPv4 or IPv6 */
+	hints.ai_socktype = 0; /* Datagram socket */
+	hints.ai_flags = 0;    /* For wildcard IP address */
+	hints.ai_protocol = 0;          /* Any protocol */
+		
+	if (getaddrinfo(host_name, port_buf, &hints, &rp) != 0) {
 		nd_logerror("getaddrinfo: %s\n", nd_last_error());
 		return -1;
 	}
@@ -100,7 +108,6 @@ int get_sockaddr_in(const char *host_name, short port, SOCKADDR_IN* sock_addr)
 		return 0;
 	}
 	return -1;
-
 }
 
 //get localhost ip
@@ -299,7 +306,7 @@ ndsocket_t nd_socket_connect(const char *host_name, short port, int sock_type, S
 			continue;
 
 		if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1) {
-			if (out_addr && rp->ai_addrlen <= sizeof(SOCKADDR_IN)) {
+			if (out_addr ) {
 				memcpy(out_addr, rp->ai_addr, rp->ai_addrlen);
 			}
 			break;                  /* Success */
@@ -515,7 +522,7 @@ int nd_socket_wait_read(ndsocket_t fd,int timeval)
 	FD_SET(fd,&rfds) ;
 
 	if(-1==timeval){
-		ret = select (fd+1, NULL, &rfds,  NULL, NULL) ;
+		ret = select (fd+1, &rfds,NULL,   NULL, NULL) ;
 	}
 	else {
 		tmvel.tv_sec = timeval/1000 ;

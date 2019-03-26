@@ -225,6 +225,7 @@ int test_remote_host(char *host)
 		return -1;
 	}
 	
+	dest.sin_family = AF_INET;
 	get_sockaddr_in(host, 0, &dest) ;
 
 	pid = (u_16)nd_processid();
@@ -297,6 +298,9 @@ int test_remote_tcp_port(char *host, short port)
 	timeout=2000;
 	//…Ë÷√Ω” ‹—”≥Ÿ
 	setsockopt(raw_fd,SOL_SOCKET,SO_RCVTIMEO,(char *)&timeout,sizeof(timeout));
+
+
+	dest.sin_family = AF_INET; 
 
 	get_sockaddr_in(host, port, &dest) ;
 	from.sin_family = AF_INET ;

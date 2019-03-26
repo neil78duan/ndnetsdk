@@ -73,7 +73,10 @@ typedef struct nd_udp_node
 
 	struct udp_proxy_info *prox_info ;
 	udp_protocol_entry 	protocol_entry ;
-	struct sockaddr_in last_read; 
+	union {
+		struct sockaddr_in last_read;
+		struct sockaddr_in6 last_read6;
+	};
 }nd_udp_node ;
 
 //open udp connect

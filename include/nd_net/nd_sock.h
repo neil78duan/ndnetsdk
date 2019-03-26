@@ -27,6 +27,7 @@
 	#include <arpa/inet.h>
 	typedef signed int 				ndsocket_t;
 	typedef struct sockaddr_in  SOCKADDR_IN ;
+	typedef struct sockaddr_in6  SOCKADDR_IN6;
 	typedef struct hostent HOSTENT,*LPHOSTENT;
 	typedef struct sockaddr SOCKADDR, *LPSOCKADDR ;
 	#define  ioctlsocket  ioctl 

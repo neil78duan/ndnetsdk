@@ -14,51 +14,13 @@ typedef struct nd_udp_node *nd_handle;
 //#include "nd_common/nd_alloc.h"
 #include "nd_net/nd_netlib.h"
 
-//static int udp_node_rawsend(struct nd_udp_node*node,char *data, size_t len)
-//{
-//	return  sendto(node->fd, data, (int)len,0,(LPSOCKADDR)&node->remote_addr, sizeof(node->remote_addr)) ;
-//}
 
 int nd_udp_connect(struct nd_udp_node*node,const char *host, int port,struct nd_proxy_info *proxy)
 {
-	if (proxy && proxy->proxy_type) {
-		short tmp_port ;
-		
-		node->fd = nd_socket_openport(0, SOCK_DGRAM ,0,0,0);
-		if(node->fd <= 0) {
-			node->myerrno = NDERR_OPENFILE ;
-			return -1 ;
-		}		
-
-		node->prox_info = malloc(sizeof(struct udp_proxy_info));
-		if(!node->prox_info) {
-			node->myerrno = NDERR_NOSOURCE ;
-			return -1 ;
-		}
-		node->prox_info->remote_port = 0 ;
-		tmp_port = nd_sock_getport(node->fd) ;
-		tmp_port = ntohs(tmp_port) ;
-
-		node->prox_info->proxy_fd =  nd_proxy_connect(host,tmp_port , &(node->prox_info->proxy_addr), proxy,1)  ;
-		if(node->prox_info->proxy_fd <= 0) {
-			node->myerrno = NDERR_INVALID_INPUT ;
-			free(node->prox_info) ;
-			node->prox_info = 0;
-			return -1 ;
-		}
-		
-		if(-1==get_sockaddr_in(host,  port,(SOCKADDR_IN*) &node->remote_addr6)) {
-			node->prox_info->remote_port =  port ;
-			ndstrncpy(node->prox_info->remote_name, host, sizeof(node->prox_info->remote_name)) ;
-		}
-		
-	}
-	else {
-		node->fd = nd_socket_udp_connect(host,  port, (SOCKADDR_IN*)&node->remote_addr6);
-		if(node->fd <=0) {
-			node->myerrno = NDERR_OPENFILE ;
-			return -1;
-		}
+	node->fd = nd_socket_udp_connect(host, port, (SOCKADDR_IN*)&node->remote_addr6);
+	if (node->fd <= 0) {
+		node->myerrno = NDERR_OPENFILE;
+		return -1;
 	}
 
 	if (node->remote_addr6.sin6_family == AF_INET6) {
@@ -70,16 +32,7 @@ int nd_udp_connect(struct nd_udp_node*node,const char *host, int port,struct nd_
 
 int nd_udp_close(struct nd_udp_node*node,int flag) 
 {
-	nd_assert(node) ;
-	if (node->prox_info){
-		if (node->prox_info->proxy_fd >0){
-			nd_socket_close(node->prox_info->proxy_fd) ;
-			node->prox_info->proxy_fd = 0 ;
-		}
-		free(node->prox_info) ;
-		node->prox_info = NULL;
-	}
-
+	nd_assert(node) ;	
 	if (node->fd) {
 		nd_socket_close(node->fd) ;
 		node->fd = 0 ;
@@ -100,20 +53,9 @@ int nd_udp_send(struct nd_udp_node*node,const char *data, size_t len)
 			}		;
 		}
 	}
-	if (!node->prox_info){
-		ret = (int) sendto(node->fd, data, (int)len,0,(LPSOCKADDR)&node->remote_addr, (int)sizeof(node->remote_addr)) ;
-	}
-	else {
-		struct udp_proxy_info *prox = node->prox_info ;
-		if (prox->remote_port){
-			ret = nd_proxy_sendtoex(node->fd,data,len, prox->remote_name,prox->remote_port,&prox->proxy_addr) ;
-		}
-		else {
-			ret = nd_proxy_sendto(node->fd,(void*)data,len, &node->remote_addr,&prox->proxy_addr) ;
-		}
-		if(ret >0)
-			ret = (int)len ;
-	}
+
+	//ret = _socket_sendto(node, data, len, &node->remote_addr);
+	ret = nd_socket_udp_write(node, data, len, &node->remote_addr);
 	if(ret > 0){
 		node->last_push = nd_time() ;
 		node->send_len += len ;
@@ -127,67 +69,62 @@ int nd_udp_send(struct nd_udp_node*node,const char *data, size_t len)
 
 	return ret;
 }
-
-int nd_udp_sendto(struct nd_udp_node*node,const char *data, size_t len, SOCKADDR_IN* to_addr)
-{
-	int ret ;
-
-	if (!node->prox_info){
-		ret = (int)sendto(node->fd, data, (int)len,0,(LPSOCKADDR)to_addr, (int)sizeof(*to_addr)) ;
-	}
-	else {
-		ret = nd_proxy_sendto(node->fd,(void*)data,len, to_addr,&node->prox_info->proxy_addr) ;
-	}
-
-	if(ret > 0) {
-		node->send_len += len ;
-
-		node->last_push = nd_time() ;
-	}
-	else if(-1==ret) {
-		if(ESOCKETTIMEOUT==nd_last_errno())
-			node->myerrno = NDERR_WOULD_BLOCK;
-		else 
-			node->myerrno = NDERR_WRITE ;
-	}
-
-	return ret;
-}
-
-int nd_udp_sendtoex(struct nd_udp_node*node,const char *data, size_t len, char *host, int port)
-{
-	int ret ;
-	if (!node->prox_info){
-		struct sockaddr_in6 to_addr ;
-		if(-1==get_sockaddr_in(host, port, (SOCKADDR_IN*)&to_addr) ) {
-			node->myerrno = NDERR_INVALID_INPUT;
-			return -1;
-		}
-		ret = (int)sendto(node->fd, data, (int)len,0,(LPSOCKADDR)&to_addr, (int)sizeof(to_addr)) ;
-	}
-	else {
-		ret =  nd_proxy_sendtoex(node->fd,data,len, node->prox_info->remote_name,node->prox_info->remote_port,&node->prox_info->proxy_addr) ;
-	}
-
-
-	if(ret > 0)
-		node->send_len += len ;
-	else if(-1==ret) {
-		if(ESOCKETTIMEOUT==nd_last_errno())
-			node->myerrno = NDERR_WOULD_BLOCK;
-		else 
-			node->myerrno = NDERR_WRITE ;
-	}
-	return ret ;
-}
+// 
+// int nd_udp_sendto(struct nd_udp_node*node,const char *data, size_t len, SOCKADDR_IN* to_addr)
+// {
+// 	int ret= nd_socket_udp_write(node->fd, data, len, to_addr);
+// 
+// 	if(ret > 0) {
+// 		node->send_len += len ;
+// 
+// 		node->last_push = nd_time() ;
+// 	}
+// 	else if(-1==ret) {
+// 		if(ESOCKETTIMEOUT==nd_last_errno())
+// 			node->myerrno = NDERR_WOULD_BLOCK;
+// 		else 
+// 			node->myerrno = NDERR_WRITE ;
+// 	}
+// 
+// 	return ret;
+// }
+// 
+// int nd_udp_sendtoex(struct nd_udp_node*node,const char *data, size_t len, char *host, int port)
+// {
+// 	int ret ;
+// 
+// 	struct sockaddr_in6 to_addr;
+// 	if (node->is_ipv6) {
+// 		to_addr.sin6_family = AF_INET6;
+// 	}
+// 	else {
+// 		to_addr.sin6_family = AF_INET;
+// 	}
+// 
+// 	if (-1 == get_sockaddr_in(host, port, (SOCKADDR_IN*)&to_addr)) {
+// 		node->myerrno = NDERR_INVALID_INPUT;
+// 		return -1;
+// 	}
+// 
+// 	ret = nd_socket_udp_write(node, data, len, &to_addr);
+// 
+// 	if(ret > 0)
+// 		node->send_len += len ;
+// 	else if(-1==ret) {
+// 		if(ESOCKETTIMEOUT==nd_last_errno())
+// 			node->myerrno = NDERR_WOULD_BLOCK;
+// 		else 
+// 			node->myerrno = NDERR_WRITE ;
+// 	}
+// 	return ret ;
+// }
 
 //read udp socket data
 int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t outval) 
 {
 
 	int ret ;
-	size_t readlen = 0;
-	socklen_t sock_len;
+	int readlen = 0;
 
 	nd_assert(buf && buf_size>0);
 
@@ -201,53 +138,22 @@ int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t o
 		}
 	}
 
-	//read data
-	sock_len = (socklen_t) sizeof(SOCKADDR_IN) ;
-	readlen = (int)recvfrom(node->fd,buf, (int)buf_size, 0, (LPSOCKADDR)&node->last_read, &sock_len )  ;
-	if(readlen <= 0 || readlen>=ND_UDP_PACKET_SIZE){
-		node->myerrno = NDERR_READ ;
+	readlen = nd_socket_udp_read(node->fd, buf, (int)buf_size, &node->last_read);
+
+	if (-1 == readlen) {
+		node->sys_error = nd_last_errno();
+		node->myerrno = NDERR_READ;
+		nd_logdebug("recvfrom : %s\n", nd_last_error());
+		return -1;
+	}
+	if(readlen>=ND_UDP_PACKET_SIZE){
+		node->myerrno = NDERR_BADPACKET ;
 		return -1 ;
 	}
 
 	TCPNODE_READ_AGAIN(node) = 1;
 	node->last_recv = nd_time() ;
 	node->recv_len += readlen ;
-
-	if (node->prox_info){
-		//struct udp_proxy_info *prox = node->prox_info ;
-		if(buf[0]!=0 || buf[1]!=0 || buf[2]!=0) {
-			node->myerrno = NDERR_BADPACKET ;
-			return -1;
-		}
-		if (buf[3]==1)	{
-			if(readlen <= 10) {
-				node->myerrno = NDERR_BADPACKET ;
-				return -1 ;
-			}
-			node->last_read.sin_addr.s_addr =*(int*) &buf[4] ;
-			node->last_read.sin_port = *(short*) &buf[8] ;
-			sock_len = 10;
-			readlen -= 10 ;
-		}
-		else if(buf[3]==3){
-			sock_len = buf[4] + 5;
-			if ( sock_len >= readlen) {
-				node->myerrno = NDERR_BADPACKET ;
-				return -1 ;
-			}
-
-			node->last_read.sin_port = *(short *) &buf[sock_len] ;
-			sock_len += 2 ;
-			
-			if ( sock_len >= readlen) {
-				node->myerrno = NDERR_BADPACKET ;
-				return -1 ;
-			}
-			readlen -= sock_len ;
-
-		}
-		memcpy(buf, buf+sock_len, readlen) ;
-	}
 
 	if (node->protocol != PROTOCOL_OTHER){
 		NDUINT16 checksum,calc_cs;

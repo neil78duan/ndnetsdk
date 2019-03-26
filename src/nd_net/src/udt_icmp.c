@@ -33,6 +33,8 @@ nd_udt_node* udt_icmp_connect(nd_udt_node *socket_node,const char *host, short p
 		return NULL ;
 	}
 	memset(&socket_node->remote_addr,0,sizeof(socket_node->remote_addr));
+	
+	socket_node->remote_addr.sin_family = AF_UNSPEC;
 
 	if(-1==get_sockaddr_in(host, port, &socket_node->remote_addr) ) {
 		return 0;

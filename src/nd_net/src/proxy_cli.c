@@ -51,6 +51,7 @@ int send_init_proxy(ndsocket_t fd,const char *host, short port, struct nd_proxy_
 	if (proxy->proxy_type==ND_PROXY_SOCKS4 || proxy->proxy_type==ND_PROXY_SOCKS4A) { 
 		 SOCKADDR_IN sock_addr ;
 		//SOCKS4 proxy
+		 sock_addr.sin_family = AF_INET;
 
 		command[0]=4;
 		command[1]=1; //CONNECT or BIND request
