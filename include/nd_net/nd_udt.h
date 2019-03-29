@@ -70,7 +70,10 @@ struct _s_udt_socket
 	ND_CONNECTOR_BASE ;
 	struct udp_proxy_info *prox_info ;
 	udp_protocol_entry 	protocol_entry ;
-	struct sockaddr_in last_read; 
+	union {
+		struct sockaddr_in last_read;
+		struct sockaddr_in6 last_read6;
+	};
 	//////////////////////////////////////////////////////////////////////////
 	check_udt_packet check_entry ;
 
@@ -93,18 +96,32 @@ struct _s_udt_socket
 	u_32 retrans_seq;					//重传系列号(位于[acknowledged_seq,send_sequence])
 	size_t window_len ;					//对方接收窗口的长度
 	struct nd_rtt		_rtt ;				//记录样本往返时间
-	
 } ;
 
+typedef int(*udt_data_proc)(nd_handle hsrv, struct ndudt_pocket *pocket, int len, SOCKADDR_IN *addr);
+typedef int(*udt_connected_proc)(nd_handle hsrv, nd_udt_node *socket_node, SOCKADDR_IN *addr);
 
-typedef struct nd_srv_node nd_udtsrv; 
+
+struct udt_listen_node
+{
+	struct nd_srv_node base;
+	udt_data_proc data_proc;
+	udt_connected_proc accept_proc;
+	struct list_head wait_rease;
+
+};
+typedef struct udt_listen_node nd_udtsrv;
 
 #define UDTSO_SET_RESET(udt_socket)  (udt_socket)->is_reset = 1
 #define UDTSO_IS_RESET(udt_socket)  (udt_socket)->is_reset
 
 static __INLINE__ size_t send_window(nd_udt_node *socket_node)
 {
-	return ndlbuf_free_capacity(&socket_node->recv_buffer) ;
+	size_t size = ndlbuf_free_capacity(&socket_node->recv_buffer) ;
+	if (size > 0xffff) {
+		return 0xffff;
+	}
+	return size;
 }
 
 
@@ -121,6 +138,9 @@ int _handle_fin(nd_udt_node* socket_node, struct ndudt_pocket *pocket);
 
 int _udt_syn(nd_udt_node *socket_node) ;
 
+int _test_checksum(struct ndudt_header *data, int size); //return 0 error ,1 success 
+void _set_checksum(struct ndudt_header *data,int size);
+
 //int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, size_t len);
 
 int _udt_fin(nd_udt_node *socket_node);
@@ -129,7 +149,8 @@ int _udt_fin(nd_udt_node *socket_node);
 //return 0 no data in coming, -1 error check error code ,else return lenght of in come data
 int _wait_data(nd_udt_node *socket_node,udt_pocketbuf* buf,ndtime_t outval) ;
 
-int write_pocket_to_socket(nd_udt_node *socket_node,struct ndudt_pocket *pocket, size_t len) ;
+int write_pocket_to_socket(nd_udt_node *socket_node, struct ndudt_pocket *pocket, size_t len);
+int read_packet_from_socket(nd_udt_node *socket_node, char *buf, size_t size, ndtime_t tmout);
 
 int _handle_syn(nd_udt_node *socket_node,struct ndudt_pocket *pocket);
 /*处理udt协议包*/
@@ -145,6 +166,7 @@ ndtime_t calc_timeouval(struct nd_rtt *rtt, int measuerment) ;
 
 void send_reset_packet(nd_udt_node* socket_node) ;
 
+ND_NET_API int update_udt_session(nd_udt_node *node);
 ND_NET_API void _udt_connector_init(nd_udt_node *socket_node) ;
 ND_NET_API void nd_udtnode_init(nd_udt_node *socket_node);
 
@@ -175,7 +197,7 @@ ND_NET_API nd_udt_node* udt_connect(nd_udt_node *socket_node,const char *host, s
 ND_NET_API int udt_send(nd_udt_node* socket_node,void *data, int len ) ;
 
 //发送UDT nd_packhdr_t 包
-ND_NET_API int udt_connector_send(nd_udt_node* socket_addr, nd_packhdr_t *msg_buf, int flag) ;									
+//ND_NET_API int udt_connector_send(nd_udt_node* socket_addr, nd_packhdr_t *msg_buf, int flag) ;									
 
 //listen 端相关
 //释放一个已经关闭的连接
@@ -188,8 +210,11 @@ void _close_listend_socket(nd_udt_node* socket_node) ;
 //定时驱动每个连接
 ND_NET_API void update_all_socket(nd_udtsrv *root) ;
 
+
+ND_NET_API int pump_insrv_udt_data(nd_udtsrv *root, struct ndudt_pocket *pocket, int len, SOCKADDR_IN *addr);
+
 //处理udt数据
-ND_NET_API int udt_data_handler(SOCKADDR_IN *addr, struct ndudt_pocket*pocket, size_t read_len, nd_udtsrv *root)  ;
+//ND_NET_API int udt_data_handler(SOCKADDR_IN *addr, struct ndudt_pocket*pocket, size_t read_len, nd_udtsrv *root)  ;
 
 ND_NET_API void udt_icmp_init(nd_udt_node *socket_node) ;
 ND_NET_API void _udticmp_connector_init(nd_udt_node *socket_node) ;

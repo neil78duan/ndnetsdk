@@ -539,6 +539,36 @@ int nd_socket_wait_read(ndsocket_t fd,int timeval)
 	return FD_ISSET(fd, &rfds) ;
 };
 
+
+int nd_sockadd_in_cmp(SOCKADDR_IN *src_addr, SOCKADDR_IN *desc_addr)
+{
+	if (src_addr->sin_family != desc_addr->sin_family) {
+		return 1;
+	}
+	else if (src_addr->sin_family == AF_INET) {
+		return !((src_addr->sin_port == desc_addr->sin_port) &&
+			((u_long)src_addr->sin_addr.s_addr == (u_long)desc_addr->sin_addr.s_addr));
+	}
+	else if (src_addr->sin_family == AF_INET6) {
+		SOCKADDR_IN6 *src6 =(SOCKADDR_IN6 *) src_addr;
+		SOCKADDR_IN6 *dest6 = (SOCKADDR_IN6 *)desc_addr;
+
+		if (src6->sin6_port != src6->sin6_port) {
+			return 1;
+		}
+
+		NDUINT64 *psrc = (NDUINT64 *)&src6->sin6_addr;
+		NDUINT64 *pdest = (NDUINT64 *)&dest6->sin6_addr;
+		
+		if ( psrc[0] != pdest[0] || psrc[1] != pdest[1]) {
+			return 1;
+		}
+
+		return 0;
+	}
+	return 1;
+}
+
 int nd_socket_nonblock(ndsocket_t fd, int cmd)
 {
 	int val = cmd;

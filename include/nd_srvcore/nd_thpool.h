@@ -48,6 +48,9 @@ void nd_srvnode_destroy(struct node_root *root);
 #endif
 
 
+int _udt_sub_thread(struct thread_pool_info *thip);
+int _utd_main_thread(struct thread_pool_info *thip);
+
 int close_session_in_thread(struct thread_pool_info *thpi);
 int update_session_in_thread(struct cm_manager *pmanger, struct thread_pool_info *thpi);
 int addto_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo);

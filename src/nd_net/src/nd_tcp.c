@@ -509,6 +509,7 @@ void _tcp_connector_init(struct nd_tcp_node *conn_node)
 	conn_node->data_entry = (data_in_entry) nd_dft_packet_handler ;
 	conn_node->msg_entry = (net_msg_entry) nd_translate_message ;
 	conn_node->get_pack_size = nd_net_getpack_size ;
+	conn_node->wait_entry = tcpnode_wait_msg;
 	conn_node->sock_type = SOCK_STREAM ;
 	conn_node->status = ETS_DEAD;				/*socket state in game 0 not read 1 ready*/
 	conn_node->start_time =nd_time() ;		

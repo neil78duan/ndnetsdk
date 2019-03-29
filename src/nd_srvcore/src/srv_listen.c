@@ -152,16 +152,16 @@ int nd_listensrv_open(int is_ipv6, int port, nd_listen_handle handle, int thread
 		return -1 ;
 	}
 	nd_socket_nonblock(get_listen_fd(handle),1) ;
-	if(_IS_UDT_MOD(io_mode)) {
-		struct nd_thsrv_createinfo ls_info = {SUBSRV_RUNMOD_STARTUP,NULL,handle,handle,	("listen")	};
-		ls_info.srv_entry = (nd_threadsrv_entry )udp_server_entry ;
-
-		handle->listen_id = nd_thsrv_createex(&ls_info,NDT_PRIORITY_HIGHT,0) ;
-		return handle->listen_id?0:-1;
-	}
+// 	if(_IS_UDT_MOD(io_mode)) {
+// 		struct nd_thsrv_createinfo ls_info = {SUBSRV_RUNMOD_STARTUP,NULL,handle,handle,	("listen")	};
+// 		ls_info.srv_entry = (nd_threadsrv_entry )udp_server_entry ;
+// 
+// 		handle->listen_id = nd_thsrv_createex(&ls_info,NDT_PRIORITY_HIGHT,0) ;
+// 		return handle->listen_id?0:-1;
+// 	}
 //Windows iocp
 #if defined(_MSC_VER)
-	else if(ND_LISTEN_OS_EXT==io_mode) {
+	if(ND_LISTEN_OS_EXT==io_mode) {
 		handle->tcp.status = 1;
 
 

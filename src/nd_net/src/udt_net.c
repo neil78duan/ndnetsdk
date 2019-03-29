@@ -73,8 +73,10 @@ int _udt_packet_handler(nd_udt_node *socket_node,struct ndudt_pocket *pocket,siz
 {
 	ENTER_FUNC()
 	int ret = 0;	
-	nd_object_seterror((nd_handle)socket_node, NDERR_SUCCESS) ;
+	nd_object_seterror((nd_handle)socket_node, NDERR_SUCCESS);
+	socket_node->last_recv = nd_time();		//record received data time
 	socket_node->update_tm = socket_node->last_recv ;
+
 
 	if(pocket->window_len > 0)
 		socket_node->window_len = pocket->window_len ;
@@ -169,7 +171,7 @@ int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, s
 	//check sequence
 	seq_offset = pocket->sequence -socket_node->received_sequence ;
 	if(seq_offset > 0){
-		//丢包
+		//丢包 这里需要保存一下等待下次包的到来
 		struct ndudt_pocket lost_ntf;
 		init_udt_pocket(&lost_ntf);
 		set_pocket_ack(&lost_ntf, socket_node->received_sequence) ;
@@ -196,37 +198,45 @@ int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, s
 	set_socket_ack( socket_node, 1) ;
 	socket_node->received_sequence += data_len ;
 
-	if (!socket_node->data_entry){
-		data_len = ndlbuf_write(recvbuf,data, data_len,EBUF_ALL) ;
-	}
-	else {
-		//notify client program
-		if (ndlbuf_datalen(recvbuf) > 0){
-			int ret = 0 ;
-			//size_t w_len = ndlbuf_write(recvbuf,data, data_len,EBUF_ALL) ;
-			//nd_assert(w_len == data_len) ;
-			ret = socket_node->data_entry((nd_handle)socket_node, ndlbuf_data(recvbuf), ndlbuf_datalen(recvbuf),(nd_handle) socket_node->srv_root) ;
-			if(ret > 0) {
-				ndlbuf_sub_data(recvbuf,ret) ;
-			}
-			else if(-1==ret) {
-				socket_node->myerrno = NDERR_USER ;
-				data_len = -1;
-			}
+	data_len = ndlbuf_write(recvbuf, data, data_len, EBUF_ALL);
+	if (data_len > 0 && socket_node->is_session) {
+		if (-1 == handle_recv_data((nd_netui_handle)socket_node,(nd_handle)socket_node->srv_root)) {
+			LEAVE_FUNC();
+			return -1;
 		}
-		else {
-			int ret = 0 ;
-			ret = socket_node->data_entry((nd_handle)socket_node, data,data_len, (nd_handle)socket_node->srv_root) ;						
-			if(data_len != ret) {
-				ndlbuf_write(recvbuf,data+ret, data_len - ret,EBUF_ALL) ;
-			}
-			else if(-1==ret) {
-				socket_node->myerrno = NDERR_USER ;
-				data_len = -1 ;
-			}
+	}
 
-		}
-	}
+// 	if (!socket_node->data_entry){
+// 		data_len = ndlbuf_write(recvbuf,data, data_len,EBUF_ALL) ;
+// 	}
+// 	else {
+// 		//notify client program
+// 		if (ndlbuf_datalen(recvbuf) > 0){
+// 			int ret = 0 ;
+// 			//size_t w_len = ndlbuf_write(recvbuf,data, data_len,EBUF_ALL) ;
+// 			//nd_assert(w_len == data_len) ;
+// 			ret = socket_node->data_entry((nd_handle)socket_node, ndlbuf_data(recvbuf), ndlbuf_datalen(recvbuf),(nd_handle) socket_node->srv_root) ;
+// 			if(ret > 0) {
+// 				ndlbuf_sub_data(recvbuf,ret) ;
+// 			}
+// 			else if(-1==ret) {
+// 				socket_node->myerrno = NDERR_USER ;
+// 				data_len = -1;
+// 			}
+// 		}
+// 		else {
+// 			int ret = 0 ;
+// 			ret = socket_node->data_entry((nd_handle)socket_node, data,data_len, (nd_handle)socket_node->srv_root) ;						
+// 			if(data_len != ret) {
+// 				ndlbuf_write(recvbuf,data+ret, data_len - ret,EBUF_ALL) ;
+// 			}
+// 			else if(-1==ret) {
+// 				socket_node->myerrno = NDERR_USER ;
+// 				data_len = -1 ;
+// 			}
+// 
+// 		}
+// 	}
 
 	LEAVE_FUNC();
 		
@@ -252,7 +262,8 @@ int _udt_syn(nd_udt_node *socket_node)
 			return -1 ;
 		}
 		socket_node->status = NETSTAT_SYNSEND ;
-		ret = _wait_data(socket_node, &pocket,WAIT_CONNECT_TIME) ;
+		//ret = _wait_data(socket_node, &pocket,WAIT_CONNECT_TIME) ;
+		ret = read_packet_from_socket(socket_node, (char*)&pocket, sizeof(udt_pocketbuf), WAIT_CONNECT_TIME);
 		if(ret>0) {
 			if(_udt_packet_handler(socket_node,(struct ndudt_pocket *) &pocket, ret) >= 0) {
 				if(NETSTAT_ESTABLISHED==socket_node->status)
@@ -280,6 +291,11 @@ int _handle_ack(nd_udt_node *socket_node, u_32 ack_seq)
 	int notified =(int)( ack_seq - socket_node->acknowledged_seq) ;
 	int unnotified = (int)(socket_node->send_sequence - ack_seq ) ;
 
+	if (ack_seq <= socket_node->acknowledged_seq) {
+		//already handled this ack 
+		return 0;
+	}
+
 	if (socket_node->status==NETSTAT_SYNRECV){
 		if(notified < 0 ){
 			nd_object_seterror((nd_handle)socket_node,NDERR_BADPACKET);
@@ -296,10 +312,10 @@ int _handle_ack(nd_udt_node *socket_node, u_32 ack_seq)
 			root =(nd_udtsrv *) socket_node->srv_root ;
 			nd_assert(root) ;
 
-			if(root && root->connect_in_callback){				
+			if(root && root->base.connect_in_callback){				
 				//socket_node->start_time = nd_time() ;
 				socket_node->start_time = socket_node->update_tm ;
-				if(-1==root->connect_in_callback(socket_node,&socket_node->remote_addr,(nd_handle)root) ) {
+				if(-1==root->base.connect_in_callback(socket_node,&socket_node->remote_addr,(nd_handle)root) ) {
 					socket_node->myerrno = NDERR_USER;
 					return -1;
 				}
@@ -372,6 +388,31 @@ int udt_send_fin(nd_udt_node *socket_node)
 		return 0;
 	}
 	return -1;
+
+}
+
+
+int _test_checksum(struct ndudt_header *data, int size)
+{
+	NDUINT16 checksum, calc_cs;
+
+	checksum = ntohs(data->checksum);
+	data->checksum = 0;
+
+	calc_cs = nd_checksum((NDUINT16*)data, size);
+	
+	if (checksum != calc_cs) {
+		return 0;
+	}
+	return 1;
+}
+
+void _set_checksum(struct ndudt_header *data,int size)
+{
+	data->checksum = 0; 
+	data->checksum = nd_checksum((NDUINT16*)data, size);
+
+	data->checksum = htons(data->checksum);
 
 }
 

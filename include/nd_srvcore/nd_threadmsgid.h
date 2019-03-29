@@ -18,6 +18,7 @@ enum eThreadMsgID
 	E_THMSGID_DELFROM_THREAD,	//delete session from thread
 	E_THMSGID_CLOSE_SESSION,	//close session
 	E_THMSGID_DELAY_CLOSE_RAND,	// close session after waiting rand() ms
+	E_THMSGID_SEND_UDP_DATA,	// send udp data to thread handler
 	E_THMSG_NUMBER
 };
 

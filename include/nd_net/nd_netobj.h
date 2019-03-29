@@ -59,6 +59,7 @@ typedef int (*net_update_entry)(nd_handle h) ;
 typedef int (*net_writable_callback) (nd_handle h,nd_userdata_t param) ; //when socket can be writable call 
 
 typedef size_t(*net_get_packet_size)(nd_handle  handle, void *data);
+typedef int(*wait_message_entry)(nd_handle  handle, ndtime_t tmout);
 
 
 #define  ND_CONNECTOR_BASE \
@@ -89,6 +90,7 @@ typedef size_t(*net_get_packet_size)(nd_handle  handle, void *data);
 	net_msg_entry		msg_entry ;		\
 	net_update_entry	update_entry ;	\
 	net_get_packet_size get_pack_size;	\
+	wait_message_entry  wait_entry ;	\
 	nd_userdata_t		writable_param ;	\
 	net_writable_callback writable_callback; \
 	nd_cryptkey			crypt_key ;		\

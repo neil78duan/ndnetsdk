@@ -13,8 +13,8 @@
 #include "nd_net/nd_udp.h"
 
 #define NDUDT_VERSION 			1
-#define NDUDT_FRAGMENT_LEN		1400  //reference rfc 1122
-#define NDUDT_BUFFER_SIZE		1024 //封包缓冲
+#define NDUDT_FRAGMENT_LEN		1400  //reference rfc 1122 not include header
+#define NDUDT_BUFFER_SIZE		NDUDT_FRAGMENT_LEN //封包缓冲
 
 //#define CHECK_LOST_PACKET		//检测丢包情况
 //定义UDT报文类型
@@ -48,13 +48,13 @@ struct ndudt_header
 	u_8	stuff:1;			//否为了加密而填充(udt中不使用
 	u_8	crypt:1;			//是否加密(udt中不使用
 	u_8	ack:1;				//是否包含回复
-	u_8	resevered:1;		//保留
+	u_8	isresend:1;			//this packet is retranslated
 #else 
 	//0~15 bit
 	u_8	protocol:4;			//协议类型
 	u_8	version:4;			//版本信息(没有使用,主要是为了保留对齐而以)
 
-	u_8	resevered:1;		//保留
+	u_8	isresend : 1;		//this packet is retranslated
 	u_8	ack:1;				//是否包含回复
 	u_8	crypt:1;			//是否加密(udt中不使用
 	u_8	stuff:1;			//否为了加密而填充(udt中不使用
@@ -140,7 +140,7 @@ static __INLINE__ int ndt_header_size(struct ndudt_pocket *pocket)
 typedef union pocket_buffer
 {
 	struct ndudt_pocket pocket ;
-	u_8		_buffer[NDUDT_BUFFER_SIZE] ;
+	u_8		_buffer[2048] ;
 }udt_pocketbuf ;
 #pragma pack(pop)
 
@@ -152,10 +152,11 @@ static __INLINE__ void init_udt_header(struct ndudt_header *hdr)
 
 static __INLINE__ void init_udt_pocket(struct ndudt_pocket *pocket)
 {
-	memset(pocket, 0, sizeof(*pocket));
-	//u_32 *p =(u_32 *) pocket ;
-	//*p++ = 0 ;*p++=0; *p++=0; 
-	pocket->header.protocol=PROTOCOL_UDT ;
+	//memset(pocket, 0, sizeof(*pocket));
+	init_udt_header(&pocket->header);
+	pocket->session_id = 0;
+	pocket->window_len = 0;
+	pocket->sequence =0 ;
 }
 
 #define POCKET_SESSIONID(pocket) (pocket)->session_id
@@ -172,24 +173,36 @@ static __INLINE__ void init_udt_pocket(struct ndudt_pocket *pocket)
 #define SET_ACK(pocket) POCKET_TYPE(pocket)=NDUDT_ACK
 #define SET_LOST(pocket) POCKET_TYPE(pocket)=NDUDT_LOST
 
-#if ND_BYTE_ORDER == ND_B_ENDIAN
 static __INLINE__ void _udt_host2net(struct ndudt_pocket *pock)
 {
-	pock->header.checksum = nd_btols(pock->header.checksum) ;
-	pock->session_id =nd_btols(pock->session_id);
-	pock->window_len=nd_btols(pock->window_len);
-	pock->sequence=nd_btoll(pock->sequence);
+	pock->header.checksum = htons(pock->header.checksum) ;
+	pock->session_id = htons(pock->session_id);
+	pock->window_len= htons(pock->window_len);
+	pock->sequence= htonl(pock->sequence);
 	if(pock->header.ack) {
-		pock->ack_seq =nd_btoll(pock->ack_seq);
+		pock->ack_seq = htonl(pock->ack_seq);
 	}
 }
+
+static __INLINE__ void _udt_net2host(struct ndudt_pocket *pock)
+{
+	pock->header.checksum = ntohs(pock->header.checksum);
+	pock->session_id = ntohs(pock->session_id);
+	pock->window_len = ntohs(pock->window_len);
+	pock->sequence = ntohl(pock->sequence);
+	if (pock->header.ack) {
+		pock->ack_seq = ntohl(pock->ack_seq);
+	}
+}
+
+//#if ND_BYTE_ORDER == ND_B_ENDIAN
 #define udt_host2net(pocket)  _udt_host2net(pocket)
-#define udt_net2host(pocket)  _udt_host2net(pocket)
+#define udt_net2host(pocket)  _udt_net2host(pocket)
 
-#else 
-#define udt_host2net(pocket)  //nothing to be done
-#define udt_net2host(pocket)  //nothing to be done
-
-#endif
+// #else 
+// #define udt_host2net(pocket)  //nothing to be done
+// #define udt_net2host(pocket)  //nothing to be done
+// 
+// #endif
 
 #endif 

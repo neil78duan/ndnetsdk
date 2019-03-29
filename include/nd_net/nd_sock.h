@@ -93,11 +93,7 @@ ND_NET_API int nd_socket_wait_read(ndsocket_t fd,int timeval);
 
 //compare two address of internet 
 //return 0 equate
-static __INLINE__ int nd_sockadd_in_cmp(SOCKADDR_IN *src_addr, SOCKADDR_IN *desc_addr)
-{
-	return !((src_addr->sin_port==desc_addr->sin_port) &&
-		((u_long)src_addr->sin_addr.s_addr==(u_long)desc_addr->sin_addr.s_addr));
-}
+ND_NET_API int nd_sockadd_in_cmp(SOCKADDR_IN *src_addr, SOCKADDR_IN *desc_addr);
 
 ND_NET_API int nd_socket_nonblock(ndsocket_t fd, int cmd) ; //set socket nonblock or blocl
 

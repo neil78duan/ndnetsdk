@@ -138,7 +138,7 @@ ND_NET_API int nd_get_wait_writablity_time() ;
  * on error return -1 
  * 
  */
-ND_NET_API int tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout);
+//ND_NET_API int tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout);
 
 ND_NET_API int _sys_socket_write(struct nd_tcp_node *node,void *data , size_t len) ;
 #endif

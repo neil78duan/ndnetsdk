@@ -123,7 +123,7 @@ int nd_sendto_all_ex(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_lev
 	return ret ;
 }
 
-//∞—œ˚œ¢Ωª∏¯session¥¶¿Ì
+
 int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle) 
 {	
 	NDUINT8 tmp,ver ;
@@ -220,7 +220,6 @@ int nd_netmsg_2all_handle(nd_usermsghdr_t *data, nd_handle listen_handle,int pri
 
 }
 
-//∞—sessionÃÌº”µΩ∆‰À˚œﬂ≥Ã
 int _session_addto(NDUINT16 sessionid, nd_handle listen_handle,ndthread_t thid) 
 {
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
@@ -511,6 +510,41 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 	return 0;
 }
 
+//udt packet handler
+int msg_udt_packate_handler(nd_thsrv_msg *msg)
+{
+	NDUINT8 iscrypt = 0;
+	NDUINT8 priv_level = 0;
+	NDUINT16  session_id;
+	nd_netui_handle client;
+
+	struct thread_pool_info *pthinfo = (struct thread_pool_info *) msg->th_userdata;
+	struct listen_contex *lc = (struct listen_contex *)pthinfo->lh;
+
+	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc);
+	struct ndudt_pocket *udt_msg;
+
+	if (!pmanger)
+		return 0;
+
+	if (msg->data_len > NDUDT_BUFFER_SIZE) {
+		return 0;
+	}
+	udt_msg = (nd_usermsgbuf_t *)msg->data;
+
+	session_id = udt_msg->session_id;
+
+
+	if (session_id) {
+		client = (nd_netui_handle)pmanger->lock(pmanger, session_id);
+		if (client) {
+			_udt_packet_handler((nd_udt_node*)client, udt_msg, msg->data_len);
+		}
+	}
+
+	return 0;
+}
+
 //////////////////////////////////////////////////////////////////////////
 //delay close
 
@@ -583,5 +617,6 @@ void init_netthread_msg( nd_handle  thhandle)
 	nd_thsrv_install_msg(thhandle,E_THMSGID_NETMSG_HANDLE, netmsg_recv_handler ) ;
 	nd_thsrv_install_msg(thhandle,E_THMSGID_CLOSE_SESSION, session_close_handler ) ;
 	nd_thsrv_install_msg(thhandle, E_THMSGID_DELAY_CLOSE_RAND, delay_rand_close_handler);
+	nd_thsrv_install_msg(thhandle, E_THMSGID_SEND_UDP_DATA, msg_udt_packate_handler);
 }
 

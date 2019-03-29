@@ -64,7 +64,7 @@ void udt_clientmap_init(struct nd_udtcli_map *node, nd_handle h_listen)
 	node->connect_node.disconn_timeout = ((struct listen_contex*)h_listen)->operate_timeout;
 	node->connect_node.close_entry =(nd_close_callback ) udt_close ;
 
-	node->connect_node.data_entry = ((nd_udtsrv*)h_listen)->data_entry ;
+	node->connect_node.data_entry = ((struct nd_srv_node*)h_listen)->data_entry ;
 
 	node->connect_node.msg_entry = ((struct nd_srv_node*)h_listen)->msg_entry ;
 	node->connect_node.update_entry = (net_update_entry)_tcp_session_update ;
@@ -86,7 +86,7 @@ void udt_icmp_cm_init(struct nd_udtcli_map *node, nd_handle h_listen)
 	node->connect_node.disconn_timeout = ((struct listen_contex*)h_listen)->operate_timeout;
 	node->connect_node.close_entry =(nd_close_callback ) udt_close ;
 
-	node->connect_node.data_entry = ((nd_udtsrv*)h_listen)->data_entry ;
+	node->connect_node.data_entry = ((struct nd_srv_node*)h_listen)->data_entry ;
 
 	node->connect_node.msg_entry = ((struct nd_srv_node*)h_listen)->msg_entry ;
 

@@ -45,17 +45,17 @@ int nd_udp_close(struct nd_udp_node*node,int flag)
 int nd_udp_send(struct nd_udp_node*node,const char *data, size_t len)  
 {
 	int ret =0;
-	if (node->protocol != PROTOCOL_OTHER ){
-		ndudp_header  *packet = (ndudp_header  *) data ;
-		if (UDP_POCKET_PROTOCOL(packet) == node->protocol) {
-			if(UDP_POCKET_CHECKSUM(packet)==0){
-				UDP_POCKET_CHECKSUM(packet) = nd_checksum((NDUINT16*)packet,len) ;
-			}		;
-		}
-	}
+// 	if (node->protocol != PROTOCOL_OTHER ){
+// 		ndudp_header  *packet = (ndudp_header  *) data ;
+// 		if (UDP_POCKET_PROTOCOL(packet) == node->protocol) {
+// 			if(UDP_POCKET_CHECKSUM(packet)==0){
+// 				UDP_POCKET_CHECKSUM(packet) = nd_checksum((NDUINT16*)packet,len) ;
+// 			}		;
+// 		}
+// 	}
 
 	//ret = _socket_sendto(node, data, len, &node->remote_addr);
-	ret = nd_socket_udp_write(node, data, len, &node->remote_addr);
+	ret = nd_socket_udp_write(node->fd, data, len, &node->remote_addr);
 	if(ret > 0){
 		node->last_push = nd_time() ;
 		node->send_len += len ;
@@ -146,34 +146,35 @@ int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t o
 		nd_logdebug("recvfrom : %s\n", nd_last_error());
 		return -1;
 	}
-	if(readlen>=ND_UDP_PACKET_SIZE){
-		node->myerrno = NDERR_BADPACKET ;
-		return -1 ;
-	}
-
 	TCPNODE_READ_AGAIN(node) = 1;
-	node->last_recv = nd_time() ;
-	node->recv_len += readlen ;
+	node->last_recv = nd_time();
+	node->recv_len += readlen;
 
-	if (node->protocol != PROTOCOL_OTHER){
-		NDUINT16 checksum,calc_cs;
-		ndudp_header  *packet = (ndudp_header  *) buf ;
+// 	if(readlen>=ND_UDP_PACKET_SIZE){
+// 		node->myerrno = NDERR_BADPACKET ;
+// 		return -1 ;
+// 	}
 
-		if (UDP_POCKET_PROTOCOL(packet)!= node->protocol) {
-			node->myerrno = NDERR_BADPACKET ;
-			return -1 ;
-		}
-
-		checksum = UDP_POCKET_CHECKSUM(packet) ;
-		if(checksum) {
-			UDP_POCKET_CHECKSUM(packet) = 0 ;
-			calc_cs = nd_checksum((NDUINT16*)buf, readlen) ;
-			if(checksum!=calc_cs){
-				node->myerrno = NDERR_BADPACKET ;
-				return -1 ;
-			}
-		}
-	}
+// 
+// 	if (node->protocol != PROTOCOL_OTHER){
+// 		NDUINT16 checksum,calc_cs;
+// 		ndudp_header  *packet = (ndudp_header  *) buf ;
+// 
+// 		if (UDP_POCKET_PROTOCOL(packet)!= node->protocol) {
+// 			node->myerrno = NDERR_BADPACKET ;
+// 			return -1 ;
+// 		}
+// 
+// 		checksum = UDP_POCKET_CHECKSUM(packet) ;
+// 		if(checksum) {
+// 			UDP_POCKET_CHECKSUM(packet) = 0 ;
+// 			calc_cs = nd_checksum((NDUINT16*)buf, readlen) ;
+// 			if(checksum!=calc_cs){
+// 				node->myerrno = NDERR_BADPACKET ;
+// 				return -1 ;
+// 			}
+// 		}
+// 	}
 
 	return readlen ;
 }

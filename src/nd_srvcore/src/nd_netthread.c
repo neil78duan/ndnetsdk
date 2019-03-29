@@ -10,7 +10,6 @@
 
 
 #include "nd_srvcore/nd_srvlib.h"
-#if defined(USE_NEW_MODE_LISTEN_THREAD)
 #include "nd_srvcore/nd_netthread.h"
 
 
@@ -33,20 +32,29 @@ nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h, int session_num)
 	}
 	NETTH_CONTEXT_INIT(piocp);	
 	piocp->lh =(struct listen_contex*) h;
-	
-#ifdef ND_UNIX
-	if (listen_thread_createex(piocp) != 0) {
-		free(piocp);
-		return 0;
-	}
-#else 
-	nd_threadsrv_entry th_func = (nd_threadsrv_entry)(((struct listen_contex *) h)->listen_id ? _nd_thpool_sub : _nd_thpool_main);
-	if (listen_thread_create(piocp, th_func) != 0) {
-		free(piocp);
-		return 0;
-	}
-#endif
 
+	if (_IS_UDT_MOD(lc->io_mod)) {
+		nd_threadsrv_entry th_func = (nd_threadsrv_entry)(((struct listen_contex *) h)->listen_id ? _udt_sub_thread : _utd_main_thread);
+		if (listen_thread_create(piocp, th_func) != 0) {
+			free(piocp);
+			return 0;
+		}
+	}
+	else {
+
+#ifdef ND_UNIX
+		if (listen_thread_createex(piocp) != 0) {
+			free(piocp);
+			return 0;
+		}
+#else 
+		nd_threadsrv_entry th_func = (nd_threadsrv_entry)(((struct listen_contex *) h)->listen_id ? _nd_thpool_sub : _nd_thpool_main);
+		if (listen_thread_create(piocp, th_func) != 0) {
+			free(piocp);
+			return 0;
+		}
+#endif
+	}
 	list_add_tail(&piocp->list, &piocp->lh->list_thread);
 
 	if (0 == lc->listen_id){
@@ -141,4 +149,3 @@ int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * 
 //////////////////////////////////////////////////////////////////////////
 
 
-#endif

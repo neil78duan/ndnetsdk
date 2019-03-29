@@ -719,8 +719,9 @@ static int fetch_udp_message(nd_handle  node, nd_packhdr_t *msg , nd_handle list
  */
 int nd_connector_waitmsg(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf, ndtime_t tmout)
 {
-	ENTER_FUNC()
-	int ret =0;
+	ENTER_FUNC();
+	int ret = 0;
+	ndtime_t waittime = 0;
 
 	if(!nd_connector_valid(net_handle)|| nd_tryto_clear_err(net_handle)) {
 		LEAVE_FUNC();
@@ -733,96 +734,80 @@ int nd_connector_waitmsg(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf, ndt
 		return ret;
 	}
 
-	if(net_handle->type==NDHANDLE_TCPNODE){
-		ndtime_t waittime = 0;
-		struct nd_tcp_node *socket_node = (struct nd_tcp_node*)net_handle ;
-
 TCP_REWAIT:
-		if (tmout > 1000) {
-			waittime = 1000 ;
-		}
-		else {
-			waittime = tmout ;
-		}
-		
-		ret = tcpnode_wait_msg(socket_node, waittime) ;
-		if(ret <= 0) {
-			if(socket_node->myerrno == NDERR_WOULD_BLOCK) {
-				if(socket_node->update_entry((nd_handle)socket_node)==-1) {
-					LEAVE_FUNC();
-					return -1;
-				}
-				tmout -= waittime ;
-				if (tmout > 0)
-					goto TCP_REWAIT ;
-			}
-			
-			LEAVE_FUNC();
-			return ret ;
-		}
-		else {
-			ret =nd_net_fetch_msg(net_handle, (nd_packhdr_t *)msgbuf) ; 
-		}
-		//if(socket_node->update_entry((nd_handle)socket_node)==-1) {
-		//	ret = -1;
-		//}
+	if (tmout > 1000) {
+		waittime = 1000;
 	}
 	else {
-		ndtime_t now = nd_time() ;
-		nd_udp_node *socket_node = (nd_udp_node *)net_handle ;
-		void *param_old = socket_node->user_data ;
-		net_msg_entry data_func = socket_node->msg_entry ;
-		char read_buf[ND_UDP_PACKET_SIZE] ;
-
-		if(-1==socket_node->update_entry((nd_handle)socket_node) ){
-			LEAVE_FUNC();
-			return -1 ;	
-		}
-
-		socket_node->user_data = (void*)msgbuf ;
-		socket_node->msg_entry  = fetch_udp_message ;
-
-RE_WAIT:
-		ret = socket_node->sock_read((nd_handle)socket_node, read_buf,sizeof(read_buf),tmout)  ;
-		if(ret > 0 ) {
-			int v ;
-			nd_pack_len(&msgbuf->hdr) = 0 ;
-
-			v = nd_udp_parse((nd_handle)socket_node, read_buf, ret) ;
-			if(-1==v) {
-				socket_node->user_data = param_old;
-				socket_node->msg_entry  = data_func ;
-				LEAVE_FUNC();
-				return -1 ;
-			} 
-			socket_node->update_entry((nd_handle)socket_node);
-			
-			ret = nd_pack_len(&msgbuf->hdr);
-			if(0==ret) {
-				tmout -= nd_time() - now ;
-				if((int)tmout > 0) {
-					goto RE_WAIT ;
-				}
-			}
-		}
-		socket_node->user_data = param_old;
-		socket_node->msg_entry  = data_func ;
-
+		waittime = tmout;
 	}
-	/*
-	if(ret>0 ) {
-		nd_assert(ret == nd_pack_len(&msgbuf->hdr)) ;
-		if(msgbuf->hdr.encrypt) {
-			int new_len ;
-			new_len = nd_packet_decrypt(net_handle, msgbuf) ;
-			if(new_len==0) {
-				net_handle->myerrno = NDERR_BADPACKET ;
+
+	ret = net_handle->wait_entry(net_handle, waittime);
+	if (ret <= 0) {
+		if (net_handle->myerrno == NDERR_WOULD_BLOCK) {
+			if (net_handle->update_entry((nd_handle)net_handle) == -1) {
 				LEAVE_FUNC();
 				return -1;
 			}
-			nd_pack_len(&msgbuf->hdr)  = (NDUINT16)new_len ;			
+			tmout -= waittime;
+			if ((int)tmout > 0)
+				goto TCP_REWAIT;
 		}
-	}*/
+
+		LEAVE_FUNC();
+		return ret;
+	}
+	else {
+		ret = nd_net_fetch_msg(net_handle, (nd_packhdr_t *)msgbuf);
+	}
+// 
+// 	if(net_handle->type==NDHANDLE_TCPNODE){
+// 		struct nd_tcp_node *socket_node = (struct nd_tcp_node*)net_handle ;
+// 
+// 	}
+// 	else {
+// 		ndtime_t now = nd_time() ;
+// 		nd_udp_node *socket_node = (nd_udp_node *)net_handle ;
+// 		void *param_old = socket_node->user_data ;
+// 		net_msg_entry data_func = socket_node->msg_entry ;
+// 		char read_buf[ND_UDP_PACKET_SIZE] ;
+// 
+// 		if(-1==socket_node->update_entry((nd_handle)socket_node) ){
+// 			LEAVE_FUNC();
+// 			return -1 ;	
+// 		}
+// 
+// 		socket_node->user_data = (void*)msgbuf ;
+// 		socket_node->msg_entry  = fetch_udp_message ;
+// 
+// RE_WAIT:
+// 		ret = socket_node->sock_read((nd_handle)socket_node, read_buf,sizeof(read_buf),tmout)  ;
+// 		if(ret > 0 ) {
+// 			int v ;
+// 			nd_pack_len(&msgbuf->hdr) = 0 ;
+// 
+// 			v = nd_udp_parse((nd_handle)socket_node, read_buf, ret) ;
+// 			if(-1==v) {
+// 				socket_node->user_data = param_old;
+// 				socket_node->msg_entry  = data_func ;
+// 				LEAVE_FUNC();
+// 				return -1 ;
+// 			} 
+// 			socket_node->update_entry((nd_handle)socket_node);
+// 			
+// 			ret = nd_pack_len(&msgbuf->hdr);
+// 			if(0==ret) {
+// 				tmout -= nd_time() - now ;
+// 				if((int)tmout > 0) {
+// 					goto RE_WAIT ;
+// 				}
+// 			}
+// 		}
+// 		socket_node->user_data = param_old;
+// 		socket_node->msg_entry  = data_func ;
+// 
+// 	}
+	
 	LEAVE_FUNC();
 	return ret ;
 
