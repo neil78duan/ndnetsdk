@@ -51,7 +51,7 @@ NDListener *NDGetListener(nd_handle h_listen)
 NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener)
 {
 	ND_TRACE_FUNC();
-	if (!session || !check_connect_valid(session)){
+	if (!session /*|| !check_connect_valid(session)*/){
 		return NULL ;
 	}
 	NDObject *pobj = (NDObject *) nd_session_getdata((nd_netui_handle )session) ;

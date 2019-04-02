@@ -48,6 +48,7 @@ void nd_srvnode_destroy(struct node_root *root);
 #endif
 
 
+int udt_session_data_handle(nd_udt_node *socket_node, struct udt_packet_info* pack_buf);
 int _udt_sub_thread(struct thread_pool_info *thip);
 int _utd_main_thread(struct thread_pool_info *thip);
 

@@ -158,15 +158,8 @@ ND_NET_API net_msg_entry nd_hook_packet(nd_handle h, net_msg_entry msg_entry) ;
 // set timeout 
 ND_NET_API int nd_connector_set_timeout(nd_netui_handle net_handle, int seconds) ;
 
-static __INLINE__ ndip_t nd_net_getip(nd_handle h)
-{
-	return nd_sock_getip(((struct nd_netsocket*)h)->fd);
-}
-static __INLINE__ ndport_t nd_net_getport(nd_handle h)
-{
-	return nd_sock_getport(((struct nd_netsocket*)h)->fd);
-
-}
+ND_NET_API ndip_t nd_net_getip(nd_handle h);
+ND_NET_API ndport_t nd_net_getport(nd_handle h);
 
 ND_NET_API ndip_t nd_net_peer_getip(nd_handle h);
 ND_NET_API ndport_t nd_net_peer_getport(nd_handle h) ;

@@ -83,7 +83,9 @@ struct _s_udt_socket
 	u_16	need_ack:1 ;				////在下一此发送数据的时候是否需要带上确认
 	u_16	iodrive_mod:1 ;				//驱动模型0默认,在send和recv函数中自动驱动,1需要用户显示的使用update_socket)
 	u_16	is_retranslate:1;			//是否在重传模式
+	u_16	user_data_in : 1;			// received user data 
 	u_16	resend_times ;				//重发的次数
+	u_16	local_port;					//port for udt
 	
 	ndtime_t retrans_timeout ;			//超时重传时间和等待关闭时间(记录时间间隔不是绝对时间)
 	ndtime_t last_resend_tm;			//上次重传时间(只针对数据报)
@@ -98,7 +100,7 @@ struct _s_udt_socket
 	struct nd_rtt		_rtt ;				//记录样本往返时间
 } ;
 
-typedef int(*udt_data_proc)(nd_handle hsrv, struct ndudt_pocket *pocket, int len, SOCKADDR_IN *addr);
+typedef int(*udt_data_proc)(nd_handle hsrv, struct udt_packet_info *packet);
 typedef int(*udt_connected_proc)(nd_handle hsrv, nd_udt_node *socket_node, SOCKADDR_IN *addr);
 
 
@@ -114,6 +116,8 @@ typedef struct udt_listen_node nd_udtsrv;
 
 #define UDTSO_SET_RESET(udt_socket)  (udt_socket)->is_reset = 1
 #define UDTSO_IS_RESET(udt_socket)  (udt_socket)->is_reset
+
+#define UDT_RECV_USER_DATA(node) (node)->user_data_in 
 
 static __INLINE__ size_t send_window(nd_udt_node *socket_node)
 {
@@ -211,7 +215,8 @@ void _close_listend_socket(nd_udt_node* socket_node) ;
 ND_NET_API void update_all_socket(nd_udtsrv *root) ;
 
 
-ND_NET_API int pump_insrv_udt_data(nd_udtsrv *root, struct ndudt_pocket *pocket, int len, SOCKADDR_IN *addr);
+//ND_NET_API int pump_insrv_udt_data(nd_udtsrv *root, struct ndudt_pocket *pocket, int len, SOCKADDR_IN *addr);
+ND_NET_API int pump_insrv_udt_data(nd_udtsrv *root, struct udt_packet_info *pack_buf);
 
 //处理udt数据
 //ND_NET_API int udt_data_handler(SOCKADDR_IN *addr, struct ndudt_pocket*pocket, size_t read_len, nd_udtsrv *root)  ;

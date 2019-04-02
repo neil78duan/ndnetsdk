@@ -153,34 +153,17 @@ void NDConnector::Destroy(int flag)
 int NDConnector::SendMsg(NDSendMsg &msg, int flag)
 {
 	return SendMsg((nd_usermsghdr_t*) (msg.GetMsgAddr()),  flag) ;
-	/*
-	ND_TRACE_FUNC();
-	int ret ;
-	if (!m_objhandle || !nd_connector_valid((nd_netui_handle)m_objhandle )) {
-		return -1 ;
-	}
-	ret = nd_connector_send(m_objhandle,(nd_packhdr_t*) (msg.GetMsgAddr()), flag) ;
-	if (ret > 0 && (flag & ESF_URGENCY)) {
-		if (m_objhandle->type == NDHANDLE_TCPNODE){
-			nd_tcpnode_flush_sendbuf((nd_netui_handle)m_objhandle) ;
-		}
-	}
-	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WOULD_BLOCK) {
-		Close(0);
-	}
-	return ret ;
-	 */
 }
 
 int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
 {
 	ND_TRACE_FUNC();
-	int ret ;
-	if (!m_objhandle || !nd_connector_valid((nd_netui_handle)m_objhandle )) {
-		nd_logwarn("try to send data error , connector is invalid\n") ;
+	int ret;
+	nd_assert(m_objhandle);
+	if (!m_objhandle ) {
+		nd_logwarn("try to send data error , connector is not created\n") ;
 		return -1 ;
 	}
-	nd_assert(m_objhandle) ;
 	ND_USERMSG_SYS_RESERVED(msghdr) = 0 ;
 	ret = nd_connector_send(m_objhandle,&msghdr->packet_hdr, flag) ;
 	if (ret > 0 && (flag & ESF_URGENCY)) {

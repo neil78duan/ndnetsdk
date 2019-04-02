@@ -157,23 +157,18 @@ int NDBaseSession::GetPrivilege()
 
 ndip_t NDBaseSession::Getip()
 {
-	return nd_sock_getip(((nd_netui_handle)m_objhandle)->fd);
+	return nd_net_getip(m_objhandle);
+	//return nd_sock_getip(((nd_netui_handle)m_objhandle)->fd);
 }
 
 ndport_t NDBaseSession::GetPort()
 {
-	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd;
-	if (fd){
-		return nd_sock_getport(fd);
-	}
-	return 0;
+	return nd_net_getport(m_objhandle);
 }
 
 ndip_t NDBaseSession::GetPeerip()
 {
-	return nd_sock_getpeerip(((nd_netui_handle)m_objhandle)->fd);
-	//return nd_net_peer_getip(m_objhandle);
-
+	return nd_net_peer_getip(m_objhandle);
 }
 ndport_t NDBaseSession::GetPeerPort()
 {

@@ -33,7 +33,35 @@ int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout)
 		LEAVE_FUNC();
 		return -1;
 	}
+	struct nd_tcp_node *socket_node = (struct nd_tcp_node *) net_handle;
 
+RE_READ:
+
+	read_len = socket_node->wait_entry((nd_handle)socket_node, timeout);
+	if (-1 == read_len) {
+		LEAVE_FUNC();
+		return -1;
+	}
+	else if (0 == read_len) {
+		if (socket_node->update_entry((nd_handle)socket_node) == -1) {
+			ret = -1;
+		}
+		LEAVE_FUNC();
+		return ret;
+	}
+	else {
+		ret += read_len;
+		if (-1 == handle_recv_data((nd_netui_handle)socket_node, NULL)) {
+			LEAVE_FUNC();
+			return -1;
+		}
+		if (TCPNODE_READ_AGAIN(socket_node)) {
+			goto RE_READ;
+		}
+		socket_node->update_entry((nd_handle)socket_node);
+	}
+
+	/*
 	if(net_handle->type==NDHANDLE_TCPNODE){		
 		struct nd_tcp_node *socket_node = (struct nd_tcp_node *) net_handle ;
 		read_len = nd_tcpnode_read(socket_node) ;
@@ -75,7 +103,6 @@ RE_READ:
 				return -1 ;
 			}
 			if(TCPNODE_READ_AGAIN(socket_node)) {
-				/*read buf is to small , after parse data , read again*/
 				read_len = nd_tcpnode_read(socket_node) ;
 				goto RE_READ;
 			}
@@ -114,7 +141,6 @@ RE_UDTREAD:
 				return -1;
 			}
 			if(TCPNODE_READ_AGAIN(socket_addr)) {
-				/*read buf is to small , after parse data , read again*/
 				goto RE_UDTREAD;
 			}
 		}
@@ -130,6 +156,7 @@ RE_UDTREAD:
 			}
 		}
 	}
+	*/
 	LEAVE_FUNC();
 	return ret;	
 }
@@ -507,16 +534,17 @@ int nd_connector_open(nd_netui_handle net_handle,const char *host, int port,stru
 	ENTER_FUNC()
 	int ret =0;
 
-	if (net_handle->fd){
-		nd_connector_reset(net_handle) ;
-	}
-	ndlbuf_reset(&(net_handle->recv_buffer));		/* buffer store data recv from net */
-	ndlbuf_reset(&(net_handle->send_buffer));		/* buffer store data send from net */
+	nd_connector_reset(net_handle);
 
-	net_handle->last_push = net_handle->last_recv = nd_time();
-	net_handle->sys_error = 0;
-	net_handle->myerrno = NDERR_SUCCESS;
-	nd_connect_level_set(net_handle, 0);
+	if (net_handle->fd){
+	}
+// 	ndlbuf_reset(&(net_handle->recv_buffer));		/* buffer store data recv from net */
+// 	ndlbuf_reset(&(net_handle->send_buffer));		/* buffer store data send from net */
+// 
+// 	net_handle->last_push = net_handle->last_recv = nd_time();
+// 	net_handle->sys_error = 0;
+// 	net_handle->myerrno = NDERR_SUCCESS;
+// 	nd_connect_level_set(net_handle, 0);
 
 	if(net_handle->type==NDHANDLE_TCPNODE){
 		struct nd_tcp_node* socket_addr=(struct nd_tcp_node*)net_handle ;
@@ -568,7 +596,7 @@ int nd_connector_valid(nd_netui_handle net_handle)
 	else if(net_handle->type==NDHANDLE_UDPNODE) {
 		if(net_handle->protocol==PROTOCOL_UDT) {
 			LEAVE_FUNC();
-			return net_handle->status == NETSTAT_ESTABLISHED ;
+			return (net_handle->status & NETSTAT_ESTABLISHED );
 		}
 		LEAVE_FUNC();
 		return 1;
@@ -823,19 +851,19 @@ int nd_connector_handled_data(nd_netui_handle net_handle, size_t size)
 	return 0 ;
 	
 }
-
-//data handle function
-static int fetch_udp_data(nd_netui_handle node,void *data , size_t len,nd_handle listen_h) 
-{
-	size_t buf_size = *((size_t*) node->user_data) ;
-	buf_size = min(len, buf_size) ;
-	if(buf_size==0) {
-		return 0 ;
-	}
-	memcpy(node->user_data, data, buf_size) ;
-	node->user_data =(void*) buf_size ;
-	return (int) buf_size ;
-}
+// 
+// //data handle function
+// static int fetch_udp_data(nd_netui_handle node,void *data , size_t len,nd_handle listen_h) 
+// {
+// 	size_t buf_size = *((size_t*) node->user_data) ;
+// 	buf_size = min(len, buf_size) ;
+// 	if(buf_size==0) {
+// 		return 0 ;
+// 	}
+// 	memcpy(node->user_data, data, buf_size) ;
+// 	node->user_data =(void*) buf_size ;
+// 	return (int) buf_size ;
+// }
 
 //
 int nd_connector_raw_waitdata(nd_netui_handle net_handle, void *buf, size_t size, ndtime_t timeout) 
@@ -847,6 +875,33 @@ int nd_connector_raw_waitdata(nd_netui_handle net_handle, void *buf, size_t size
 		return -1;
 	}
 
+	struct nd_tcp_node *socket_node = (struct nd_tcp_node*)net_handle;
+	if (timeout) {
+		if (nd_socket_wait_read(socket_node->fd, timeout) <= 0) {
+			socket_node->myerrno = NDERR_WOULD_BLOCK;
+			LEAVE_FUNC();
+			return -1;
+		}
+
+	}
+
+	ret = socket_node->sock_read(net_handle, buf, size, timeout);
+	if (ret == 0) {
+		LEAVE_FUNC();
+		return 0;
+	}
+	if (ret == -1) {
+		if (nd_last_errno() == ESOCKETTIMEOUT) {
+			socket_node->myerrno = NDERR_WOULD_BLOCK;
+		}
+		else {
+			socket_node->myerrno = NDERR_BADSOCKET;
+		}
+	}
+	LEAVE_FUNC();
+	return ret;
+
+	/*
 	if(net_handle->type==NDHANDLE_TCPNODE){
 		struct nd_tcp_node *socket_node = (struct nd_tcp_node*)net_handle ;
 		
@@ -904,7 +959,8 @@ int nd_connector_raw_waitdata(nd_netui_handle net_handle, void *buf, size_t size
 				return -1 ;
 			} 
 		}
-	}
+	}*/
+
 	LEAVE_FUNC();
 	return ret ;
 }

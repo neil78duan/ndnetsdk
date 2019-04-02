@@ -194,6 +194,7 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 		nd_net_ioctl((nd_netui_handle)nethandle, NDIOCTL_SET_SESSIONID,&sessionid, &size) ;
 		nd_connect_level_set(nethandle, EPL_CONNECT) ;
 		
+
 		//tea_k &k = mykey.k ;
 		//nd_logdebug("sym-key = { %x, %x, %x, %x} \n" AND k.k[0]  AND  k.k[1] AND  k.k[2] AND  k.k[3]);
 	}

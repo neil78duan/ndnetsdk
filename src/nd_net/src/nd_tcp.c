@@ -282,6 +282,15 @@ int nd_tcpnode_read(struct nd_tcp_node *node)
 	}
 }
 
+static int _tcp_node_read(struct nd_tcp_node *node, void *data, size_t size, ndtime_t tmout)
+{
+	int ret = tcpnode_wait_msg(node,tmout);
+	if (ret > 0) {
+		return nd_socket_tcp_read(node->fd, data, size);
+	}
+	return ret;
+}
+
 /* wait a tcp-node income data 
 * return the data length received from the @node 
 * return -1 on error ,need to be close,check error code
@@ -490,8 +499,11 @@ void nd_tcpnode_reset(struct nd_tcp_node *conn_node)
 	
 	_nd_object_on_destroy((nd_handle)conn_node,0)  ;
 	
+
+	conn_node->level = 0;
+	conn_node->myerrno = NDERR_SUCCESS;
 	conn_node->sys_error = 0 ;
-	conn_node->last_push = nd_time();
+	conn_node->last_recv = conn_node->last_push = nd_time();
 	ndlbuf_reset(&(conn_node->recv_buffer)) ;		/* buffer store data recv from net */
 	ndlbuf_reset(&(conn_node->send_buffer)) ;		/* buffer store data send from net */
 	LEAVE_FUNC();
@@ -504,7 +516,7 @@ void _tcp_connector_init(struct nd_tcp_node *conn_node)
 	conn_node->size = sizeof(struct nd_tcp_node) ;
 	conn_node->packet_write =(packet_write_entry ) nd_tcpnode_send ;
 	conn_node->sock_write = (socket_write_entry)_sys_socket_write;
-	conn_node->sock_read = NULL;
+	conn_node->sock_read = _tcp_node_read;
 	conn_node->update_entry = (net_update_entry)_tcp_node_update ;
 	conn_node->data_entry = (data_in_entry) nd_dft_packet_handler ;
 	conn_node->msg_entry = (net_msg_entry) nd_translate_message ;

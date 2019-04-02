@@ -60,69 +60,32 @@ int update_udt_session(nd_udt_node *node)
 	
 	return 0;
 }
-// 
-// void update_all_socket(nd_udtsrv *root) 
-// {
-// 	ENTER_FUNC()
-// 
-// 	cmlist_iterator_t cm_iter;
-// 	struct cm_manager *conn_manager  = &root->conn_manager ;
-// 	nd_udt_node *node ;
-// 	
-// 	for(node = conn_manager->lock_first(conn_manager,&cm_iter) ; node; 
-// 	node = conn_manager->lock_next(conn_manager,&cm_iter) ) {
-// 		if(-1==update_udt_session(node) ) {
-// 			release_dead_node(node,1) ;
-// 		}
-// 	} 
-// 
-// 	LEAVE_FUNC();
-// }
-// 
-// //udt数据处理函数,listen 端用的
-// int udt_data_handler(SOCKADDR_IN *addr, struct ndudt_pocket*pocket, size_t read_len, nd_udtsrv *root) 
-// {
-// 	NDUINT16 calc_cs,checksum;
-// 	if(read_len > MAX_UDP_LEN){
-// 		return -1 ;
-// 	}
-// 
-// 	udt_net2host(pocket) ;
-// 
-// 	checksum = POCKET_CHECKSUM(pocket);
-// 	POCKET_CHECKSUM(pocket) = 0;
-// 
-// 	calc_cs = nd_checksum((NDUINT16*)pocket,read_len) ;
-// 	if(checksum!=calc_cs){
-// 		return 0 ;
-// 	}
-// 
-// 
-// 	if(POCKET_PROTOCOL(pocket)==PROTOCOL_UDT) {
-// 		return pump_insrv_udt_data(root, pocket, (int)read_len, addr);
-// 	}
-// 	return -1;
-// 
-// }
 
 
 //处理进入服务器的消息
-int pump_insrv_udt_data(nd_udtsrv *root,struct ndudt_pocket *pocket, int len,SOCKADDR_IN *addr)
+int pump_insrv_udt_data(nd_udtsrv *root, struct udt_packet_info *pack_buf)
 {
-	ENTER_FUNC()
-	int ret = 0;
-	u_16 session_id = POCKET_SESSIONID(pocket) ;
+	ENTER_FUNC();
+	int ret = 0; 
+	int len = pack_buf->data_len;
+	SOCKADDR_IN *addr =(SOCKADDR_IN *) &pack_buf->addr;
+	struct ndudt_pocket *pocket = &pack_buf->packet.pocket;
+		
+
+	//u_16 session_id = POCKET_SESSIONID(pocket) ;
+	u_16 localport = pocket->local_port;
+
 	if (NDUDT_SYN == POCKET_TYPE(pocket)) {
 		nd_udt_node *socket_node = NULL;
-		if(0==session_id) {
+		if(0==localport) {
 			socket_node = alloc_listen_socket(&root->base) ;
 			if(!socket_node){
 				LEAVE_FUNC();
 				return 0 ;
 			}
-			socket_node->session_id = root->base.conn_manager.accept(&root->base.conn_manager,socket_node);
+			socket_node->local_port = root->base.conn_manager.accept(&root->base.conn_manager,socket_node);
 
-			if(!socket_node->session_id) {
+			if(!socket_node->local_port) {
 				release_dead_node(socket_node, 1) ;
 				LEAVE_FUNC();
 				return 0 ;
@@ -132,12 +95,13 @@ int pump_insrv_udt_data(nd_udtsrv *root,struct ndudt_pocket *pocket, int len,SOC
 			memcpy(&socket_node->remote_addr,addr,sizeof(*addr)) ;
 			socket_node->last_recv = nd_time() ;
 			socket_node->update_tm = socket_node->last_recv ;
-			session_id = socket_node->session_id ;
+			localport = socket_node->local_port;
+			socket_node->session_id = socket_node->local_port;
 		}
 		else {
-			socket_node = root->base.conn_manager.lock(&root->base.conn_manager,session_id) ;
+			socket_node = root->base.conn_manager.lock(&root->base.conn_manager,localport) ;
 			if(!socket_node){
-				ret = root->data_proc((nd_handle)root, pocket, len , addr);
+				ret = root->data_proc((nd_handle)root, pack_buf);
 				LEAVE_FUNC();
 				return ret;
 			}
@@ -152,37 +116,13 @@ int pump_insrv_udt_data(nd_udtsrv *root,struct ndudt_pocket *pocket, int len,SOC
 		}
 
 		socket_node->recv_len += len;
-		root->base.conn_manager.unlock(&root->base.conn_manager, session_id);
+		root->base.conn_manager.unlock(&root->base.conn_manager, localport);
 
 	}
 	else {
-		ret = root->data_proc((nd_handle)root, pocket, len, addr);
-
-// 		socket_node = root->conn_manager.lock(&root->conn_manager,session_id) ;
-// 		if(!socket_node){
-// 			LEAVE_FUNC();
-// 			return -1 ;
-// 		}
-// 		socket_node->last_recv = nd_time() ;		//record received data time 
-// 
-// 		if(socket_node->check_entry(socket_node,pocket,len,addr) ) {
-// 			ret = _udt_packet_handler(socket_node,pocket,len)  ;
-// 		}  
-// 		
-// 		if(-1== ret){
-// 			release_dead_node(socket_node,1) ;
-// 		}
-// 		else {
-// 			socket_node->last_recv = nd_time() ;
-// 			if(-1==update_socket(socket_node) )
-// 				release_dead_node(socket_node,1) ;
-// 		}
+		ret = root->data_proc((nd_handle)root, pack_buf);
 
 	}
-// 	if(socket_node) {
-// 		socket_node->recv_len += len ;
-// 		root->conn_manager.unlock(&root->conn_manager,session_id) ;
-// 	}
 	LEAVE_FUNC();
 	return ret ;
 }
@@ -217,7 +157,7 @@ void release_dead_node(nd_udt_node *socket_node,int needcallback)
 	struct cm_manager *cm = &root->conn_manager ;
 	
 	nd_assert(root && cm) ;
-	if(!root || 0==socket_node->session_id)
+	if(!root || 0==socket_node->local_port)
 		return ;
 
 	if( root->connect_out_callback && socket_node->status & NETSTAT_ESTABLISHED) {
@@ -225,7 +165,7 @@ void release_dead_node(nd_udt_node *socket_node,int needcallback)
 		socket_node->status &= ~NETSTAT_ESTABLISHED ;
 	}
 
-	cm->deaccept(cm, socket_node->session_id);
+	cm->deaccept(cm, socket_node->local_port);
 	
 	_deinit_udt_socket(socket_node) ;
 	cm->dealloc ((void*)socket_node,nd_srv_get_allocator((struct nd_srv_node*)root));

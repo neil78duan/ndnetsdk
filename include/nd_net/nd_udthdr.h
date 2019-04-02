@@ -73,7 +73,7 @@ struct ndudt_header
 struct ndudt_pocket
 {
 	struct ndudt_header header;
-	u_16	session_id ;			//(port of udt protocol, session id)
+	u_16	local_port ;			//(port of udt protocol,local port not system port)
 	u_16	window_len;			//slide window lenght
 	u_32	sequence ;			//sender sequence 发送系列号(当前封包系列)
 	
@@ -86,7 +86,7 @@ struct ndudt_pocket
 struct _ndudt_unack_packet 
 {
 	struct ndudt_header header;
-	u_16	session_id ;			//(port of udt protocol, session id)
+	u_16	udt_local_port;			//(port of udt protocol, session id)
 	u_16	window_len;			//slide window lenght
 	u_32	sequence ;			//sender sequence 发送系列号
 
@@ -95,7 +95,7 @@ struct _ndudt_unack_packet
 struct ndudp_packet
 {
 	struct ndudt_header header;		//32bits
-	u_16	session_id ;			//(port of udt protocol, session id)
+	u_16	udt_local_port;			//(port of udt protocol, session id)
 	//32bits + 16bits
 	u_8		data[0] ;
 };
@@ -142,7 +142,20 @@ typedef union pocket_buffer
 	struct ndudt_pocket pocket ;
 	u_8		_buffer[2048] ;
 }udt_pocketbuf ;
+
 #pragma pack(pop)
+
+struct udt_packet_info
+{
+	NDUINT32 data_len; //include packet header
+	struct sockaddr_in6 addr;
+	udt_pocketbuf packet;
+};
+
+static __INLINE__ int _udt_packet_info_size(struct udt_packet_info *packet)
+{
+	return sizeof(*packet) - sizeof(packet->packet) + packet->data_len ;
+}
 
 static __INLINE__ void init_udt_header(struct ndudt_header *hdr)
 {
@@ -154,12 +167,12 @@ static __INLINE__ void init_udt_pocket(struct ndudt_pocket *pocket)
 {
 	//memset(pocket, 0, sizeof(*pocket));
 	init_udt_header(&pocket->header);
-	pocket->session_id = 0;
+	pocket->local_port = 0;
 	pocket->window_len = 0;
 	pocket->sequence =0 ;
 }
 
-#define POCKET_SESSIONID(pocket) (pocket)->session_id
+#define POCKET_GETPORT(pocket) (pocket)->local_port
 #define POCKET_CHECKSUM(pocket) (pocket)->header.checksum
 #define POCKET_PROTOCOL(pocket) (pocket)->header.protocol
 #define POCKET_TYPE(pocket)		(pocket)->header.udt_type
@@ -176,7 +189,7 @@ static __INLINE__ void init_udt_pocket(struct ndudt_pocket *pocket)
 static __INLINE__ void _udt_host2net(struct ndudt_pocket *pock)
 {
 	pock->header.checksum = htons(pock->header.checksum) ;
-	pock->session_id = htons(pock->session_id);
+	pock->local_port = htons(pock->local_port);
 	pock->window_len= htons(pock->window_len);
 	pock->sequence= htonl(pock->sequence);
 	if(pock->header.ack) {
@@ -187,7 +200,7 @@ static __INLINE__ void _udt_host2net(struct ndudt_pocket *pock)
 static __INLINE__ void _udt_net2host(struct ndudt_pocket *pock)
 {
 	pock->header.checksum = ntohs(pock->header.checksum);
-	pock->session_id = ntohs(pock->session_id);
+	pock->local_port = ntohs(pock->local_port);
 	pock->window_len = ntohs(pock->window_len);
 	pock->sequence = ntohl(pock->sequence);
 	if (pock->header.ack) {

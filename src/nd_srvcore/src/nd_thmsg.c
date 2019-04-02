@@ -515,14 +515,15 @@ int msg_udt_packate_handler(nd_thsrv_msg *msg)
 {
 	NDUINT8 iscrypt = 0;
 	NDUINT8 priv_level = 0;
-	NDUINT16  session_id;
+	NDUINT16  localport;
 	nd_netui_handle client;
 
 	struct thread_pool_info *pthinfo = (struct thread_pool_info *) msg->th_userdata;
 	struct listen_contex *lc = (struct listen_contex *)pthinfo->lh;
 
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc);
-	struct ndudt_pocket *udt_msg;
+	
+	struct udt_packet_info* pack_buf;
 
 	if (!pmanger)
 		return 0;
@@ -530,15 +531,15 @@ int msg_udt_packate_handler(nd_thsrv_msg *msg)
 	if (msg->data_len > NDUDT_BUFFER_SIZE) {
 		return 0;
 	}
-	udt_msg = (nd_usermsgbuf_t *)msg->data;
+	pack_buf = (nd_usermsgbuf_t *)msg->data;
 
-	session_id = udt_msg->session_id;
+	localport = pack_buf->packet.pocket.local_port;
 
 
-	if (session_id) {
-		client = (nd_netui_handle)pmanger->lock(pmanger, session_id);
+	if (localport) {
+		client = (nd_netui_handle)pmanger->lock(pmanger, localport);
 		if (client) {
-			_udt_packet_handler((nd_udt_node*)client, udt_msg, msg->data_len);
+			udt_session_data_handle((nd_udt_node*)client, pack_buf);
 		}
 	}
 

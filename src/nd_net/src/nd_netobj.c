@@ -354,7 +354,7 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		socket_node->session_id = (NDUINT16) (*(int*)val);
 		ret = 0;
 		break;
-		
+
 	case NDIOCTL_GET_WRITABLE_CALLBACK:
 		*(net_writable_callback*)val = socket_node->writable_callback ;
 		ret = 0 ;
@@ -511,22 +511,56 @@ int nd_connector_set_timeout(nd_netui_handle net_handle, int seconds)
 	return ret ;
 }
 
+
+ndip_t nd_net_getip(nd_handle h)
+{
+	ndip_t ip = { 0 };
+	if (((struct nd_netsocket*)h)->fd) {
+		return nd_sock_getip(((struct nd_netsocket*)h)->fd);
+	}
+	else if (h->type == NDHANDLE_UDPNODE) {
+		nd_handle root = (nd_handle) h->srv_root;
+		if (root) {
+			return nd_net_getip(root);
+		}
+
+	}
+	return ip;
+}
+ndport_t nd_net_getport(nd_handle h)
+{
+	if (((struct nd_netsocket*)h)->fd) {
+		return nd_sock_getport(((struct nd_netsocket*)h)->fd);
+	}
+	else if (h->type == NDHANDLE_UDPNODE) {
+		nd_handle root = (nd_handle)h->srv_root;
+		if (root) {
+			return nd_net_getport(root);
+		}
+
+	}
+	return 0;
+}
+
 ndip_t nd_net_peer_getip(nd_handle h)
 {
-	ndip_t ret = ND_IP_INIT;
-	if (h->type ==NDHANDLE_TCPNODE ||  h->type==NDHANDLE_UDPNODE){
-		nd_netui_handle handle = (nd_netui_handle)h ;
-		nd_sockadd_to_ndip(&handle->remote_addr, &ret);
+	if (h->type == NDHANDLE_TCPNODE && h->fd) {
+		return nd_sock_getpeerip(h->fd);
 	}
-	return ret ;
+	else {
+		ndip_t ret = ND_IP_INIT;
+		nd_sockadd_to_ndip(&h->remote_addr, &ret);
+		return ret;
+	}
 }
 ndport_t nd_net_peer_getport(nd_handle h)
 {
-	if (h->type ==NDHANDLE_TCPNODE ||  h->type==NDHANDLE_UDPNODE){
-		nd_netui_handle handle = (nd_netui_handle)h ;
-		return (ndport_t)handle->remote_addr.sin_port ;
- 	}
-	return 0 ;
+	if (h->type == NDHANDLE_TCPNODE && h->fd) {
+		return nd_sock_getpeerport(h->fd);
+	}
+	else {
+		return (ndport_t)h->remote_addr.sin_port;
+	}
 }
 
 

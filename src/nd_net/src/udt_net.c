@@ -38,7 +38,7 @@ int _handle_syn(nd_udt_node *socket_node,struct ndudt_pocket *pocket)
 			nd_assert(0) ;
 			return -1;
 		}
-		socket_node->session_id = pocket->session_id ;
+		socket_node->local_port = pocket->local_port;
 		socket_node->received_sequence = pocket->sequence +1 ;
 		socket_node->acknowledged_seq = pocket->ack_seq ;		
 		
@@ -199,44 +199,7 @@ int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, s
 	socket_node->received_sequence += data_len ;
 
 	data_len = ndlbuf_write(recvbuf, data, data_len, EBUF_ALL);
-	if (data_len > 0 && socket_node->is_session) {
-		if (-1 == handle_recv_data((nd_netui_handle)socket_node,(nd_handle)socket_node->srv_root)) {
-			LEAVE_FUNC();
-			return -1;
-		}
-	}
-
-// 	if (!socket_node->data_entry){
-// 		data_len = ndlbuf_write(recvbuf,data, data_len,EBUF_ALL) ;
-// 	}
-// 	else {
-// 		//notify client program
-// 		if (ndlbuf_datalen(recvbuf) > 0){
-// 			int ret = 0 ;
-// 			//size_t w_len = ndlbuf_write(recvbuf,data, data_len,EBUF_ALL) ;
-// 			//nd_assert(w_len == data_len) ;
-// 			ret = socket_node->data_entry((nd_handle)socket_node, ndlbuf_data(recvbuf), ndlbuf_datalen(recvbuf),(nd_handle) socket_node->srv_root) ;
-// 			if(ret > 0) {
-// 				ndlbuf_sub_data(recvbuf,ret) ;
-// 			}
-// 			else if(-1==ret) {
-// 				socket_node->myerrno = NDERR_USER ;
-// 				data_len = -1;
-// 			}
-// 		}
-// 		else {
-// 			int ret = 0 ;
-// 			ret = socket_node->data_entry((nd_handle)socket_node, data,data_len, (nd_handle)socket_node->srv_root) ;						
-// 			if(data_len != ret) {
-// 				ndlbuf_write(recvbuf,data+ret, data_len - ret,EBUF_ALL) ;
-// 			}
-// 			else if(-1==ret) {
-// 				socket_node->myerrno = NDERR_USER ;
-// 				data_len = -1 ;
-// 			}
-// 
-// 		}
-// 	}
+	UDT_RECV_USER_DATA(socket_node) = 1;
 
 	LEAVE_FUNC();
 		
@@ -262,7 +225,6 @@ int _udt_syn(nd_udt_node *socket_node)
 			return -1 ;
 		}
 		socket_node->status = NETSTAT_SYNSEND ;
-		//ret = _wait_data(socket_node, &pocket,WAIT_CONNECT_TIME) ;
 		ret = read_packet_from_socket(socket_node, (char*)&pocket, sizeof(udt_pocketbuf), WAIT_CONNECT_TIME);
 		if(ret>0) {
 			if(_udt_packet_handler(socket_node,(struct ndudt_pocket *) &pocket, ret) >= 0) {

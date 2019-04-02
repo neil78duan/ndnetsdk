@@ -179,7 +179,8 @@ int write_pocket_to_socket(nd_udt_node *socket_node,struct ndudt_pocket *pocket,
 {
 	int ret ;
 	
-	POCKET_SESSIONID(pocket) = socket_node->session_id ;
+	//POCKET_SESSIONID(pocket) = socket_node->session_id ;
+	pocket->local_port = socket_node->local_port;
 
 	if(NDUDT_DGRAM!=pocket->header.udt_type){
 		pocket->window_len = (u_16) send_window(socket_node) ;
@@ -510,11 +511,13 @@ RE_WAIT:
 	//ret = socket_node->sock_read((nd_handle)socket_node, (char*)buf, sizeof(udt_pocketbuf), waittime);
 	if (ret <= 0) {
 		if (ret == 0 || socket_node->myerrno == NDERR_WOULD_BLOCK) {
+			NDUINT16 err = socket_node->myerrno;
 			if (-1 == update_socket(socket_node)) {
 				LEAVE_FUNC();
 				return -1;
 			}
 			tmout -= waittime;
+			socket_node->myerrno = err;
 			if ((int)tmout > 0) {
 				goto RE_WAIT;
 			}
@@ -531,8 +534,8 @@ RE_WAIT:
 		}
 
 		nd_assert(PROTOCOL_UDT == POCKET_PROTOCOL(&buf->pocket));
-		if (socket_node->session_id) {
-			if (socket_node->session_id != POCKET_SESSIONID(&buf->pocket)) {
+		if (socket_node->local_port) {
+			if (socket_node->local_port != buf->pocket.local_port) {
 				socket_node->myerrno = NDERR_BADPACKET;
 				LEAVE_FUNC();
 				return -1;
@@ -566,6 +569,7 @@ static int udt_wait_packet(nd_udt_node *socket_node, ndtime_t tmout)
 
 	ndtime_t beginTm;
 
+	UDT_RECV_USER_DATA(socket_node) = 0;
 RE_WAIT:
 
 	beginTm = nd_time();
@@ -605,6 +609,7 @@ void _udt_connector_init(nd_udt_node *socket_node)
 {
 	socket_node->type = NDHANDLE_UDPNODE ;
 	socket_node->size = sizeof(nd_udt_node) ;
+	socket_node->local_port = 0;
 
 	socket_node->packet_write = (packet_write_entry )udt_connector_send;
 	socket_node->sock_write = (socket_write_entry) nd_udp_send;
@@ -647,6 +652,37 @@ void nd_udtnode_reset(nd_udt_node *socket_node)
 	
 	udt_reset(socket_node,0);	
 
+	socket_node->sys_error = 0;
+	socket_node->myerrno = 0;
+	socket_node->last_recv = socket_node->last_push = nd_time();
+	socket_node->local_port = 0;
+	socket_node->level = 0;
+
+	socket_node->status = NETSTAT_CLOSED;
+
+	socket_node->need_ack = 0;
+	socket_node->is_retranslate = 0;
+	socket_node->user_data_in = 0;
+	socket_node->resend_times = 0;
+	socket_node->last_resend_tm = 0;
+	socket_node->last_active = 0;
+	socket_node->update_tm = 0;
+	socket_node->send_sequence = 0;
+	socket_node->acknowledged_seq = 0;
+	socket_node->received_sequence = 0;
+	socket_node->retrans_seq = 0;
+	socket_node->window_len = 0;
+
+
+	socket_node->_rtt.average = RETRANSLATE_TIME;
+	socket_node->_rtt.deviation = 0;
+	socket_node->retrans_timeout = RETRANSLATE_TIME * TIME_OUT_BETA;
+
+	///////////////////////////
+	ndlbuf_reset(&(socket_node->recv_buffer));	
+	ndlbuf_reset(&(socket_node->send_buffer));	
+
+	/*
 	_udt_connector_init(socket_node) ;
 
 #define SET_VAL(valname) socket_node->valname = tmp_node.valname 
@@ -664,11 +700,13 @@ void nd_udtnode_reset(nd_udt_node *socket_node)
 	SET_VAL(disconn_timeout) ;
 	SET_VAL(sock_read) ;
 	SET_VAL(crypt_key) ;
+	SET_VAL(session_id) ;
+	
 #undef SET_VAL
 
 	ndlbuf_reset(&(socket_node->recv_buffer)) ;
 	ndlbuf_reset(&(socket_node->send_buffer)) ;
-
+	*/
 }
 
 void _deinit_udt_socket(nd_udt_node *socket_node) 
