@@ -67,16 +67,16 @@ int checksum_test()
 
 void calc_cs(udt_pocketbuf *pocket , int len)
 {
-	u_32 sums ;
-	
-	POCKET_SESSIONID(&pocket->pocket) = 1024 ;
-	pocket->pocket.window_len = 4096;
-
-	len += ndt_header_size(&pocket->pocket) ;
-	POCKET_CHECKSUM(&pocket->pocket) = 0 ;
-
-	sums = nd_checksum((NDUINT16*)pocket,len) ;
-	POCKET_CHECKSUM(&pocket->pocket) = LOWORD(sums) ;
+//	u_32 sums ;
+//	
+//	POCKET_SESSIONID(&pocket->pocket) = 1024 ;
+//	pocket->pocket.window_len = 4096;
+//
+//	len += ndt_header_size(&pocket->pocket) ;
+//	POCKET_CHECKSUM(&pocket->pocket) = 0 ;
+//
+//	sums = nd_checksum((NDUINT16*)pocket,len) ;
+//	POCKET_CHECKSUM(&pocket->pocket) = LOWORD(sums) ;
 
 	//udt_host2net(pocket) ;
 
