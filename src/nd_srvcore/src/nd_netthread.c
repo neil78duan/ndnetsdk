@@ -147,10 +147,10 @@ int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * 
 	
 	if (client->connect_node.type == NDHANDLE_UDPNODE) {
 		struct nd_udtcli_map *udtcli = (struct nd_udtcli_map *) client;
-		list_del_init(&udtcli->map_list, &pthinfo->sessions_list);
+		list_del_init(&udtcli->map_list);
 	}
 	else {
-		list_del_init(&client->map_list, &pthinfo->sessions_list);
+		list_del_init(&client->map_list);
 	}
 
 	--pthinfo->session_num;
