@@ -11,7 +11,7 @@
 #include <tchar.h>
 #include <crtdbg.h>
 
-#ifdef ND_DEBUG
+#ifdef _DEBUG
 #define _CRTTRAC(msg) do { if ((1 == _CrtDbgReport(_CRT_WARN, NULL, 0, NULL, "%s", msg))) _CrtDbgBreak(); } while (0)
 #else 
 #define _CRTTRAC(msg)

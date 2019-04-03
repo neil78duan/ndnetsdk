@@ -56,6 +56,7 @@ typedef struct _s_udt_socket nd_udt_node ;
 
 //检测UDT数据包是否合法
 typedef int (*check_udt_packet)(nd_udt_node *node, struct ndudt_pocket *pocket, int len,SOCKADDR_IN *addr) ;
+typedef int(*udt_close_entry)(nd_udt_node *node, int flag);
 
 /* 定义网络连接节点
  * 用来连接服务器的节点
@@ -70,6 +71,7 @@ struct _s_udt_socket
 	ND_CONNECTOR_BASE ;
 	struct udp_proxy_info *prox_info ;
 	udp_protocol_entry 	protocol_entry ;
+	udt_close_entry udt_close;
 	union {
 		struct sockaddr_in last_read;
 		struct sockaddr_in6 last_read6;
@@ -109,7 +111,7 @@ struct udt_listen_node
 	struct nd_srv_node base;
 	udt_data_proc data_proc;
 	udt_connected_proc accept_proc;
-	struct list_head wait_rease;
+	//struct list_head wait_rease;
 
 };
 typedef struct udt_listen_node nd_udtsrv;
@@ -135,6 +137,11 @@ static __INLINE__ void set_socket_ack(nd_udt_node *socket_node, int flag)
 }
 #define get_socket_ack(socket_node ) (socket_node)->need_ack 
 
+
+static __INLINE__ int udt_is_reset(nd_udt_node *socket_node)
+{
+	return socket_node->status == NETSTAT_RESET;
+}
 
 int _handle_ack(nd_udt_node *socket_node, u_32 ack_seq);
 
@@ -164,11 +171,11 @@ int udt_send_ack(nd_udt_node *socket_node) ;
 
 char *send_window_start(nd_udt_node* socket_node, size_t *sendlen) ;
 
-void udt_conn_timeout(nd_udt_node* socket_node) ;
+//void udt_conn_timeout(nd_udt_node* socket_node) ;
 
 ndtime_t calc_timeouval(struct nd_rtt *rtt, int measuerment) ;
 
-void send_reset_packet(nd_udt_node* socket_node) ;
+//void send_reset_packet(nd_udt_node* socket_node) ;
 
 ND_NET_API int update_udt_session(nd_udt_node *node);
 ND_NET_API void _udt_connector_init(nd_udt_node *socket_node) ;
@@ -208,7 +215,7 @@ ND_NET_API int udt_send(nd_udt_node* socket_node,void *data, int len ) ;
 ND_NET_API void release_dead_node(nd_udt_node *socket_node,int needcallback) ;
 
 //发送fin并请求关闭连接
-void _close_listend_socket(nd_udt_node* socket_node) ;
+//void _close_listend_socket(nd_udt_node* socket_node) ;
 
 //更新每个udt_socket的状态
 //定时驱动每个连接
