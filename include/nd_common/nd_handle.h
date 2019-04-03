@@ -13,6 +13,7 @@
 #include "list.h"
 #include "nd_os.h"
 #include "nd_bintree.h"
+#include "_source_trace.h"
 
  //predefine handle type 
 enum END_OBJECT_TYPE

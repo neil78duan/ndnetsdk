@@ -125,9 +125,18 @@ int update_session_in_thread(struct cm_manager *pmanger, struct nd_netth_context
 int addto_thread_pool(struct nd_client_map *client, struct nd_netth_context * pthinfo)
 {
 	pthinfo->session_num++;
-	list_add_tail(&client->map_list, &pthinfo->sessions_list);
+	if (client->connect_node.type == NDHANDLE_UDPNODE) {
+		struct nd_udtcli_map *udtcli =(struct nd_udtcli_map *) client;
+		list_add_tail(&udtcli->map_list, &pthinfo->sessions_list);
+	}
+	else {
+		list_add_tail(&client->map_list, &pthinfo->sessions_list);
+	}	
+
 #ifdef ND_UNIX
-	attach_to_listen(pthinfo, client);
+	if (pthinfo->lh->io_mod == ND_LISTEN_OS_EXT) {
+		attach_to_listen(pthinfo, client);
+	}
 #endif 
 	nd_logdebug("client %d add to %d thread server\n", nd_session_getid((nd_handle)client), nd_thread_self());
 	return 0;
@@ -135,7 +144,15 @@ int addto_thread_pool(struct nd_client_map *client, struct nd_netth_context * pt
 
 int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo)
 {
-	list_del_init(&client->map_list);
+	
+	if (client->connect_node.type == NDHANDLE_UDPNODE) {
+		struct nd_udtcli_map *udtcli = (struct nd_udtcli_map *) client;
+		list_del_init(&udtcli->map_list, &pthinfo->sessions_list);
+	}
+	else {
+		list_del_init(&client->map_list, &pthinfo->sessions_list);
+	}
+
 	--pthinfo->session_num;
 
 #ifdef ND_UNIX

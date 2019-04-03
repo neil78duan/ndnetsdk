@@ -72,11 +72,22 @@ int _handle_syn(nd_udt_node *socket_node,struct ndudt_pocket *pocket)
 int _udt_packet_handler(nd_udt_node *socket_node,struct ndudt_pocket *pocket,size_t len)
 {
 	ENTER_FUNC()
-	int ret = 0;	
-	nd_object_seterror((nd_handle)socket_node, NDERR_SUCCESS);
+	int ret = 0;
+
+	if (socket_node->status & NETSTAT_RESET) {
+		//ack reset
+		struct ndudt_pocket pocket;
+		init_udt_pocket(&pocket);
+		SET_RESET(&pocket);
+		write_pocket_to_socket(socket_node, &pocket, ndt_header_size(&pocket));
+		LEAVE_FUNC();
+		return 0;
+	}
+
 	socket_node->last_recv = nd_time();		//record received data time
 	socket_node->update_tm = socket_node->last_recv ;
 
+	nd_object_seterror((nd_handle)socket_node, NDERR_SUCCESS);
 
 	if(pocket->window_len > 0)
 		socket_node->window_len = pocket->window_len ;
@@ -127,11 +138,11 @@ int _udt_packet_handler(nd_udt_node *socket_node,struct ndudt_pocket *pocket,siz
 			socket_node->received_sequence = pocket->sequence ; 
 			if((NETSTAT_SENDCLOSE+NETSTAT_FINSEND) & socket_node->status) {
 				socket_node->status |= NETSTAT_RESET ;
-				ret = -1 ;
 			}
-			socket_node->myerrno = NDERR_CLOSED;
 		}
-		udt_send_ack(socket_node) ;
+		udt_send_ack(socket_node);
+		socket_node->myerrno = NDERR_CLOSED;
+		ret = -1;
 		break ;
 	case NDUDT_RESET:
 		socket_node->status |= NETSTAT_RESET ;
@@ -273,16 +284,21 @@ int _handle_ack(nd_udt_node *socket_node, u_32 ack_seq)
 
 			root =(nd_udtsrv *) socket_node->srv_root ;
 			nd_assert(root) ;
+			if (root && root->accept_proc) {
+				root->accept_proc(root, socket_node, &socket_node->remote_addr);
+				socket_node->start_time = socket_node->update_tm;
+				socket_node->status = NETSTAT_ESTABLISHED;
+			}
 
-			if(root && root->base.connect_in_callback){				
-				//socket_node->start_time = nd_time() ;
-				socket_node->start_time = socket_node->update_tm ;
-				if(-1==root->base.connect_in_callback(socket_node,&socket_node->remote_addr,(nd_handle)root) ) {
-					socket_node->myerrno = NDERR_USER;
-					return -1;
-				}
-				socket_node->status = NETSTAT_ESTABLISHED ;
-			}			
+// 			if(root && root->base.connect_in_callback){				
+// 				//socket_node->start_time = nd_time() ;
+// 				socket_node->start_time = socket_node->update_tm;
+// 				socket_node->status = NETSTAT_ESTABLISHED;
+// 				if(-1==root->base.connect_in_callback(socket_node,&socket_node->remote_addr,(nd_handle)root) ) {
+// 					socket_node->myerrno = NDERR_USER;
+// 					return -1;
+// 				}
+// 			}			
 		}
 
 		return 0;
@@ -337,9 +353,13 @@ int udt_send_fin(nd_udt_node *socket_node)
 	len = ndt_header_size(&fin_pocket);
 
 	if (!(socket_node->status & NETSTAT_FINSEND )) {
-		socket_node->status |= NETSTAT_FINSEND ;
-		socket_node->is_retranslate =1;
+		socket_node->status |= NETSTAT_FINSEND;
+		socket_node->is_retranslate =0;
 		socket_node->resend_times = 0;
+	}
+	else {
+		socket_node->is_retranslate = 1;
+		++socket_node->resend_times ;
 	}
 
 	fin_pocket.sequence = socket_node->send_sequence;// + 1 ;

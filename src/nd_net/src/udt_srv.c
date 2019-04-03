@@ -13,6 +13,30 @@
 int udt_send_fin(nd_udt_node *socket_node);
 nd_udt_node *alloc_listen_socket(struct nd_srv_node *root);
 
+//关闭服务器端的socket
+int _close_listend_socket(nd_udt_node* socket_node, int force)
+{
+	struct nd_srv_node *root = (struct nd_srv_node *) socket_node->srv_root;
+	nd_assert(socket_node->is_accept);
+
+	if (force || (NETSTAT_ESTABLISHED & socket_node->status) &&
+		!(socket_node->status & NETSTAT_SENDCLOSE)) {
+		udt_send_fin(socket_node);
+	}
+	else {
+		udt_reset(socket_node, 1);
+	}
+	
+	if (root && socket_node->local_port) {
+
+		if (root->connect_out_callback && socket_node->status & NETSTAT_ESTABLISHED) {
+			root->connect_out_callback(socket_node, (nd_handle)root);
+			socket_node->status &= ~NETSTAT_ESTABLISHED;
+		}
+	}
+	return 0;
+}
+
 //更新每一个节点
 // return -1 ,closed , source already release
 int update_udt_session(nd_udt_node *node)
@@ -50,13 +74,13 @@ int update_udt_session(nd_udt_node *node)
 			return -1 ;
 		}
 	}
-
-	else if(NETSTAT_ESTABLISHED != node->status) {
-		ndtime_t now = nd_time() ;
-		if((now - node->last_resend_tm) > (node->retrans_timeout*2)) {
-			return -1;
-		}
-	}
+// 
+// 	else if(NETSTAT_ESTABLISHED != node->status) {
+// 		ndtime_t now = nd_time() ;
+// 		if((now - node->last_resend_tm) > (node->retrans_timeout*2)) {
+// 			return -1;
+// 		}
+// 	}
 	
 	return 0;
 }
@@ -126,7 +150,6 @@ int pump_insrv_udt_data(nd_udtsrv *root, struct udt_packet_info *pack_buf)
 	LEAVE_FUNC();
 	return ret ;
 }
-
 nd_udt_node *alloc_listen_socket(struct nd_srv_node *root)
 {
 	nd_udt_node* node ;
@@ -142,6 +165,7 @@ nd_udt_node *alloc_listen_socket(struct nd_srv_node *root)
 		nd_udtnode_init(node);
 	}
 
+	node->close_entry = _close_listend_socket;
 	node->status = NETSTAT_LISTEN;
 	node->is_accept = 1;
 	node->srv_root =(nd_handle) root;

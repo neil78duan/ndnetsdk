@@ -35,6 +35,29 @@ struct udp_thpool
 };
 
 
+int accept_udt(nd_handle hsrv, nd_udt_node *socket_node, SOCKADDR_IN *addr)
+{
+	struct listen_contex* root = (struct listen_contex*)hsrv;
+
+	struct thread_pool_info * thpool = get_thread_poolinf((nd_listen_handle)hsrv, nd_thread_self());
+	if (!thpool) {
+		release_dead_node(socket_node, 0);
+		return -1;
+	}
+
+	addto_thread_pool((struct nd_client_map *)socket_node, thpool);
+
+	if ( root->udt.base.connect_in_callback) {
+		//socket_node->start_time = nd_time() ;
+		socket_node->start_time = socket_node->update_tm;
+		socket_node->status = NETSTAT_ESTABLISHED;
+		if (-1 == root->udt.base.connect_in_callback(socket_node, &socket_node->remote_addr, (nd_handle)root)) {
+			socket_node->myerrno = NDERR_USER;
+			return -1;
+		}
+	}
+	return 0;
+}
 
 int udt_session_data_handle(nd_udt_node *socket_node, struct udt_packet_info* pack_buf)
 {
@@ -43,10 +66,11 @@ int udt_session_data_handle(nd_udt_node *socket_node, struct udt_packet_info* pa
 	if (socket_node->check_entry(socket_node, &pack_buf->packet.pocket, pack_buf->data_len,(SOCKADDR_IN*)&pack_buf->addr)) {
 		ret = _udt_packet_handler(socket_node, &pack_buf->packet, pack_buf->data_len);
 		if (-1 == ret) {
-			release_dead_node(socket_node, 1);
+			return -1;
 		}
 		else if (UDT_RECV_USER_DATA(socket_node)) {
-			handle_recv_data((nd_netui_handle)socket_node, (nd_handle)socket_node->srv_root);
+			ret = handle_recv_data((nd_netui_handle)socket_node, (nd_handle)socket_node->srv_root);
+			
 		}
 	}
 	return ret;
@@ -61,6 +85,9 @@ static int data_handle(nd_handle hsrv, struct udt_packet_info* pack_buf)
 	
 	if (socket_node) {		
 		ret = udt_session_data_handle(socket_node, pack_buf);
+		if (-1 == ret) {
+			nd_session_close((nd_handle)socket_node, 1);
+		}
 	}
 	else {
 		ndthread_t  thid = nd_node_get_owner(pmanger, localport);
@@ -88,6 +115,7 @@ int _utd_main_thread(struct thread_pool_info *thip)
 	pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info);
 
 	listen_info->udt.data_proc = data_handle;
+	listen_info->udt.accept_proc = accept_udt;
 
 	while (!nd_thsrv_isexit(context)) {
 		int sleep = LISTEN_INTERVAL;
@@ -193,11 +221,15 @@ int update_udt_sessions(struct cm_manager *pmanger, struct nd_netth_context *thp
 	list_for_each_safe(pos, next, &thpi->sessions_list) {
 		struct nd_udtcli_map  *client = list_entry(pos, struct nd_client_map, map_list);
 
-		if (!client || !nd_handle_checkvalid((nd_handle)client, NDHANDLE_TCPNODE)) {
-			nd_session_close((nd_handle)client, 1);
-			continue;
+		if (udt_is_reset (client) ) {
+
+			delfrom_thread_pool((struct nd_client_map *)client, thpi);
+			release_dead_node(client, 1);
 		}
-		update_udt_session((nd_udt_node*)client);
+		else if (-1 == update_udt_session((nd_udt_node*)client)) {
+			nd_session_close((nd_handle)client, 1);
+		}
+
 	}
 
 	LEAVE_FUNC();
