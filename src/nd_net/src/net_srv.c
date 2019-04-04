@@ -6,10 +6,7 @@
  */
 
 #include "nd_net/nd_netlib.h"
-//#include "nd_net/nd_tcp.h"
-//#include "nd_net/nd_srv.h"
-//#include "nd_common/nd_alloc.h"
-//#include "nd_common/nd_atomic.h"
+
 
 
 int nd_srv_capacity(struct nd_srv_node *srvnode) 
@@ -37,18 +34,5 @@ void nd_srv_close(struct nd_srv_node *node)
 	node->status = 0 ;
 	node->fd = 0 ;
 }
-
-// void nd_srv_node_init(struct nd_srv_node *node)
-// {
-// 	bzero(node,sizeof(*node)) ;
-// 	node->size = sizeof(*node);
-// 	node->type = NDHANDLE_LISTEN ;
-// }
-// void nd_srv_set_allocator(struct nd_srv_node *node,nd_handle allocator,cm_alloc alloc,cm_dealloc dealloc)
-// {
-// 	node->conn_manager.node_alloctor = allocator;
-// 	node->conn_manager.alloc = alloc ;
-// 	node->conn_manager.dealloc = dealloc ;
-// }
 
 #undef  GET_SESSION_ID

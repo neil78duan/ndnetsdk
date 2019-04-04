@@ -4,9 +4,7 @@
  * 2005-11-17
  */
 
-//#include "nd_common/nd_common.h"
 #include "nd_net/nd_netlib.h"
-//#include "nd_common/nd_alloc.h"
 
 int post_udt_datagram(nd_udt_node* socket_node, void *data, size_t len) ;
 int post_udt_datagramex(nd_udt_node* socket_node, struct ndudt_pocket *packet, size_t len) ;
@@ -108,12 +106,14 @@ static int _udt_fin_send_handle(nd_udt_node* socket_node)
 
 int _connector_close(nd_udt_node* socket_node, int force)
 {
+	ENTER_FUNC();
 	if (force)
 		udt_reset(socket_node, 1);
 	else {
 		_udt_fin_send_handle(socket_node);
 	}
-	nd_udp_close(socket_node, force);
+	nd_udp_close(socket_node, force); 
+	LEAVE_FUNC();
 	return 0;
 }
 
@@ -123,25 +123,12 @@ int _connector_close(nd_udt_node* socket_node, int force)
 //发送fin并且等待确认
 int udt_close(nd_udt_node* socket_node,int force)
 {
-	ENTER_FUNC()
+	ENTER_FUNC();
 	if (NETSTAT_ESTABLISHED == socket_node->status) {
 		while (flush_send_window(socket_node) > 0){} 
 	}
-	socket_node->udt_close(socket_node, force);
-// 
-// 	if(socket_node->is_accept){
-// 		_close_listend_socket(socket_node) ;
-// 		LEAVE_FUNC();
-// 		return 0;
-// 	}
-// 	else {
-// 		if (force)
-// 			udt_reset(socket_node,1) ;
-// 		else {
-// 			_udt_connector_close(socket_node);
-// 		}
-// 		nd_udp_close(socket_node, 1); 
-// 	}
+	socket_node->udt_close_entry(socket_node, force);
+
 	LEAVE_FUNC();
 	return 0;
 		
@@ -161,10 +148,6 @@ void udt_reset(nd_udt_node* socket_node, int issend_reset)
 		nd_udp_close(socket_node, 1);
 	}
 
-// 	if (!(socket_node->status & NETSTAT_RESET) ){
-// 		socket_node->status |= NETSTAT_RESET ;
-// 		send_reset_packet(socket_node) ;
-// 	}
 }
 
 int read_packet_from_socket(nd_udt_node *socket_node, char *buf, size_t size, ndtime_t tmout)
@@ -189,7 +172,6 @@ int write_pocket_to_socket(nd_udt_node *socket_node,struct ndudt_pocket *pocket,
 {
 	int ret ;
 	
-	//POCKET_SESSIONID(pocket) = socket_node->session_id ;
 	pocket->local_port = socket_node->local_port;
 
 	if(NDUDT_DGRAM!=pocket->header.udt_type){
@@ -213,15 +195,18 @@ int write_pocket_to_socket(nd_udt_node *socket_node,struct ndudt_pocket *pocket,
 
 int udt_send(nd_udt_node* socket_node,void *data, int len )
 {
+	ENTER_FUNC();
 	int ret ;
 	
 	if(socket_node->status < NETSTAT_ESTABLISHED || (socket_node->status &NETSTAT_FINSEND)) {
 		socket_node->myerrno = NDERR_CLOSED;
+		LEAVE_FUNC();
 		return -1 ;
 	}
 
 	if(len < 1 || !data || len >= ndlbuf_capacity(&socket_node->send_buffer)) {
 		socket_node->myerrno = NDERR_INVALID_INPUT;
+		LEAVE_FUNC();
 		return -1 ;
 	}
 	socket_node->myerrno = NDERR_SUCCESS;
@@ -229,7 +214,7 @@ int udt_send(nd_udt_node* socket_node,void *data, int len )
 	nd_send_lock((nd_netui_handle)socket_node) ;
 	ret = ndlbuf_write(&socket_node->send_buffer, data, len, EBUF_SPECIFIED) ;
 	nd_send_unlock((nd_netui_handle)socket_node) ;
-	
+	LEAVE_FUNC();
 	return ret ;
 	
 }
@@ -238,17 +223,20 @@ int udt_send(nd_udt_node* socket_node,void *data, int len )
 //发送udt 窗口中的数据
 int flush_send_window(nd_udt_node* socket_node)
 {
+	ENTER_FUNC();
 	int ret =0,isack=0;
 	size_t header_len=0, len=0 ;
 	char *send_addr;	
 	struct ndudt_pocket *packet_hdr, packet_backup;
 	
 	if( (socket_node->status & NETSTAT_SENDCLOSE) || socket_node->is_retranslate) {
+		LEAVE_FUNC();
 		return 0;
 	}
 
 	send_addr = send_window_start(socket_node, &len) ;
 	if(!send_addr || len ==0 ){	
+		LEAVE_FUNC();
 		return 0;
 	}
 
@@ -284,6 +272,7 @@ int flush_send_window(nd_udt_node* socket_node)
 	}
 
 	memcpy(packet_hdr, &packet_backup, sizeof(struct ndudt_pocket)) ;
+	LEAVE_FUNC();
 	return ret;
 
 
@@ -291,7 +280,7 @@ int flush_send_window(nd_udt_node* socket_node)
 
 int retranslate_data(nd_udt_node* socket_node)
 {
-
+	ENTER_FUNC();
 	int ret =0,sendlen;
 	int len ;
 	size_t header_len ;
@@ -310,6 +299,7 @@ int retranslate_data(nd_udt_node* socket_node)
 	}
 
 	if (len <=0)	{
+		LEAVE_FUNC();
 		return ret ;
 	}
 
@@ -345,6 +335,7 @@ int retranslate_data(nd_udt_node* socket_node)
 		ret = len ;
 		
 	}
+	LEAVE_FUNC();
 	return ret;
 }
 
@@ -394,20 +385,21 @@ int udt_retranslate(nd_udt_node* socket_node)
  */
 int update_socket(nd_udt_node* socket_node)
 {
-	//size_t len=0;
-//	char *send_addr ;
+	ENTER_FUNC();
 	ndtime_t now = nd_time() ;
-
-	socket_node->update_tm = now ;
-	
+	socket_node->update_tm = now ;	
 	nd_object_seterror((nd_handle)socket_node,NDERR_SUCCESS) ;	
 
+	if (socket_node->status & NETSTAT_ESTABLISHED && !list_empty(&socket_node->pre_list)) {
+		_update_prelist(socket_node);
+	}
 	//check data need to be send 
 	if (flush_send_window(socket_node) > 0) {
 		while (flush_send_window(socket_node) > 0){} 
 	}
 	else {
-		if(-1== udt_retranslate(socket_node) ){
+		if (-1 == udt_retranslate(socket_node)) {
+			LEAVE_FUNC();
 			return -1 ;
 		}
 	}	
@@ -417,8 +409,7 @@ int update_socket(nd_udt_node* socket_node)
 		udt_send_ack(socket_node) ;
 		set_socket_ack(socket_node,0) ;
 	}
-	
-
+	LEAVE_FUNC();
 	return 1 ;
 }
 
@@ -441,11 +432,13 @@ char *send_window_start(nd_udt_node* socket_node, size_t *sendlen)
 
 int udt_sendto(nd_udt_node* socket_node,void *data, int len ) 
 {
+	ENTER_FUNC();
 	int ret ;
 	struct ndudp_packet tmp,*p_send ;
 
 	if(len < 1 ||  len >(ND_UDP_PACKET_SIZE-UDP_PACKET_HEAD_SIZE)){
-		nd_object_seterror((nd_handle)socket_node, NDERR_INVALID_INPUT) ;
+		nd_object_seterror((nd_handle)socket_node, NDERR_INVALID_INPUT);
+		LEAVE_FUNC();
 		return -1 ;
 	}
 
@@ -459,13 +452,15 @@ int udt_sendto(nd_udt_node* socket_node,void *data, int len )
 	len += UDP_PACKET_HEAD_SIZE ;
 	ret = write_pocket_to_socket(socket_node,(struct ndudt_pocket*)p_send, len) ;
 	
-	*p_send = tmp ;
+	*p_send = tmp;
+	LEAVE_FUNC();
 	return ret ;
 }
 
 
 int udt_connector_send(nd_udt_node* socket_addr, nd_packhdr_t *msg_buf, int flag)
 {
+	ENTER_FUNC();
 	int ret ;
 	struct packet_hdr hdr = *msg_buf;
 	socket_addr->myerrno = NDERR_SUCCESS ;
@@ -473,21 +468,16 @@ int udt_connector_send(nd_udt_node* socket_addr, nd_packhdr_t *msg_buf, int flag
 
 	packet_ntoh(&hdr);
 
-	if(ESF_POST & flag) {
-		
-		return udt_sendto(socket_addr, msg_buf, nd_pack_len(&hdr)) ;			
+	if(ESF_POST & flag) {		
+		ret = udt_sendto(socket_addr, msg_buf, nd_pack_len(&hdr)) ;			
 	}
-	else {		//用udt发送可靠消息
+	else {
 		ret = udt_send(socket_addr, msg_buf, nd_pack_len(&hdr)) ;
-		if(ret <= 0) {
-			return ret ;
+		if(ret >= 0) {
+			flush_send_window(socket_addr);
 		}
-		flush_send_window(socket_addr);
-// 		if (nd_netobj_is_session(socket_addr)) {
-// 			flush_send_window(socket_addr);
-// 		}
-		
 	}
+	LEAVE_FUNC();
 	return ret ;
 }
 
@@ -508,7 +498,6 @@ int _wait_data(nd_udt_node *socket_node,udt_pocketbuf* buf,ndtime_t tmout)
 RE_WAIT:
 
 	ret = read_packet_from_socket(socket_node, (char*)buf, sizeof(udt_pocketbuf), waittime);
-	//ret = socket_node->sock_read((nd_handle)socket_node, (char*)buf, sizeof(udt_pocketbuf), waittime);
 	if (ret <= 0) {
 		if (ret == 0 || socket_node->myerrno == NDERR_WOULD_BLOCK) {
 			NDUINT16 err = socket_node->myerrno;
@@ -526,7 +515,6 @@ RE_WAIT:
 		return ret;
 	}
 	else {
-		//数据检测
 		if (!socket_node->check_entry(socket_node, &buf->pocket, ret, &socket_node->last_read)) {
 			socket_node->myerrno = NDERR_BADPACKET;
 			LEAVE_FUNC();
@@ -566,7 +554,6 @@ static int udt_wait_packet(nd_udt_node *socket_node, ndtime_t tmout)
 	ENTER_FUNC();
 	int ret = 0;
 	udt_pocketbuf databuf;
-
 	ndtime_t beginTm;
 
 	UDT_RECV_USER_DATA(socket_node) = 0;
@@ -591,6 +578,7 @@ RE_WAIT:
 			}
 		}
 		else if (-1 == ret) {
+			LEAVE_FUNC();
 			return -1;
 		}
 
@@ -603,6 +591,133 @@ RE_WAIT:
 		LEAVE_FUNC();
 		return 0;
 	}
+}
+
+// pre list
+static void _release_pre_list(nd_udt_node *socket_node)
+{
+	struct list_head *pos, *next;
+
+	list_for_each_safe(pos, next, &socket_node->pre_list) {
+		struct _udt_packet_node *pack_node = list_entry(pos, struct _udt_packet_node, list);
+		list_del_init(&pack_node->list);
+		free(pack_node);
+	}
+	INIT_LIST_HEAD(&socket_node->pre_list);
+}
+
+int _addto_pre_list(nd_udt_node *socket_node, struct ndudt_pocket *packet, int len)
+{
+	struct list_head *pos, *next;
+	size_t size = sizeof(struct _udt_packet_node) + len;
+	struct _udt_packet_node *pnode = (struct _udt_packet_node *) malloc(size);
+	if (!pnode) {
+		return -1;
+	}
+	
+	INIT_LIST_HEAD(&pnode->list);
+	pnode->recvTm = nd_time();
+	pnode->size = len;
+	memcpy(&pnode->pack, packet, len);
+
+	list_for_each_safe(pos, next, &socket_node->pre_list) {
+		struct _udt_packet_node *plist = list_entry(pos, struct _udt_packet_node, list);
+		int tmval = (int)(pnode->recvTm - plist->recvTm );
+		if (tmval < 0) {
+			list_add(&pnode->list, pos);
+			return 0;
+		}
+		else if (0 == tmval) {
+			int seqIndex = pnode->pack.sequence - plist->pack.sequence;
+			if (seqIndex < 0) {
+
+				list_add(&pnode->list, pos);
+			}
+			else {
+				list_add_tail(&pnode->list, pos);
+			}
+			return 0;
+		}
+	}
+
+	list_add_tail(&pnode->list, &socket_node->pre_list);
+	return 0;
+}
+
+
+static int _handle_pre_packet(nd_udt_node* socket_node, struct ndudt_pocket *pocket, size_t len)
+{
+	ENTER_FUNC();
+	int data_len, seq_offset;
+	char *data;
+	nd_netbuf_t *recvbuf = &socket_node->recv_buffer;
+
+	nd_assert(socket_node && pocket);
+
+	data_len = (int)len - ndt_header_size(pocket);
+	
+	if (pocket->sequence != socket_node->received_sequence) {
+		ENTER_FUNC();
+		return 1;
+	}
+
+	if (data_len > ndlbuf_free_capacity(&socket_node->recv_buffer)) {
+		LEAVE_FUNC();
+		return -1;
+	}
+
+	data = pocket_data(pocket);
+	set_socket_ack(socket_node, 1);
+	socket_node->received_sequence += data_len;
+
+	data_len = ndlbuf_write(recvbuf, data, data_len, EBUF_ALL);
+	UDT_RECV_USER_DATA(socket_node) = 1;
+
+	LEAVE_FUNC();
+	return 0;
+}
+
+int _tryto_fetch_prelist(nd_udt_node *socket_node)
+{
+	ENTER_FUNC();
+	int ret = 0;
+	struct list_head *pos, *next;
+	list_for_each_safe(pos, next, &socket_node->pre_list) {
+		struct _udt_packet_node *plist = list_entry(pos, struct _udt_packet_node, list);
+		int ret = _handle_pre_packet(socket_node, &plist->pack, plist->size);
+		if (-1 == ret) {
+			break;
+		}
+		else if (0 == ret) {
+			list_del_init(&plist->list);
+			free(plist);
+			++ret;
+		}
+		else {
+			break;
+		}
+	}
+	LEAVE_FUNC();
+	return ret;
+}
+
+int _update_prelist(nd_udt_node *socket_node)
+{
+	ENTER_FUNC();
+	int ret = 0;
+	struct list_head *pos, *next;
+	list_for_each_safe(pos, next, &socket_node->pre_list) {
+		struct _udt_packet_node *plist = list_entry(pos, struct _udt_packet_node, list);
+		int seq_val = (int)(plist->pack.sequence - socket_node->received_sequence);
+		int tm_val = (int)(nd_time() - plist->recvTm);
+		if (seq_val < 0 || tm_val > 60000) {
+			list_del_init(&plist->list);
+			free(plist);
+			++ret;
+		}
+	}
+	LEAVE_FUNC();
+	return ret;
 }
 
 void _udt_connector_init(nd_udt_node *socket_node)
@@ -620,8 +735,7 @@ void _udt_connector_init(nd_udt_node *socket_node)
 
 	socket_node->protocol = PROTOCOL_UDT ;
 	socket_node->sock_type = SOCK_DGRAM ;
-	socket_node->protocol_entry = (udp_protocol_entry) _udt_packet_handler ;
-	socket_node->udt_close = _connector_close;
+	socket_node->udt_close_entry = _connector_close;
 	socket_node->update_entry = (net_update_entry) update_socket ;
 	socket_node->get_pack_size = nd_net_getpack_size ;
 	socket_node->wait_entry = udt_wait_packet;
@@ -633,7 +747,8 @@ void _udt_connector_init(nd_udt_node *socket_node)
 	socket_node->retrans_timeout = RETRANSLATE_TIME*TIME_OUT_BETA ;
 	init_crypt_key(&socket_node->crypt_key) ;
 
-	INIT_LIST_HEAD(&socket_node->__release_cb_hdr) ;
+	INIT_LIST_HEAD(&socket_node->__release_cb_hdr);
+	INIT_LIST_HEAD(&socket_node->pre_list);
 }
 
 void nd_udtnode_init(nd_udt_node *socket_node)
@@ -649,9 +764,9 @@ void nd_udtnode_reset(nd_udt_node *socket_node)
 	nd_udt_node tmp_node = *socket_node;
 	nd_assert(socket_node) ;
 
+	_release_pre_list(socket_node);
 	_nd_object_on_destroy((nd_handle)socket_node,0)  ;
 	
-	//udt_reset(socket_node,0);	
 
 	socket_node->sys_error = 0;
 	socket_node->myerrno = 0;
@@ -689,6 +804,7 @@ void _deinit_udt_socket(nd_udt_node *socket_node)
 {
 	net_release_sendlock((nd_netui_handle)socket_node) ;
 
+	_release_pre_list(socket_node);
 	socket_node->status = NETSTAT_CLOSED;
 
 	ndlbuf_destroy(&(socket_node->recv_buffer)) ;

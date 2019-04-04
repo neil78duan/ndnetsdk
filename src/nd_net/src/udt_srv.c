@@ -74,13 +74,6 @@ int update_udt_session(nd_udt_node *node)
 			return -1 ;
 		}
 	}
-// 
-// 	else if(NETSTAT_ESTABLISHED != node->status) {
-// 		ndtime_t now = nd_time() ;
-// 		if((now - node->last_resend_tm) > (node->retrans_timeout*2)) {
-// 			return -1;
-// 		}
-// 	}
 	
 	return 0;
 }
@@ -95,8 +88,6 @@ int pump_insrv_udt_data(nd_udtsrv *root, struct udt_packet_info *pack_buf)
 	SOCKADDR_IN *addr =(SOCKADDR_IN *) &pack_buf->addr;
 	struct ndudt_pocket *pocket = &pack_buf->packet.pocket;
 		
-
-	//u_16 session_id = POCKET_SESSIONID(pocket) ;
 	u_16 localport = pocket->local_port;
 
 	if (NDUDT_SYN == POCKET_TYPE(pocket)) {

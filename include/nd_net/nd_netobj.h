@@ -179,8 +179,7 @@ ND_NET_API int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbu
 ND_NET_API int nd_net_bind(int isipv6, int port, int listen_nums,nd_handle net_handle) ;
 
 ND_NET_API int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN *to) ;
-//bind to spacifed IP
-ND_NET_API int nd_net_ipbind(nd_handle net_handle, const char* ip) ;
+
 ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
 
 

@@ -70,9 +70,7 @@ typedef struct nd_udp_node
 	ND_OBJ_BASE ;
 	ND_SOCKET_OBJ_BASE ;
 	ND_CONNECTOR_BASE ;
-
 	struct udp_proxy_info *prox_info ;
-	udp_protocol_entry 	protocol_entry ;
 	union {
 		struct sockaddr_in last_read;
 		struct sockaddr_in6 last_read6;
@@ -90,7 +88,7 @@ ND_NET_API int nd_udp_send(nd_handle net_handle,const char *data, size_t len)  ;
 //ND_NET_API int nd_udp_sendtoex(nd_handle net_handle,const char *data, size_t len, char *host, int port)  ;
 ND_NET_API int nd_udp_read(struct nd_udp_node*node , char *buf, size_t buf_size, ndtime_t outval) ;
 
-ND_NET_API int nd_udp_parse(nd_handle net_handle, char *buf,size_t len );
+//ND_NET_API int nd_udp_parse(nd_handle net_handle, char *buf,size_t len );
 
 //get addr
 ND_NET_API struct sockaddr_in* nd_udp_read_addr(nd_handle net_handle) ;

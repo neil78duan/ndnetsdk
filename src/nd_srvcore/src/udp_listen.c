@@ -16,9 +16,7 @@
 //#define USE_UDP_THREAD_POOL
 
 typedef int (*udp_entry) (SOCKADDR_IN *addr,char *buf, size_t read_len, nd_udtsrv *root)  ;
-//extern int udt_listen_callback(struct listen_contex *listen_info) ;
 
-//int create_udp_thpool(struct listen_contex *listen_info,udp_entry data_entry);
 int read_datagram(struct nd_netsocket *node, char *buf, size_t buf_size, SOCKADDR_IN *addr );
 
 static int update_udt_sessions(struct cm_manager *pmanger, struct nd_netth_context *thpi);
@@ -219,7 +217,7 @@ int update_udt_sessions(struct cm_manager *pmanger, struct nd_netth_context *thp
 	struct listen_contex *lc = (struct listen_contex *)(thpi->lh);
 
 	list_for_each_safe(pos, next, &thpi->sessions_list) {
-		struct nd_udtcli_map  *client = list_entry(pos, struct nd_client_map, map_list);
+		struct nd_udtcli_map  *client = list_entry(pos, struct nd_udtcli_map, map_list);
 
 		if (udt_is_reset (client) ) {
 

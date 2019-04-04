@@ -4,10 +4,7 @@
  * 2007-11-27
  */
 
-//#include "nd_common/nd_common.h"
 #include "nd_net/nd_netlib.h"
-//#include "nd_common/nd_alloc.h"
-
 
 int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, size_t len);
 extern int retranslate_data(nd_udt_node* socket_node);
@@ -180,16 +177,19 @@ int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, s
 	}
 
 	//check sequence
-	seq_offset = pocket->sequence -socket_node->received_sequence ;
+	seq_offset = (int)(pocket->sequence -socket_node->received_sequence );
 	if(seq_offset > 0){
 		//丢包 这里需要保存一下等待下次包的到来
-		struct ndudt_pocket lost_ntf;
-		init_udt_pocket(&lost_ntf);
-		set_pocket_ack(&lost_ntf, socket_node->received_sequence) ;
-		SET_LOST(&lost_ntf);
-		lost_ntf.sequence = pocket->sequence ;
-		write_pocket_to_socket(socket_node, &lost_ntf, ndt_header_size(&lost_ntf));
+// 		struct ndudt_pocket lost_ntf;
+// 		init_udt_pocket(&lost_ntf);
+// 		set_pocket_ack(&lost_ntf, socket_node->received_sequence) ;
+// 		SET_LOST(&lost_ntf);
+// 		lost_ntf.sequence = pocket->sequence ;
+// 		write_pocket_to_socket(socket_node, &lost_ntf, ndt_header_size(&lost_ntf));
 		//nd_log_screen("lost data \n") ;
+
+		_addto_pre_list(socket_node, pocket, (int)len); 
+
 		LEAVE_FUNC();
 		return 0;
 	}
@@ -212,6 +212,9 @@ int _handle_income_data(nd_udt_node* socket_node, struct ndudt_pocket *pocket, s
 	data_len = ndlbuf_write(recvbuf, data, data_len, EBUF_ALL);
 	UDT_RECV_USER_DATA(socket_node) = 1;
 
+	if (!list_empty(&socket_node->pre_list)) {
+		_tryto_fetch_prelist(socket_node);
+	}
 	LEAVE_FUNC();
 		
 	return data_len ;
@@ -290,15 +293,6 @@ int _handle_ack(nd_udt_node *socket_node, u_32 ack_seq)
 				socket_node->status = NETSTAT_ESTABLISHED;
 			}
 
-// 			if(root && root->base.connect_in_callback){				
-// 				//socket_node->start_time = nd_time() ;
-// 				socket_node->start_time = socket_node->update_tm;
-// 				socket_node->status = NETSTAT_ESTABLISHED;
-// 				if(-1==root->base.connect_in_callback(socket_node,&socket_node->remote_addr,(nd_handle)root) ) {
-// 					socket_node->myerrno = NDERR_USER;
-// 					return -1;
-// 				}
-// 			}			
 		}
 
 		return 0;

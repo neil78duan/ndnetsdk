@@ -51,28 +51,6 @@ void net_release_sendlock(nd_netui_handle  socket_node)
 	}
 }
 
-//bind IP
-int nd_net_ipbind(nd_handle net_handle, const char* ip) 
-{
-// 	struct nd_netsocket *node =(struct nd_netsocket *)net_handle ;
-// 	ndstrncpy(node->bindip, ip,sizeof(node->bindip));
-// 	if(node->fd) {
-// 		SOCKADDR_IN self ;
-// 		self.sin_family = AF_INET;
-// 		if (node->sock_type==SOCK_RAW)
-// 			self.sin_port = 0;
-// 		else 
-// 			self.sin_port = node->port;
-// 		self.sin_addr.s_addr = ip ;
-// 		if(-1==bind(node->fd, (SOCKADDR *)&self, sizeof(self) ) ) {
-// 			nd_showerror();
-// 	 		return -1 ;
-// 	 	}
-// 	}
-	return -1;
-		
-}
-
 int nd_net_bind(int isipv6, int port, int listen_nums,nd_handle net_handle)
 {
 	ndsocket_t fd;

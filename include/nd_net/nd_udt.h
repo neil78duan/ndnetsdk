@@ -52,6 +52,13 @@ struct nd_rtt
 };
 
 
+struct _udt_packet_node{
+	struct list_head list;
+	ndtime_t recvTm;
+	int size;
+	struct ndudt_pocket pack;
+};
+
 typedef struct _s_udt_socket nd_udt_node ;
 
 //检测UDT数据包是否合法
@@ -70,14 +77,13 @@ struct _s_udt_socket
 	ND_SOCKET_OBJ_BASE ;
 	ND_CONNECTOR_BASE ;
 	struct udp_proxy_info *prox_info ;
-	udp_protocol_entry 	protocol_entry ;
-	udt_close_entry udt_close;
 	union {
 		struct sockaddr_in last_read;
 		struct sockaddr_in6 last_read6;
 	};
 	//////////////////////////////////////////////////////////////////////////
-	check_udt_packet check_entry ;
+	check_udt_packet check_entry;
+	udt_close_entry udt_close_entry;
 
 	u_16	is_accept:4;				//0 connect , 1 accept
 	u_16	is_reset:1;
@@ -99,7 +105,8 @@ struct _s_udt_socket
 	u_32 received_sequence ;			//接受到的对方的系列号
 	u_32 retrans_seq;					//重传系列号(位于[acknowledged_seq,send_sequence])
 	size_t window_len ;					//对方接收窗口的长度
-	struct nd_rtt		_rtt ;				//记录样本往返时间
+	struct nd_rtt    _rtt ;				//记录样本往返时间
+	struct list_head pre_list;			//提前到来的包
 } ;
 
 typedef int(*udt_data_proc)(nd_handle hsrv, struct udt_packet_info *packet);
@@ -176,6 +183,10 @@ char *send_window_start(nd_udt_node* socket_node, size_t *sendlen) ;
 ndtime_t calc_timeouval(struct nd_rtt *rtt, int measuerment) ;
 
 //void send_reset_packet(nd_udt_node* socket_node) ;
+
+int _tryto_fetch_prelist(nd_udt_node *socket_node);
+int _addto_pre_list(nd_udt_node *socket_node, struct ndudt_pocket *packet, int len);
+int _update_prelist(nd_udt_node *socket_node);
 
 ND_NET_API int update_udt_session(nd_udt_node *node);
 ND_NET_API void _udt_connector_init(nd_udt_node *socket_node) ;

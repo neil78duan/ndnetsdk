@@ -48,9 +48,6 @@ nd_udt_node* udt_icmp_connect(nd_udt_node *socket_node,const char *host, short p
 	if(-1==set_raw_iphdr(socket_node->fd,1) ) 
 		return NULL;
 
-// 	if(-1==nd_net_ipbind((nd_handle)socket_node,nd_get_ip()) ){
-// 		return NULL;
-// 	}
 	socket_node->port = socket_node->fd & 0xffff; 
 
 	raw_set_recvall(socket_node->fd) ;
@@ -145,17 +142,7 @@ static int _raw_send(nd_udt_node *node, char *data, int len, SOCKADDR_IN *dest)
 int udt_icmp_write(nd_udt_node* node,char *data, size_t len) 
 {
 
-	int ret =0;
-	if (node->protocol != PROTOCOL_OTHER ){
-		ndudp_header  *packet = (ndudp_header  *) data ;
-		if (UDP_POCKET_PROTOCOL(packet) == node->protocol) {
-			if(UDP_POCKET_CHECKSUM(packet)==0){
-				UDP_POCKET_CHECKSUM(packet) = nd_checksum((NDUINT16*)packet,len) ;
-			}		;
-		}
-	}
-
-	ret =_raw_send(node, data, (int)len, &node->remote_addr) ;
+	int ret =_raw_send(node, data, (int)len, &node->remote_addr) ;
 	
 	if(-1==ret) {
 		if(ESOCKETTIMEOUT==nd_last_errno())
@@ -178,7 +165,7 @@ int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, stru
 		s_pid = htons((NDUINT16) nd_processid() );
 
 RE_READ:
-	sock_len = sizeof(*addr) ;
+	sock_len = sizeof(struct sockaddr_in6) ;
 	ret=recvfrom(node->fd,recv_buf,RAW_SYSTEM_BUF,0,(struct sockaddr *)addr, &sock_len);
 	if(ret>(int)((sizeof(udt_icmp_hdr) + sizeof(ip_hdr)))) {
 		int icmp_len = 0 ;

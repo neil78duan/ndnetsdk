@@ -107,28 +107,6 @@ struct sockaddr_in* nd_udp_read_addr(struct nd_udp_node*node)
 {
 	return &node->last_read ;
 }
-//parse udp data 
-int nd_udp_parse(struct nd_udp_node*node, char *buf,size_t len )
-{
-	int ret =0;
-	ENTER_FUNC()
-	if (node->protocol==PROTOCOL_OTHER){
-		ret = node->data_entry( (nd_handle)node, buf, len,(nd_handle) &node->last_read ) ;
-	}
-	else  {
-		ndudp_header  *packet = (ndudp_header  *) buf ;
-		nd_assert(node->protocol_entry) ;
-		if(len < sizeof(*packet)) {
-			node->myerrno = NDERR_BADPACKET ;
-		}
-		else { 
-			ret = node->protocol_entry((nd_handle) node , packet, len , &node->last_read) ;
-		}
-	}
-
-	LEAVE_FUNC();
-	return ret ;
-}
 
 
 void udp_node_init(struct nd_udp_node* node) 

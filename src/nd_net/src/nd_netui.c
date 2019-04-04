@@ -60,103 +60,7 @@ RE_READ:
 		}
 		socket_node->update_entry((nd_handle)socket_node);
 	}
-
-	/*
-	if(net_handle->type==NDHANDLE_TCPNODE){		
-		struct nd_tcp_node *socket_node = (struct nd_tcp_node *) net_handle ;
-		read_len = nd_tcpnode_read(socket_node) ;
-		if (timeout ){
-			if (read_len == 0)	{
-				int waitret =nd_socket_wait_read(socket_node->fd,timeout) ;
-				if(waitret<=0) {
-					
-					if(socket_node->update_entry((nd_handle)socket_node)==-1) {
-						waitret = -1;
-					}
-					LEAVE_FUNC();
-					return waitret ;
-				}
-				read_len = nd_tcpnode_read(socket_node) ;
-			}
-		}
-
-RE_READ:
-		if(-1==read_len) {
-			LEAVE_FUNC();
-			return -1;
-		}
-		else if(0==read_len) {
-			if (ret > 0) {
-				nd_tcpnode_flush_sendbuf((nd_netui_handle)socket_node) ;
-			}
-			if(socket_node->update_entry((nd_handle)socket_node)==-1) {
-				ret = -1;
-			}			
-			
-			LEAVE_FUNC();
-			return ret;
-		}
-		else {
-			ret += read_len ;
-			if(-1==handle_recv_data((nd_netui_handle)socket_node, NULL) ) {
-				LEAVE_FUNC();
-				return -1 ;
-			}
-			if(TCPNODE_READ_AGAIN(socket_node)) {
-				read_len = nd_tcpnode_read(socket_node) ;
-				goto RE_READ;
-			}
-			nd_tcpnode_flush_sendbuf((nd_netui_handle)socket_node) ;
-			if(socket_node->update_entry((nd_handle)socket_node)==-1) {
-				ret = -1;
-			}			
-		}
-	}
-	else if(net_handle->type==NDHANDLE_UDPNODE) {
-		nd_udp_node *socket_addr =(nd_udp_node *) net_handle ;
-		char read_buf[ND_UDP_PACKET_SIZE] ;
-
-		//socket_addr->myerrno = NDERR_SUCCESS ;
-
-		nd_assert(socket_addr->update_entry) ;
-		if(-1== socket_addr->update_entry((nd_handle)socket_addr)) {
-			LEAVE_FUNC();
-			return -1;
-		}
-RE_UDTREAD:
-		read_len =  socket_addr->sock_read((nd_handle)socket_addr, read_buf,sizeof(read_buf),timeout) ;
-		if(read_len > 0 ) {
-			read_len = nd_udp_parse((nd_handle)socket_addr, read_buf, read_len) ;
-			if(-1==read_len) {
-				LEAVE_FUNC();
-				return -1 ;
-			}
-			else if(0==read_len){
-				LEAVE_FUNC();
-				return ret ;
-			}
-			ret += read_len ;
-			if(-1==socket_addr->update_entry((nd_handle)socket_addr)) {
-				LEAVE_FUNC();
-				return -1;
-			}
-			if(TCPNODE_READ_AGAIN(socket_addr)) {
-				goto RE_UDTREAD;
-			}
-		}
-		else if(read_len==-1 ) {
-			if (socket_addr->myerrno==NDERR_BADPACKET)	{
-				if(TCPNODE_READ_AGAIN(socket_addr)) {
-					goto RE_UDTREAD;
-				}
-			}
-			else {
-				LEAVE_FUNC();
-				return 0;
-			}
-		}
-	}
-	*/
+		
 	LEAVE_FUNC();
 	return ret;	
 }
@@ -788,53 +692,6 @@ TCP_REWAIT:
 	else {
 		ret = nd_net_fetch_msg(net_handle, (nd_packhdr_t *)msgbuf);
 	}
-// 
-// 	if(net_handle->type==NDHANDLE_TCPNODE){
-// 		struct nd_tcp_node *socket_node = (struct nd_tcp_node*)net_handle ;
-// 
-// 	}
-// 	else {
-// 		ndtime_t now = nd_time() ;
-// 		nd_udp_node *socket_node = (nd_udp_node *)net_handle ;
-// 		void *param_old = socket_node->user_data ;
-// 		net_msg_entry data_func = socket_node->msg_entry ;
-// 		char read_buf[ND_UDP_PACKET_SIZE] ;
-// 
-// 		if(-1==socket_node->update_entry((nd_handle)socket_node) ){
-// 			LEAVE_FUNC();
-// 			return -1 ;	
-// 		}
-// 
-// 		socket_node->user_data = (void*)msgbuf ;
-// 		socket_node->msg_entry  = fetch_udp_message ;
-// 
-// RE_WAIT:
-// 		ret = socket_node->sock_read((nd_handle)socket_node, read_buf,sizeof(read_buf),tmout)  ;
-// 		if(ret > 0 ) {
-// 			int v ;
-// 			nd_pack_len(&msgbuf->hdr) = 0 ;
-// 
-// 			v = nd_udp_parse((nd_handle)socket_node, read_buf, ret) ;
-// 			if(-1==v) {
-// 				socket_node->user_data = param_old;
-// 				socket_node->msg_entry  = data_func ;
-// 				LEAVE_FUNC();
-// 				return -1 ;
-// 			} 
-// 			socket_node->update_entry((nd_handle)socket_node);
-// 			
-// 			ret = nd_pack_len(&msgbuf->hdr);
-// 			if(0==ret) {
-// 				tmout -= nd_time() - now ;
-// 				if((int)tmout > 0) {
-// 					goto RE_WAIT ;
-// 				}
-// 			}
-// 		}
-// 		socket_node->user_data = param_old;
-// 		socket_node->msg_entry  = data_func ;
-// 
-// 	}
 	
 	LEAVE_FUNC();
 	return ret ;
@@ -851,19 +708,6 @@ int nd_connector_handled_data(nd_netui_handle net_handle, size_t size)
 	return 0 ;
 	
 }
-// 
-// //data handle function
-// static int fetch_udp_data(nd_netui_handle node,void *data , size_t len,nd_handle listen_h) 
-// {
-// 	size_t buf_size = *((size_t*) node->user_data) ;
-// 	buf_size = min(len, buf_size) ;
-// 	if(buf_size==0) {
-// 		return 0 ;
-// 	}
-// 	memcpy(node->user_data, data, buf_size) ;
-// 	node->user_data =(void*) buf_size ;
-// 	return (int) buf_size ;
-// }
 
 //
 int nd_connector_raw_waitdata(nd_netui_handle net_handle, void *buf, size_t size, ndtime_t timeout) 
@@ -898,69 +742,7 @@ int nd_connector_raw_waitdata(nd_netui_handle net_handle, void *buf, size_t size
 			socket_node->myerrno = NDERR_BADSOCKET;
 		}
 	}
-	LEAVE_FUNC();
-	return ret;
-
-	/*
-	if(net_handle->type==NDHANDLE_TCPNODE){
-		struct nd_tcp_node *socket_node = (struct nd_tcp_node*)net_handle ;
-		
-		if (timeout)	{
-			if(nd_socket_wait_read(socket_node->fd, timeout) <= 0) {
-				socket_node->myerrno = NDERR_WOULD_BLOCK;
-				LEAVE_FUNC();
-				return -1 ;
-			}
-
-		}		
-		ret = nd_socket_tcp_read(socket_node->fd, buf, size) ;
-		if(ret==0){
-			LEAVE_FUNC();
-			return 0;
-		}
-		if (ret== -1 ){
-			if (nd_last_errno() == ESOCKETTIMEOUT)	{
-				socket_node->myerrno = NDERR_WOULD_BLOCK;
-			}
-			else {
-				socket_node->myerrno= NDERR_BADSOCKET ;
-			}
-		}
-		LEAVE_FUNC();
-		return ret ;
-	}
-	else {
-
-		nd_udp_node *socket_node = (nd_udp_node *)net_handle ;
-
-		char read_buf[ND_UDP_PACKET_SIZE] ;
-
-		ret = socket_node->sock_read((nd_handle)socket_node, read_buf,sizeof(read_buf),timeout)  ;
-		if(ret > 0 ) {
-			int v ;
-			void *param_old = socket_node->user_data ;
-			data_in_entry data_func = socket_node->data_entry ;
-
-			*((size_t *)buf) = size ;
-			socket_node->user_data = buf ;
-			socket_node->data_entry  = fetch_udp_data ;
-
-			v = nd_udp_parse((nd_handle)socket_node, read_buf, ret)  ;
-
-			ret = (int)socket_node->user_data;
-			socket_node->user_data = param_old;
-			socket_node->data_entry  = data_func ;
-
-			if (socket_node->update_entry)
-				socket_node->update_entry((nd_handle)socket_node);
-
-			if(-1==v) {
-				LEAVE_FUNC();
-				return -1 ;
-			} 
-		}
-	}*/
-
+	
 	LEAVE_FUNC();
 	return ret ;
 }
@@ -1022,15 +804,6 @@ int nd_packet_encrypt_key(nd_cryptkey *pcrypt_key, nd_packetbuf_t *msgbuf)
 int nd_packet_decrypt(nd_netui_handle net_handle, nd_packetbuf_t *msgbuf)
 {
 	return nd_packet_decrypt_key(&(net_handle->crypt_key ), msgbuf) ; 
-//	int ret = nd_packet_decrypt_key(&(net_handle->crypt_key ), msgbuf) ;
-//	if (-1==ret ) {
-//		char buf[64] ;
-//		buf[0]= 0 ;
-//		SOCKADDR_IN *addr =& (net_handle->remote_addr );
-//		nd_logdebug("[%s] send data error :unknow crypt data\n" AND inet_ntop(addr->sin_family, &addr->sin_addr, buf ,sizeof(buf)) );
-//		return 0;
-//	}
-//	return ret;
 }
 
 int nd_packet_decrypt_key(nd_cryptkey *pcrypt_key,nd_packetbuf_t *msgbuf)
@@ -1141,23 +914,6 @@ int nd_net_sysmsg_hander(nd_netui_handle node, nd_sysresv_pack_t *pack)
 	}
 	return 0;	
 }
-//
-//int nd_net_message_version_error(nd_netui_handle node)
-//{
-//	nd_sysresv_pack_t packdata ;
-//	nd_sysresv_pack_t *pack = &packdata ;
-//	nd_hdr_init(&pack->hdr) ;
-//	pack->hdr.length = sizeof(nd_sysresv_pack_t) ;
-//	pack->hdr.ndsys_msg = 1;
-//	pack->hdr.stuff_len = 5 ;
-//	pack->msgid = ERSV_VERSION_ERROR ;
-//	pack->checksum = 0;
-//	pack->checksum = nd_checksum((NDUINT16 *)pack,sizeof(nd_sysresv_pack_t) ) ;
-//	nd_connector_send(node, &pack->hdr, ESF_URGENCY) ;
-//
-//	node->myerrno = NDERR_VERSION ;
-//
-//	return 0;
-//}
+
 
 #undef  ND_IMPLEMENT_HANDLE
