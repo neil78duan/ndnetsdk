@@ -40,20 +40,22 @@ nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h, int session_num)
 			return 0;
 		}
 	}
-	else {
-
+	else
 #ifdef ND_UNIX
+	if(ND_LISTEN_OS_EXT ==lc->io_mod){
 		if (listen_thread_createex(piocp) != 0) {
 			free(piocp);
 			return 0;
 		}
-#else 
+	}
+	else
+#endif
+	{
 		nd_threadsrv_entry th_func = (nd_threadsrv_entry)(((struct listen_contex *) h)->listen_id ? _nd_thpool_sub : _nd_thpool_main);
 		if (listen_thread_create(piocp, th_func) != 0) {
 			free(piocp);
 			return 0;
 		}
-#endif
 	}
 	list_add_tail(&piocp->list, &piocp->lh->list_thread);
 
