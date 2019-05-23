@@ -741,6 +741,8 @@ void _udt_connector_init(nd_udt_node *socket_node)
 	socket_node->wait_entry = udt_wait_packet;
 	socket_node->status = NETSTAT_CLOSED;
 
+	socket_node->msg_caller = socket_node;
+	
 	socket_node->check_entry = check_income_udp_packet ;
 	socket_node->_rtt.average = RETRANSLATE_TIME ;	
 	socket_node->_rtt.deviation = 0;

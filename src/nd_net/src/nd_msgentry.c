@@ -81,10 +81,6 @@ static void destroy_msgroot(nd_handle h)
 		struct sub_msgentry *psub = &root->sub_buf[i];
 		for (j = 0; j < SUB_MSG_NUM; j++) {
 			struct  msg_entry_node *node = &psub->msg_buf[j];
-// 			if (node->name)	{
-// 				free(node->name);
-// 				node->name = 0;
-// 			}
 			if (node->is_script)	{
 				free((void*)node->entry);
 				node->entry = NULL;
@@ -331,7 +327,7 @@ int nd_msgentry_install(nd_netui_handle handle, nd_usermsg_func func, ndmsgid_t 
 		node->is_script = 0;
 #if 1
 		if (name && name[0]) {
-			int len = ndstrlen(name) + 1;
+			int len = (int)ndstrlen(name) + 1;
 			if (len > (int) sizeof(node->name)) {
 				len = sizeof(node->name);
 			}
@@ -393,41 +389,41 @@ void* nd_message_get_script_engine(nd_handle handle)
 	return NULL;
 }
 
-static int _call_message_func(struct msgentry_root *root,struct msg_entry_node * node, nd_usermsgbuf_t*msg, nd_netui_handle conn, nd_handle lh)
+//return error code
+static int _call_message_func(struct msgentry_root *root,struct msg_entry_node * node, nd_usermsgbuf_t*msg, nd_netui_handle connector, nd_handle lh)
 {
-	int ret = 0;
+	int ret = 0 ;
 	if (!node || !node->entry) {
 		if (root->def_entry){
-			ret = root->def_entry(conn, msg, lh);
+			ret = root->def_entry(connector->msg_caller, msg, lh);
 		}
 		else{
 			nd_logmsg("received message (%d,%d) UNHANDLED\n" AND msg->msg_hdr.maxid AND msg->msg_hdr.minid);
-			ret = -1;
-			nd_object_seterror(conn, NDERR_UNHANDLED_MSG);
+			return NDERR_UNHANDLED_MSG ;
 		}
 	}
 	else {
 		if (!node->is_script){
-			ret = node->entry(conn, msg, lh);
+			ret = node->entry(connector->msg_caller, msg, lh);
 		}
 		else {
-			ret = root->script_entry(root->script_engine, conn, msg, (const char*)node->entry);
+			ret = root->script_entry(root->script_engine, connector, msg, (const char*)node->entry);
 		}
 	}
-	return ret;
+	return ret==-1? NDERR_USER : 0 ;
 }
+//
+//int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
+//{
+//	return nd_translate_message_ex(connect_handle, msg, listen_handle, connect_handle);
+//
+//}
 
-int nd_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle) 
-{
-	return nd_translate_message_ex(connect_handle, msg, listen_handle, connect_handle);
-	
-}
-
-int nd_translate_message_ex(nd_netui_handle owner,  nd_packhdr_t *msg, nd_handle listen_handle, nd_handle caller)
+int nd_translate_message(nd_netui_handle owner,  nd_packhdr_t *msg, nd_handle listen_handle)
 {
 	ENTER_FUNC()
 
-		int ret = 0;
+	int error= 0;
 	int data_len = nd_pack_len(msg);
 	struct msgentry_root *root_entry = (struct msgentry_root *) owner->msg_handle;
 	nd_usermsghdr_t *usermsg = (nd_usermsghdr_t *)(msg);
@@ -442,10 +438,12 @@ int nd_translate_message_ex(nd_netui_handle owner,  nd_packhdr_t *msg, nd_handle
 	}
 #endif
 
-	ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, caller, listen_handle);
-
+	error = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, owner, listen_handle);
+	if(error) {
+		nd_object_seterror(owner, error);
+	}
 	LEAVE_FUNC();
-	return  ret == -1 ? -1 : data_len;
+	return  error ? -1 : data_len;
 
 }
 
@@ -479,7 +477,7 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 	if (!node || (!node->entry && !root_entry->def_entry) ){
 		if (srv_node->unreg_msg_close) {
 			nd_object_seterror(connect_handle, NDERR_UNHANDLED_MSG) ; 
-			ret = srv_node->unreg_msg_close ? -1 : data_len ;
+			ret = srv_node->unreg_msg_close ? NDERR_UNHANDLED_MSG : 0 ;
 		}
 		nd_logwarn("receive UNHANDLED message(%d , %d) \n", usermsg->maxid,  usermsg->minid) ;
 	}
@@ -487,17 +485,15 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 		if( nd_connect_level_get(connect_handle) < node->level ||  (node->sys_msg && !msg->ndsys_msg) ){			
 			if (srv_node->error_privilage_close) {
 				nd_object_seterror(connect_handle, NDERR_NO_PRIVILAGE) ;
-				ret = srv_node->error_privilage_close ? -1 : data_len ;
+				ret = srv_node->error_privilage_close ? NDERR_UNHANDLED_MSG : 0 ;
 			}
 			
 			nd_logwarn("receive un-privilege message(%d , %d) \n", usermsg->maxid,  usermsg->minid) ;
 		}		
 		else {
 			ret = _call_message_func(root_entry, node, (nd_usermsgbuf_t*)msg, connect_handle, listen_handle);
-			if (-1 == ret) {
-				if (nd_object_lasterror(connect_handle) == 0) {
-					nd_object_seterror(connect_handle, NDERR_USER);
-				}
+			if (ret) {
+				nd_object_seterror(connect_handle, ret);
 			}
 		}		
 	}
@@ -508,9 +504,10 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 			usermsg->packet_hdr.length, ret==-1?"FAILED":"SUCCESS") ;
     }
 #endif
-		
-	LEAVE_FUNC();	
-	return  ret==-1 ? -1 : data_len ;
+	
+	LEAVE_FUNC();
+	return  ret ? -1 : data_len;
+	
 	
 }
 

@@ -126,6 +126,7 @@ void udp_node_init(struct nd_udp_node* node)
 	node->start_time =nd_time() ;		
 	node->last_push = nd_time() ;
 	node->disconn_timeout = ND_DFT_DISSCONN_TIMEOUT ;
+	node->msg_caller = node;
 	init_crypt_key(&node->crypt_key);
 
 	nd_net_connbuf_init((struct netui_info*)node) ;

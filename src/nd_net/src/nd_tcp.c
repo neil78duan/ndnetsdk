@@ -526,7 +526,8 @@ void _tcp_connector_init(struct nd_tcp_node *conn_node)
 	conn_node->status = ETS_DEAD;				/*socket state in game 0 not read 1 ready*/
 	conn_node->start_time =nd_time() ;		
 	conn_node->last_push = nd_time() ;
-	conn_node->disconn_timeout = ND_DFT_DISSCONN_TIMEOUT ;	
+	conn_node->disconn_timeout = ND_DFT_DISSCONN_TIMEOUT ;
+	conn_node->msg_caller = conn_node;
 	init_crypt_key(&conn_node->crypt_key);
 	conn_node->type = NDHANDLE_TCPNODE ;
 	

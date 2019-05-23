@@ -246,7 +246,7 @@ int NDConnector::Close(int force)
 	return -1 ;
 }
 
-static int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)  ;
+//static int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)  ;
 int NDConnector::Create(const char *protocol_name)
 {
 	//connect to host 
@@ -261,13 +261,14 @@ int NDConnector::Create(const char *protocol_name)
 		return -1;
 	}
 	((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
+	((nd_netui_handle)m_objhandle)->msg_caller =(void*) this ;
 
 	//set message handle	
 	if (msg_kinds > 0){
 		if(-1==nd_msgtable_create(m_objhandle, msg_kinds, msg_base) ) {
 			nd_object_destroy(m_objhandle, 0) ;
 		}
-		nd_hook_packet(m_objhandle,(net_msg_entry )cliconn_translate_message);
+		//nd_hook_packet(m_objhandle,(net_msg_entry )cliconn_translate_message);
 	}
 	//int val = 1;
 	//int size = sizeof(val);
@@ -375,10 +376,8 @@ int NDConnector::Update(ndtime_t wait_time)
 		nd_usermsgbuf_t msg_recv;
 RE_WAIT:
 		ret = nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)&msg_recv,wait_time);
-		if(ret > 0) {			
-			//msg_entry(connect_handle, &msg_recv) ;
-			//cliconn_translate_message((nd_netui_handle)m_objhandle, (nd_packhdr_t*)&msg_recv, 0) ;
-			nd_translate_message_ex(m_objhandle, (nd_packhdr_t*)&msg_recv, 0, (nd_handle)this);
+		if(ret > 0) {
+			nd_translate_message(m_objhandle, (nd_packhdr_t*)&msg_recv, 0);
 			wait_time = 0;
 			goto RE_WAIT;
 			//return 0;
@@ -402,7 +401,7 @@ RE_WAIT:
 
 int NDConnector::CallMsgHandle(nd_usermsgbuf_t *msgbuf)
 {
-	return nd_translate_message_ex(m_objhandle, (nd_packhdr_t*)msgbuf, NULL, (nd_handle)this);
+	return nd_translate_message(m_objhandle, (nd_packhdr_t*)msgbuf, NULL);
 }
 
 bool NDConnector::TestMsgIsHandle(ndmsgid_t maxid, ndmsgid_t minid)
@@ -518,17 +517,17 @@ void ndSetLogFile(const char *pathfile)
 	set_log_file(pathfile);
 }
 
-
-int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
-{
-	if (connect_handle->is_log_recv){
-		nd_usermsghdr_t *pmsgHdr = (nd_usermsghdr_t*)msg;
-		nd_logmsg("received (%d,%d) len=%d\n", pmsgHdr->maxid, pmsgHdr->minid, ND_USERMSG_LEN(msg));
-	}
-
-	return nd_translate_message_ex((nd_handle)connect_handle, msg, 0, (nd_handle)htoConnector((nd_handle)connect_handle));
-	
-}
+//
+//int cliconn_translate_message(nd_netui_handle connect_handle, nd_packhdr_t *msg ,nd_handle listen_handle)
+//{
+//	if (connect_handle->is_log_recv){
+//		nd_usermsghdr_t *pmsgHdr = (nd_usermsghdr_t*)msg;
+//		nd_logmsg("received (%d,%d) len=%d\n", pmsgHdr->maxid, pmsgHdr->minid, ND_USERMSG_LEN(msg));
+//	}
+//
+//	return nd_translate_message((nd_handle)connect_handle, msg, 0);
+//
+//}
 
 
 int _big_data_recv_handler(NDIConn* pconn, nd_usermsgbuf_t *msg )

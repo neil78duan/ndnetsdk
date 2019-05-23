@@ -134,7 +134,7 @@ static __INLINE__ int nd_connectmsg_sendex(nd_handle  connector_handle, nd_userm
  */
 ND_NET_API int nd_translate_message(nd_handle  connector_handle, nd_packhdr_t *msg,nd_handle listen_handle ) ;
 
-ND_NET_API int nd_translate_message_ex(nd_handle owner, nd_packhdr_t *msg, nd_handle listen_handle, nd_handle caller);
+//ND_NET_API int nd_translate_message_ex(nd_handle owner, nd_packhdr_t *msg, nd_handle listen_handle, nd_handle caller);
 
 /* 
  * used in listener 
