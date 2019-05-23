@@ -282,14 +282,6 @@ int nd_tcpnode_read(struct nd_tcp_node *node)
 	}
 }
 
-static int _tcp_node_read(struct nd_tcp_node *node, void *data, size_t size, ndtime_t tmout)
-{
-	int ret = tcpnode_wait_msg(node,tmout);
-	if (ret > 0) {
-		return nd_socket_tcp_read(node->fd, data, size);
-	}
-	return ret;
-}
 
 /* wait a tcp-node income data 
 * return the data length received from the @node 
@@ -373,6 +365,15 @@ int tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout)
 	}
 	LEAVE_FUNC();
 	return 0;
+}
+
+static int _tcp_node_read(struct nd_tcp_node *node, void *data, size_t size, ndtime_t tmout)
+{
+	int ret = tcpnode_wait_msg(node,tmout);
+	if (ret > 0) {
+		return nd_socket_tcp_read(node->fd, data, size);
+	}
+	return ret;
 }
 
 int nd_tcpnode_tryto_flush_sendbuf(struct nd_tcp_node *conn_node) 

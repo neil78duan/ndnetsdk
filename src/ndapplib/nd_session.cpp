@@ -9,7 +9,7 @@
 #include "nd_srvcore/nd_srvlib.h"
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_listener.h"
-#include "ndapplib/nd_datatransfer.h"
+//#include "ndapplib/nd_datatransfer.h"
 #include "nd_msg.h"
 
 static  int _session_update(nd_handle h)
@@ -46,15 +46,15 @@ void NDBaseSession::baseUpdate()
 	}
 	NDAlarm::Update();
 }
-
-int NDBaseSession::BigDataSend(int maxID, int minID, void *data, size_t datalen)
-{
-	NDUINT32 hiDword = -1;
-	NDUINT32 lowDord = ND_MAKE_DWORD(maxID, minID);
-	NDUINT64 param = ND_MAKE_QWORD(hiDword, lowDord);
-
-	return BigDataAsyncSend(m_objhandle, data, datalen, param, NULL);
-}
+//
+//int NDBaseSession::BigDataSend(int maxID, int minID, void *data, size_t datalen)
+//{
+//	NDUINT32 hiDword = -1;
+//	NDUINT32 lowDord = ND_MAKE_DWORD(maxID, minID);
+//	NDUINT64 param = ND_MAKE_QWORD(hiDword, lowDord);
+//
+//	return BigDataAsyncSend(m_objhandle, data, datalen, param, NULL);
+//}
 
 int NDBaseSession::CryptPackage(nd_usermsgbuf_t *msgBuf)
 {

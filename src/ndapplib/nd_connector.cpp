@@ -6,7 +6,7 @@
  */
 
 #include "ndapplib/nd_connector.h"
-#include "ndapplib/nd_datatransfer.h"
+//#include "ndapplib/nd_datatransfer.h"
 //////////////////////////////////////////////////////////////////////////
 //class NDConnector
 
@@ -200,11 +200,11 @@ int NDConnector::SendRawData(void *data , size_t size)
 	return ret ;
 
 }
-
-int NDConnector::BigDataSend(NDUINT64 param, void *data, size_t datalen) 
-{
-	return BigDataAsyncSend(m_objhandle, data, datalen,  param, NULL) ;
-}
+//
+//int NDConnector::BigDataSend(NDUINT64 param, void *data, size_t datalen) 
+//{
+//	return BigDataAsyncSend(m_objhandle, data, datalen,  param, NULL) ;
+//}
 
 int NDConnector::RecvRawData(void *buf, size_t size, ndtime_t waittm) 
 {

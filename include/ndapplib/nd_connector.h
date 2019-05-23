@@ -34,7 +34,7 @@ public :
 	int SendRawData(void *data , size_t size) ;
 	int RecvRawData(void *buf, size_t size, ndtime_t waittm) ;
 	
-	int BigDataSend(NDUINT64 param, void *data, size_t datalen) ;
+	//int BigDataSend(NDUINT64 param, void *data, size_t datalen) ;
 
 	int CheckValid();
 	int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100);

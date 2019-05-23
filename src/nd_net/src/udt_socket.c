@@ -13,21 +13,21 @@ int flush_send_window(nd_udt_node* socket_node);			//发送 窗口中的数据
 int udt_send_fin(nd_udt_node *socket_node) ;
 
 
-extern nd_udt_node * udt_icmp_connect(nd_udt_node *socket_node, const char *host, short port, struct nd_proxy_info *proxy);
+//extern nd_udt_node * udt_icmp_connect(nd_udt_node *socket_node, const char *host, short port, struct nd_proxy_info *proxy);
 /* connect to remote host 
  * realize 3-times handshake
  */
 nd_udt_node* udt_connect(nd_udt_node *socket_node,const char *host, short port, struct nd_proxy_info *proxy)
 {
 	ENTER_FUNC()
-	if(socket_node->sock_type == SOCK_RAW) {
+	/*if(socket_node->sock_type == SOCK_RAW) {
 		if (!udt_icmp_connect(socket_node,host, port, proxy)) {
 			nd_showerror() ;
 			LEAVE_FUNC();
 			return 0;
 		}
 	}
-	else {
+	else*/ {
 		if (-1==nd_udp_connect((nd_handle)socket_node,host, port, proxy)) {
 			nd_showerror() ;
 			LEAVE_FUNC();

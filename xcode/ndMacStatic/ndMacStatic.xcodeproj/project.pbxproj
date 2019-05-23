@@ -70,7 +70,6 @@
 		0757AA9D21A7D704001BAE36 /* nd_udp.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEE819A8DFCD00802576 /* nd_udp.c */; };
 		0757AA9E21A7D704001BAE36 /* net_srv.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEE919A8DFCD00802576 /* net_srv.c */; };
 		0757AA9F21A7D704001BAE36 /* proxy_cli.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEEA19A8DFCD00802576 /* proxy_cli.c */; };
-		0757AAA021A7D704001BAE36 /* udt_icmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEEB19A8DFCD00802576 /* udt_icmp.c */; };
 		0757AAA121A7D704001BAE36 /* udt_net.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEEC19A8DFCD00802576 /* udt_net.c */; };
 		0757AAA221A7D704001BAE36 /* udt_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEED19A8DFCD00802576 /* udt_socket.c */; };
 		0757AAA321A7D704001BAE36 /* udt_srv.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEEE19A8DFCD00802576 /* udt_srv.c */; };
@@ -111,12 +110,9 @@
 		0757AAC621A7D72D001BAE36 /* nd_stlalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCF1E19A8DFCD00802576 /* nd_stlalloc.cpp */; };
 		0757AAC721A7D72D001BAE36 /* readcfg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCF3819A8DFCD00802576 /* readcfg.cpp */; };
 		0757AAC821A7D72D001BAE36 /* unix_sig.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCF3919A8DFCD00802576 /* unix_sig.c */; };
-		0757AAC921A7D72D001BAE36 /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */; };
 		0757AACA21A7D72D001BAE36 /* nd_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0739F41D1A676B1C00520AE2 /* nd_version.cpp */; };
 		0760D30D1B26CAE5005F076C /* httpParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0760D30C1B26CAE5005F076C /* httpParser.cpp */; };
 		0760D30F1B26CAF5005F076C /* httpParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 0760D30E1B26CAF5005F076C /* httpParser.h */; };
-		07631C7F1A539BEB00C82B5A /* nd_datatransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */; };
-		07631C821A539E7500C82B5A /* nd_datatransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = 07631C811A539E7500C82B5A /* nd_datatransfer.h */; };
 		07647B501A3FDBBE00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B4F1A3FDBBE00A96620 /* nd_cmdline.c */; };
 		07728B5020BE8947006CDB04 /* nd_sysmsg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07728B4F20BE8947006CDB04 /* nd_sysmsg.cpp */; };
 		07728B5220BE895C006CDB04 /* nd_sysmsg.h in Headers */ = {isa = PBXBuildFile; fileRef = 07728B5120BE895C006CDB04 /* nd_sysmsg.h */; };
@@ -176,7 +172,6 @@
 		07EBCF8A19A8DFCD00802576 /* nd_udp.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEE819A8DFCD00802576 /* nd_udp.c */; };
 		07EBCF8B19A8DFCD00802576 /* net_srv.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEE919A8DFCD00802576 /* net_srv.c */; };
 		07EBCF8C19A8DFCD00802576 /* proxy_cli.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEEA19A8DFCD00802576 /* proxy_cli.c */; };
-		07EBCF8D19A8DFCD00802576 /* udt_icmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEEB19A8DFCD00802576 /* udt_icmp.c */; };
 		07EBCF8E19A8DFCD00802576 /* udt_net.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEEC19A8DFCD00802576 /* udt_net.c */; };
 		07EBCF8F19A8DFCD00802576 /* udt_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEED19A8DFCD00802576 /* udt_socket.c */; };
 		07EBCF9019A8DFCD00802576 /* udt_srv.c in Sources */ = {isa = PBXBuildFile; fileRef = 07EBCEEE19A8DFCD00802576 /* udt_srv.c */; };
@@ -317,8 +312,6 @@
 		0757AA6D21A7D6A1001BAE36 /* libiconv.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.tbd; path = usr/lib/libiconv.2.tbd; sourceTree = SDKROOT; };
 		0760D30C1B26CAE5005F076C /* httpParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = httpParser.cpp; sourceTree = "<group>"; };
 		0760D30E1B26CAF5005F076C /* httpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = httpParser.h; sourceTree = "<group>"; };
-		07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_datatransfer.cpp; sourceTree = "<group>"; };
-		07631C811A539E7500C82B5A /* nd_datatransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_datatransfer.h; sourceTree = "<group>"; };
 		07647B4E1A3FD77C00A96620 /* nd_cmdline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_cmdline.h; sourceTree = "<group>"; };
 		07647B4F1A3FDBBE00A96620 /* nd_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_cmdline.c; sourceTree = "<group>"; };
 		07647B641A4419B300A96620 /* _nderr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
@@ -381,7 +374,6 @@
 		07EBCEE819A8DFCD00802576 /* nd_udp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_udp.c; sourceTree = "<group>"; };
 		07EBCEE919A8DFCD00802576 /* net_srv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net_srv.c; sourceTree = "<group>"; };
 		07EBCEEA19A8DFCD00802576 /* proxy_cli.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = proxy_cli.c; sourceTree = "<group>"; };
-		07EBCEEB19A8DFCD00802576 /* udt_icmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = udt_icmp.c; sourceTree = "<group>"; };
 		07EBCEEC19A8DFCD00802576 /* udt_net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = udt_net.c; sourceTree = "<group>"; };
 		07EBCEED19A8DFCD00802576 /* udt_socket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = udt_socket.c; sourceTree = "<group>"; };
 		07EBCEEE19A8DFCD00802576 /* udt_srv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = udt_srv.c; sourceTree = "<group>"; };
@@ -682,7 +674,6 @@
 				07EBCEE819A8DFCD00802576 /* nd_udp.c */,
 				07EBCEE919A8DFCD00802576 /* net_srv.c */,
 				07EBCEEA19A8DFCD00802576 /* proxy_cli.c */,
-				07EBCEEB19A8DFCD00802576 /* udt_icmp.c */,
 				07EBCEEC19A8DFCD00802576 /* udt_net.c */,
 				07EBCEED19A8DFCD00802576 /* udt_socket.c */,
 				07EBCEEE19A8DFCD00802576 /* udt_srv.c */,
@@ -765,7 +756,6 @@
 				07EBCF1E19A8DFCD00802576 /* nd_stlalloc.cpp */,
 				07EBCF3819A8DFCD00802576 /* readcfg.cpp */,
 				07EBCF3919A8DFCD00802576 /* unix_sig.c */,
-				07631C7D1A539BEB00C82B5A /* nd_datatransfer.cpp */,
 				0739F41D1A676B1C00520AE2 /* nd_version.cpp */,
 			);
 			name = ndapplib;
@@ -897,7 +887,6 @@
 				078966C8207F069800A38013 /* nd_httpListener.h */,
 				073DB4311B67162E00A93310 /* ndsingleton.h */,
 				0760D30E1B26CAF5005F076C /* httpParser.h */,
-				07631C811A539E7500C82B5A /* nd_datatransfer.h */,
 				07D47C5019D9694A00D08BB6 /* nd_alarms.h */,
 				07EBD01219A8E01500802576 /* applib.h */,
 				07EBD01319A8E01500802576 /* nd_affair.h */,
@@ -955,7 +944,6 @@
 				07EBD07419A8E01500802576 /* readcfg.h in Headers */,
 				07EBD05F19A8E01500802576 /* nd_udthdr.h in Headers */,
 				07EBD06F19A8E01500802576 /* nd_lockhelper.h in Headers */,
-				07631C821A539E7500C82B5A /* nd_datatransfer.h in Headers */,
 				07EBD07519A8E01500802576 /* nd_allocator.h in Headers */,
 				07EBD05C19A8E01500802576 /* nd_tcp.h in Headers */,
 				07EBD05A19A8E01500802576 /* nd_sock.h in Headers */,
@@ -1114,6 +1102,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 07EBCE7E19A8DEFC00802576;
@@ -1152,7 +1141,6 @@
 				0757AAC621A7D72D001BAE36 /* nd_stlalloc.cpp in Sources */,
 				0757AAC721A7D72D001BAE36 /* readcfg.cpp in Sources */,
 				0757AAC821A7D72D001BAE36 /* unix_sig.c in Sources */,
-				0757AAC921A7D72D001BAE36 /* nd_datatransfer.cpp in Sources */,
 				0757AACA21A7D72D001BAE36 /* nd_version.cpp in Sources */,
 				0757AAA421A7D719001BAE36 /* nd_netthread.c in Sources */,
 				0757AAA521A7D719001BAE36 /* session.c in Sources */,
@@ -1181,7 +1169,6 @@
 				0757AA9D21A7D704001BAE36 /* nd_udp.c in Sources */,
 				0757AA9E21A7D704001BAE36 /* net_srv.c in Sources */,
 				0757AA9F21A7D704001BAE36 /* proxy_cli.c in Sources */,
-				0757AAA021A7D704001BAE36 /* udt_icmp.c in Sources */,
 				0757AAA121A7D704001BAE36 /* udt_net.c in Sources */,
 				0757AAA221A7D704001BAE36 /* udt_socket.c in Sources */,
 				0757AAA321A7D704001BAE36 /* udt_srv.c in Sources */,
@@ -1281,7 +1268,6 @@
 				07EBCF5F19A8DFCD00802576 /* callstack.c in Sources */,
 				07EBCF6419A8DFCD00802576 /* nd_static_alloc.c in Sources */,
 				07EBCFAE19A8DFCD00802576 /* nd_connector.cpp in Sources */,
-				07631C7F1A539BEB00C82B5A /* nd_datatransfer.cpp in Sources */,
 				07EBCFAD19A8DFCD00802576 /* nd_cmmgr.cpp in Sources */,
 				07EBCF8619A8DFCD00802576 /* nd_netobj.c in Sources */,
 				07EBCF7D19A8DFCD00802576 /* nd_cryptfile.c in Sources */,
@@ -1317,7 +1303,6 @@
 				074D84FC1D6C25D200201121 /* nd_time.c in Sources */,
 				07EBCF7E19A8DFCD00802576 /* nd_pubkey.c in Sources */,
 				07EBCFA819A8DFCD00802576 /* nd_vmmain.c in Sources */,
-				07EBCF8D19A8DFCD00802576 /* udt_icmp.c in Sources */,
 				07CFB03F1B1308EE0061C219 /* nd_iconv.c in Sources */,
 				07EBCF7619A8DFCD00802576 /* r_dh.c in Sources */,
 				07EBCF7119A8DFCD00802576 /* digit.c in Sources */,
@@ -1367,8 +1352,9 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1401,8 +1387,9 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

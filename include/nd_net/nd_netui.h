@@ -64,7 +64,7 @@ ND_NET_API int nd_connector_raw_write(nd_handle net_handle , void *data, size_t 
 ND_NET_API int handle_recv_data(nd_netui_handle node, nd_handle h_listen) ;
 
 
-int _packet_handler(nd_netui_handle node,nd_packhdr_t *msg, nd_handle h_listen) ;
+ND_NET_API int _packet_handler(nd_netui_handle node,nd_packhdr_t *msg, nd_handle h_listen) ;
 ND_NET_API int nd_dft_packet_handler(nd_netui_handle node,void *data , size_t data_len , nd_handle h_listen) ;
 
 /*
@@ -173,7 +173,7 @@ ND_NET_API void nd_connector_set_userdata(nd_netui_handle net_handle, void *p);
 
 ND_NET_API void* nd_connector_get_userdata(nd_netui_handle net_handle);
 
-int nd_net_sysmsg_hander(nd_netui_handle node, nd_sysresv_pack_t *pack);
+ND_NET_API int nd_net_sysmsg_hander(nd_netui_handle node, nd_sysresv_pack_t *pack);
 
 // add function call when close
 static __INLINE__ int nd_connector_add_close_callback(nd_handle handle,nd_object_destroy_callback callback, void *param) 

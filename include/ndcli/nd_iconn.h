@@ -16,7 +16,7 @@
 #include "nd_net/nd_netlib.h"
 #include "nd_crypt/nd_crypt.h"
 #endif 
-#include "ndcli/nd_api_c.h"
+//#include "ndcli/nd_api_c.h"
 #include "ndapplib/nd_iBaseObj.h"
 #include "ndapplib/nd_msgpacket.h"
 
@@ -35,8 +35,7 @@ typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
 
 typedef int (*nd_bigdata_handler)(nd_handle nethandle,  NDUINT64 param , void *data, size_t datalen) ;
 
-
-ND_CONNCLI_API int ndGetTimeoutVal();
+typedef int (*ndNetFunc)(nd_handle handle, unsigned char *data, int dataLen );
 
 #define  WAITMSG_TIMEOUT ndGetTimeoutVal()
 
@@ -70,7 +69,6 @@ public:
 	virtual int SendMsg(nd_usermsgbuf_t *msghdr, int flag=0) = 0;
 	virtual int SendRawData(void *data , size_t size)  = 0;
 	virtual int RecvRawData(void *buf, size_t size, ndtime_t waittm) = 0 ;
-	virtual int BigDataSend(NDUINT64 param, void *data, size_t datalen) =0;
 	virtual int CryptMsg(nd_usermsgbuf_t *msghdr, bool bEncrypt=true) = 0 ;
 	virtual int CheckValid() = 0;
 	virtual int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100) = 0;
@@ -88,7 +86,6 @@ public:
     virtual void SetUserData(void *pData) = 0;
 
 	virtual int ioctl(int cmd, void *val, int *size) = 0;
-	virtual void SetBigDataHandler(nd_bigdata_handler entry) = 0 ;
 	virtual int GetStatus() = 0;
 
 protected:
@@ -96,8 +93,10 @@ protected:
 	virtual~NDIConn() {}
 };
 
-ND_CONNCLI_API int InitNet();
-ND_CONNCLI_API void DeinitNet();
+ND_CONNCLI_API int ndInitNet();
+ND_CONNCLI_API void ndDeinitNet();
+#define InitNet ndInitNet
+#define DeinitNet ndDeinitNet
 ND_CONNCLI_API NDIConn* CreateConnectorObj(const char *protocol_name);
 ND_CONNCLI_API void DestroyConnectorObj(NDIConn *pconn);
 ND_CONNCLI_API NDIConn * htoConnector(nd_handle h);
@@ -105,6 +104,17 @@ ND_CONNCLI_API NDIConn * htoConnector(nd_handle h);
 ND_CONNCLI_API void* ndSetLogoutFunc(void *func);
 ND_CONNCLI_API void ndSetLogFile(const char *pathfile);
 ND_CONNCLI_API int ndSetTimeoutVal(int val);
+
+ND_CONNCLI_API int nd_exchange_key(nd_handle nethandle, void *output_key);
+ND_CONNCLI_API int nd_checkErrorMsg(nd_handle nethandle,  nd_usermsghdr_t *msg);
+
+ND_CONNCLI_API int ndSendAndWaitMessage(nd_handle nethandle, nd_usermsgbuf_t *sendBuf, nd_usermsgbuf_t* recvBuf, ndmsgid_t waitMaxid, ndmsgid_t waitMinid, int sendFlag, int timeout);
+
+//set terminate callback function , return old function
+ND_CONNCLI_API ndNetFunc ndSetTerminateFunc(ndNetFunc func);
+
+
+ND_CONNCLI_API int ndGetTimeoutVal();
 
 
 #endif

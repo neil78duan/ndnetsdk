@@ -28,7 +28,7 @@ extern int iocp_close_client(struct nd_client_map_iocp *iocp_map, int force) ;
 
 extern void nd_listen_contex_init(nd_listen_handle handle) ;
 
-void udt_icmp_cm_init(struct nd_udtcli_map *node, nd_handle h_listen) ;
+//void udt_icmp_cm_init(struct nd_udtcli_map *node, nd_handle h_listen) ;
 
 int register_listensrv(void) ;
 
@@ -81,24 +81,24 @@ static void srv_udt_init(struct  listen_contex *lc)
 	INIT_LIST_HEAD(&lc->list_thread) ;
 	nd_srv_set_cm_init(&lc->tcp,(cm_init )udt_clientmap_init) ;
 }
-
-static void srv_icmp_init(struct  listen_contex *lc)
-{
-
-	nd_listen_contex_init((nd_listen_handle)lc) ;
-
-	lc->io_mod = ND_LISTEN_UDT_STREAM ;
-	;
-	lc->tcp.protocol = PROTOCOL_UDT ;
-	lc->tcp.sock_type = SOCK_RAW;
-#if !defined(ND_UNIX) 
-	lc->tcp.sock_protocol = IPPROTO_ICMP; 
-#else 
-	lc->tcp.sock_protocol = IPPROTO_ICMP ;
-#endif
-
-	nd_srv_set_cm_init(&lc->tcp,(cm_init )udt_icmp_cm_init) ;
-}
+//
+//static void srv_icmp_init(struct  listen_contex *lc)
+//{
+//
+//	nd_listen_contex_init((nd_listen_handle)lc) ;
+//
+//	lc->io_mod = ND_LISTEN_UDT_STREAM ;
+//	;
+//	lc->tcp.protocol = PROTOCOL_UDT ;
+//	lc->tcp.sock_type = SOCK_RAW;
+//#if !defined(ND_UNIX)
+//	lc->tcp.sock_protocol = IPPROTO_ICMP;
+//#else
+//	lc->tcp.sock_protocol = IPPROTO_ICMP ;
+//#endif
+//
+//	nd_srv_set_cm_init(&lc->tcp,(cm_init )udt_icmp_cm_init) ;
+//}
 
 int register_listensrv(void)
 {
@@ -128,15 +128,15 @@ int register_listensrv(void)
 		return -1 ;
 	}
 
-	//icmp-udt connector register 
-	reginfo.init_entry =(nd_init_func ) srv_icmp_init ;
-	ndstrcpy(reginfo.name, "listen-icmp" ) ;
-
-	ret = nd_object_register(&reginfo) ;
-	if(-1==ret) {
-		nd_logerror("register udtlisten server error") ;
-		return -1 ;
-	}
+//	//icmp-udt connector register 
+//	reginfo.init_entry =(nd_init_func ) srv_icmp_init ;
+//	ndstrcpy(reginfo.name, "listen-icmp" ) ;
+//
+//	ret = nd_object_register(&reginfo) ;
+//	if(-1==ret) {
+//		nd_logerror("register udtlisten server error") ;
+//		return -1 ;
+//	}
 
 	//ext connector register 
 	reginfo.init_entry =(nd_init_func ) srv_ext_init ;

@@ -96,16 +96,16 @@ int register_connector(void)
 	}
 
 
-	//ICMP-udt connector register 
-	reginfo.object_size = sizeof(nd_udt_node) ;
-	reginfo.init_entry = (nd_init_func ) udt_icmp_init ;
-	reginfo.close_entry = (nd_close_callback )_connector_destroy  ;
-	ndstrcpy(reginfo.name, "icmp-connector" ) ;
-
-	ret = nd_object_register(&reginfo) ;
-	if(-1==ret) {
-		nd_logerror("register udt-connector error") ;
-		return -1 ;
-	}
+//	//ICMP-udt connector register
+//	reginfo.object_size = sizeof(nd_udt_node) ;
+//	reginfo.init_entry = (nd_init_func ) udt_icmp_init ;
+//	reginfo.close_entry = (nd_close_callback )_connector_destroy  ;
+//	ndstrcpy(reginfo.name, "icmp-connector" ) ;
+//
+//	ret = nd_object_register(&reginfo) ;
+//	if(-1==ret) {
+//		nd_logerror("register udt-connector error") ;
+//		return -1 ;
+//	}
 	return ret ;
 }

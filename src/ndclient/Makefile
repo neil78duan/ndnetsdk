@@ -21,8 +21,8 @@ CFLAGS += -I$(TOPDIR)/include
 
 VPATH :=  ./c_api ./cpp_api
 
-OBJS := msg_format.o nd_client.o nd_connector.o nd_exch_key.o
-PathOBJS := $(OBJDIR)/msg_format.o $(OBJDIR)/nd_client.o $(OBJDIR)/nd_connector.o $(OBJDIR)/nd_exch_key.o
+OBJS := nd_client.o nd_exch_key.o
+PathOBJS := $(OBJDIR)/nd_client.o $(OBJDIR)/nd_exch_key.o
 
 ##############################################################
 

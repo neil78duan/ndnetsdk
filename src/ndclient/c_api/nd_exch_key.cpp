@@ -12,43 +12,15 @@
 #include "nd_crypt/nd_crypt.h"
 
 #include "ndapplib/nd_msgpacket.h"
-#include "ndcli/nd_api_c.h"
+//#include "ndcli/nd_api_c.h"
 #include "ndcli/nd_iconn.h"
 
 #include "nd_msg.h"
 
-/*
-  ,	//get RSA public-key md5
-	ND_MSG_SYS_GET_PUBLIC_KEY,		//get RSA public
-	ND_MSG_SYS_SEND_SYM_KEY ,		//send SYM encrypt key
-	ND_MSG_SYS_SYM_KEY_ACK ,		// acknowledgement of send-sym-key
- */
 #define SEND_MSG(__handle, _omsg) \
 	nd_connector_send(__handle,(nd_packhdr_t*) (_omsg.GetMsgAddr()), ESF_URGENCY)
 
 
-/*
-#define SEND_AND_WAIT(_handle, _omsg, _rmsg_buf,_wait_min_id) \
-if(SEND_MSG(_handle, _omsg) <= 0) {	\
-	nd_object_seterror(_handle, NDERR_WRITE) ;	\
-	nd_logdebug("send data error \n") ;			\
-	return -1 ;									\
-}												\
-if(-1==ndWaitMsg(_handle, (char*)_rmsg_buf, WAITMSG_TIMEOUT)) {	\
-	nd_object_seterror(_handle, NDERR_TIMEOUT) ;	\
-	nd_logdebug("wait message error \n") ;			\
-	return -1 ;									\
-}												\
-else if(nd_checkErrorMsg((netObject)_handle ,(ndMsgData *)_rmsg_buf) )   {\
-	nd_logdebug("object connect error \n") ;			\
-	return -1 ;	\
-}\
-else if(ND_USERMSG_MAXID(_rmsg_buf)!=ND_MAIN_ID_SYS || ND_USERMSG_MINID(_rmsg_buf) != _wait_min_id) { \
-	nd_object_seterror(_handle, NDERR_BADPACKET) ;	\
-	nd_logdebug("received error-return message(%d,%d) \n" AND ND_USERMSG_MAXID(_rmsg_buf) AND ND_USERMSG_MINID(_rmsg_buf)) ;				\
-	return -1 ;										\
-}
-*/
 
 #define SEND_AND_WAIT(_handle, _omsg, _rmsg_buf,_wait_min_id) \
 	if(0 != ndSendAndWaitMessage(_handle, _omsg.GetMsgAddr(), _rmsg_buf,ND_MAIN_ID_SYS,_wait_min_id, 0,  WAITMSG_TIMEOUT) ) {	\
@@ -202,9 +174,8 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 	return 0;
 }
 
-int nd_exchange_key(netObject netObject,void *out_public_key)
+int nd_exchange_key(nd_handle nethandle,void *out_public_key)
 {
-	nd_handle nethandle = (nd_handle) netObject ;
 	if (-1== _check_public_key( nethandle)) {
 		nd_logdebug("check public key md5 error\n") ;
 		return -1;

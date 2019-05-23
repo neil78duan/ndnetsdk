@@ -239,6 +239,6 @@ ND_NET_API int pump_insrv_udt_data(nd_udtsrv *root, struct udt_packet_info *pack
 //处理udt数据
 //ND_NET_API int udt_data_handler(SOCKADDR_IN *addr, struct ndudt_pocket*pocket, size_t read_len, nd_udtsrv *root)  ;
 
-ND_NET_API void udt_icmp_init(nd_udt_node *socket_node) ;
-ND_NET_API void _udticmp_connector_init(nd_udt_node *socket_node) ;
+//ND_NET_API void udt_icmp_init(nd_udt_node *socket_node) ;
+//ND_NET_API void _udticmp_connector_init(nd_udt_node *socket_node) ;
 #endif

@@ -26,7 +26,7 @@ public:
 	virtual void Initilize(nd_handle hsession, nd_handle listen = NULL);
 	NDUINT16 GetSessionID();
 
-	int BigDataSend(int maxID, int minID, void *data, size_t datalen);
+	//int BigDataSend(int maxID, int minID, void *data, size_t datalen);
 	int Close(int flag = 0);
 	int SendRawData(void *data, size_t size);
 	bool FlushSendBuf(bool bForce);

@@ -10,7 +10,7 @@
 #ifndef BUILD_AS_THIRD_PARTY
 #include "nd_net/nd_netlib.h"
 #include "nd_common/nd_common.h"
-#include "ndcli/nd_api_c.h"
+//#include "ndcli/nd_api_c.h"
 #else
 #include "nd_net/byte_order.h"
 #include "nd_net/nd_netbyte.h"
