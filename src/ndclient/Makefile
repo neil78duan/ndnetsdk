@@ -16,16 +16,19 @@ objdir := $(shell [ -d obj ] || mkdir obj)
 
 CFLAGS += -I$(TOPDIR)/include 
 
-
 ######################
 
-VPATH :=  ./c_api ./cpp_api
+VPATH :=  $(SRCDIR)  $(OBJDIR)
 
-OBJS := nd_client.o nd_exch_key.o
-PathOBJS := $(OBJDIR)/nd_client.o $(OBJDIR)/nd_exch_key.o
+SRC_C := $(shell  ls | grep '\.c\>' )
+SRC := $(shell  ls | grep '\.cpp\>' )
 
-##############################################################
+OBJS := $(patsubst %.cpp, %.o,$(SRC)  )   $(patsubst %.c, %.o,$(SRC_C)  )
 
+PathOBJS :=$(patsubst %.cpp, $(OBJDIR)/%.o, $(SRC) )  $(patsubst %.c, $(OBJDIR)/%.o, $(SRC_C) ) 
+
+PathSRC := $(SRC)  $(SRC_C)
+#######################################
 
 LibFLAGS += -L$(LIBDIR)
 

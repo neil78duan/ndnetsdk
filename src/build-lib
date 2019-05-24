@@ -31,7 +31,9 @@ obj1 = $(shell ls $(TOPDIR)/src/ndclient/obj | grep '\.o\>')
 OBJ_CLIENT += $(addprefix $(TOPDIR)/src/ndclient/obj/,$(obj1) )
 
 OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_msgpack.o
-OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_datatransfer.o
+OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_baseConn.o
+OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_object.o
+OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_connector.o
 
 ##############set flag
 

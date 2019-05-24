@@ -51,7 +51,7 @@ public :
 	void SetMsgNum(int maxmsg_num , int maxid_start=0) ;
 	virtual~NDConnector() ;
 
-private:
+protected:
 	int m_open ;
 	int msg_kinds ;
 	int msg_base ;

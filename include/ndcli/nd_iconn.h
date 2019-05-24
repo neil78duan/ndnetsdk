@@ -17,14 +17,16 @@
 #include "nd_crypt/nd_crypt.h"
 #endif 
 //#include "ndcli/nd_api_c.h"
-#include "ndapplib/nd_iBaseObj.h"
+//#include "ndapplib/nd_iBaseObj.h"
 #include "ndapplib/nd_msgpacket.h"
+#include "ndapplib/nd_connector.h"
+#include "nd_msg.h"
 
 
 //#define ND_CONNCLI_API NDNET_API 
 
-class NDIConn ;
-typedef int (*nd_iconn_func)(NDIConn* pconn, nd_usermsgbuf_t *msg );
+//class NDIConn ;
+typedef int (*nd_iconn_func)(NDBaseConnector* pconn, nd_usermsgbuf_t *msg );
 
 #define CONNECT_INSTALL_MSG(connect, msgFunc, maxID, minID) \
 	(connect)->InstallMsgFunc(msgFunc, maxID, minID, #maxID"-"#minID) 
@@ -39,25 +41,56 @@ typedef int (*ndNetFunc)(nd_handle handle, unsigned char *data, int dataLen );
 
 #define  WAITMSG_TIMEOUT ndGetTimeoutVal()
 
-
-class NDObject: public NDIBaseObj
+class NDCliConnector : public NDConnector
 {
-public:	
+	
+public:
+	NDCliConnector(int maxmsg_num = ND_MAIN_MSG_CAPACITY, int maxid_start = ND_MSG_BASE_ID);
+	virtual ~NDCliConnector() ;
+	int Create(const char *protocol_name) ;
+	void Destroy(int flag=0) ;
+	
+	virtual int Open(const char*host, int port,const char *protocol_name, void *proxy=NULL) ;
+	virtual int Open(ndip_t& ip, int port,const char *protocol_name, void *proxy=NULL) ;
+	virtual int Close(int force=0) ;
+	
+	int CallMsgHandle(nd_usermsgbuf_t *msgbuf)  ;
+	bool TestMsgIsHandle(ndmsgid_t maxid, ndmsgid_t minid) ;
+	void SetDftMsgHandler(nd_iconn_func) ;
+	void SetMsgNum(int maxmsg_num , int maxid_start) ;
+	int Reconnect(ndip_t& IP, int port,void *proxy=NULL)  ;//connect to another host
+	int ExchangeKey(void *output_key) ;
+	const char *ErrorDesc() ;
+	const char *ConvertErrorDesc(NDUINT32 errcode) ;
+	
+	void *GetUserData();
+	void SetUserData(void *pData);
 
-	virtual void *getScriptEngine() = 0;
-	virtual int LastError() = 0;
-	virtual void SetLastError(NDUINT32 errcode) = 0;
-	virtual nd_handle GetHandle() = 0;
-
-	virtual const char *getName() = 0;
-	virtual void setName(const char *name) = 0;
-
-	static NDObject * FromHandle(nd_handle h);
 protected:
-	NDObject() {}
-	virtual ~NDObject() {}
+	
+	void *__userData ;
 };
-//net connector 
+//
+//class NDObject: public NDIBaseObj
+//{
+//public:
+//
+//	virtual void *getScriptEngine() = 0;
+//	virtual int LastError() = 0;
+//	virtual void SetLastError(NDUINT32 errcode) = 0;
+//	virtual nd_handle GetHandle() = 0;
+//
+//	virtual const char *getName() = 0;
+//	virtual void setName(const char *name) = 0;
+//
+//	static NDObject * FromHandle(nd_handle h);
+//protected:
+//	NDObject() {}
+//	virtual ~NDObject() {}
+//};
+
+//net connector
+/*
 class NDIConn : public NDObject
 {
 public:
@@ -92,14 +125,16 @@ protected:
 	NDIConn() {} 
 	virtual~NDIConn() {}
 };
+ */
 
 ND_CONNCLI_API int ndInitNet();
 ND_CONNCLI_API void ndDeinitNet();
 #define InitNet ndInitNet
 #define DeinitNet ndDeinitNet
-ND_CONNCLI_API NDIConn* CreateConnectorObj(const char *protocol_name);
+typedef NDCliConnector NDIConn;
+ND_CONNCLI_API NDCliConnector* CreateConnectorObj(const char *protocol_name);
 ND_CONNCLI_API void DestroyConnectorObj(NDIConn *pconn);
-ND_CONNCLI_API NDIConn * htoConnector(nd_handle h);
+//ND_CONNCLI_API NDIConn * htoConnector(nd_handle h);
 
 ND_CONNCLI_API void* ndSetLogoutFunc(void *func);
 ND_CONNCLI_API void ndSetLogFile(const char *pathfile);
