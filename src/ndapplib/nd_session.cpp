@@ -46,6 +46,12 @@ void NDBaseSession::baseUpdate()
 	}
 	NDAlarm::Update();
 }
+
+int NDBaseSession::sendPack(nd_packhdr_t *msghdr, int flag)
+{
+	return ::nd_sessionmsg_sendex(GetHandle() ,(nd_usermsghdr_t*)msghdr, flag) ;
+}
+
 //
 //int NDBaseSession::BigDataSend(int maxID, int minID, void *data, size_t datalen)
 //{
@@ -55,32 +61,24 @@ void NDBaseSession::baseUpdate()
 //
 //	return BigDataAsyncSend(m_objhandle, data, datalen, param, NULL);
 //}
-
-int NDBaseSession::CryptPackage(nd_usermsgbuf_t *msgBuf)
-{
-	if (msgBuf->msg_hdr.packet_hdr.encrypt) {
-		return 0;
-	}
-	return nd_packet_encrypt(m_objhandle, (nd_packetbuf_t*)msgBuf) > 0 ? 0 : -1;
-
-}
-//得到网络地址
-// const char* NDBaseSession::GetInetAddr()
-// {
-// 	static char buf[20];
-// 	SOCKADDR_IN *addr = &(((nd_netui_handle)m_objhandle)->remote_addr);
-// 	return (const char*)nd_inet_ntoa(addr->sin_addr.s_addr, buf);
-// 
-// }
-
-NDUINT16 NDBaseSession::GetSessionID()
-{
-	nd_assert(m_objhandle);
-	if (m_objhandle){
-		return ((nd_netui_handle)m_objhandle)->session_id;
-	}
-	return (NDUINT16)-1;
-}
+//
+//int NDBaseSession::CryptPackage(nd_usermsgbuf_t *msgBuf)
+//{
+//	if (msgBuf->msg_hdr.packet_hdr.encrypt) {
+//		return 0;
+//	}
+//	return nd_packet_encrypt(m_objhandle, (nd_packetbuf_t*)msgBuf) > 0 ? 0 : -1;
+//
+//}
+//
+//NDUINT16 NDBaseSession::GetSessionID()
+//{
+//	nd_assert(m_objhandle);
+//	if (m_objhandle){
+//		return ((nd_netui_handle)m_objhandle)->session_id;
+//	}
+//	return (NDUINT16)-1;
+//}
 //增加使用计数
 int NDBaseSession::IncRefCount()
 {
@@ -102,25 +100,25 @@ void NDBaseSession::DecRefCount()
 	root->conn_manager.dec_ref(&root->conn_manager, GetSessionID());
 
 }
-
-int NDBaseSession::SendRawData(void *data, size_t size)
-{
-	int ret = nd_session_raw_write(m_objhandle, data, size);
-	if (ret == -1){
-		nd_logmsg("SendRawData() send error ret = -1\n");
-	}
-	return ret;
-}
-
-bool NDBaseSession::FlushSendBuf(bool bForce)
-{
-	if (bForce) {
-		return nd_tcpnode_flush_sendbuf_force((nd_netui_handle)GetHandle()) > 0;
-	}
-	else {
-		return nd_tcpnode_flush_sendbuf((nd_netui_handle)GetHandle()) > 0;
-	}
-}
+//
+//int NDBaseSession::SendRawData(void *data, size_t size)
+//{
+//	int ret = nd_session_raw_write(m_objhandle, data, size);
+//	if (ret == -1){
+//		nd_logmsg("SendRawData() send error ret = -1\n");
+//	}
+//	return ret;
+//}
+//
+//bool NDBaseSession::FlushSendBuf(bool bForce)
+//{
+//	if (bForce) {
+//		return nd_tcpnode_flush_sendbuf_force((nd_netui_handle)GetHandle()) > 0;
+//	}
+//	else {
+//		return nd_tcpnode_flush_sendbuf((nd_netui_handle)GetHandle()) > 0;
+//	}
+//}
 
 void NDBaseSession::Initilize(nd_handle hsession, nd_handle listen)
 {
@@ -145,43 +143,43 @@ NDObject* NDBaseSession::GetParent()
 {
 	return NDGetListener(((nd_netui_handle)m_objhandle)->srv_root);
 }
-
-void NDBaseSession::SetPrivilege(int level)
-{
-	nd_connect_level_set(m_objhandle, (NDUINT32)level);
-}
-int NDBaseSession::GetPrivilege()
-{
-	return (int)nd_connect_level_get(m_objhandle);
-}
-
-ndip_t NDBaseSession::Getip()
-{
-	return nd_net_getip(m_objhandle);
-	//return nd_sock_getip(((nd_netui_handle)m_objhandle)->fd);
-}
-
-ndport_t NDBaseSession::GetPort()
-{
-	return nd_net_getport(m_objhandle);
-}
-
-ndip_t NDBaseSession::GetPeerip()
-{
-	return nd_net_peer_getip(m_objhandle);
-}
-ndport_t NDBaseSession::GetPeerPort()
-{
-	return nd_net_peer_getport(m_objhandle);
-}
-
-int NDBaseSession::Ioctl(int cmd, void *val, int *size)
-{
-	if (m_objhandle /*&& nd_connector_valid((nd_netui_handle)m_objhandle)*/)	{
-		return  nd_net_ioctl((nd_netui_handle)m_objhandle, cmd, val, size);
-	}
-	return -1;
-}
+//
+//void NDBaseSession::SetPrivilege(int level)
+//{
+//	nd_connect_level_set(m_objhandle, (NDUINT32)level);
+//}
+//int NDBaseSession::GetPrivilege()
+//{
+//	return (int)nd_connect_level_get(m_objhandle);
+//}
+//
+//ndip_t NDBaseSession::Getip()
+//{
+//	return nd_net_getip(m_objhandle);
+//	//return nd_sock_getip(((nd_netui_handle)m_objhandle)->fd);
+//}
+//
+//ndport_t NDBaseSession::GetPort()
+//{
+//	return nd_net_getport(m_objhandle);
+//}
+//
+//ndip_t NDBaseSession::GetPeerip()
+//{
+//	return nd_net_peer_getip(m_objhandle);
+//}
+//ndport_t NDBaseSession::GetPeerPort()
+//{
+//	return nd_net_peer_getport(m_objhandle);
+//}
+//
+//int NDBaseSession::Ioctl(int cmd, void *val, int *size)
+//{
+//	if (m_objhandle /*&& nd_connector_valid((nd_netui_handle)m_objhandle)*/)	{
+//		return  nd_net_ioctl((nd_netui_handle)m_objhandle, cmd, val, size);
+//	}
+//	return -1;
+//}
 
 int NDBaseSession::SetDelayClose()
 {
@@ -250,61 +248,46 @@ bool NDSession::RedirectLogToMe()
 	return true;
 }
 
-#if 0
-void *NDSession::operator new(size_t size, void *addr)  throw (std::bad_alloc)
-{
-	return addr ;
-}
-void NDSession::operator delete(void *p) 
-{
-}
-
-void *  NDSession::operator new(size_t size) throw (std::bad_alloc) 
-{
-	throw std::bad_alloc() ;
-}
-#endif 
-
 //send message in script
-int NDSession::Send(NDOStreamMsg &omsg) 
-{
-	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(omsg.GetMsgAddr()), ESF_NORMAL) ;
-}
-
-int NDSession::Send(int maxId, int minId, void *data, size_t len)
-{
-	if (!data || len == 0) {
-		nd_usermsghdr_t header;
-		nd_usermsghdr_init(&header);
-		header.maxid = maxId;
-		header.minid = minId;
-		return ::nd_sessionmsg_sendex(GetHandle(), &header, ESF_NORMAL);
-	}
-	else {
-		NDOStreamMsg omsg(maxId, minId);
-		omsg.WriteStream((char*)data, len);
-
-		return Send(omsg);
-	}
-}
-
-int NDSession::Send(NDUINT16 messageId, void *data, size_t len)
-{
-	return Send((int)ND_HIBYTE(messageId), (int)ND_LOBYTE(messageId), data, len);
-}
-
-int NDSession::SendMsg(NDSendMsg &smsg, int flag)
-{
-	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(smsg.GetMsgAddr()), flag) ;
-}
-int NDSession::SendMsg(nd_usermsghdr_t *msghdr, int flag)
-{
-	return ::nd_sessionmsg_sendex(GetHandle() , msghdr, flag) ;
-}
-int NDSession::ResendMsg(NDIStreamMsg &resendmsg, int flag)
-{
-	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(resendmsg.GetMsgAddr()), flag) ;
-}
+//int NDSession::Send(NDOStreamMsg &omsg)
+//{
+//	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(omsg.GetMsgAddr()), ESF_NORMAL) ;
+//}
+//
+//int NDSession::Send(int maxId, int minId, void *data, size_t len)
+//{
+//	if (!data || len == 0) {
+//		nd_usermsghdr_t header;
+//		nd_usermsghdr_init(&header);
+//		header.maxid = maxId;
+//		header.minid = minId;
+//		return ::nd_sessionmsg_sendex(GetHandle(), &header, ESF_NORMAL);
+//	}
+//	else {
+//		NDOStreamMsg omsg(maxId, minId);
+//		omsg.WriteStream((char*)data, len);
+//
+//		return Send(omsg);
+//	}
+//}
+//
+//int NDSession::Send(NDUINT16 messageId, void *data, size_t len)
+//{
+//	return Send((int)ND_HIBYTE(messageId), (int)ND_LOBYTE(messageId), data, len);
+//}
+//
+//int NDSession::SendMsg(NDSendMsg &smsg, int flag)
+//{
+//	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(smsg.GetMsgAddr()), flag) ;
+//}
+//int NDSession::SendMsg(nd_usermsghdr_t *msghdr, int flag)
+//{
+//	return ::nd_sessionmsg_sendex(GetHandle() , msghdr, flag) ;
+//}
+//int NDSession::ResendMsg(NDIStreamMsg &resendmsg, int flag)
+//{
+//	return ::nd_sessionmsg_sendex(GetHandle() , (nd_usermsghdr_t *)(resendmsg.GetMsgAddr()), flag) ;
+//}
 
 
 #undef ND_NEW_REDEFINE

@@ -12,7 +12,7 @@
 
 #include "ndapplib/nd_object.h"
 
-class ND_COMMON_CLASS  NDAlarm : public NDObject
+class ND_COMMON_CLASS  NDAlarm //: public NDObject
 {
 public:
 

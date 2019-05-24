@@ -90,8 +90,9 @@ void NDAlarm::Destroy(int flag)
 
 nd_handle NDAlarm::addAlarm(NDObject *target, NDObjectFunc func, ndtime_t delay)
 {
-    nd_handle pool = GetMmpool()  ;
-    alarm_node *node = (alarm_node *)nd_pool_alloc(pool, sizeof(alarm_node) );
+    //nd_handle pool = GetMmpool()  ;
+    //alarm_node *node = (alarm_node *)nd_pool_alloc(pool, sizeof(alarm_node) );
+	alarm_node *node = (alarm_node *)malloc(sizeof(alarm_node)) ;
     if (!node){
         return NULL ;
     }
@@ -112,14 +113,15 @@ nd_handle NDAlarm::addAlarm(NDObject *target, NDObjectFunc func, ndtime_t delay)
 }
 int NDAlarm::removeAlarm(nd_handle hTimer)
 {
-    nd_handle pool = GetMmpool() ;
+    //nd_handle pool = GetMmpool() ;
     alarm_node *node = (alarm_node *) hTimer ;
     nd_assert(node);
     nd_assert(node->size == sizeof(*node)) ;
     nd_assert(node->type == ALARM_HANDLE_ID) ;
     
     list_del(&node->list) ;
-    nd_pool_free(pool, node) ;
+    //nd_pool_free(pool, node) ;
+	free(node);
     return 0;
 }
 

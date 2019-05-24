@@ -88,7 +88,7 @@ protected:
 
 
 
-class  ND_COMMON_CLASS NDInstanceBase : public NDAlarm
+class  ND_COMMON_CLASS NDInstanceBase : public NDObject, public NDAlarm
 {
 public :
 	int Create(int argc, const char *argv[]) ;

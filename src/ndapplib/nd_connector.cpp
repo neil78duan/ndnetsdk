@@ -6,7 +6,6 @@
  */
 
 #include "ndapplib/nd_connector.h"
-//#include "ndapplib/nd_datatransfer.h"
 //////////////////////////////////////////////////////////////////////////
 //class NDConnector
 
@@ -20,50 +19,22 @@ NDObject * htoNDObject(nd_handle h)
 	return static_cast<NDObject*>(((nd_netui_handle)h)->user_data);
 }
 
-// 
-// static int data_in_ofconnect(nd_handle h,void *data , size_t len,nd_handle listen_h)
-// {
-// 	NDConnector *pconn = htoConnector(h) ;
-// 	if (pconn){
-// 		return pconn->_data_func(data,len) ;
-// 	}
-// 	return 0;
-// }
-
-NDConnector::NDConnector(int maxmsg_num, int maxid_start) : NDObject() 
+NDConnector::NDConnector(int maxmsg_num, int maxid_start) : NDBaseConnector()
 {
 	msg_kinds = maxmsg_num;
 	msg_base = maxid_start;
-	//m_old_in_func = 0;
 	m_open = 0 ;
 }
 
 NDConnector::~NDConnector() 
 {
-	//Destroy() ;
 }
 
-//设置消息映射表大小,必须在OPEN函数前调用
 void NDConnector::SetMsgNum(int maxmsg_num , int maxid_start) 
 {
 	msg_kinds = maxmsg_num;
 	msg_base = maxid_start;
 }
-// 
-// int NDConnector::_data_func(void *data, size_t size) 
-// {
-// 	ND_TRACE_FUNC();
-// 	if (!data || 0==size){
-// 		//OnClose() ;
-// 	}
-// 	else if (m_old_in_func && m_old_in_func != data_in_ofconnect) {
-// 		return m_old_in_func(m_objhandle,data,size,NULL) ;
-// 	}
-// 	else {
-// 		((struct netui_info*)m_objhandle)->data_entry(m_objhandle, data, size, NULL);
-// 	}
-// 	return 0;
-// }
 
 int NDConnector::Open(const char *host, int port, const char *protocol_name,nd_proxy_info *proxy)
 {
@@ -79,9 +50,6 @@ int NDConnector::Open(const char *host, int port, const char *protocol_name,nd_p
 	}
 	
 	if(-1==nd_connector_open( m_objhandle, host,  port,proxy ) ) {
-		//nd_logerror("connect error :%s!" AND nd_last_error()) ;
-		//nd_object_destroy(m_objhandle,1) ;
-		//m_objhandle = NULL ;
 		return -1;
 	}
 	
@@ -124,8 +92,6 @@ int NDConnector::Create(const char *protocol_name)
 
 	((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
 	
-	//m_old_in_func = ((nd_netui_handle)m_objhandle)->data_entry;
-	//((nd_netui_handle)m_objhandle)->data_entry = data_in_ofconnect;
 
 	//set message handle	
 	if (msg_kinds > 0){
@@ -142,76 +108,71 @@ void NDConnector::Destroy(int flag)
 	ND_TRACE_FUNC();
 	if(m_objhandle && ((nd_netui_handle)m_objhandle)->user_data ==(void*) this){
 		Close(flag) ;
-		//nd_connector_close(m_objhandle, 0) ;
 		OnDestroy() ;
 		nd_msgtable_destroy(m_objhandle, 0);
 		nd_object_destroy(m_objhandle, 0) ;
 		m_objhandle = 0 ;
 	}
 }
-
-int NDConnector::SendMsg(NDSendMsg &msg, int flag)
-{
-	return SendMsg((nd_usermsghdr_t*) (msg.GetMsgAddr()),  flag) ;
-}
-
-int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
-{
-	ND_TRACE_FUNC();
-	int ret;
-	nd_assert(m_objhandle);
-	if (!m_objhandle ) {
-		nd_logwarn("try to send data error , connector is not created\n") ;
-		return -1 ;
-	}
-	ND_USERMSG_SYS_RESERVED(msghdr) = 0 ;
-	ret = nd_connector_send(m_objhandle,&msghdr->packet_hdr, flag) ;
-	if (ret > 0 && (flag & ESF_URGENCY)) {
-		if (m_objhandle->type == NDHANDLE_TCPNODE){
-			nd_tcpnode_flush_sendbuf((nd_netui_handle)m_objhandle) ;
-		}
-	}
-	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WOULD_BLOCK) {
-		nd_logwarn("Send data error errorcode =%d\n", LastError() ) ;
-		Close(0);
-	}
-	return ret ;
-}
-
-int NDConnector::ResendMsg(NDIStreamMsg &resendmsg, int flag)
-{
-	return SendMsg((nd_usermsghdr_t*) (resendmsg.GetMsgAddr()),  flag) ;	
-}
-
-int NDConnector::SendRawData(void *data , size_t size) 
-{
-	ND_TRACE_FUNC();
-	int ret ;
-	nd_assert(m_objhandle) ;
-	ret = nd_connector_raw_write(m_objhandle,data,size) ;
-	if (ret > 0 ) {
-		if (m_objhandle->type == NDHANDLE_TCPNODE){
-			nd_tcpnode_flush_sendbuf((nd_netui_handle)m_objhandle) ;
-		}
-	}
-	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WOULD_BLOCK) {
-		Close(0);
-	}
-	return ret ;
-
-}
 //
-//int NDConnector::BigDataSend(NDUINT64 param, void *data, size_t datalen) 
+//int NDConnector::SendMsg(NDSendMsg &msg, int flag)
 //{
-//	return BigDataAsyncSend(m_objhandle, data, datalen,  param, NULL) ;
+//	return SendMsg((nd_usermsghdr_t*) (msg.GetMsgAddr()),  flag) ;
 //}
-
-int NDConnector::RecvRawData(void *buf, size_t size, ndtime_t waittm) 
-{
-	ND_TRACE_FUNC();
-	nd_assert(m_objhandle) ;
-	return nd_connector_raw_waitdata(m_objhandle, buf, size, waittm) ;
-}
+//
+//int NDConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
+//{
+//	ND_TRACE_FUNC();
+//	int ret;
+//	nd_assert(m_objhandle);
+//	if (!m_objhandle ) {
+//		nd_logwarn("try to send data error , connector is not created\n") ;
+//		return -1 ;
+//	}
+//	ND_USERMSG_SYS_RESERVED(msghdr) = 0 ;
+//	ret = nd_connector_send(m_objhandle,&msghdr->packet_hdr, flag) ;
+//	if (ret > 0 && (flag & ESF_URGENCY)) {
+//		if (m_objhandle->type == NDHANDLE_TCPNODE){
+//			nd_tcpnode_flush_sendbuf((nd_netui_handle)m_objhandle) ;
+//		}
+//	}
+//	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WOULD_BLOCK) {
+//		nd_logwarn("Send data error errorcode =%d\n", LastError() ) ;
+//		Close(0);
+//	}
+//	return ret ;
+//}
+//
+//int NDConnector::ResendMsg(NDIStreamMsg &resendmsg, int flag)
+//{
+//	return SendMsg((nd_usermsghdr_t*) (resendmsg.GetMsgAddr()),  flag) ;
+//}
+//
+//int NDConnector::SendRawData(void *data , size_t size)
+//{
+//	ND_TRACE_FUNC();
+//	int ret ;
+//	nd_assert(m_objhandle) ;
+//	ret = nd_connector_raw_write(m_objhandle,data,size) ;
+//	if (ret > 0 ) {
+//		if (m_objhandle->type == NDHANDLE_TCPNODE){
+//			nd_tcpnode_flush_sendbuf((nd_netui_handle)m_objhandle) ;
+//		}
+//	}
+//	else if(ret == -1 && nd_object_lasterror(m_objhandle) != NDERR_WOULD_BLOCK) {
+//		Close(0);
+//	}
+//	return ret ;
+//
+//}
+//
+//
+//int NDConnector::RecvRawData(void *buf, size_t size, ndtime_t waittm)
+//{
+//	ND_TRACE_FUNC();
+//	nd_assert(m_objhandle) ;
+//	return nd_connector_raw_waitdata(m_objhandle, buf, size, waittm) ;
+//}
 
 int NDConnector::Update(ndtime_t wait_time)
 {
@@ -239,78 +200,77 @@ RE_WAIT:
 		return nd_connector_update(m_objhandle,wait_time) ;
 	}
 }
-
-int NDConnector::WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time)
-{
-	ND_TRACE_FUNC();
-	return nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)msgbuf,wait_time);
-}
+//
+//int NDConnector::WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time)
+//{
+//	ND_TRACE_FUNC();
+//	return nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)msgbuf,wait_time);
+//}
 void NDConnector::InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,const char *msgname)
 {
 	if(m_objhandle)
 		nd_msgentry_install(m_objhandle, func,  maxid,  minid,EPL_CONNECT,msgname) ;
 }
-
-int NDConnector::CheckValid()
-{
-	if(!m_objhandle)
-		return 0 ;
-	return 	nd_connector_valid((nd_netui_handle)m_objhandle) ;
-}
-
-ndip_t NDConnector::Getip() 
-{
-	ndip_t ret = ND_IP_INIT;
-	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
-	if (fd){
-		ret = nd_sock_getip(fd) ;
-	}
-	return ret;
-}
-
-ndport_t NDConnector::GetPort() 
-{
-	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
-	if (fd){
-		return nd_sock_getport(fd) ;
-	}
-	return 0 ;
-}
-
-ndip_t NDConnector::GetPeerip() 
-{
-	ndip_t ret = ND_IP_INIT;
-	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
-	if (fd){
-		ret = nd_sock_getpeerip(fd) ;
-	}
-	return ret;
-
-}
-ndport_t NDConnector::GetPeerPort() 
-{
-	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
-	if (fd){
-		return nd_sock_getpeerport(fd) ;
-	}
-	return 0 ;
-}
-
-void NDConnector::SetConnectTimeOut(int seconds) 
-{
-	ND_TRACE_FUNC();
-	//((nd_netui_handle)m_objhandle)->disconn_timeout = tmval;
-	nd_connector_set_timeout((nd_netui_handle)m_objhandle,seconds) ;
-}
-
-
-int NDConnector::Ioctl(int cmd, void *val, int *size) 
-{
-	if (m_objhandle && nd_connector_valid((nd_netui_handle)m_objhandle))	{
-		return  nd_net_ioctl((nd_netui_handle)m_objhandle,  cmd, val, size) ;
-	}
-	return 0;
-}
+//
+//int NDConnector::CheckValid()
+//{
+//	if(!m_objhandle)
+//		return 0 ;
+//	return 	nd_connector_valid((nd_netui_handle)m_objhandle) ;
+//}
+//
+//ndip_t NDConnector::Getip()
+//{
+//	ndip_t ret = ND_IP_INIT;
+//	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
+//	if (fd){
+//		ret = nd_sock_getip(fd) ;
+//	}
+//	return ret;
+//}
+//
+//ndport_t NDConnector::GetPort()
+//{
+//	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
+//	if (fd){
+//		return nd_sock_getport(fd) ;
+//	}
+//	return 0 ;
+//}
+//
+//ndip_t NDConnector::GetPeerip()
+//{
+//	ndip_t ret = ND_IP_INIT;
+//	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
+//	if (fd){
+//		ret = nd_sock_getpeerip(fd) ;
+//	}
+//	return ret;
+//
+//}
+//ndport_t NDConnector::GetPeerPort()
+//{
+//	ndsocket_t fd = ((nd_netui_handle)m_objhandle)->fd ;
+//	if (fd){
+//		return nd_sock_getpeerport(fd) ;
+//	}
+//	return 0 ;
+//}
+//
+//void NDConnector::SetConnectTimeOut(int seconds) 
+//{
+//	ND_TRACE_FUNC();
+//	nd_connector_set_timeout((nd_netui_handle)m_objhandle,seconds) ;
+//}
+//
+//
+//int NDConnector::Ioctl(int cmd, void *val, int *size) 
+//{
+//	if (m_objhandle && nd_connector_valid((nd_netui_handle)m_objhandle))	{
+//		return  nd_net_ioctl((nd_netui_handle)m_objhandle,  cmd, val, size) ;
+//	}
+//	return 0;
+//}
 
 //////////////////////////////////////////////////////////////////////////
 

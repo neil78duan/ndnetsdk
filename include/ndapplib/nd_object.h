@@ -26,13 +26,6 @@ protected :
 	NDObject();
 	virtual ~NDObject() {}
 public :
-#if 0
-	void *operator new(size_t size) throw (std::bad_alloc);
-	void *operator new[](size_t size) throw (std::bad_alloc);
-	
-	void operator delete(void *p) throw();
-	void operator delete[](void *p) throw();
-#endif
 
 	virtual nd_handle GetHandle() ;
 	virtual NDObject* GetParent() ;
@@ -49,15 +42,10 @@ public :
 	virtual void OnClose() ;
 	virtual void OnInitilize() ;		// call on open
 	
-    virtual int Update() ;
-    
     virtual nd_handle GetMmpool() ;
     virtual int SetMmpool(nd_handle pool) ;
 	virtual void *getScriptEngine();
 	
-	//void SetUserObj(NDObject *obj) {m_userData = obj ;}
-	//NDObject *GetUserObj() {return m_userData ;}
-
 	const char *getName();
 	void setName(const char *name);
 
@@ -68,7 +56,6 @@ protected:
     nd_handle m_pool ;
     
     nd_handle m_objhandle ;
-	//NDObject *m_userData ;
 };
 
 typedef void (NDObject::*NDObjectFunc)();
