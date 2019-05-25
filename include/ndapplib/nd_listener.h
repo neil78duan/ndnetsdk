@@ -7,7 +7,7 @@
 #ifndef _NDLISTENER_H_
 #define _NDLISTENER_H_
 
-#include "ndapplib/nd_object.h"
+#include "ndapplib/nd_baseConn.h"
 #include "ndapplib/applib.h"
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_objmgr.h"
@@ -40,7 +40,7 @@ public:
 	int GetAllocatorCapacity();
 	
 	int CloseAllConnects() ;
-	void InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level=EPL_CONNECT, const char *msgname=NULL);
+	void InstallMsgFunc(nd_conn_msg_entry func, ndmsgid_t maxid, ndmsgid_t minid,int level=EPL_CONNECT, const char *msgname=NULL);
 	void setScriptEngine(void *script_engine, nd_msg_script_entry entry);
 	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			//accept callback
 	

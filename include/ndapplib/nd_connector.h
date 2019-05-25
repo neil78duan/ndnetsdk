@@ -17,6 +17,7 @@
 #define CONNECT_INSTALL_MSG_INT16(connect, msgFunc, msgID) \
 	(connect)->InstallMsgFunc(msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID), #msgID)
 
+
 //net connector 
 class  ND_COMMON_CLASS NDConnector : public NDBaseConnector
 {
@@ -37,7 +38,7 @@ public :
 	//int CheckValid();
 	//int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100);
 	int Update(ndtime_t wait_time);
-	void InstallMsgFunc( nd_usermsg_func, ndmsgid_t maxid, ndmsgid_t minid,const char *msgname=NULL);
+	void InstallMsgFunc( nd_conn_msg_entry, ndmsgid_t maxid, ndmsgid_t minid,const char *msgname=NULL);
 
 //	ndip_t Getip() ;
 //	ndport_t GetPort() ;

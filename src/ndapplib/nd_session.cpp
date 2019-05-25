@@ -124,9 +124,14 @@ void NDBaseSession::Initilize(nd_handle hsession, nd_handle listen)
 {
 	ND_TRACE_FUNC();
 	m_objhandle = hsession;
-	m_handle_update = ((nd_session_handle)hsession)->update_entry;
-	((nd_session_handle)hsession)->update_entry = _session_update;
-	((nd_session_handle)hsession)->user_data = this;
+	nd_session_handle hs =  (nd_session_handle)hsession ;
+	m_handle_update = hs->update_entry;
+	hs->update_entry = _session_update;
+	
+	hs->user_data = this;
+	hs->msg_caller = this;
+	
+	
 	NDAlarm::Create();
 	OnInitilize();
 }

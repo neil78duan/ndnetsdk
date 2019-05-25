@@ -49,7 +49,7 @@ static __INLINE__ void nd_pause()
 
 
 
-ND_APPLIB_API int send_error_ack(nd_handle hconnect, int errcode);
+ND_APPLIB_API int send_error_ack(NDBaseConnector* conn, int errcode);
 
 #if defined(_MSC_VER)
 #define error_exit(msg,...) _error_exit(__FILE__, __LINE__ ,msg,__VA_ARGS__)
@@ -80,11 +80,11 @@ static inline int nd_check_coming_our_server(nd_usermsgbuf_t *msg)
 }
 //message function define 
 #define MSG_ENTRY_INSTANCE(name) \
-	int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen) 
+	int name (NDBaseConnector *netconn,nd_usermsgbuf_t *msg, nd_handle h_listen)
 
 //message function declare
 #define MSG_ENTRY_DECLARE(name) \
-	CPPAPI int name (nd_handle nethandle,nd_usermsgbuf_t *msg, nd_handle h_listen)
+	CPPAPI int name (NDBaseConnector *netconn,nd_usermsgbuf_t *msg, nd_handle h_listen)
 
 
 ND_APPLIB_API int nd_get_private_certificate_version(void);

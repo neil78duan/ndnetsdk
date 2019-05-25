@@ -25,9 +25,10 @@ public :
 	virtual void *GetScriptEngine() ;
 	
 	int Send(NDOStreamMsg &omsg) ;		//send message in script
-	int SendMsg(NDSendMsg &msg, int flag=ESF_URGENCY);
-	int SendMsg(nd_usermsghdr_t *msghdr, int flag=ESF_URGENCY);
-	int SendMsg(NDIStreamMsg &resendmsg, int flag=ESF_URGENCY);
+	int SendMsg(NDSendMsg &msg, int flag=ESF_NORMAL);
+	int SendMsg(nd_usermsgbuf_t *msghdr, int flag=ESF_NORMAL) ;
+	int SendMsg(nd_usermsghdr_t *msghdr, int flag=ESF_NORMAL);
+	int SendMsg(NDIStreamMsg &resendmsg, int flag=ESF_NORMAL);
 	
 	int SendRawData(void *data , size_t size) ;
 	int RecvRawData(void *buf, size_t size, ndtime_t waittm) ;
@@ -56,5 +57,7 @@ protected:
 	
 };
 
+
+typedef int (*nd_conn_msg_entry)(NDBaseConnector* pconn, nd_usermsgbuf_t *msg,nd_handle hListen);
 
 #endif 

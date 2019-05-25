@@ -91,6 +91,7 @@ int NDConnector::Create(const char *protocol_name)
 	}
 
 	((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
+	((nd_netui_handle)m_objhandle)->msg_caller =(void*) this ;
 	
 
 	//set message handle	
@@ -206,10 +207,10 @@ RE_WAIT:
 //	ND_TRACE_FUNC();
 //	return nd_connector_waitmsg(m_objhandle, (nd_packetbuf_t *)msgbuf,wait_time);
 //}
-void NDConnector::InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,const char *msgname)
+void NDConnector::InstallMsgFunc( nd_conn_msg_entry func, ndmsgid_t maxid, ndmsgid_t minid,const char *msgname)
 {
 	if(m_objhandle)
-		nd_msgentry_install(m_objhandle, func,  maxid,  minid,EPL_CONNECT,msgname) ;
+		nd_msgentry_install(m_objhandle,(nd_usermsg_func)func,  maxid,  minid,EPL_CONNECT,msgname) ;
 }
 //
 //int NDConnector::CheckValid()

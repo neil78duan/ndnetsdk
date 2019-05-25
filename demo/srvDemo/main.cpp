@@ -77,20 +77,22 @@ MSG_ENTRY_INSTANCE(check_version_handler)
     NDUINT16 ver = 1 ;
     
     omsg.Write(ver) ;
-    ND_MSG_SEND( nethandle, omsg.GetMsgAddr(), h_listen) ;
+    //ND_MSG_SEND( nethandle, omsg.GetMsgAddr(), h_listen) ;
+	netconn->SendMsg(omsg) ;
     return 0;
 }
 
 
 MSG_ENTRY_INSTANCE(echo_handler)
 {
-    ND_MSG_SEND( nethandle,(nd_usermsghdr_t *)msg, h_listen) ;
+    //ND_MSG_SEND( nethandle,(nd_usermsghdr_t *)msg, h_listen) ;
+	netconn->SendMsg(msg) ;
     return 0 ;
 }
 
 MSG_ENTRY_INSTANCE(broadcast_handler)
 {
-    ND_BROAD_CAST( h_listen,(nd_usermsghdr_t *)msg);
+    //ND_BROAD_CAST( h_listen,(nd_usermsghdr_t *)msg);
     
     NDIStreamMsg inmsg(msg) ;
     NDUINT8 buf[1024] ;
@@ -127,11 +129,11 @@ MSG_ENTRY_INSTANCE(loging_hander)
 
 
 #define MSG_INSTALLER_SYS(f, sub_msg) \
-inst.GetDeftListener()->InstallMsgFunc(f, ND_MAIN_ID_SYS, sub_msg,EPL_CONNECT)
+inst.GetDeftListener()->InstallMsgFunc((nd_conn_msg_entry)f, ND_MAIN_ID_SYS, sub_msg,EPL_CONNECT)
 
 
 #define MSG_INSTALLER(f,main_msg, sub_msg) \
-inst.GetDeftListener()->InstallMsgFunc(f, main_msg, sub_msg,EPL_CONNECT)
+inst.GetDeftListener()->InstallMsgFunc((nd_conn_msg_entry)f, main_msg, sub_msg,EPL_CONNECT)
 int InitMsgHandler(NDInstanceBase &inst)
 {
     MSG_INSTALLER_SYS(check_version_handler,ND_MSG_SYS_GETVERSION) ;

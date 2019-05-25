@@ -165,18 +165,19 @@ void _error_exit(const char * file, int line, const char *stm,...)
 }
 
 #include "nd_msg.h"
-int send_error_ack(nd_handle hconnect, int errcode)
+int send_error_ack(NDBaseConnector* netconn, int errcode)
 {
 	NDOStreamMsg omsg(ND_MAIN_ID_SYS, ND_MSG_SYS_ERROR) ;
 	omsg.Write((NDUINT32)errcode) ;
 
 
-	ND_MSG_SEND( hconnect, omsg.GetMsgAddr(), NULL) ;
+	netconn->SendMsg(omsg) ;
+	//ND_MSG_SEND( hconnect, omsg.GetMsgAddr(), NULL) ;
 	
 	
-	NDSession *pSession = (NDSession*) NDGetSession(hconnect) ;
+	//NDSession *pSession = (NDSession*) NDGetSession(hconnect) ;
 	char ipbuf[64] ;
-	nd_logdebug("send error %d to %s \n", errcode, ND_INET_NTOA(pSession->Getip(), ipbuf) ) ;
+	nd_logdebug("send error %d to %s \n", errcode, ND_INET_NTOA(netconn->Getip(), ipbuf) ) ;
 	return 0;
 }
 

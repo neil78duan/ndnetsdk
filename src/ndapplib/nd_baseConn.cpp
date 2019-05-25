@@ -34,6 +34,12 @@ int NDBaseConnector::SendMsg(nd_usermsghdr_t *msghdr, int flag)
 	return sendPack( &msghdr->packet_hdr,  flag) ;
 }
 
+int NDBaseConnector::SendMsg(nd_usermsgbuf_t *msg, int flag)
+{
+	return sendPack( &msg->msg_hdr.packet_hdr,  flag) ;
+}
+
+
 int NDBaseConnector::SendMsg(NDIStreamMsg &resendmsg, int flag)
 {
 	return sendPack((nd_packhdr_t*) (resendmsg.GetMsgAddr()),  flag) ;

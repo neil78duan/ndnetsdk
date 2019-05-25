@@ -315,9 +315,9 @@ int NDListener::OnAccept(NDBaseSession *pSession, SOCKADDR_IN *addr)
 }
 
 
-void NDListener::InstallMsgFunc(nd_usermsg_func func, ndmsgid_t maxid, ndmsgid_t minid,int level , const char *msgname)
+void NDListener::InstallMsgFunc( nd_conn_msg_entry func, ndmsgid_t maxid, ndmsgid_t minid,int level , const char *msgname)
 {
-	::nd_msgentry_install(m_objhandle, func,  maxid,  minid, level,msgname) ;
+	::nd_msgentry_install(m_objhandle,(nd_usermsg_func) func,  maxid,  minid, level,msgname) ;
 }
 void NDListener::setScriptEngine(void *script_engine, nd_msg_script_entry entry)
 {

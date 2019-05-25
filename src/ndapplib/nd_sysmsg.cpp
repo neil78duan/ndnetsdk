@@ -13,7 +13,9 @@
 MSG_ENTRY_INSTANCE(nd_echo_handler)
 {
 	ND_TRACE_FUNC();
-	ND_MSG_SEND(nethandle, (nd_usermsghdr_t *)msg, h_listen);
+	
+	netconn->SendMsg(msg) ;
+	//ND_MSG_SEND(nethandle, (nd_usermsghdr_t *)msg, h_listen);
 	nd_logdebug("receive echo message ECHO length=%d\n", ND_USERMSG_LEN(msg));
 	return 0;
 }
@@ -32,7 +34,6 @@ MSG_ENTRY_INSTANCE(nd_transfer_to_msgproc)
 	NDUINT16 sid;
 	NDIStreamMsg inmsg(msg);
 
-	//nd_logdebug("receive message need transfer\n");
 	if (-1 == inmsg.Read(sid) || sid == 0) {
 
 		nd_logmsg("transfer-message error sessionid ==0\n");
@@ -58,9 +59,7 @@ MSG_ENTRY_INSTANCE(nd_transfer_to_client)
 	NDUINT16 sid;
 	NDIStreamMsg inmsg(msg);
 
-	//nd_logdebug("receive message need transfer\n");
 	if (-1 == inmsg.Read(sid) || sid == 0) {
-
 		nd_logmsg("transfer-message error sessionid ==0\n");
 		return 0;
 	}
@@ -98,7 +97,8 @@ MSG_ENTRY_INSTANCE(nd_get_message_name_handler)
 
 	omsg.Write((NDUINT8*)p);
 
-	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
+	netconn->SendMsg(omsg) ;
+	//ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
 	return 0;
 }
 
@@ -117,7 +117,8 @@ MSG_ENTRY_INSTANCE(nd_get_app_ver_handler)
 	}
 	omsg.Write((NDUINT8*)pinst->GetVersionDesc());
 
-	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
+	netconn->SendMsg(omsg) ;
+	//ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
 	return 0;
 }
 
@@ -129,7 +130,8 @@ MSG_ENTRY_INSTANCE(nd_get_sys_time)
 	NDUINT64 tm1 = (NDUINT64)time(NULL);
 	omsg.Write(tm1);
 
-	nd_connector_send(nethandle, (nd_packhdr_t*)(omsg.GetMsgAddr()), ESF_URGENCY);
+	netconn->SendMsg(omsg) ;
+	//nd_connector_send(nethandle, (nd_packhdr_t*)(omsg.GetMsgAddr()), ESF_URGENCY);
 
 	return 0;
 }
@@ -141,7 +143,8 @@ MSG_ENTRY_INSTANCE(nd_get_game_time)
 	NDUINT64 tm1 = (NDUINT64)app_inst_time(NULL);
 	omsg.Write(tm1);
 
-	nd_connector_send(nethandle, (nd_packhdr_t*)(omsg.GetMsgAddr()), ESF_URGENCY);
+	netconn->SendMsg(omsg) ;
+	//nd_connector_send(nethandle, (nd_packhdr_t*)(omsg.GetMsgAddr()), ESF_URGENCY);
 
 	return 0;
 }
@@ -171,7 +174,8 @@ MSG_ENTRY_INSTANCE(nd_get_server_rlimit)
 	get_rlimit_info(buf, sizeof(buf));
 	omsg.Write((NDUINT8*)buf);
 
-	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
+	netconn->Send(omsg) ;
+	//ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
 	return 0;
 }
 
@@ -204,7 +208,8 @@ MSG_ENTRY_INSTANCE(nd_set_netmsg_log)
 	omsg.Write(minID);
 	omsg.Write(isOpen);
 
-	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
+	netconn->SendMsg(omsg) ;
+	//ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
 	nd_logmsg("message (%d,%d) will be logged\n", maxID, minID);
 	return 0;
 }
@@ -238,7 +243,8 @@ MSG_ENTRY_INSTANCE(nd_set_netmsg_print)
 	omsg.Write(minID);
 	omsg.Write(isOpen);
 
-	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
+	netconn->SendMsg(omsg) ;
+	//ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
 	nd_logmsg("message (%d,%d) will be print format\n", maxID, minID);
 	return 0;
 }
@@ -267,7 +273,7 @@ MSG_ENTRY_INSTANCE(default_close_handler)
 MSG_ENTRY_INSTANCE(nd_redirect_msglog_to_me)
 {
 	ND_TRACE_FUNC();
-	NDSession *psession = dynamic_cast<NDSession*>(NDGetSession(nethandle ));
+	NDSession *psession = dynamic_cast<NDSession*>(netconn);
 	if (psession) {
 		psession->RedirectLogToMe();
 		return 0;
@@ -305,7 +311,8 @@ MSG_ENTRY_INSTANCE(error_ack_message)
 	ND_TRACE_FUNC();
 	NDOStreamMsg omsg(ND_MAIN_ID_SYS,ND_MSG_SYS_ERROR);
 	omsg.Write((NDUINT32)NDERR_FUNCTION_CLOSED);
-	ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
+	netconn->SendMsg(omsg) ;
+	//ND_MSG_SEND(nethandle, omsg.GetMsgAddr(), h_listen);
 	return 0;
 }
 
@@ -324,6 +331,6 @@ MSG_ENTRY_INSTANCE(nd_close_exist_msg_handler)
 		return 0;
 	}
 
-	nd_msgentry_install(h_listen, error_ack_message, maxID, minID, EPL_READY, NULL);
+	nd_msgentry_install(h_listen, (nd_usermsg_func)error_ack_message, maxID, minID, EPL_READY, NULL);
 	return 0;
 }

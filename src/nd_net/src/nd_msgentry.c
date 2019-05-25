@@ -407,7 +407,7 @@ static int _call_message_func(struct msgentry_root *root,struct msg_entry_node *
 			ret = node->entry(connector->msg_caller, msg, lh);
 		}
 		else {
-			ret = root->script_entry(root->script_engine, connector, msg, (const char*)node->entry);
+			ret = root->script_entry(root->script_engine, connector->msg_caller, msg, (const char*)node->entry);
 		}
 	}
 	return ret==-1? NDERR_USER : 0 ;
