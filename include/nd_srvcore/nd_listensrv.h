@@ -53,7 +53,6 @@ struct listen_contex
 	volatile nd_thsrvid_t  listen_id ;			//listen thread server id
 	//volatile nd_thsrvid_t  sub_id ;				//sub thread server id
 	void	 *th_pool;							//thread pool data
-	void	 *user_data ;						//user data of listener
 	struct node_root  *connector_hub ;			//connector manager
 	struct list_head list_thread;				//list of thread
 	listen_thread_update pre_update ;

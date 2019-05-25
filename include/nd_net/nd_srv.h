@@ -34,7 +34,9 @@ struct nd_srv_node
 	ND_OBJ_BASE ;
 	ND_SOCKET_OBJ_BASE ;
 
-	void				*msg_handle ;				//message talbe handle
+	
+	void	*user_data ;						//user data of listener
+	void	*msg_handle ;				//message talbe handle
 
 	data_in_entry		data_entry;					//data in function
 	net_msg_entry		msg_entry ;					//message function

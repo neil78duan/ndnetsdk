@@ -17,32 +17,12 @@
 static ndatomic_t __current_num = 0 ;
 
 
-NDObject *NDObject::FromHandle(nd_handle h)
-{
-	if (!h) {
-		return NULL;
-	}
-	int type = nd_object_get_type(h);
-	if (type == NDHANDLE_TCPNODE || type == NDHANDLE_UDPNODE) {
-		if (nd_netobj_is_session(h)) {
-			return NDGetSession(h);
-		}
-		else {
-			return htoNDObject(h);
-		}
-	}
-	else if (type == NDHANDLE_LISTEN) {
-		return NDGetListener(h);
-	}
-	return NULL;
-}
-
 //通过监听句柄得到NDListener类
 NDListener *NDGetListener(nd_handle h_listen) 
 {
 	ND_TRACE_FUNC();
 	if (h_listen) {
-		return static_cast<NDListener*>(((struct listen_contex *)h_listen)->user_data);
+		return static_cast<NDListener*>(((struct nd_srv_node *)h_listen)->user_data);
 	}
 	return NULL;
 }
@@ -237,7 +217,7 @@ int NDListener::Create(const char *listen_name, int session_num, size_t session_
 
 	m_objhandle = listen_handle ;
 
-	((struct listen_contex *)m_objhandle)->user_data = this ;
+	((struct nd_srv_node *)m_objhandle)->user_data = this ;
 	m_session_mgr.SetMgr(nd_listensrv_get_cmmamager(listen_handle));
 	
 	nd_logmsg("Create %s listen object success %d sessions in buffer list \n", listen_name, session_num);

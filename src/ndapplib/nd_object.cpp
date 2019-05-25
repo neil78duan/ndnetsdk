@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include "nd_common/nd_common.h"
 #include "nd_common/nd_alloc.h"
+#include "nd_net/nd_netlib.h"
 #include "ndapplib/nd_object.h"
 
 
@@ -15,6 +16,19 @@
 using namespace std ;
 #define __ND_THROW_ALLOC()  throw std::bad_alloc() 
 
+
+
+NDObject *NDObject::FromHandle(nd_handle h)
+{
+	if (!h) {
+		return NULL;
+	}
+	void *pData = nd_net_object_userdata(h) ;
+	if(!pData) {
+		return NULL;
+	}
+	return static_cast<NDObject*>(pData);
+}
 
 NDObject::NDObject() :m_objhandle(NULL)//,m_userData(NULL)
 {

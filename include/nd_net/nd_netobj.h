@@ -181,8 +181,9 @@ ND_NET_API int nd_net_bind(int isipv6, int port, int listen_nums,nd_handle net_h
 
 ND_NET_API int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN *to) ;
 
-ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
+//ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
 
+ND_NET_API void* nd_net_object_userdata(nd_handle node) ;
 
 ND_NET_API int nd_netobj_recv_stream_save(nd_netui_handle net_handle, void *data, int size );
 ND_NET_API int nd_netobj_send_stream_save(nd_netui_handle net_handle, void *data, int size );

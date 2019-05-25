@@ -52,7 +52,7 @@ int open_net()
     for (int i=0; i<__real_conn_num; i++) {
         __conn_buf[i] = CreateConnectorObj(NULL);
         if (__conn_buf[i]) {
-            __conn_buf[i]->InstallMsgFunc(msg_br_handler, ND_MAIN_ID_SYS, ND_MSG_SYS_BROADCAST);
+            //__conn_buf[i]->InstallMsgFunc(msg_br_handler, ND_MAIN_ID_SYS, ND_MSG_SYS_BROADCAST);
             
             __conn_buf[i]->SetUserData((void*) 0) ;
             __conn_buf[i]->Open(__host, __port, "tcp-connector", NULL) ;

@@ -434,11 +434,12 @@ bool NDCliConnector::TestMsgIsHandle(ndmsgid_t maxid, ndmsgid_t minid)
 //	return ret ;
 //
 //}
-//void NDConnector::InstallMsgFunc(nd_iconn_func func, ndmsgid_t maxid, ndmsgid_t minid,const char *name)
-//{
-//	if(m_objhandle)
-//		nd_msgentry_install(m_objhandle, (nd_usermsg_func)func,  maxid,  minid,EPL_CONNECT, name) ;
-//}
+
+void NDCliConnector::InstallMsgFunc(nd_iconn_func func, ndmsgid_t maxid, ndmsgid_t minid,const char *name)
+{
+	if(m_objhandle)
+		nd_msgentry_install(m_objhandle, (nd_usermsg_func)func,  maxid,  minid,EPL_CONNECT, name) ;
+}
 
 void NDCliConnector::SetDftMsgHandler(nd_iconn_func func)
 {
