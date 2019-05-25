@@ -63,7 +63,7 @@ typedef struct _s_udt_socket nd_udt_node ;
 
 //检测UDT数据包是否合法
 typedef int (*check_udt_packet)(nd_udt_node *node, struct ndudt_pocket *pocket, int len,SOCKADDR_IN *addr) ;
-typedef int(*udt_close_entry)(nd_udt_node *node, int flag);
+typedef int(*nd_udt_close_entry)(nd_udt_node *node, int flag);
 
 /* 定义网络连接节点
  * 用来连接服务器的节点
@@ -83,7 +83,7 @@ struct _s_udt_socket
 	};
 	//////////////////////////////////////////////////////////////////////////
 	check_udt_packet check_entry;
-	udt_close_entry udt_close_entry;
+	nd_udt_close_entry udt_close_entry;
 
 	u_16	is_accept:4;				//0 connect , 1 accept
 	u_16	is_reset:1;

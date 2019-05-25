@@ -26,10 +26,11 @@
 ndpid_t run_exec(const char * working_path,const char *path, char *plist[])
 {
 	int i = 0 ;
+#ifndef __ND_ANDROID__
 	for (i = 0; i < NOFILE; i++) {
 		close(i);
 	}
-
+#endif
 	if (working_path && *working_path) {
 		nd_chdir(working_path);
 	}
