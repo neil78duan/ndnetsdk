@@ -45,6 +45,8 @@ public :
 	
 	NDUINT16 GetSessionID();
 	
+	nd_handle GetListenerHandle() ;
+	
 	int CheckValid();
 	
 	void SetConnectTimeOut(int seconds) ;
@@ -58,6 +60,6 @@ protected:
 };
 
 
-typedef int (*nd_conn_msg_entry)(NDBaseConnector* pconn, nd_usermsgbuf_t *msg,nd_handle hListen);
+typedef int (*nd_conn_msg_entry)(NDBaseConnector* pconn, nd_usermsgbuf_t *msg);
 
 #endif 

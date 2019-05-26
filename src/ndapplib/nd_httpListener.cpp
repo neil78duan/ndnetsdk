@@ -93,11 +93,11 @@ static int _session_data_handler(nd_handle sessionHandler, void *data, size_t le
 	if (!data || len == 0) {
 		return 0;
 	}
-	NDHttpSession *pSession = (NDHttpSession*)NDGetSession(sessionHandler);
+	NDHttpSession *pSession = dynamic_cast<NDHttpSession*>(NDObject::FromHandle(sessionHandler));
 	if (!pSession) {
 		return -1;
 	}
-	return pSession->onDataRecv((char*)data, (int)len,(NDHttpListener*) NDGetListener(listen_h));
+	return pSession->onDataRecv((char*)data, (int)len,(NDHttpListener*) NDObject::FromHandle(listen_h));
 }
 
 

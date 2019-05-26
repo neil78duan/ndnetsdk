@@ -33,6 +33,7 @@ void nd_listen_contex_init(nd_listen_handle handle)
 
 	handle->tcp.data_entry = (data_in_entry) nd_dft_packet_handler ;
 	handle->tcp.msg_entry =(net_msg_entry) nd_srv_translate_message ;
+	handle->tcp.msg_caller = handle;
 
 
 #if !defined (USE_NEW_MODE_LISTEN_THREAD)

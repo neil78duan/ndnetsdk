@@ -14,7 +14,7 @@
 
 static  int _session_update(nd_handle h)
 {
-	NDBaseSession *pSe = NDGetSession(h);
+	NDBaseSession *pSe = dynamic_cast<NDBaseSession*>( NDObject::FromHandle(h));
 	if (pSe) {
 		pSe->baseUpdate() ;
 	}
@@ -128,7 +128,7 @@ void NDBaseSession::Initilize(nd_handle hsession, nd_handle listen)
 	m_handle_update = hs->update_entry;
 	hs->update_entry = _session_update;
 	
-	hs->user_data = this;
+	//hs->user_data = this;
 	hs->msg_caller = this;
 	
 	
@@ -147,8 +147,19 @@ int NDBaseSession::Close(int flag)
 }
 NDObject* NDBaseSession::GetParent()
 {
-	return NDGetListener(((nd_netui_handle)m_objhandle)->srv_root);
+	return GetListener() ;
+	//return NDGetListener(((nd_netui_handle)m_objhandle)->srv_root);
 }
+
+NDListener* NDBaseSession::GetListener()
+{
+	nd_handle hl = nd_session_getlisten( m_objhandle);
+	if(!hl){
+		return NULL;
+	}
+	return dynamic_cast<NDListener*>(NDObject::FromHandle(hl)) ;
+}
+
 //
 //void NDBaseSession::SetPrivilege(int level)
 //{

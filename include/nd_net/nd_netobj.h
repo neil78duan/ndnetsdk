@@ -23,6 +23,7 @@
 	NDUINT8				unreg_msg_close:1; /* close recv unhandler message */		\
 	NDUINT8				user_define_packet:1; /* user define packet*/ \
 	int					sys_error;			\
+	void 				*msg_caller;	\
 	char				bindip[64]
 
 struct nd_netsocket
@@ -82,7 +83,6 @@ typedef int(*wait_message_entry)(nd_handle  handle, ndtime_t tmout);
 	nd_handle 	msg_handle ;	\
 	nd_handle 	srv_root;		\
 	nd_userdata_t 		user_data ;	\
-	void 				*msg_caller;	\
 	nd_mutex			*send_lock;		\
 	packet_write_entry	packet_write;	\
 	socket_write_entry	sock_write;		\
@@ -183,7 +183,7 @@ ND_NET_API int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN 
 
 //ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
 
-ND_NET_API void* nd_net_object_userdata(nd_handle node) ;
+ND_NET_API void* nd_net_object_caller(nd_handle node) ;
 
 ND_NET_API int nd_netobj_recv_stream_save(nd_netui_handle net_handle, void *data, int size );
 ND_NET_API int nd_netobj_send_stream_save(nd_netui_handle net_handle, void *data, int size );

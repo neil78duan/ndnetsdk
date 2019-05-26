@@ -162,6 +162,11 @@ NDUINT16 NDBaseConnector::GetSessionID()
 	return (NDUINT16)-1;
 }
 
+nd_handle NDBaseConnector::GetListenerHandle()
+{
+	return (nd_handle) (((struct netui_info*)m_objhandle)->srv_root );
+}
+
 void NDBaseConnector::SetConnectTimeOut(int seconds)
 {
 	ND_TRACE_FUNC();
@@ -194,5 +199,4 @@ void *NDBaseConnector::GetScriptEngine()
 	}
 	return NULL;
 }
-
 

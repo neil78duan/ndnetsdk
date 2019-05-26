@@ -20,7 +20,7 @@ static inline NDBaseSession* GetSessionFromHandle(nd_netui_handle handle)
 
 NDBaseSession* NDSessionMgr::GetObject(NDObjectMgrBase::iterator &it)
 {
-	return NDGetSession((nd_handle)it.second, NULL);
+	return dynamic_cast<NDBaseSession*>( NDObject::FromHandle((nd_handle)it.second));
 }
 
 NDBaseSession* NDSessionMgr::Lock(OBJECTID_T oid)

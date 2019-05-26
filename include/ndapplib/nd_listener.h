@@ -95,8 +95,8 @@ public:
 protected:
 	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			
 };
-ND_APPLIB_API NDListener *NDGetListener(nd_handle h_listen) ;
-ND_APPLIB_API NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener = NULL);
+//ND_APPLIB_API NDListener *NDGetListener(nd_handle h_listen) ;
+//ND_APPLIB_API NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener = NULL);
 //#pragma  warning (pop)
 #endif
 

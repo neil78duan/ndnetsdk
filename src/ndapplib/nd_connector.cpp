@@ -9,15 +9,15 @@
 //////////////////////////////////////////////////////////////////////////
 //class NDConnector
 
-NDConnector * htoConnector(nd_handle h)
-{
-	return static_cast<NDConnector*>(((nd_netui_handle)h)->user_data  );
-}
-
-NDObject * htoNDObject(nd_handle h)
-{
-	return static_cast<NDObject*>(((nd_netui_handle)h)->user_data);
-}
+//NDConnector * htoConnector(nd_handle h)
+//{
+//	return static_cast<NDConnector*>(((nd_netui_handle)h)->user_data  );
+//}
+//
+//NDObject * htoNDObject(nd_handle h)
+//{
+//	return static_cast<NDObject*>(((nd_netui_handle)h)->user_data);
+//}
 
 NDConnector::NDConnector(int maxmsg_num, int maxid_start) : NDBaseConnector()
 {
@@ -90,7 +90,7 @@ int NDConnector::Create(const char *protocol_name)
 		return -1;
 	}
 
-	((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
+	//((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
 	((nd_netui_handle)m_objhandle)->msg_caller =(void*) this ;
 	
 
@@ -107,7 +107,7 @@ int NDConnector::Create(const char *protocol_name)
 void NDConnector::Destroy(int flag)
 {
 	ND_TRACE_FUNC();
-	if(m_objhandle && ((nd_netui_handle)m_objhandle)->user_data ==(void*) this){
+	if(m_objhandle && ((nd_netui_handle)m_objhandle)->msg_caller ==(void*) this){
 		Close(flag) ;
 		OnDestroy() ;
 		nd_msgtable_destroy(m_objhandle, 0);

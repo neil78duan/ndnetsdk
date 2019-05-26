@@ -23,7 +23,7 @@ NDObject *NDObject::FromHandle(nd_handle h)
 	if (!h) {
 		return NULL;
 	}
-	void *pData = nd_net_object_userdata(h) ;
+	void *pData = nd_net_object_caller(h) ;
 	if(!pData) {
 		return NULL;
 	}

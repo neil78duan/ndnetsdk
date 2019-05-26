@@ -14,8 +14,9 @@
 
 #pragma  warning(push)
 #pragma  warning (disable : 4290 )
-//net session 
 
+class NDListener ;
+//net session
 class ND_COMMON_CLASS  NDBaseSession : public NDBaseConnector, public NDAlarm
 {
 public:
@@ -29,6 +30,7 @@ public:
 	//int SendRawData(void *data, size_t size);
 	//bool FlushSendBuf(bool bForce);
 	NDObject* GetParent();
+	NDListener* GetListener() ;
 
 	void DecRefCount();
 	int IncRefCount();

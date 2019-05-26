@@ -278,7 +278,7 @@ int NDCliConnector::Create(const char *protocol_name)
 		nd_logerror("NDConnector::create connector (%s) object error :%s!" AND protocol_name AND nd_last_error()) ;
 		return -1;
 	}
-	((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
+	//((nd_netui_handle)m_objhandle)->user_data =(void*) this ;
 	((nd_netui_handle)m_objhandle)->msg_caller =(void*) this ;
 
 	//set message handle	
@@ -292,7 +292,7 @@ int NDCliConnector::Create(const char *protocol_name)
 }
 void NDCliConnector::Destroy(int flag)
 {
-	if(m_objhandle && ((nd_netui_handle)m_objhandle)->user_data ==(void*) this){
+	if(m_objhandle && ((nd_netui_handle)m_objhandle)->msg_caller ==(void*) this){
 		nd_connector_close(m_objhandle, 0) ;
 		nd_msgtable_destroy(m_objhandle, 0);
 		nd_object_destroy(m_objhandle, 0) ;

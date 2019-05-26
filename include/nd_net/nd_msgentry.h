@@ -14,6 +14,18 @@
 #include "nd_net/nd_netui.h"
 
 
+/* message hande function
+ * return -1 the connection would closed .
+ */
+typedef int (*nd_usermsg_func)(nd_handle  handle, nd_usermsgbuf_t *msg );
+
+typedef int(*nd_msg_script_entry)(void *script_engine,nd_handle  handle, nd_usermsgbuf_t *msg, const char *script);
+
+/*packet data function
+ */
+//typedef int (*nd_packet_func)(nd_handle  handle, nd_packhdr_t *msg );
+
+
 static __INLINE__ void nd_make_alive_pack(nd_sysresv_pack_t *pack)
 {
 	nd_hdr_init(&pack->hdr);
@@ -38,16 +50,6 @@ static __INLINE__ void nd_packet_ntoh(nd_packhdr_t *hdr)
 #define packet_hton(p) nd_packet_hton((nd_packhdr_t *)(p))
 #define packet_ntoh(p) nd_packet_ntoh((nd_packhdr_t *)(p))
 
-/* message hande function
- * return -1 the connection would closed .
- */
-typedef int (*nd_usermsg_func)(nd_handle  handle, nd_usermsgbuf_t *msg , nd_handle listener);
-
-typedef int(*nd_msg_script_entry)(void *script_engine,nd_handle  handle, nd_usermsgbuf_t *msg, const char *script);
-
-/*packet data function 
- */
-typedef int (*nd_packet_func)(nd_handle  handle, nd_packhdr_t *msg , nd_handle listener);
 
 /* create message map table 
  * @mainmsg_num main message number

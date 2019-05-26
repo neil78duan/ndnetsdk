@@ -18,28 +18,28 @@ static ndatomic_t __current_num = 0 ;
 
 
 //通过监听句柄得到NDListener类
-NDListener *NDGetListener(nd_handle h_listen) 
-{
-	ND_TRACE_FUNC();
-	if (h_listen) {
-		return static_cast<NDListener*>(((struct nd_srv_node *)h_listen)->user_data);
-	}
-	return NULL;
-}
+//NDListener *NDGetListener(nd_handle h_listen)
+//{
+//	ND_TRACE_FUNC();
+//	if (h_listen) {
+//		return static_cast<NDListener*>(((struct nd_srv_node *)h_listen)->user_data);
+//	}
+//	return NULL;
+//}
 
 //通过句柄得到绘话
-NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener)
-{
-	ND_TRACE_FUNC();
-	if (!session /*|| !check_connect_valid(session)*/){
-		return NULL ;
-	}
-	NDObject *pobj = (NDObject *) nd_session_getdata((nd_netui_handle )session) ;
-	if (pobj){
-		return dynamic_cast<NDBaseSession*>(pobj);
-	}
-	return NULL ;
-}
+//NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener)
+//{
+//	ND_TRACE_FUNC();
+//	if (!session /*|| !check_connect_valid(session)*/){
+//		return NULL ;
+//	}
+//	NDObject *pobj = (NDObject *) nd_session_getdata((nd_netui_handle )session) ;
+//	if (pobj){
+//		return dynamic_cast<NDBaseSession*>(pobj);
+//	}
+//	return NULL ;
+//}
 static  int _check_session_valid(nd_handle session)
 {
 	NDObject *pobj = (NDObject *)nd_session_getdata((nd_netui_handle)session);
@@ -59,7 +59,7 @@ static int on_accept_entry(nd_handle nethandle, SOCKADDR_IN *addr, nd_handle h_l
 	char buf[64] ;
 	const char  *pszTemp= inet_ntop(addr->sin_family, &addr->sin_addr, buf, sizeof(buf));
 
-	pListener =NDGetListener( h_listen)  ;
+	pListener = (NDListener *)NDObject::FromHandle( h_listen)  ;
 
 	int old_num ;
 	((nd_netui_handle )nethandle)->level = EPL_CONNECT ;		//set privilage
@@ -96,7 +96,9 @@ static  void on_close_entry(nd_handle nethandle, nd_handle h_listen)
 	NDListener *pListener ;
 
 	NDBaseSession *newSession = NULL;
-	pListener =NDGetListener( h_listen)  ;
+	//pListener =NDGetListener( h_listen)  ;
+	
+	pListener = (NDListener *)NDObject::FromHandle( h_listen)  ;
 	
 	if(!nethandle|| !pListener)
 		return ;
@@ -217,7 +219,8 @@ int NDListener::Create(const char *listen_name, int session_num, size_t session_
 
 	m_objhandle = listen_handle ;
 
-	((struct nd_srv_node *)m_objhandle)->user_data = this ;
+	//((struct nd_srv_node *)m_objhandle)->user_data = this ;
+	((struct nd_srv_node *)m_objhandle)->msg_caller = this ;
 	m_session_mgr.SetMgr(nd_listensrv_get_cmmamager(listen_handle));
 	
 	nd_logmsg("Create %s listen object success %d sessions in buffer list \n", listen_name, session_num);

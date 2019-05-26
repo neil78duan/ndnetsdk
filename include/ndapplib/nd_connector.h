@@ -82,7 +82,7 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////
-NDConnector * htoConnector(nd_handle h);
-NDObject * htoNDObject(nd_handle h);
+//NDConnector * htoConnector(nd_handle h);
+//NDObject * htoNDObject(nd_handle h);
 
 #endif

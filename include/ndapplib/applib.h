@@ -80,11 +80,11 @@ static inline int nd_check_coming_our_server(nd_usermsgbuf_t *msg)
 }
 //message function define 
 #define MSG_ENTRY_INSTANCE(name) \
-	int name (NDBaseConnector *netconn,nd_usermsgbuf_t *msg, nd_handle h_listen)
+	int name (NDBaseConnector *netconn,nd_usermsgbuf_t *msg)
 
 //message function declare
 #define MSG_ENTRY_DECLARE(name) \
-	CPPAPI int name (NDBaseConnector *netconn,nd_usermsgbuf_t *msg, nd_handle h_listen)
+	CPPAPI int name (NDBaseConnector *netconn,nd_usermsgbuf_t *msg)
 
 
 ND_APPLIB_API int nd_get_private_certificate_version(void);

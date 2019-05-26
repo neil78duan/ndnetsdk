@@ -1132,7 +1132,8 @@ int HttpConnector::Create(const char *instantName)
 		nd_logerror((char*)"connect error :%s!", nd_last_error());
 		return -1;
 	}
-	((nd_netui_handle)m_objhandle)->user_data = (void*)this;
+	//((nd_netui_handle)m_objhandle)->user_data = (void*)this;
+	((nd_netui_handle)m_objhandle)->msg_caller = (void*)this;
 	if (instantName && *instantName) {
 		nd_object_set_instname(m_objhandle, instantName);
 	}

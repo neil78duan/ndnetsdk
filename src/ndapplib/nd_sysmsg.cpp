@@ -39,6 +39,7 @@ MSG_ENTRY_INSTANCE(nd_transfer_to_msgproc)
 		nd_logmsg("transfer-message error sessionid ==0\n");
 		return 0;
 	}
+	nd_handle h_listen = netconn->GetListenerHandle() ;
 	if (!h_listen) {
 		h_listen = getbase_inst()->GetDeftListener()->GetHandle();
 		nd_assert(h_listen);
@@ -63,6 +64,7 @@ MSG_ENTRY_INSTANCE(nd_transfer_to_client)
 		nd_logmsg("transfer-message error sessionid ==0\n");
 		return 0;
 	}
+	nd_handle h_listen = netconn->GetListenerHandle() ;
 	if (!h_listen) {
 		h_listen = getbase_inst()->GetDeftListener()->GetHandle();
 		nd_assert(h_listen);
@@ -88,6 +90,11 @@ MSG_ENTRY_INSTANCE(nd_get_message_name_handler)
 	}
 	if (-1 == inmsg.Read(minID)) {
 		return 0;
+	}
+	nd_handle h_listen = netconn->GetListenerHandle() ;
+	if (!h_listen) {
+		h_listen = getbase_inst()->GetDeftListener()->GetHandle();
+		nd_assert(h_listen);
 	}
 	const char *p = nd_msgentry_get_name(h_listen, (ndmsgid_t)maxID, (ndmsgid_t)minID);
 
@@ -196,6 +203,13 @@ MSG_ENTRY_INSTANCE(nd_set_netmsg_log)
 	if (-1 == inmsg.Read(isOpen)) {
 		return 0;
 	}
+	
+	nd_handle h_listen = netconn->GetListenerHandle() ;
+	if (!h_listen) {
+		h_listen = getbase_inst()->GetDeftListener()->GetHandle();
+		nd_assert(h_listen);
+	}
+	
 	int ret = nd_message_set_log(h_listen, (ndmsgid_t)maxID, (ndmsgid_t)minID, (int)isOpen);
 	if (-1 == ret) {
 		isOpen = 0xff;
@@ -231,6 +245,12 @@ MSG_ENTRY_INSTANCE(nd_set_netmsg_print)
 	if (-1 == inmsg.Read(isOpen)) {
 		return 0;
 	}
+	nd_handle h_listen = netconn->GetListenerHandle() ;
+	if (!h_listen) {
+		h_listen = getbase_inst()->GetDeftListener()->GetHandle();
+		nd_assert(h_listen);
+	}
+	
 	int ret = nd_message_set_print(h_listen, (ndmsgid_t)maxID, (ndmsgid_t)minID, (int)isOpen);
 	if (-1 == ret) {
 		isOpen = 0xff;
@@ -330,7 +350,11 @@ MSG_ENTRY_INSTANCE(nd_close_exist_msg_handler)
 	if (-1 == inmsg.Read(minID)) {
 		return 0;
 	}
-
+	nd_handle h_listen = netconn->GetListenerHandle() ;
+	if (!h_listen) {
+		h_listen = getbase_inst()->GetDeftListener()->GetHandle();
+		nd_assert(h_listen);
+	}
 	nd_msgentry_install(h_listen, (nd_usermsg_func)error_ack_message, maxID, minID, EPL_READY, NULL);
 	return 0;
 }

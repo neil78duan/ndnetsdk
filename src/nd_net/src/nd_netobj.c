@@ -93,14 +93,11 @@ int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN *to)
 	return (int)sendto(((struct nd_netsocket*)node)->fd, data,(int) len,0,(LPSOCKADDR)to, (int) sizeof(*to)) ;
 }
 
-void* nd_net_object_userdata(nd_handle node)
+void* nd_net_object_caller(nd_handle node)
 {
 	int type = nd_object_get_type(node) ;
-	if(type==NDHANDLE_TCPNODE || type==NDHANDLE_UDPNODE) {
-		return node->user_data ;
-	}
-	else if(type == NDHANDLE_LISTEN) {
-		return ((struct nd_srv_node*) node)->user_data ;
+	if(type==NDHANDLE_TCPNODE || type==NDHANDLE_UDPNODE || type == NDHANDLE_LISTEN) {
+		return node->msg_caller ;
 	}
 	return NULL ;
 	

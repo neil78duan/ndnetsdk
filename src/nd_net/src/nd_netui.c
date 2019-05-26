@@ -625,23 +625,23 @@ int _connector_destroy(nd_handle net_handle, int force)
 
 
 //data handle function
-static int fetch_udp_message(nd_handle  node, nd_packhdr_t *msg , nd_handle listener)
-{
-	ENTER_FUNC() 
-	nd_packhdr_t *buf = (nd_packhdr_t*) node->user_data ;
-	if(nd_pack_len(buf) > 0) {
-		//already read data 
-		LEAVE_FUNC();
-		return 0 ;
-	}
-	else if(nd_pack_len(msg)>=ND_PACKET_DATA_SIZE) {
-		LEAVE_FUNC();
-		return -1;
-	}
-	memcpy(buf, msg, nd_pack_len(msg)) ;
-	LEAVE_FUNC();
-	return nd_pack_len(msg) ;
-}
+//static int fetch_udp_message(nd_handle  node, nd_packhdr_t *msg , nd_handle listener)
+//{
+//	ENTER_FUNC() 
+//	nd_packhdr_t *buf = (nd_packhdr_t*) node->user_data ;
+//	if(nd_pack_len(buf) > 0) {
+//		//already read data 
+//		LEAVE_FUNC();
+//		return 0 ;
+//	}
+//	else if(nd_pack_len(msg)>=ND_PACKET_DATA_SIZE) {
+//		LEAVE_FUNC();
+//		return -1;
+//	}
+//	memcpy(buf, msg, nd_pack_len(msg)) ;
+//	LEAVE_FUNC();
+//	return nd_pack_len(msg) ;
+//}
 
 
 /* wait message , if the message income, read to message buf , untill timeout
