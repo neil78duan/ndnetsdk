@@ -25,16 +25,6 @@
 
 //#define ND_CONNCLI_API NDNET_API 
 
-class NDCliConnector ;
-typedef int (*nd_iconn_func)(NDCliConnector* pconn, nd_usermsgbuf_t *msg );
-
-#define CONNECT_INSTALL_MSG(connect, msgFunc, maxID, minID) \
-	(connect)->InstallMsgFunc(msgFunc, maxID, minID, #maxID"-"#minID) 
-
-#define CONNECT_INSTALL_MSG_INT16(connect, msgFunc, msgID) \
-	(connect)->InstallMsgFunc(msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID), #msgID)
-
-
 typedef int (*ndNetFunc)(nd_handle handle, unsigned char *data, int dataLen );
 
 #define  WAITMSG_TIMEOUT ndGetTimeoutVal()
@@ -52,22 +42,14 @@ public:
 	virtual int Open(ndip_t& ip, int port,const char *protocol_name, void *proxy=NULL) ;
 	virtual int Close(int force=0) ;
 	
-	virtual void InstallMsgFunc(nd_iconn_func, ndmsgid_t maxid, ndmsgid_t minid,const char *name=NULL) ;
 	int CallMsgHandle(nd_usermsgbuf_t *msgbuf)  ;
 	bool TestMsgIsHandle(ndmsgid_t maxid, ndmsgid_t minid) ;
-	void SetDftMsgHandler(nd_iconn_func) ;
 	void SetMsgNum(int maxmsg_num , int maxid_start) ;
 	int Reconnect(ndip_t& IP, int port,void *proxy=NULL)  ;//connect to another host
 	int ExchangeKey(void *output_key) ;
 	const char *ErrorDesc() ;
 	const char *ConvertErrorDesc(NDUINT32 errcode) ;
 	
-	void *GetUserData() {return __userData;}
-	void SetUserData(void *pData) { __userData = pData;}
-
-protected:
-	
-	void *__userData ;
 };
 //
 //class NDObject: public NDIBaseObj

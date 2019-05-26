@@ -200,3 +200,19 @@ void *NDBaseConnector::GetScriptEngine()
 	return NULL;
 }
 
+
+void *NDBaseConnector::GetUserData()
+{
+	if (m_objhandle){
+		return nd_connector_get_userdata((nd_netui_handle)m_objhandle);
+	}
+	return NULL;
+}
+void NDBaseConnector::SetUserData(void *pData)
+{
+	if (m_objhandle){
+		return nd_connector_set_userdata((nd_netui_handle)m_objhandle,pData);
+	}
+	
+}
+

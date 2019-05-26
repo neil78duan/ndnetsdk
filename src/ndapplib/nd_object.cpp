@@ -152,7 +152,7 @@ void NDObject::setName(const char *name)
 	if (m_objhandle){
 		nd_object_set_instname(m_objhandle,name);
 	}
-
 }
+
 
 #pragma  warning(pop)

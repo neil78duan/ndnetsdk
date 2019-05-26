@@ -212,6 +212,15 @@ void NDConnector::InstallMsgFunc( nd_conn_msg_entry func, ndmsgid_t maxid, ndmsg
 	if(m_objhandle)
 		nd_msgentry_install(m_objhandle,(nd_usermsg_func)func,  maxid,  minid,EPL_CONNECT,msgname) ;
 }
+
+void NDConnector::SetDftMsgHandler(nd_conn_msg_entry func)
+{
+	if(m_objhandle)
+		nd_msgentry_def_handler(m_objhandle, (nd_usermsg_func)func) ;
+	
+}
+
+
 //
 //int NDConnector::CheckValid()
 //{

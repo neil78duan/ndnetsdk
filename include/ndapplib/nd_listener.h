@@ -12,7 +12,6 @@
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_objmgr.h"
 
-//#pragma  warning (push)
 #pragma  warning (disable : 4786) 
 
 //class NDNetMsg ;
@@ -95,8 +94,6 @@ public:
 protected:
 	virtual int OnAccept(NDBaseSession *pSession, SOCKADDR_IN*addr);			
 };
-//ND_APPLIB_API NDListener *NDGetListener(nd_handle h_listen) ;
-//ND_APPLIB_API NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener = NULL);
-//#pragma  warning (pop)
+
 #endif
 

@@ -54,6 +54,10 @@ public :
 	
 	void SetPrivilege(int level);
 	int GetPrivilege() ;
+	
+	void *GetUserData();
+	void SetUserData(void *pData);
+	
 protected:
 	virtual int sendPack(nd_packhdr_t *msghdr, int flag) ;
 	

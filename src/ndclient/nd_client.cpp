@@ -435,18 +435,18 @@ bool NDCliConnector::TestMsgIsHandle(ndmsgid_t maxid, ndmsgid_t minid)
 //
 //}
 
-void NDCliConnector::InstallMsgFunc(nd_iconn_func func, ndmsgid_t maxid, ndmsgid_t minid,const char *name)
-{
-	if(m_objhandle)
-		nd_msgentry_install(m_objhandle, (nd_usermsg_func)func,  maxid,  minid,EPL_CONNECT, name) ;
-}
-
-void NDCliConnector::SetDftMsgHandler(nd_iconn_func func)
-{
-    if(m_objhandle)
-        nd_msgentry_def_handler(m_objhandle, (nd_usermsg_func)func) ;
-
-}
+//void NDCliConnector::InstallMsgFunc(nd_iconn_func func, ndmsgid_t maxid, ndmsgid_t minid,const char *name)
+//{
+//	if(m_objhandle)
+//		nd_msgentry_install(m_objhandle, (nd_usermsg_func)func,  maxid,  minid,EPL_CONNECT, name) ;
+//}
+//
+//void NDCliConnector::SetDftMsgHandler(nd_iconn_func func)
+//{
+//    if(m_objhandle)
+//        nd_msgentry_def_handler(m_objhandle, (nd_usermsg_func)func) ;
+//
+//}
 //
 //int NDConnector::CheckValid()
 //{

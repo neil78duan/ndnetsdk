@@ -12,10 +12,10 @@
 #include "nd_msg.h"
 
 #define CONNECT_INSTALL_MSG(connect, msgFunc, maxID, minID) \
-	(connect)->InstallMsgFunc(msgFunc, maxID, minID, #maxID"-"#minID) 
+	(connect)->InstallMsgFunc((nd_conn_msg_entry)msgFunc, maxID, minID, #maxID"-"#minID)
 
 #define CONNECT_INSTALL_MSG_INT16(connect, msgFunc, msgID) \
-	(connect)->InstallMsgFunc(msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID), #msgID)
+	(connect)->InstallMsgFunc((nd_conn_msg_entry)msgFunc, ND_HIBYTE(msgID),ND_LOBYTE(msgID), #msgID)
 
 
 //net connector 
@@ -27,26 +27,9 @@ public :
 	int Open(const char*host, int port,const char *protocol_name, struct nd_proxy_info *proxy=NULL);
 	int Close(int force=0);
 
-//	int SendMsg(NDSendMsg &msg, int flag=ESF_URGENCY);
-//	int SendMsg(nd_usermsghdr_t *msghdr, int flag=ESF_URGENCY);
-//	int ResendMsg(NDIStreamMsg &resendmsg, int flag=ESF_URGENCY);
-//	int SendRawData(void *data , size_t size) ;
-//	int RecvRawData(void *buf, size_t size, ndtime_t waittm) ;
-	
-	//int BigDataSend(NDUINT64 param, void *data, size_t datalen) ;
-
-	//int CheckValid();
-	//int WaitMsg(nd_usermsgbuf_t *msgbuf, ndtime_t wait_time=100);
 	int Update(ndtime_t wait_time);
 	void InstallMsgFunc( nd_conn_msg_entry, ndmsgid_t maxid, ndmsgid_t minid,const char *msgname=NULL);
-
-//	ndip_t Getip() ;
-//	ndport_t GetPort() ;
-//	ndip_t GetPeerip() ;
-//	ndport_t GetPeerPort() ;
-//
-//	void SetConnectTimeOut(int seconds) ;
-//	int Ioctl(int cmd, void *val, int *size) ;
+	void SetDftMsgHandler(nd_conn_msg_entry func);
 
 	NDConnector(int maxmsg_num = ND_MAIN_MSG_CAPACITY, int maxid_start = ND_MSG_BASE_ID);
 	void SetMsgNum(int maxmsg_num , int maxid_start=0) ;
@@ -81,8 +64,5 @@ private:
 	struct list_head m_undeliveried_list;
 };
 
-//////////////////////////////////////////////////////////////////////////
-//NDConnector * htoConnector(nd_handle h);
-//NDObject * htoNDObject(nd_handle h);
 
 #endif
