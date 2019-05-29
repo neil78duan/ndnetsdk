@@ -11,6 +11,7 @@
 #include "ndapplib/applib.h"
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_objmgr.h"
+#include "ndapplib/nd_objfactory.h"
 
 #pragma  warning (disable : 4786) 
 

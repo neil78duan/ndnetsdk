@@ -62,7 +62,7 @@ int udt_session_data_handle(nd_udt_node *socket_node, struct udt_packet_info* pa
 	int ret = 0;
 	UDT_RECV_USER_DATA(socket_node) = 0;
 	if (socket_node->check_entry(socket_node, &pack_buf->packet.pocket, pack_buf->data_len,(SOCKADDR_IN*)&pack_buf->addr)) {
-		ret = _udt_packet_handler(socket_node, &pack_buf->packet, pack_buf->data_len);
+		ret = _udt_packet_handler(socket_node, &pack_buf->packet.pocket, pack_buf->data_len);
 		if (-1 == ret) {
 			return -1;
 		}
@@ -135,7 +135,7 @@ int _utd_main_thread(struct thread_pool_info *thip)
 		if (sleep) {
 			if (nd_socket_wait_read(listen_info->udt.base.fd, 30) > 0) {
 				ret = read_datagram((struct nd_netsocket *)listen_info,
-					(char*)&pack_buf.packet, sizeof(pack_buf.packet), &pack_buf.addr);
+					(char*)(&pack_buf.packet), sizeof(pack_buf.packet), &pack_buf.addr);
 			}
 		}
 		else {
@@ -148,7 +148,7 @@ int _utd_main_thread(struct thread_pool_info *thip)
 		if (ret > 0) {
 			//udt_data_handler(&addr, readbuf, ret, (nd_handle)listen_info);
 			pack_buf.data_len = ret;
-			pump_insrv_udt_data((nd_handle)listen_info, &pack_buf);
+			pump_insrv_udt_data(&listen_info->udt, &pack_buf);
 		}		
 
 		if (update_udt_sessions(pmanger, thip) > 0) {
@@ -214,15 +214,15 @@ int update_udt_sessions(struct cm_manager *pmanger, struct nd_netth_context *thp
 {
 	ENTER_FUNC();
 	struct list_head *pos, *next;
-	struct listen_contex *lc = (struct listen_contex *)(thpi->lh);
+	//struct listen_contex *lc = (struct listen_contex *)(thpi->lh);
 
 	list_for_each_safe(pos, next, &thpi->sessions_list) {
 		struct nd_udtcli_map  *client = list_entry(pos, struct nd_udtcli_map, map_list);
 
-		if (udt_is_reset (client) ) {
+		if (udt_is_reset ((nd_udt_node*)client) ) {
 
 			delfrom_thread_pool((struct nd_client_map *)client, thpi);
-			release_dead_node(client, 1);
+			release_dead_node((nd_udt_node*)client, 1);
 		}
 		else if (-1 == update_udt_session((nd_udt_node*)client)) {
 			nd_session_close((nd_handle)client, 1);
@@ -252,7 +252,7 @@ int read_datagram(struct nd_netsocket *node, char *buf, size_t buf_size, SOCKADD
 		LEAVE_FUNC();
 		return 0;
 	}
-	udt_net2host((struct ndudt_header*)buf);
+	udt_net2host((struct ndudt_pocket*)buf);
 
 	if (POCKET_PROTOCOL(((struct ndudt_pocket*)buf)) == PROTOCOL_UDT) {
 		LEAVE_FUNC();

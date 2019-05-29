@@ -6,6 +6,7 @@
  */
 
 #include "ndapplib/nd_connector.h"
+#include "ndstl/nd_utility.h"
 //////////////////////////////////////////////////////////////////////////
 //class NDConnector
 
@@ -35,7 +36,7 @@ void NDConnector::SetMsgNum(int maxmsg_num , int maxid_start)
 	msg_kinds = maxmsg_num;
 	msg_base = maxid_start;
 }
-
+#ifndef DND_CLIENT_ONLY
 int NDConnector::Open(const char *host, int port, const char *protocol_name,nd_proxy_info *proxy)
 {
 	ND_TRACE_FUNC();
@@ -73,7 +74,7 @@ int NDConnector::Close(int force)
 	}
 	return -1 ;
 }
-
+#endif
 
 int NDConnector::Create(const char *protocol_name)
 {

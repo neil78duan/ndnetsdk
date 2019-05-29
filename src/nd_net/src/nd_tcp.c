@@ -150,7 +150,7 @@ static int __tcpnode_push_and_send(struct nd_tcp_node *node, void *msg_buf, size
 	size_t length_in_buff = ndlbuf_datalen(pbuf);
 
 	if (length_in_buff) {
-		int flushlen = node->sock_write(node, ndlbuf_data(pbuf), length_in_buff);
+		int flushlen = node->sock_write((nd_handle)node, ndlbuf_data(pbuf), length_in_buff);
 		if (flushlen > 0) {
 			nd_assert(flushlen <= length_in_buff);
 			ndlbuf_sub_data(pbuf, (size_t)flushlen);
@@ -411,7 +411,7 @@ int _tcpnode_push_force(struct nd_tcp_node *conn_node)
 	}
 RESEND:
 	conn_node->myerrno = NDERR_SUCCESS;
-	ret = (signed int)conn_node->sock_write(conn_node, ndlbuf_data(pbuf), data_len);
+	ret = (signed int)conn_node->sock_write((nd_handle)conn_node, ndlbuf_data(pbuf), data_len);
 	if (ret <= 0) {
 		LEAVE_FUNC() ;
 		return ret ;
@@ -447,7 +447,7 @@ int _tcpnode_push_sendbuf(struct nd_tcp_node *conn_node)
 		LEAVE_FUNC();
 		return -1;
 	}
-	ret = (signed int)conn_node->sock_write(conn_node,ndlbuf_data(pbuf),data_len) ;
+	ret = (signed int)conn_node->sock_write((nd_handle)conn_node,ndlbuf_data(pbuf),data_len) ;
 	if(ret>0) {
 		nd_assert(ret<= data_len) ;
 		ndlbuf_sub_data(pbuf,(size_t)ret) ;
@@ -517,12 +517,12 @@ void _tcp_connector_init(struct nd_tcp_node *conn_node)
 	conn_node->size = sizeof(struct nd_tcp_node) ;
 	conn_node->packet_write =(packet_write_entry ) nd_tcpnode_send ;
 	conn_node->sock_write = (socket_write_entry)_sys_socket_write;
-	conn_node->sock_read = _tcp_node_read;
+	conn_node->sock_read = (socket_read_entry)_tcp_node_read;
 	conn_node->update_entry = (net_update_entry)_tcp_node_update ;
 	conn_node->data_entry = (data_in_entry) nd_dft_packet_handler ;
 	conn_node->msg_entry = (net_msg_entry) nd_translate_message ;
 	conn_node->get_pack_size = nd_net_getpack_size ;
-	conn_node->wait_entry = tcpnode_wait_msg;
+	conn_node->wait_entry = (wait_message_entry)tcpnode_wait_msg;
 	conn_node->sock_type = SOCK_STREAM ;
 	conn_node->status = ETS_DEAD;				/*socket state in game 0 not read 1 ready*/
 	conn_node->start_time =nd_time() ;		

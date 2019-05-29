@@ -165,7 +165,7 @@ int tryto_close_tcpsession(nd_session_handle nethandle, ndtime_t connect_tmout )
 
 int _tcp_session_update(nd_session_handle handle)
 {
-	int ret = _tcpnode_push_sendbuf(handle);
+	int ret = _tcpnode_push_sendbuf((struct nd_tcp_node *)handle);
 	if (ret <= 0) {
 		if (nd_netobj_is_alive((nd_netui_handle)handle)) {
 			ndtime_t now = nd_time();

@@ -19,8 +19,8 @@ int _close_listend_socket(nd_udt_node* socket_node, int force)
 	struct nd_srv_node *root = (struct nd_srv_node *) socket_node->srv_root;
 	nd_assert(socket_node->is_accept);
 
-	if (force || (NETSTAT_ESTABLISHED & socket_node->status) &&
-		!(socket_node->status & NETSTAT_SENDCLOSE)) {
+	if (force || ((NETSTAT_ESTABLISHED & socket_node->status) &&
+		!(socket_node->status & NETSTAT_SENDCLOSE))) {
 		udt_send_fin(socket_node);
 	}
 	else {
@@ -156,7 +156,7 @@ nd_udt_node *alloc_listen_socket(struct nd_srv_node *root)
 		nd_udtnode_init(node);
 	}
 
-	node->close_entry = _close_listend_socket;
+	node->close_entry = (nd_close_callback)_close_listend_socket;
 	node->status = NETSTAT_LISTEN;
 	node->is_accept = 1;
 	node->srv_root =(nd_handle) root;

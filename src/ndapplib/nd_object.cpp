@@ -3,7 +3,7 @@
  *
  * 2009-4-24 23:04
  */
-#include <stdexcept>
+//#include <stdexcept>
 #include "nd_common/nd_common.h"
 #include "nd_common/nd_alloc.h"
 #include "nd_net/nd_netlib.h"
@@ -112,6 +112,7 @@ void NDObject::Destroy(int flag)
         m_pool = 0 ;
     }
 }
+#ifndef DND_CLIENT_ONLY
 void NDObject::OnCreate() 
 {
 
@@ -138,7 +139,7 @@ void NDObject::OnInitilize()
 {
 
 }
-
+#endif
 
 const char *NDObject::getName()
 {

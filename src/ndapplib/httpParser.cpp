@@ -174,7 +174,7 @@ static unsigned char bits4ToHexLittle(unsigned char x)
 
 static unsigned char FromHexChar(unsigned char x)
 {
-	unsigned char y;
+	unsigned char y=0;
 	if (x >= 'A' && x <= 'Z') y = x - 'A' + 10;
 	else if (x >= 'a' && x <= 'z') y = x - 'a' + 10;
 	else if (x >= '0' && x <= '9') y = x - '0';
@@ -328,7 +328,7 @@ void NDHttpParser::InData(const char *data, int size)
 {
 	ND_TRACE_FUNC();
 	//ndprintf("%s\n", data);
-	char end = 0;
+	//char end = 0;
 	ndlbuf_write(&m_bodyBuf, (void*)data, size, 0);
 	//ndlbuf_write(&m_bodyBuf, (void*)&end, 1, 0); //write end char
 	ndlbuf_set_zero_tail(&m_bodyBuf);
@@ -601,7 +601,7 @@ int NDHttpParser::_parseBody()
 		}
 		size_t realSize = p - p_start;
 		char buf[32];
-		ndsnprintf(buf, sizeof(buf), "%lld", realSize);
+		ndsnprintf(buf, sizeof(buf), "%lld", (NDUINT64)realSize);
 		addHeader("content-length", buf);
 
 		_setParseEnd();

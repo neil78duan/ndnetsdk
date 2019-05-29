@@ -133,7 +133,7 @@ int epoll_sub(struct thread_pool_info *thip)
 {
 	ENTER_FUNC()
 	int  event_num;
-	struct epoll_event ev_listen, *ev_buf ;
+	struct epoll_event  *ev_buf ;
 	nd_handle thread_handle = nd_thsrv_gethandle(0)  ;
 	struct listen_contex *listen_info = (struct listen_contex *)thip->lh ;
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;
@@ -189,7 +189,7 @@ void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,s
 {
 	ENTER_FUNC() ;
 	struct nd_client_map *client_map;
-	int fd_tmp =(ev_node->data.u32 >> 16) & 0xffff;
+	//int fd_tmp =(ev_node->data.u32 >> 16) & 0xffff;
 	NDUINT16 session_id =(NDUINT16) (ev_node->data.u32) & 0xffff;
 
 	client_map = pmanger->lock(pmanger,session_id) ;
@@ -532,7 +532,7 @@ int listen_thread_createex(struct thread_pool_info *ic)
 int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thpi)
 {
 	ENTER_FUNC() ;
-	int i ,sleep=0;
+	int sleep=0;
 	
 	//flush send buffer
 #if !defined (USE_NEW_MODE_LISTEN_THREAD)

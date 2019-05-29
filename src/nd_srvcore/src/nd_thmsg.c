@@ -17,7 +17,7 @@
 
 static int _check_session_valid_async(nd_handle session, NDUINT16 sid, struct listen_contex *lc)
 {
-	if (!nd_connector_valid(session)) {
+	if (!nd_connector_valid((nd_netui_handle)session)) {
 		return 0;
 	}
 	if (nd_session_getid(session) != sid)	{
@@ -59,7 +59,7 @@ int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle list
 		nd_handle client = (nd_handle) pmanger->lock(pmanger,sessionid) ;
 		if(!client) 
 			return -1 ;
-		if (_check_session_valid_async(client,sessionid,listen_handle) ) {
+		if (_check_session_valid_async(client,sessionid,(struct listen_contex*)listen_handle) ) {
 			ret = nd_sessionmsg_sendex(client, data, flag);
 		}
 		pmanger->unlock(pmanger,sessionid);
@@ -130,7 +130,7 @@ int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_
 	int ret = -1;
 	
 	ndthread_t thid ;
-	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
+	//struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
 	NDUINT32  size = ND_USERMSG_LEN(data) ;
@@ -157,7 +157,7 @@ int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_
 	if(thid == nd_thread_self() ) {
 		nd_netui_handle  client = (nd_netui_handle) pmanger->lock(pmanger,sessionid) ;
 		if(client) {
-			if (_check_session_valid_async(client, sessionid, listen_handle)){
+			if (_check_session_valid_async((nd_handle)client, sessionid,(struct listen_contex*)listen_handle)){
 				ret = client->msg_entry((nd_handle)client, (nd_packhdr_t *)data, listen_handle);
 			}
 			pmanger->unlock(pmanger,sessionid);
@@ -222,7 +222,7 @@ int nd_netmsg_2all_handle(nd_usermsghdr_t *data, nd_handle listen_handle,int pri
 
 int _session_addto(NDUINT16 sessionid, nd_handle listen_handle,ndthread_t thid) 
 {
-	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
+	//struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 	nd_netui_handle client ;
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
 	
@@ -357,7 +357,7 @@ int session_close_handler(nd_thsrv_msg *msg)
 	if(!client) {
 		return 0 ;
 	}
-	if (nd_session_getid(client) == sessionid) {
+	if (nd_session_getid((nd_handle)client) == sessionid) {
 		nd_session_close((nd_handle)client, 0);
 	}
 	pmanger->unlock(pmanger,sessionid);
@@ -398,7 +398,7 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 		int flag = iscrypt?  (ESF_NORMAL | ESF_ENCRYPT) : ESF_NORMAL;
 		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;		
 		if (client ) {
-			if (_check_session_valid_async(client, session_id, lc)) {
+			if (_check_session_valid_async((nd_handle)client, session_id, lc)) {
 				nd_sessionmsg_sendex((nd_handle)client, &net_msg->msg_hdr, flag);
 			}
 			pmanger->unlock(pmanger,session_id);			
@@ -473,7 +473,7 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 	if(session_id) {
 		client = (nd_netui_handle) pmanger->lock(pmanger,session_id) ;
 		if (client ) {
-			if (_check_session_valid_async(client, session_id, lc)) {
+			if (_check_session_valid_async((nd_handle)client, session_id, lc)) {
 				client->msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
 			}
 			pmanger->unlock(pmanger, session_id);
@@ -513,8 +513,8 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 //udt packet handler
 int msg_udt_packate_handler(nd_thsrv_msg *msg)
 {
-	NDUINT8 iscrypt = 0;
-	NDUINT8 priv_level = 0;
+	//NDUINT8 iscrypt = 0;
+	//NDUINT8 priv_level = 0;
 	NDUINT16  localport;
 	nd_netui_handle client;
 
@@ -531,7 +531,7 @@ int msg_udt_packate_handler(nd_thsrv_msg *msg)
 	if (msg->data_len > NDUDT_BUFFER_SIZE) {
 		return 0;
 	}
-	pack_buf = (nd_usermsgbuf_t *)msg->data;
+	pack_buf = (struct udt_packet_info *)msg->data;
 
 	localport = pack_buf->packet.pocket.local_port;
 
@@ -567,7 +567,7 @@ static int _delay_close_timer(void *param)
 }
 static void _walk_all_session(struct node_root *pmanger, NDUINT16 session_id, void *param)
 {
-	nd_listen_handle listen_info = (nd_listen_handle)param;
+	//nd_listen_handle listen_info = (nd_listen_handle)param;
 
 	struct nd_client_map *client = pmanger->lock(pmanger, session_id);
 
@@ -587,7 +587,7 @@ static void _walk_all_session(struct node_root *pmanger, NDUINT16 session_id, vo
 
 int nd_rand_delay_cloase_all(nd_handle listen_info)
 {
-	int ret = 0;
+	//int ret = 0;
 	struct nd_srv_node *srv_root = (struct nd_srv_node *)listen_info;
 	struct cm_manager *pmanger = &srv_root->conn_manager;
 	
@@ -601,7 +601,7 @@ static int delay_rand_close_handler(nd_thsrv_msg *msg)
 	NDUINT16 interval = rand();
 	struct thread_pool_info *pthinfo = (struct thread_pool_info *) msg->th_userdata;
 
-	struct listen_contex *lc = (struct listen_contex *)pthinfo->lh;
+	//struct listen_contex *lc = (struct listen_contex *)pthinfo->lh;
 
 	NDUINT16 sessionid = *(NDUINT16*)(msg->data);
 	

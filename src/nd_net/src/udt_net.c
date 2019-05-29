@@ -288,7 +288,7 @@ int _handle_ack(nd_udt_node *socket_node, u_32 ack_seq)
 			root =(nd_udtsrv *) socket_node->srv_root ;
 			nd_assert(root) ;
 			if (root && root->accept_proc) {
-				root->accept_proc(root, socket_node, &socket_node->remote_addr);
+				root->accept_proc((nd_handle)root, socket_node, (SOCKADDR_IN*)&socket_node->remote_addr);
 				socket_node->start_time = socket_node->update_tm;
 				socket_node->status = NETSTAT_ESTABLISHED;
 			}

@@ -10,7 +10,7 @@ extern int destroy_udp_thpool(struct listen_contex *listen_info,int flag) ;
 extern int listen_thread_createex(struct thread_pool_info *ic);
 
 
-static int _delfrom_thread_pool(NDUINT16 sid, struct thread_pool_info * pthinfo) ;
+//static int _delfrom_thread_pool(NDUINT16 sid, struct thread_pool_info * pthinfo) ;
 /* @thread_num 线程个数
  * @th_sessions 每个线程的连接数
  */

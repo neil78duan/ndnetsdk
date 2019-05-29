@@ -146,7 +146,7 @@ static int _msg_entry(nd_thsrv_context_t *contex)
 	//struct list_head header, unhandled ;
 	ND_LIST_HEAD(header) ;
 	ND_LIST_HEAD(unhandled) ;
-	struct nd_srv_entry *srventry = get_srv_entry()  ;
+	//struct nd_srv_entry *srventry = get_srv_entry()  ;
 
 	if(list_empty(&contex->msg_list) ) {
 		goto EXIT_MSG ;

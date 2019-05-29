@@ -328,7 +328,7 @@ ndsocket_t nd_socket_connect(const char *host_name, short port, int sock_type, S
 const char *nd_inet_ntoa (ndip_t in, char *buffer, size_t size)
 {
 	if (in.sin_family == AF_INET6) {
-		return inet_ntop(AF_INET6, in.ip6, buffer, size);
+		return inet_ntop(AF_INET6, in.ip6, buffer,(socklen_t) size);
 	}
 	else {
 		struct in_addr inaddr;

@@ -19,8 +19,8 @@
 
 //static nd_handle _s_pool_for_new = 0 ;
 
-static int __isdebug = 0 ;
-static int __look_size = 0 ;
+//static int __isdebug = 0 ;
+//static int __look_size = 0 ;
 
 #ifdef ND_UNUSE_STDC_ALLOC
 #include "nd_common/nd_mempool.h"

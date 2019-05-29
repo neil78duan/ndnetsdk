@@ -171,7 +171,7 @@ int read_config(ndxml *xmlroot, const char *name, struct server_config *scfg)
 	
 	int base_port = read_base_port(xmlroot) ;
 
-	memset(scfg, 0, sizeof(scfg)) ;
+	memset(scfg, 0, sizeof(*scfg)) ;
 	if (-1==base_port) {
 		return -1;
 	}

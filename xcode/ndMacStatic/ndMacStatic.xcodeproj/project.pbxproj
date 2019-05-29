@@ -17,6 +17,7 @@
 		07272F192137FCBD00D66BB0 /* nd_trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 07272F152137FCBD00D66BB0 /* nd_trace.h */; };
 		0739F41E1A676B1C00520AE2 /* nd_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0739F41D1A676B1C00520AE2 /* nd_version.cpp */; };
 		073DB4321B67162E00A93310 /* ndsingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 073DB4311B67162E00A93310 /* ndsingleton.h */; };
+		0749E864229D2DA000630782 /* nd_objfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0749E863229D2D9F00630782 /* nd_objfactory.h */; };
 		074D84FC1D6C25D200201121 /* nd_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 074D84FB1D6C25D200201121 /* nd_time.c */; };
 		074D850B1D6C267D00201121 /* nd_iconv.h in Headers */ = {isa = PBXBuildFile; fileRef = 074D85091D6C267D00201121 /* nd_iconv.h */; };
 		074D850C1D6C267D00201121 /* nd_time.h in Headers */ = {isa = PBXBuildFile; fileRef = 074D850A1D6C267D00201121 /* nd_time.h */; };
@@ -308,6 +309,7 @@
 		073129B01B57613B00D3F203 /* nd_netbyte.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nd_netbyte.h; sourceTree = "<group>"; };
 		0739F41D1A676B1C00520AE2 /* nd_version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_version.cpp; sourceTree = "<group>"; };
 		073DB4311B67162E00A93310 /* ndsingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ndsingleton.h; sourceTree = "<group>"; };
+		0749E863229D2D9F00630782 /* nd_objfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_objfactory.h; sourceTree = "<group>"; };
 		074D84FB1D6C25D200201121 /* nd_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_time.c; sourceTree = "<group>"; };
 		074D85091D6C267D00201121 /* nd_iconv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconv.h; sourceTree = "<group>"; };
 		074D850A1D6C267D00201121 /* nd_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_time.h; sourceTree = "<group>"; };
@@ -888,6 +890,7 @@
 		07EBD01119A8E01500802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				0749E863229D2D9F00630782 /* nd_objfactory.h */,
 				075C57FF2297900200A89A1E /* nd_baseConn.h */,
 				07728B5120BE895C006CDB04 /* nd_sysmsg.h */,
 				07108C9920905CFE0028321B /* nd_iBaseObj.h */,
@@ -1012,6 +1015,7 @@
 				078966C9207F069800A38013 /* nd_httpListener.h in Headers */,
 				07EBD07819A8E01500802576 /* nd_rbtree.h in Headers */,
 				07EBD02D19A8E01500802576 /* nd_alloc.h in Headers */,
+				0749E864229D2DA000630782 /* nd_objfactory.h in Headers */,
 				07EBD04D19A8E01500802576 /* rsa.h in Headers */,
 				07EBD05B19A8E01500802576 /* nd_srv.h in Headers */,
 				07272F182137FCBD00D66BB0 /* nd_logger.h in Headers */,

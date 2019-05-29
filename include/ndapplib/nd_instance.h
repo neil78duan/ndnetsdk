@@ -16,6 +16,7 @@
 #include "ndapplib/nd_session.h"
 #include "ndapplib/nd_cmmgr.h"
 #include "ndapplib/readcfg.h"
+#include "ndapplib/nd_objfactory.h"
 #include "ndstl/nd_new.h"
 
 #ifdef WIN32

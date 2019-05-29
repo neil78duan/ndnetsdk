@@ -247,7 +247,7 @@ int NDHttpSession::sendBinaryData(NDHttpResponse &response, void *data, size_t d
 	p += len;
 
 	len = ndsnprintf(p, sizeof(buf) - (p - buf),
-					 "Server:%s\r\nContent-Length:%lld\r\n\r\n", getServerInfo(), datalen);
+					 "Server:%s\r\nContent-Length:%lld\r\n\r\n", getServerInfo(), (NDUINT64)datalen);
 	p += len;
 
 	len = nd_connector_send_stream(GetHandle(), buf, p - buf, 0);

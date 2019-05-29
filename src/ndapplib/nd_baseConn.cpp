@@ -10,6 +10,7 @@
 
 
 #include "ndapplib/nd_baseConn.h"
+#include "ndstl/nd_utility.h"
 
 NDBaseConnector::NDBaseConnector()
 {

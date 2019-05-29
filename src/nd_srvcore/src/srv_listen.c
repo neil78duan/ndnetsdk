@@ -251,7 +251,7 @@ struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info, 
 	}
 
 	if(listen_info->tcp.connect_in_callback){		
-		if(-1==listen_info->tcp.connect_in_callback(client_map,&client_addr,(nd_handle)listen_info) ){
+		if(-1==listen_info->tcp.connect_in_callback(client_map,(SOCKADDR_IN*)&client_addr,(nd_handle)listen_info) ){
 			nd_socket_close(newconnect_fd);
 			pmanger->deaccept (pmanger,client_map->connect_node.session_id);
 			
