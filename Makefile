@@ -17,20 +17,26 @@ debug:
 release:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n release || exit 1; done
 
-dll: dll_release
+dll: dll-debug
 
-dll_debug:
+dll-debug:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n dll_debug || exit 1; done
-dll_release:
+dll-release:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n dll_release || exit 1; done
 
 
-clean_dll:
+clean-dll:
 	cd src ;make clean
 	cd ./lib/$(SUB_AIM_DIR) ; rm *.so ; rm *.dylib
 
 clean:
 	for n in $(SUBDIRS); do $(MAKE) -C $$n clean ; done
+
+update:
+	git commit -m "auto commit " -a; git pull
+
+commit:
+	make update ; git push
 
 install-dll:
 	cd src ; make install  DEBUG="n" BUILD_DLL="y"
@@ -49,12 +55,6 @@ objs:
 
 run:
 	$(BIN_AIM)/srvDemo -f ./cfg/config.xml -c test_srv_config
-
-run-cli:
-	$(BIN_AIM)/client_test localhost 7828 10
-
-run-cli2:
-	$(BIN_AIM)/client_test localhost 9000 10
 
 config:
 	chmod u+x ./config.sh ; ./config.sh
