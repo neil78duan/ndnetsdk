@@ -279,9 +279,9 @@
     <ClCompile Include="..\..\..\src\ndapplib\misc.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_affair.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_alarms.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_cmmgr.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp" />
-    <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_httpListener.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_instance.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_listener.cpp" />
@@ -345,7 +345,6 @@
     <ClCompile Include="..\..\..\src\nd_net\src\nd_udp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\net_srv.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\proxy_cli.c" />
-    <ClCompile Include="..\..\..\src\nd_net\src\udt_icmp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c" />

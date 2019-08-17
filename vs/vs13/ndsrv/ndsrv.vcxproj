@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{D30F8CA9-BAEF-4D43-9D33-7459395089BE}</ProjectGuid>
     <RootNamespace>ndsrv</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -86,14 +86,15 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ND_DEBUG;X86_64;ND_COMPILE_AS_DLL;ND_NET_EXPORTS;ND_SRV_EXPORTS;ND_APPLIB_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../../../lib/Win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ndcommon_d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(TargetPath)  ..\..\..\..\apolloBP\bin
-copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
+      <Command>copy /Y $(TargetPath)  ..\..\..\..\nodeflow\bin
+copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -128,6 +129,7 @@ copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>X86_64;ND_COMPILE_AS_DLL;ND_SRV_EXPORTS;ND_APPLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -136,8 +138,8 @@ copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
       <AdditionalDependencies>ndcommon.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(TargetPath)  ..\..\..\..\apolloBP\bin
-copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
+      <Command>copy /Y $(TargetPath)  ..\..\..\..\nodeflow\bin
+copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -145,9 +147,9 @@ copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
     <ClCompile Include="..\..\..\src\ndapplib\misc.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_affair.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_alarms.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_cmmgr.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp" />
-    <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_httpListener.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_instance.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_listener.cpp" />
@@ -172,7 +174,6 @@ copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\apolloBP\bin</Command>
     <ClCompile Include="..\..\..\src\nd_net\src\nd_udp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\net_srv.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\proxy_cli.c" />
-    <ClCompile Include="..\..\..\src\nd_net\src\udt_icmp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c" />

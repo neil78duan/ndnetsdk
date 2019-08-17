@@ -66,9 +66,6 @@
     <ClCompile Include="..\..\..\src\nd_net\src\proxy_cli.c">
       <Filter>Source Files\net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_net\src\udt_icmp.c">
-      <Filter>Source Files\net</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c">
       <Filter>Source Files\net</Filter>
     </ClCompile>
@@ -94,9 +91,6 @@
       <Filter>Source Files\ndapplib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp">
-      <Filter>Source Files\ndapplib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp">
       <Filter>Source Files\ndapplib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_httpListener.cpp">
@@ -175,6 +169,9 @@
       <Filter>Source Files\srvcore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\thread_iocp.c">
+      <Filter>Source Files\srvcore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp">
       <Filter>Source Files\srvcore</Filter>
     </ClCompile>
   </ItemGroup>

@@ -458,9 +458,6 @@
     <ClCompile Include="..\..\..\src\nd_net\src\proxy_cli.c">
       <Filter>src\net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_net\src\udt_icmp.c">
-      <Filter>src\net</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c">
       <Filter>src\net</Filter>
     </ClCompile>
@@ -498,9 +495,6 @@
       <Filter>src\ndapplib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp">
-      <Filter>src\ndapplib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp">
       <Filter>src\ndapplib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_instance.cpp">
@@ -649,6 +643,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_common\src\nd_logger.c">
       <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp">
+      <Filter>src\ndapplib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -222,7 +222,7 @@ int nd_netmsg_2all_handle(nd_usermsghdr_t *data, nd_handle listen_handle,int pri
 
 int _session_addto(NDUINT16 sessionid, nd_handle listen_handle,ndthread_t thid) 
 {
-	//struct listen_contex *lc = (struct listen_contex *)listen_handle ;
+	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 	nd_netui_handle client ;
 	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
 	

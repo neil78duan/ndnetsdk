@@ -104,7 +104,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>ND_DEBUG;WIN32;_DEBUG;_LIB;X86_64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,6 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;X86_64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -204,12 +205,12 @@
     <ClInclude Include="..\..\..\include\nd_net\nd_udthdr.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp" />
-    <ClCompile Include="..\..\..\src\ndclient\cpp_api\nd_client.cpp" />
-    <ClCompile Include="..\..\..\src\ndclient\c_api\msg_format.cpp" />
-    <ClCompile Include="..\..\..\src\ndclient\c_api\nd_connector.c" />
-    <ClCompile Include="..\..\..\src\ndclient\c_api\nd_exch_key.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp" />
+    <ClCompile Include="..\..\..\src\ndclient\nd_client.cpp" />
+    <ClCompile Include="..\..\..\src\ndclient\nd_exch_key.cpp" />
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\callstack.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\cJSON.c" />
@@ -259,7 +260,6 @@
     <ClCompile Include="..\..\..\src\nd_net\src\nd_udp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\net_srv.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\proxy_cli.c" />
-    <ClCompile Include="..\..\..\src\nd_net\src\udt_icmp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c" />

@@ -5,30 +5,51 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{971B7798-5B00-4C99-9793-C8DC3384CD5A}</ProjectGuid>
+    <ProjectGuid>{9D4B8DB7-429A-45D2-9944-8A8EBDCA0F17}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>nd_cli</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <RootNamespace>ndclient_s</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -36,49 +57,100 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <OutDir>../../../lib/win32</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
-    <OutDir>../../../lib</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>../../../lib/Win64</OutDir>
+    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
-    <OutDir>../../../lib</OutDir>
+    <OutDir>../../../lib/Win32</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>../../../lib/Win64</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;ND_CLI_EXPORTS;CONN_CLI_EXPORTS;ND_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\include;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ND_DEBUG;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>ND_DEBUG;X86_64;ND_COMPILE_AS_DLL;ND_NET_EXPORTS;ND_APPLIB_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../../../lib/Win64</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;ND_CLI_EXPORTS;CONN_CLI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\include;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>X86_64;ND_COMPILE_AS_DLL;ND_NET_EXPORTS;ND_APPLIB_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../../../lib/Win64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -88,20 +160,19 @@
     <ClInclude Include="..\..\..\include\ndapplib\nd_msgpacket.h" />
     <ClInclude Include="..\..\..\include\ndcli\nd_api_c.h" />
     <ClInclude Include="..\..\..\include\ndcli\nd_iconn.h" />
+    <ClInclude Include="..\..\..\include\ndlib.h" />
     <ClInclude Include="..\..\..\include\nd_common\list.h" />
-    <ClInclude Include="..\..\..\include\nd_common\ndchar.h" />
     <ClInclude Include="..\..\..\include\nd_common\nddir.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_alloc.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_atomic.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_bintree.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_cmdline.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_comcfg.h" />
-    <ClInclude Include="..\..\..\include\nd_common\nd_comdef.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_common.h" />
-    <ClInclude Include="..\..\..\include\nd_common\nd_dbg.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_define.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_handle.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_iconv.h" />
+    <ClInclude Include="..\..\..\include\nd_common\nd_logger.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_mempool.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_node_mgr.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_os.h" />
@@ -114,6 +185,7 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_win.h" />
     <ClInclude Include="..\..\..\include\nd_common\nd_xml.h" />
     <ClInclude Include="..\..\..\include\nd_common\_nderr.h" />
+    <ClInclude Include="..\..\..\include\nd_common\_source_trace.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_crypt.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_cryptfile.h" />
     <ClInclude Include="..\..\..\include\nd_crypt\nd_pubkey.h" />
@@ -133,16 +205,14 @@
     <ClInclude Include="..\..\..\include\nd_net\nd_udp.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_udt.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_udthdr.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\ndapplib\nd_datatransfer.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp" />
-    <ClCompile Include="..\..\..\src\ndclient\cpp_api\nd_client.cpp" />
-    <ClCompile Include="..\..\..\src\ndclient\c_api\msg_format.cpp" />
-    <ClCompile Include="..\..\..\src\ndclient\c_api\nd_connector.c" />
-    <ClCompile Include="..\..\..\src\ndclient\c_api\nd_exch_key.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp" />
+    <ClCompile Include="..\..\..\src\ndclient\nd_client.cpp" />
+    <ClCompile Include="..\..\..\src\ndclient\nd_exch_key.cpp" />
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\callstack.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\cJSON.c" />
@@ -151,6 +221,7 @@
     <ClCompile Include="..\..\..\src\nd_common\src\nd_cmdline.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_handle.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_iconv.c" />
+    <ClCompile Include="..\..\..\src\nd_common\src\nd_logger.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_mempool.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_mutex.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\nd_static_alloc.c" />
@@ -163,7 +234,6 @@
     <ClCompile Include="..\..\..\src\nd_common\src\nd_xml.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\node_mgr.c" />
     <ClCompile Include="..\..\..\src\nd_common\src\recbuf.c" />
-    <ClCompile Include="..\..\..\src\nd_common\src\source_log.c" />
     <ClCompile Include="..\..\..\src\nd_crypt\rsa\desc.c" />
     <ClCompile Include="..\..\..\src\nd_crypt\rsa\digit.c" />
     <ClCompile Include="..\..\..\src\nd_crypt\rsa\md2c.c" />
@@ -192,10 +262,14 @@
     <ClCompile Include="..\..\..\src\nd_net\src\nd_udp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\net_srv.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\proxy_cli.c" />
-    <ClCompile Include="..\..\..\src\nd_net\src\udt_icmp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_asm.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_formula.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vm.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vmdbg.c" />
+    <ClCompile Include="..\..\..\src\nd_vm\src\nd_vmmain.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
