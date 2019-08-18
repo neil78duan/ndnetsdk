@@ -145,10 +145,10 @@
 
 /* Begin PBXFileReference section */
 		07272F222137FDCE00D66BB0 /* nd_logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_logger.c; sourceTree = "<group>"; };
-		0757AA3121A7D4E1001BAE36 /* libndcommon_dll.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndcommon_dll.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0757AA3121A7D4E1001BAE36 /* libndcommon.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndcommon.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0757AA6221A7D5F6001BAE36 /* libiconv.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.tbd; path = usr/lib/libiconv.2.tbd; sourceTree = SDKROOT; };
 		075E673D22968E730084C66A /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cJSON.c; sourceTree = "<group>"; };
-		077B895C207C6BAB00090DFD /* libndcommon_mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndcommon_mac.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		077B895C207C6BAB00090DFD /* libndcommon_s.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndcommon_s.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		077B8967207C6BE800090DFD /* _nderr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
 		077B8969207C6BE800090DFD /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cJSON.h; sourceTree = "<group>"; };
 		077B896A207C6BE800090DFD /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
@@ -281,8 +281,8 @@
 		077B895D207C6BAB00090DFD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				077B895C207C6BAB00090DFD /* libndcommon_mac.a */,
-				0757AA3121A7D4E1001BAE36 /* libndcommon_dll.dylib */,
+				077B895C207C6BAB00090DFD /* libndcommon_s.a */,
+				0757AA3121A7D4E1001BAE36 /* libndcommon.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -548,9 +548,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0757AA3021A7D4E1001BAE36 /* ndcommon_dll */ = {
+		0757AA3021A7D4E1001BAE36 /* ndcommon */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0757AA3421A7D4E1001BAE36 /* Build configuration list for PBXNativeTarget "ndcommon_dll" */;
+			buildConfigurationList = 0757AA3421A7D4E1001BAE36 /* Build configuration list for PBXNativeTarget "ndcommon" */;
 			buildPhases = (
 				0757AA2D21A7D4E1001BAE36 /* Sources */,
 				0757AA2E21A7D4E1001BAE36 /* Frameworks */,
@@ -560,14 +560,14 @@
 			);
 			dependencies = (
 			);
-			name = ndcommon_dll;
+			name = ndcommon;
 			productName = ndcommon_dll;
-			productReference = 0757AA3121A7D4E1001BAE36 /* libndcommon_dll.dylib */;
+			productReference = 0757AA3121A7D4E1001BAE36 /* libndcommon.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		077B895B207C6BAB00090DFD /* ndcommon_mac */ = {
+		077B895B207C6BAB00090DFD /* ndcommon_s */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 077B8960207C6BAB00090DFD /* Build configuration list for PBXNativeTarget "ndcommon_mac" */;
+			buildConfigurationList = 077B8960207C6BAB00090DFD /* Build configuration list for PBXNativeTarget "ndcommon_s" */;
 			buildPhases = (
 				077B8958207C6BAB00090DFD /* Sources */,
 				077B8959207C6BAB00090DFD /* Frameworks */,
@@ -577,9 +577,9 @@
 			);
 			dependencies = (
 			);
-			name = ndcommon_mac;
+			name = ndcommon_s;
 			productName = ndcommon_mac;
-			productReference = 077B895C207C6BAB00090DFD /* libndcommon_mac.a */;
+			productReference = 077B895C207C6BAB00090DFD /* libndcommon_s.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -613,8 +613,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				077B895B207C6BAB00090DFD /* ndcommon_mac */,
-				0757AA3021A7D4E1001BAE36 /* ndcommon_dll */,
+				077B895B207C6BAB00090DFD /* ndcommon_s */,
+				0757AA3021A7D4E1001BAE36 /* ndcommon */,
 			);
 		};
 /* End PBXProject section */
@@ -737,7 +737,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ndcommon;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -754,7 +754,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ndcommon;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -765,14 +765,17 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ANALYZER_USE_AFTER_MOVE = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = NO;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -787,6 +790,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN_VEXING_PARSE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
@@ -795,6 +799,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -803,6 +808,7 @@
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -821,14 +827,17 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ANALYZER_USE_AFTER_MOVE = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = NO;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -843,6 +852,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN_VEXING_PARSE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
@@ -850,10 +860,12 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = __ND_MAC__;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -872,7 +884,7 @@
 				DEVELOPMENT_TEAM = B5437EBYUA;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ndcommon_s;
 				USER_HEADER_SEARCH_PATHS = ../../include;
 			};
 			name = Debug;
@@ -884,7 +896,7 @@
 				DEVELOPMENT_TEAM = B5437EBYUA;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = __ND_MAC__;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ndcommon_s;
 				USER_HEADER_SEARCH_PATHS = ../../include;
 			};
 			name = Release;
@@ -892,7 +904,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0757AA3421A7D4E1001BAE36 /* Build configuration list for PBXNativeTarget "ndcommon_dll" */ = {
+		0757AA3421A7D4E1001BAE36 /* Build configuration list for PBXNativeTarget "ndcommon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0757AA3221A7D4E1001BAE36 /* Debug */,
@@ -910,7 +922,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		077B8960207C6BAB00090DFD /* Build configuration list for PBXNativeTarget "ndcommon_mac" */ = {
+		077B8960207C6BAB00090DFD /* Build configuration list for PBXNativeTarget "ndcommon_s" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				077B8961207C6BAB00090DFD /* Debug */,

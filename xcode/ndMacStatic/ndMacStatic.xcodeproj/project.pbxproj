@@ -313,7 +313,7 @@
 		074D84FB1D6C25D200201121 /* nd_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_time.c; sourceTree = "<group>"; };
 		074D85091D6C267D00201121 /* nd_iconv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iconv.h; sourceTree = "<group>"; };
 		074D850A1D6C267D00201121 /* nd_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_time.h; sourceTree = "<group>"; };
-		0757AA6821A7D685001BAE36 /* libndSrvDll.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndSrvDll.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0757AA6821A7D685001BAE36 /* libndsrv.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndsrv.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0757AA6D21A7D6A1001BAE36 /* libiconv.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.tbd; path = usr/lib/libiconv.2.tbd; sourceTree = SDKROOT; };
 		075C57FF2297900200A89A1E /* nd_baseConn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_baseConn.h; sourceTree = "<group>"; };
 		075C58012297971C00A89A1E /* nd_baseConn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_baseConn.cpp; sourceTree = "<group>"; };
@@ -333,7 +333,7 @@
 		07CFB03E1B1308EE0061C219 /* nd_iconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_iconv.c; sourceTree = "<group>"; };
 		07D47C5019D9694A00D08BB6 /* nd_alarms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_alarms.h; sourceTree = "<group>"; };
 		07D47C5219D9695A00D08BB6 /* nd_alarms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_alarms.cpp; sourceTree = "<group>"; };
-		07EBCE8719A8DEFC00802576 /* libndMacStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndMacStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		07EBCE8719A8DEFC00802576 /* libndsrv_s.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libndsrv_s.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		07EBCE9219A8DFCD00802576 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		07EBCEB719A8DFCD00802576 /* bintree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bintree.c; sourceTree = "<group>"; };
 		07EBCEB819A8DFCD00802576 /* callstack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = callstack.c; sourceTree = "<group>"; };
@@ -543,8 +543,8 @@
 		07EBCE8819A8DEFC00802576 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				07EBCE8719A8DEFC00802576 /* libndMacStatic.a */,
-				0757AA6821A7D685001BAE36 /* libndSrvDll.dylib */,
+				07EBCE8719A8DEFC00802576 /* libndsrv_s.a */,
+				0757AA6821A7D685001BAE36 /* libndsrv.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1070,7 +1070,7 @@
 			);
 			name = ndSrvDll;
 			productName = ndSrvDll;
-			productReference = 0757AA6821A7D685001BAE36 /* libndSrvDll.dylib */;
+			productReference = 0757AA6821A7D685001BAE36 /* libndsrv.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		07EBCE8619A8DEFC00802576 /* ndMacStatic */ = {
@@ -1087,7 +1087,7 @@
 			);
 			name = ndMacStatic;
 			productName = ndMacStatic;
-			productReference = 07EBCE8719A8DEFC00802576 /* libndMacStatic.a */;
+			productReference = 07EBCE8719A8DEFC00802576 /* libndsrv_s.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1367,7 +1367,7 @@
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ndsrv;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
@@ -1402,7 +1402,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ndsrv;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
@@ -1494,7 +1494,7 @@
 					ND_DEBUG,
 					__ND_MAC__,
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ndsrv_s;
 			};
 			name = Debug;
 		};
@@ -1503,7 +1503,7 @@
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = __ND_MAC__;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ndsrv_s;
 			};
 			name = Release;
 		};
