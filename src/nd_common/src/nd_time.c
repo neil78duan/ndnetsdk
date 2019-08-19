@@ -108,8 +108,7 @@ const char *nd_get_datetimestr_gm(time_t in_tm, char *timebuf, int size)
 
 int nd_time_day_interval(time_t end_tm, time_t start_tm)
 {
-	NDINT64 tm_zone = nd_time_zone();
-	return nd_time_day_interval_ex(end_tm, start_tm, (int)tm_zone);
+	return nd_time_day_interval_ex(end_tm, start_tm, nd_time_zone());
 }
 
 int nd_time_day_interval_ex(time_t end_tm, time_t start_tm, int tm_zone)
@@ -140,12 +139,17 @@ int nd_time_week_index(time_t now, int tm_zone)
 
 int nd_time_zone(void)
 {
-	time_t stamp = 12 * 3600;
-	struct  tm loca_tm = { 0 };
-	struct  tm gm_tm = { 0 };
-	localtime_r(&stamp, &loca_tm);
-	gmtime_r(&stamp, &gm_tm);
-	return loca_tm.tm_hour - gm_tm.tm_hour;
+	static int s_zoneid = -1;
+
+	if (s_zoneid == -1) {
+		time_t stamp = 12 * 3600; //this time all world is in the same day
+		struct  tm loca_tm = { 0 };
+		struct  tm gm_tm = { 0 };
+		localtime_r(&stamp, &loca_tm);
+		gmtime_r(&stamp, &gm_tm);
+		s_zoneid = loca_tm.tm_hour - gm_tm.tm_hour;
+	}
+	return s_zoneid;
 }
 
 //convert the clock-time (9:30:00) to the index-of-second from 00:00:00
