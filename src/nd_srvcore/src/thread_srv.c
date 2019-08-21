@@ -3,10 +3,10 @@
  * version 1.0 all right reserved by neil
  * 2007-10
  */
-//#define TEST_MYMM 1		//¶¨ÒåÕâ¸öÊ±,ÓÃÏµÍ³µÄmalloc´úÌæÎÒmempool
+//#define TEST_MYMM 1		//å®šä¹‰è¿™ä¸ªæ—¶,ç”¨ç³»ç»Ÿçš„mallocä»£æ›¿æˆ‘mempool
 // 
 // #ifdef ND_UNIX
-// #define USER_P_V_LOCKMSG		1		//Ê¹ÓÃÌõ¼ş±äÁ¿À´»¥³âÏûÏ¢
+// #define USER_P_V_LOCKMSG		1		//ä½¿ç”¨æ¡ä»¶å˜é‡æ¥äº’æ–¥æ¶ˆæ¯
 // #endif 
 
 #include "nd_srvcore/nd_srvlib.h"
@@ -32,7 +32,7 @@ typedef struct nd_threadsrv_context{
 	nd_thsrvmsg_func msg_entry ;				//handle received message from other thread!
 	nd_threadsrv_clean cleanup_entry;			//clean up when server is terminal
 	nd_mutex msg_lock ;
-	int send_message_retval ;			//µÈ´ı¶Ô·½´¦ÀíÏûÏ¢ºóµÄ·µ»ØÖµ
+	int send_message_retval ;			//ç­‰å¾…å¯¹æ–¹å¤„ç†æ¶ˆæ¯åçš„è¿”å›å€¼
 	struct list_head list;				//self list
 	struct list_head msg_list ;
 	struct list_head msg_entry_list;	//message handler entry
@@ -44,7 +44,7 @@ typedef struct nd_threadsrv_context{
 	char srv_name[ND_SRV_NAME] ;	//service name
 }nd_thsrv_context_t;
 
-//·şÎñ´´½¨²ÎÊı
+//æœåŠ¡åˆ›å»ºå‚æ•°
 struct thsrv_create_param
 {
 	nd_thsrv_context_t *pcontext ;
@@ -301,7 +301,7 @@ static void *_srv_entry(void *p)
 		ret = contex->srv_entry(contex->srv_param) ;
 	}
 	else if(SUBSRV_MESSAGE==contex->run_module) {		
-		//×¨ÒµµÄÏûÏ¢´¦ÀíÏß³Ì
+		//ä¸“ä¸šçš„æ¶ˆæ¯å¤„ç†çº¿ç¨‹
 		while(0==nd_atomic_read(&contex->__exit) && 0==nd_atomic_read(&__s_entry.__exit)) {	
 			int hr = _msg_entry(contex);
 			if(contex->h_timer) {
@@ -321,7 +321,7 @@ EXIT_SRV:
 		contex->cleanup_entry = NULL ;		//clean up once
 	}
 
-	//ÍË³öÊ±ĞèÒªÖ´ĞĞ
+	//é€€å‡ºæ—¶éœ€è¦æ‰§è¡Œ
 	if(contex->h_timer) {
 		nd_timer_destroy(contex->h_timer, 0) ;
 		contex->h_timer = 0 ;
@@ -747,7 +747,7 @@ int nd_thsrv_sendex(nd_thsrvid_t srvid,NDUINT32 msgid,void *data, NDUINT32 data_
 		nd_mutex_unlock(&contex->msg_lock) ;
 		
 		if (nd_atomic_read(&contex->in_suspend) ) {
-			nd_atomic_swap(&contex->is_suspend,0) ;		//Ç¿ÖÆ»½ĞÑ
+			nd_atomic_swap(&contex->is_suspend,0) ;		//å¼ºåˆ¶å”¤é†’
 			nd_sem_post(contex->sem_suspend) ;
 		}
 

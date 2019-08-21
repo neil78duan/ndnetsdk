@@ -17,7 +17,7 @@
 static ndatomic_t __current_num = 0 ;
 
 
-//Í¨¹ı¼àÌı¾ä±úµÃµ½NDListenerÀà
+//é€šè¿‡ç›‘å¬å¥æŸ„å¾—åˆ°NDListenerç±»
 //NDListener *NDGetListener(nd_handle h_listen)
 //{
 //	ND_TRACE_FUNC();
@@ -27,7 +27,7 @@ static ndatomic_t __current_num = 0 ;
 //	return NULL;
 //}
 
-//Í¨¹ı¾ä±úµÃµ½»æ»°
+//é€šè¿‡å¥æŸ„å¾—åˆ°ç»˜è¯
 //NDBaseSession *NDGetSession(nd_handle session, NDListener * Listener)
 //{
 //	ND_TRACE_FUNC();
@@ -148,10 +148,10 @@ NDListener::NDListener(nd_fectory_base* sf) : session_fectory(sf)
 	m_msg_kinds = ND_MAIN_MSG_CAPACITY;
 	m_msg_base = 0;
 
-	m_total_send = 0 ;		//×Ü·¢ËÍ³¤¶È
-	m_total_recv = 0 ;		//×Ü½ÓÊÕ³¤¶È
-	m_total_online = 0 ;	//×ÜÔÚÏßÊ±¼ä
-	m_max_onlines = 0 ;		//×î´óÔÚÏßÈËÊı
+	m_total_send = 0 ;		//æ€»å‘é€é•¿åº¦
+	m_total_recv = 0 ;		//æ€»æ¥æ”¶é•¿åº¦
+	m_total_online = 0 ;	//æ€»åœ¨çº¿æ—¶é—´
+	m_max_onlines = 0 ;		//æœ€å¤§åœ¨çº¿äººæ•°
 	m_inst = 0 ;
 }
 NDListener::~NDListener() 

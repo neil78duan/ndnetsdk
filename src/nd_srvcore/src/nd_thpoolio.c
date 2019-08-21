@@ -11,8 +11,8 @@ extern int listen_thread_createex(struct thread_pool_info *ic);
 
 
 //static int _delfrom_thread_pool(NDUINT16 sid, struct thread_pool_info * pthinfo) ;
-/* @thread_num 线程个数
- * @th_sessions 每个线程的连接数
+/* @thread_num 绾跨▼涓暟
+ * @th_sessions 姣忎釜绾跨▼鐨勮繛鎺ユ暟
  */
 int create_listen_thread_pool(struct listen_contex *handle, int pre_thnum, int session_num)
 {
@@ -123,7 +123,7 @@ int nd_close_listen_thread(nd_listen_handle h,nd_thsrvid_t sid)
 
 }
 
-//为session找一个相对空闲的线程
+//涓簊ession鎵句竴涓浉瀵圭┖闂茬殑绾跨▼
 int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid)
 {
 	ndthread_t self_id = nd_thread_self() ;
@@ -184,7 +184,7 @@ int _nd_thpool_main(struct thread_pool_info *thip)
 			listen_info->pre_update((nd_handle)listen_info, context) ;
 		}
 		msgret = nd_thsrv_msghandler(context) ;
-		if(-1== msgret) {		//处理线程消息
+		if(-1== msgret) {		//澶勭悊绾跨▼娑堟伅
 			if (listen_info->end_update){
 				listen_info->end_update((nd_handle)listen_info, context) ;
 			}
@@ -254,7 +254,7 @@ int _nd_thpool_sub(struct thread_pool_info *thip)
 			listen_info->pre_update((nd_handle)listen_info, context) ;
 		}
 		msgret = nd_thsrv_msghandler(context) ;
-		if(-1== msgret) {		//处理线程消息
+		if(-1== msgret) {		//澶勭悊绾跨▼娑堟伅
 			if (listen_info->end_update){
 				listen_info->end_update((nd_handle)listen_info, context) ;
 			}

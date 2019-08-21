@@ -13,7 +13,7 @@
 int udt_send_fin(nd_udt_node *socket_node);
 nd_udt_node *alloc_listen_socket(struct nd_srv_node *root);
 
-//¹Ø±Õ·þÎñÆ÷¶ËµÄsocket
+//å…³é—­æœåŠ¡å™¨ç«¯çš„socket
 int _close_listend_socket(nd_udt_node* socket_node, int force)
 {
 	struct nd_srv_node *root = (struct nd_srv_node *) socket_node->srv_root;
@@ -37,7 +37,7 @@ int _close_listend_socket(nd_udt_node* socket_node, int force)
 	return 0;
 }
 
-//¸üÐÂÃ¿Ò»¸ö½Úµã
+//æ›´æ–°æ¯ä¸€ä¸ªèŠ‚ç‚¹
 // return -1 ,closed , source already release
 int update_udt_session(nd_udt_node *node)
 {	
@@ -79,7 +79,7 @@ int update_udt_session(nd_udt_node *node)
 }
 
 
-//´¦Àí½øÈë·þÎñÆ÷µÄÏûÏ¢
+//å¤„ç†è¿›å…¥æœåŠ¡å™¨çš„æ¶ˆæ¯
 int pump_insrv_udt_data(nd_udtsrv *root, struct udt_packet_info *pack_buf)
 {
 	ENTER_FUNC();
@@ -165,7 +165,7 @@ nd_udt_node *alloc_listen_socket(struct nd_srv_node *root)
 }
 
 
-//ÊÍ·Åaccept¶ËÒ»¸öÒÑ¾­¹Ø±ÕµÄÁ¬½Ó
+//é‡Šæ”¾acceptç«¯ä¸€ä¸ªå·²ç»å…³é—­çš„è¿žæŽ¥
 void release_dead_node(nd_udt_node *socket_node,int needcallback)
 {
 	struct nd_srv_node *root =(struct nd_srv_node *) socket_node->srv_root;

@@ -14,7 +14,7 @@
 
 
 extern int listen_thread_createex(struct thread_pool_info *ic);
-//´ò¿ªÒ»¸öÏß³Ì·þÎñÆ÷
+//æ‰“å¼€ä¸€ä¸ªçº¿ç¨‹æœåŠ¡å™¨
 nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h, int session_num)
 {
 	struct listen_contex * lc = (struct listen_contex *) h;
@@ -123,7 +123,7 @@ int update_session_in_thread(struct cm_manager *pmanger, struct nd_netth_context
 
 
 
-//°ÑsessioÌí¼Óµ½Ïß³Ì³ØÖÐ
+//æŠŠsessioæ·»åŠ åˆ°çº¿ç¨‹æ± ä¸­
 int addto_thread_pool(struct nd_client_map *client, struct nd_netth_context * pthinfo)
 {
 	pthinfo->session_num++;
