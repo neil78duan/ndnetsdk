@@ -166,6 +166,8 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ND_DEBUG;ND_COMMON_EXPORTS;ND_COMPILE_AS_DLL;ND_CRYPT_EXPORTS;X86_64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4828</DisableSpecificWarnings>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -222,6 +224,8 @@ copy /Y $(TargetPath)  ..\..\..\..\apollolib\editor;</Command>
       <PreprocessorDefinitions>NDEBUG;X86_64;ND_COMMON_EXPORTS;ND_CRYPT_EXPORTS;ND_COMPILE_AS_DLL;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4828</DisableSpecificWarnings>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

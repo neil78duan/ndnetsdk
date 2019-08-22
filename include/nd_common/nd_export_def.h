@@ -41,6 +41,7 @@
 #pragma  warning(disable: 4996)
 #pragma  warning(disable: 4819)
 #pragma  warning(disable: 4828)
+
 #else 
 #define DLL_EXPORT 
 #define DLL_IMPORT 

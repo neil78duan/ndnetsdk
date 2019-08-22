@@ -13,7 +13,7 @@
 #define __APPLIB_H__
 
 #pragma warning (disable: 4355)
-
+#include "nd_common/nd_export_def.h"
 #include "nd_common/nd_common.h"
 #include "nd_net/nd_netlib.h"
 #include "nd_crypt/nd_crypt.h"
