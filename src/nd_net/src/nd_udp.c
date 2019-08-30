@@ -117,9 +117,9 @@ void udp_node_init(struct nd_udp_node* node)
 
 	node->type = NDHANDLE_UDPNODE ;
 	node->size = sizeof(struct nd_udp_node) ;
-	node->sock_write = (socket_write_entry) nd_udp_send ;
+	node->sys_sock_write = (socket_sys_entry) nd_udp_send ;
+	node->sys_sock_read = (socket_sys_entry)nd_udp_read;
 	node->close_entry = (nd_close_callback) nd_udp_close;
-	node->sock_read = (socket_read_entry)nd_udp_read;
 	node->status = ETS_DEAD;				/*socket state in game 0 not read 1 ready*/
 	node->protocol = PROTOCOL_OTHER;
 	node->sock_type = SOCK_DGRAM ;

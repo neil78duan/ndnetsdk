@@ -18,7 +18,6 @@ typedef struct netui_info *nd_handle;
 
 static int _crypt_unit_len ;		//crypt unit length
 static nd_netcrypt __net_encrypt, __net_decrypt ;
-static int _min_packet_len = sizeof(nd_usermsghdr_t) ;
 //static int nd_net_message_version_error(nd_netui_handle node) ;
 
 /* connector tick  */
@@ -33,17 +32,17 @@ int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout)
 		LEAVE_FUNC();
 		return -1;
 	}
-	struct nd_tcp_node *socket_node = (struct nd_tcp_node *) net_handle;
 
 RE_READ:
 
-	read_len = socket_node->wait_entry((nd_handle)socket_node, timeout);
+	//read_len = socket_node->recv_data((nd_handle)socket_node, timeout);
+	read_len = nd_netobj_recv(net_handle, timeout);
 	if (-1 == read_len) {
 		LEAVE_FUNC();
 		return -1;
 	}
 	else if (0 == read_len) {
-		if (socket_node->update_entry((nd_handle)socket_node) == -1) {
+		if (nd_netobj_update(net_handle) == -1) {
 			ret = -1;
 		}
 		LEAVE_FUNC();
@@ -51,14 +50,14 @@ RE_READ:
 	}
 	else {
 		ret += read_len;
-		if (-1 == handle_recv_data((nd_netui_handle)socket_node, NULL)) {
+		if (-1 == handle_recv_data(net_handle, NULL)) {
 			LEAVE_FUNC();
 			return -1;
 		}
-		if (TCPNODE_READ_AGAIN(socket_node)) {
+		if (TCPNODE_READ_AGAIN(net_handle)) {
 			goto RE_READ;
 		}
-		socket_node->update_entry((nd_handle)socket_node);
+		nd_netobj_update(net_handle);
 	}
 		
 	LEAVE_FUNC();
@@ -165,119 +164,6 @@ int nd_dft_packet_handler(nd_netui_handle node,void *data , size_t data_len , nd
 
 }
 
-//fetch recvd message in nd_packhdr_t format
-static int __net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
-{
-	ENTER_FUNC() 
-	int data_len =0, valid_len=0;
-	nd_packhdr_t  tmp_hdr ;
-	nd_netbuf_t  *pbuf;
-	nd_packhdr_t *stream_data ;
-
-	if (!nd_connector_valid(socket_addr)) {
-		LEAVE_FUNC();
-		return -1;
-	}
-	
-RE_FETCH:
-	pbuf  = &(socket_addr->recv_buffer) ;
-	data_len =(int)  ndlbuf_datalen(pbuf) ;
-
-	if(data_len < ND_PACKET_HDR_SIZE) {
-		LEAVE_FUNC();
-		return 0;
-	}
-
-	stream_data = (nd_packhdr_t *)ndlbuf_data(pbuf) ;
-
-	ND_HDR_SET(&tmp_hdr, stream_data) ;
-	//nd_hdr_ntoh(&tmp_hdr) ;
-
-	//check incoming data legnth
-	valid_len = (int) socket_addr->get_pack_size(socket_addr, &tmp_hdr) ;
-	//valid_len =  nd_pack_len(&tmp_hdr) ;
-
-	if(valid_len >ND_PACKET_SIZE || valid_len < _min_packet_len) {
-		socket_addr->myerrno = NDERR_BADPACKET ;
-		LEAVE_FUNC();
-		return -1 ;	//incoming data error 
-	}
-	else if(valid_len > data_len ) {
-		LEAVE_FUNC();
-		return 0 ;	//not enough
-	}
-	
-	if (socket_addr->user_define_packet){
-		//user define packet data
-		nd_atomic_inc(&socket_addr->recv_pack_times) ;
-		ndlbuf_read(pbuf, msgbuf,valid_len,EBUF_SPECIFIED ) ;
-        //nd_packet_ntoh(msgbuf) ;
-		return valid_len ;
-	}
-
-	/*if ((int)NDNETMSG_VERSION != nd_pack_version(&tmp_hdr)){
-		nd_net_message_version_error(socket_addr);
-		return -1;
-	}
-	else*/ if (tmp_hdr.ndsys_msg){		
-		if (-1==nd_net_sysmsg_hander(socket_addr,(nd_sysresv_pack_t *)stream_data) ){
-			LEAVE_FUNC();
-			return -1;
-		}
-		ndlbuf_sub_data(pbuf, valid_len) ;
-		valid_len = 0;
-		goto RE_FETCH;
-	}
-
-	if (msgbuf )	{
-		ndlbuf_read(pbuf, msgbuf,valid_len,EBUF_SPECIFIED ) ;
-		
-        nd_packet_ntoh(msgbuf) ;
-
-		nd_assert(valid_len == nd_pack_len(msgbuf)) ;
-		if(msgbuf->encrypt) {
-			int new_len ;
-			new_len = nd_packet_decrypt(socket_addr,(nd_packetbuf_t *) msgbuf) ;
-			if(new_len==0) {
-				socket_addr->myerrno = NDERR_BADPACKET ;
-				LEAVE_FUNC();
-				return -1;
-			}
-			nd_pack_len(msgbuf)  = (NDUINT16)new_len ;
-			valid_len = new_len ;
-			CURRENT_IS_CRYPT(socket_addr) = 1 ;
-		}
-		else {
-			CURRENT_IS_CRYPT(socket_addr) = 0 ;
-		}
-	}
-	nd_atomic_inc(&socket_addr->recv_pack_times) ;
-	LEAVE_FUNC();
-	return valid_len ;
-}
-
-int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
-{
-	int readlen = __net_fetch_msg( socket_addr, msgbuf);
-	if (readlen>0 && socket_addr->is_log_recv){
-		if (socket_addr->is_log_recv) {
-			nd_logmsg("received (%d,%d) len=%d\n\n", ND_USERMSG_MAXID(msgbuf), ND_USERMSG_MINID(msgbuf), ND_USERMSG_LEN(msgbuf));
-		}
-		if (socket_addr->save_recv_stream) {
-			if (CURRENT_IS_CRYPT(socket_addr)) {
-				msgbuf->encrypt = 1 ;
-				nd_netobj_recv_stream_save(socket_addr, msgbuf, readlen ) ;
-				msgbuf->encrypt = 0 ;
-			}
-			else {
-				nd_netobj_recv_stream_save(socket_addr, msgbuf,readlen ) ;
-			}
-		}
-		
-	}
-	return readlen;
-}
-
 // send packet by tcp
 static int _tcp_connector_send(struct nd_tcp_node* socket_addr, nd_packhdr_t *msg_buf, int flag) 
 {
@@ -379,9 +265,9 @@ int nd_connector_raw_write(nd_handle net_handle , void *data, size_t size)
 {
 	int ret ;
 	ENTER_FUNC() 
-	nd_assert(net_handle->sock_write) ;
+	nd_assert(net_handle->sys_sock_write) ;
 		
-	ret = net_handle->sock_write(net_handle , data,  size);
+	ret = net_handle->sys_sock_write(net_handle , data,  size);
 	LEAVE_FUNC() ;
 	return ret ;
 }
@@ -624,25 +510,6 @@ int _connector_destroy(nd_handle net_handle, int force)
 }
 
 
-//data handle function
-//static int fetch_udp_message(nd_handle  node, nd_packhdr_t *msg , nd_handle listener)
-//{
-//	ENTER_FUNC() 
-//	nd_packhdr_t *buf = (nd_packhdr_t*) node->user_data ;
-//	if(nd_pack_len(buf) > 0) {
-//		//already read data 
-//		LEAVE_FUNC();
-//		return 0 ;
-//	}
-//	else if(nd_pack_len(msg)>=ND_PACKET_DATA_SIZE) {
-//		LEAVE_FUNC();
-//		return -1;
-//	}
-//	memcpy(buf, msg, nd_pack_len(msg)) ;
-//	LEAVE_FUNC();
-//	return nd_pack_len(msg) ;
-//}
-
 
 /* wait message , if the message income, read to message buf , untill timeout
  * return 0 timeout
@@ -674,10 +541,10 @@ TCP_REWAIT:
 		waittime = tmout;
 	}
 
-	ret = net_handle->wait_entry(net_handle, waittime);
+	ret = nd_netobj_recv(net_handle, waittime);
 	if (ret <= 0) {
 		if (net_handle->myerrno == NDERR_WOULD_BLOCK) {
-			if (net_handle->update_entry((nd_handle)net_handle) == -1) {
+			if (nd_netobj_update((nd_handle)net_handle) == -1) {
 				LEAVE_FUNC();
 				return -1;
 			}
@@ -721,15 +588,16 @@ int nd_connector_raw_waitdata(nd_netui_handle net_handle, void *buf, size_t size
 
 	struct nd_tcp_node *socket_node = (struct nd_tcp_node*)net_handle;
 	if (timeout) {
-		if (nd_socket_wait_read(socket_node->fd, timeout) <= 0) {
-			socket_node->myerrno = NDERR_WOULD_BLOCK;
+		//if (nd_socket_wait_read(socket_node->fd, timeout) <= 0) {
+		//	socket_node->myerrno = NDERR_WOULD_BLOCK;
+		if(nd_netobj_wait_readable(net_handle,timeout)<=0){
 			LEAVE_FUNC();
 			return -1;
 		}
 
 	}
 
-	ret = socket_node->sock_read(net_handle, buf, size, timeout);
+	ret = socket_node->sys_sock_read(net_handle, buf, size);
 	if (ret == 0) {
 		LEAVE_FUNC();
 		return 0;
@@ -872,12 +740,6 @@ size_t nd_net_getpack_size(nd_handle  handle, void *data)
 	return (size_t) len;
 }
 
-int nd_net_set_packet_minsize(int minsize)
-{
-	int ret = _min_packet_len;
-	_min_packet_len = minsize ;
-	return ret;
-}
 
 
 int nd_net_sysmsg_hander(nd_netui_handle node, nd_sysresv_pack_t *pack)

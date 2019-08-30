@@ -83,7 +83,7 @@ struct _s_udt_socket
 	};
 	//////////////////////////////////////////////////////////////////////////
 	check_udt_packet check_entry;
-	nd_udt_close_entry udt_close_entry;
+	//nd_udt_close_entry udt_close_entry;
 
 	u_16	is_accept:4;				//0 connect , 1 accept
 	u_16	is_reset:1;

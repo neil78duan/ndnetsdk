@@ -69,31 +69,6 @@ void udt_clientmap_init(struct nd_udtcli_map *node, nd_handle h_listen)
 	node->connect_node.msg_entry = ((struct nd_srv_node*)h_listen)->msg_entry ;
 	//node->connect_node.update_entry = (net_update_entry)_tcp_session_update ;
 }
-//
-//void udt_icmp_cm_init(struct nd_udtcli_map *node, nd_handle h_listen)
-//{
-//	memset(node, 0, sizeof(*node )) ;
-//	//udt_icmp_init(&node->connect_node);
-//
-//	_udticmp_connector_init((nd_udt_node*)node);
-//
-//	INIT_SESSION_BUFF(node) ;
-//
-//	INIT_LIST_HEAD(&(node->map_list)) ;
-//	node->connect_node.is_session = 1;
-//	node->connect_node.size = sizeof(struct nd_udtcli_map) ;
-//
-//	node->connect_node.disconn_timeout = ((struct listen_contex*)h_listen)->operate_timeout;
-//	node->connect_node.close_entry =(nd_close_callback ) udt_close ;
-//
-//	node->connect_node.data_entry = ((struct nd_srv_node*)h_listen)->data_entry ;
-//
-//	node->connect_node.msg_entry = ((struct nd_srv_node*)h_listen)->msg_entry ;
-//
-//	ndstrncpy(node->connect_node.bindip ,((struct nd_netsocket*)h_listen)->bindip, sizeof(node->connect_node.bindip));
-//	node->connect_node.port = ((struct nd_netsocket*)h_listen)->port ;
-//	//node->connect_node.update_entry = (net_update_entry)_tcp_session_update ;
-//}
 
 /* get client header size*/
 size_t nd_getclient_hdr_size(int iomod)

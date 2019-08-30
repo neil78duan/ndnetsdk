@@ -94,6 +94,9 @@ void _set_ndtcp_conn_dft_option(ndsocket_t sock_fd);
 void _set_ndtcp_session_dft_option(ndsocket_t sock_fd);
 
 
+int _wait_read_msg(struct nd_tcp_node *node, ndtime_t tmout);
+int _wait_write_msg(struct nd_tcp_node *node, ndtime_t tmout);
+
 #define TCPNODE_FD(conn_node) (((struct nd_tcp_node*)(conn_node))->fd )
 #define TCPNODE_READ_AGAIN(conn_node) (conn_node)->read_again
 #define CURRENT_IS_CRYPT(conn_node) (((struct nd_tcp_node*)(conn_node))->is_crypt_packet )
@@ -128,9 +131,9 @@ void _set_ndtcp_session_dft_option(ndsocket_t sock_fd);
 
 #define TCPNODE_CHECK_RESET(conn_node) (((struct nd_tcp_node*)(conn_node))->status == ETS_RESET)
 
-
-ND_NET_API int nd_set_wait_writablity_time(int newtimeval) ;
-ND_NET_API int nd_get_wait_writablity_time() ;
+// 
+// ND_NET_API int nd_set_wait_writablity_time(int newtimeval) ;
+// ND_NET_API int nd_get_wait_writablity_time() ;
 
 
 /*wait message ,

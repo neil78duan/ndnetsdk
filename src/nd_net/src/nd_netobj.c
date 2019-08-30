@@ -15,6 +15,15 @@ typedef struct netui_info *nd_handle;
 static char *_s_send_stream =NULL;
 static char *_s_recv_stream =NULL;
 
+static int _min_packet_len = sizeof(nd_usermsghdr_t);
+
+int nd_net_set_packet_minsize(int minsize)
+{
+	int ret = _min_packet_len;
+	_min_packet_len = minsize;
+	return ret;
+}
+
 void _release_send_stream()
 {
 	if (_s_send_stream) {
@@ -662,6 +671,175 @@ int nd_netobj_send_stream_save(nd_netui_handle net_handle,  void *data, int size
 	}
 	return _log_net_stream(_s_send_stream, data, size) ;
 	
+}
+
+int nd_netobj_update(nd_netui_handle node)
+{
+	return node->update_entry(node);
+}
+
+
+int nd_netobj_wait_readable(nd_netui_handle node, int tmout)
+{
+	return node->wait_readable(node, tmout);
+}
+
+int nd_netobj_recv(nd_netui_handle node, int tmout)
+{
+	return node->recv_data(node, tmout);
+}
+
+int nd_netobj_wait_writable(nd_netui_handle node, int tmout)
+{
+	return node->wait_writable(node, tmout);
+}
+
+int nd_netobj_close(nd_netui_handle node, int flag)
+{
+	return node->sys_sock_close(node, flag);
+}
+
+int nd_netobj_read(nd_netui_handle node, void *buffer, int size)
+{
+	return node->sys_sock_read(node, buffer, size);
+}
+
+int nd_netobj_write(nd_netui_handle node, void *data, int len)
+{
+	ENTER_FUNC();
+	int ret;
+	ret = (int)node->sys_sock_write(node, data, len);
+	if (ret > 0) {
+		node->send_len += ret;
+		node->last_push = nd_time();
+	}
+	else if (-1 == ret) {
+		node->sys_error = nd_socket_last_error();
+		if (node->sys_error == ESOCKETTIMEOUT) {
+			node->myerrno = NDERR_WOULD_BLOCK;
+		}
+		else {
+			node->myerrno = NDERR_IO;
+		}
+	}
+	else if (ret == 0) {
+		node->myerrno = NDERR_WOULD_BLOCK;
+	}
+	LEAVE_FUNC();
+	return ret;
+}
+
+//fetch recvd message in nd_packhdr_t format
+static int __net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
+{
+	ENTER_FUNC()
+		int data_len = 0, valid_len = 0;
+	nd_packhdr_t  tmp_hdr;
+	nd_netbuf_t  *pbuf;
+	nd_packhdr_t *stream_data;
+
+	if (!nd_connector_valid(socket_addr)) {
+		LEAVE_FUNC();
+		return -1;
+	}
+
+RE_FETCH:
+	pbuf = &(socket_addr->recv_buffer);
+	data_len = (int)ndlbuf_datalen(pbuf);
+
+	if (data_len < ND_PACKET_HDR_SIZE) {
+		LEAVE_FUNC();
+		return 0;
+	}
+
+	stream_data = (nd_packhdr_t *)ndlbuf_data(pbuf);
+
+	ND_HDR_SET(&tmp_hdr, stream_data);
+	//nd_hdr_ntoh(&tmp_hdr) ;
+
+	//check incoming data legnth
+	valid_len = (int)socket_addr->get_pack_size(socket_addr, &tmp_hdr);
+	//valid_len =  nd_pack_len(&tmp_hdr) ;
+
+	if (valid_len > ND_PACKET_SIZE || valid_len < _min_packet_len) {
+		socket_addr->myerrno = NDERR_BADPACKET;
+		LEAVE_FUNC();
+		return -1;	//incoming data error 
+	}
+	else if (valid_len > data_len) {
+		LEAVE_FUNC();
+		return 0;	//not enough
+	}
+
+	if (socket_addr->user_define_packet) {
+		//user define packet data
+		nd_atomic_inc(&socket_addr->recv_pack_times);
+		ndlbuf_read(pbuf, msgbuf, valid_len, EBUF_SPECIFIED);
+		//nd_packet_ntoh(msgbuf) ;
+		return valid_len;
+	}
+
+	/*if ((int)NDNETMSG_VERSION != nd_pack_version(&tmp_hdr)){
+		nd_net_message_version_error(socket_addr);
+		return -1;
+	}
+	else*/ if (tmp_hdr.ndsys_msg) {
+		if (-1 == nd_net_sysmsg_hander(socket_addr, (nd_sysresv_pack_t *)stream_data)) {
+			LEAVE_FUNC();
+			return -1;
+		}
+		ndlbuf_sub_data(pbuf, valid_len);
+		valid_len = 0;
+		goto RE_FETCH;
+	}
+
+	if (msgbuf) {
+		ndlbuf_read(pbuf, msgbuf, valid_len, EBUF_SPECIFIED);
+
+		nd_packet_ntoh(msgbuf);
+
+		nd_assert(valid_len == nd_pack_len(msgbuf));
+		if (msgbuf->encrypt) {
+			int new_len;
+			new_len = nd_packet_decrypt(socket_addr, (nd_packetbuf_t *)msgbuf);
+			if (new_len == 0) {
+				socket_addr->myerrno = NDERR_BADPACKET;
+				LEAVE_FUNC();
+				return -1;
+			}
+			nd_pack_len(msgbuf) = (NDUINT16)new_len;
+			valid_len = new_len;
+			CURRENT_IS_CRYPT(socket_addr) = 1;
+		}
+		else {
+			CURRENT_IS_CRYPT(socket_addr) = 0;
+		}
+	}
+	nd_atomic_inc(&socket_addr->recv_pack_times);
+	LEAVE_FUNC();
+	return valid_len;
+}
+
+int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbuf)
+{
+	int readlen = __net_fetch_msg(socket_addr, msgbuf);
+	if (readlen > 0 && socket_addr->is_log_recv) {
+		if (socket_addr->is_log_recv) {
+			nd_logmsg("received (%d,%d) len=%d\n\n", ND_USERMSG_MAXID(msgbuf), ND_USERMSG_MINID(msgbuf), ND_USERMSG_LEN(msgbuf));
+		}
+		if (socket_addr->save_recv_stream) {
+			if (CURRENT_IS_CRYPT(socket_addr)) {
+				msgbuf->encrypt = 1;
+				nd_netobj_recv_stream_save(socket_addr, msgbuf, readlen);
+				msgbuf->encrypt = 0;
+			}
+			else {
+				nd_netobj_recv_stream_save(socket_addr, msgbuf, readlen);
+			}
+		}
+
+	}
+	return readlen;
 }
 
 #undef ND_IMPLEMENT_HANDLE

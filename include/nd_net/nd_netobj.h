@@ -35,9 +35,12 @@ struct nd_netsocket
 typedef void *nd_userdata_t ;
 
 //send raw-data function 
-typedef int (*socket_write_entry)(nd_handle node,void *data , size_t len) ; 
+//typedef int (*socket_write_entry)(nd_handle node,void *data , size_t len) ; 
+typedef int(*socket_sys_entry)(nd_handle node, void *data, size_t len);
+typedef int(*socket_wait_entry)(nd_handle  handle, ndtime_t tmout);
+typedef int(*socket_close_entry)(nd_handle  handle, int flag);
 
-typedef int (*socket_read_entry)(nd_handle node,void *data , size_t size, ndtime_t tmout) ; 
+//typedef int (*socket_read_entry)(nd_handle node,void *data , size_t size, ndtime_t tmout) ; 
 
 //send *ND-protocol* package function 
 typedef int (*packet_write_entry)(nd_handle net_handle, nd_packhdr_t *msg_buf, int flag) ;	//define extend send function
@@ -84,14 +87,17 @@ typedef int(*wait_message_entry)(nd_handle  handle, ndtime_t tmout);
 	nd_handle 	srv_root;		\
 	nd_userdata_t 		user_data ;	\
 	nd_mutex			*send_lock;		\
+	socket_sys_entry    sys_sock_read;	\
+	socket_sys_entry    sys_sock_write;	\
+	socket_wait_entry	wait_readable ;	\
+	socket_wait_entry	wait_writable;	\
+	socket_close_entry	sys_sock_close;	\
+	socket_wait_entry	recv_data;	\
 	packet_write_entry	packet_write;	\
-	socket_write_entry	sock_write;		\
-	socket_read_entry	sock_read;		\
 	data_in_entry		data_entry;		\
 	net_msg_entry		msg_entry ;		\
 	net_update_entry	update_entry ;	\
 	net_get_packet_size get_pack_size;	\
-	wait_message_entry  wait_entry ;	\
 	nd_userdata_t		writable_param ;	\
 	net_writable_callback writable_callback; \
 	nd_cryptkey			crypt_key ;		\
@@ -171,6 +177,7 @@ ND_NET_API nd_packhdr_t* nd_net_get_msg(nd_netui_handle node) ;
 ND_NET_API void nd_net_del_msg(nd_netui_handle node, nd_packhdr_t *msgaddr) ;
 
 
+ND_NET_API int nd_netobj_update(nd_netui_handle node);
 /* fetch message from RECV-WINDOW
  * and copy message to msgbuf
  */
@@ -180,6 +187,18 @@ ND_NET_API int nd_net_fetch_msg(nd_netui_handle socket_addr, nd_packhdr_t *msgbu
 ND_NET_API int nd_net_bind(int isipv6, int port, int listen_nums,nd_handle net_handle) ;
 
 ND_NET_API int nd_net_sendto(nd_handle node,void *data , size_t len,SOCKADDR_IN *to) ;
+
+ND_NET_API int nd_netobj_wait_readable(nd_netui_handle node, int tmout);
+
+ND_NET_API int nd_netobj_wait_writable(nd_netui_handle node, int tmout);
+
+ND_NET_API int nd_netobj_close(nd_netui_handle node, int flag);
+
+ND_NET_API int nd_netobj_read(nd_netui_handle node, void *buffer, int size);
+
+ND_NET_API int nd_netobj_write(nd_netui_handle node, void *data, int len);
+
+ND_NET_API int nd_netobj_recv(nd_netui_handle node, int tmout);
 
 //ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
 

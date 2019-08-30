@@ -120,7 +120,7 @@ int nd_iocp_node_init(struct nd_client_map_iocp *iocp_map,nd_handle h_listen)
 	iocp_map->__client_map.connect_node.msg_entry =lc->tcp.msg_entry ;
 	
 	iocp_map->__client_map.connect_node.packet_write =(packet_write_entry)nd_iocp_sendmsg;
-	iocp_map->__client_map.connect_node.sock_write = (socket_write_entry)iocp_socket_write ;
+	iocp_map->__client_map.connect_node.sys_sock_write = (socket_sys_entry)iocp_socket_write ;
 	iocp_map->in_sending = 0 ;
 	return 0 ;
 }
