@@ -495,6 +495,9 @@ int nd_srv_translate_message( nd_netui_handle connect_handle, nd_packhdr_t *msg 
 		}		
 	}
 
+    nd_logmsg("TRACE Message RECV(%d, %d) length=%d %s\n", usermsg->maxid,  usermsg->minid,
+              usermsg->packet_hdr.length, ret==-1?"FAILED":"SUCCESS") ;
+    
 #if defined(ND_TRACE_MESSAGE)
     if (node && node->is_log) {
         nd_logmsg("TRACE Message RECV(%d, %d) length=%d %s\n", usermsg->maxid,  usermsg->minid, 
