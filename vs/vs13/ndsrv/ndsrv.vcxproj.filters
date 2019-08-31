@@ -181,7 +181,7 @@
       <Filter>Source Files\srvcore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp">
-      <Filter>Source Files\srvcore</Filter>
+      <Filter>Source Files\ndapplib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

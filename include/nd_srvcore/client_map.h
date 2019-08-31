@@ -63,18 +63,18 @@ struct nd_client_map_iocp
 };
 
 #endif
-
-enum ePlayerState {
-	EPS_NONE = 0 ,
-	EPS_CONNECT,
-	EPS_LOGIN
-};
+// 
+// enum ePlayerState {
+// 	EPS_NONE = 0 ,
+// 	EPS_CONNECT,
+// 	EPS_LOGIN
+// };
 //header of playerdata
-typedef struct player_header{
-	nd_netui_handle		h_session ;		//handle of connection session
-	NDUINT32			id ;
-	int					status ;		//ref ePlayerState
-}player_header_t ;
+// typedef struct player_header{
+// 	nd_netui_handle		h_session ;		//handle of connection session
+// 	NDUINT32			id ;
+// 	int					status ;		//ref ePlayerState
+// }player_header_t ;
 
 
 //typedef void *nd_cli_handle;
