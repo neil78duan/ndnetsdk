@@ -198,7 +198,7 @@ ND_NET_API int nd_netobj_read(nd_netui_handle node, void *buffer, int size);
 
 ND_NET_API int nd_netobj_write(nd_netui_handle node, void *data, int len);
 
-ND_NET_API int nd_netobj_recv(nd_netui_handle node, int tmout);
+ND_NET_API int nd_netobj_packet_recv(nd_netui_handle node, int tmout);
 
 //ND_NET_API int icmp_socket_read(struct nd_netsocket*node , char *buf, size_t buf_size, struct sockaddr_in *addr, ndip_t destip, NDUINT16 destport);
 
