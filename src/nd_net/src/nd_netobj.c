@@ -684,7 +684,7 @@ int nd_netobj_wait_readable(nd_netui_handle node, int tmout)
 	return node->wait_readable(node, tmout);
 }
 
-int nd_netobj_recv(nd_netui_handle node, int tmout)
+int nd_netobj_packet_recv(nd_netui_handle node, int tmout)
 {
 	return node->recv_data(node, tmout);
 }

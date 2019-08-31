@@ -221,7 +221,10 @@ int _nd_thpool_main(struct thread_pool_info *thip)
 		if(update_session_in_thread(pmanger,thip) > 0) {
 			sleep = 0;
 		}
-
+		if (thip->connector_hub) {
+			if (update_connectors(thip->connector_hub) > 0)
+				sleep = 0;
+		}
 
 		if (listen_info->end_update){
 			listen_info->end_update((nd_handle)listen_info, context) ;

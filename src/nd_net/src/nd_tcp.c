@@ -305,7 +305,8 @@ int nd_tcpnode_read(struct nd_tcp_node *node)
 	TCPNODE_READ_AGAIN(node) = 0;
 	if(space_len<=0){
 		int datalen =(int) ndlbuf_datalen(&(node->recv_buffer)) ;
-		if (datalen> 0)	{
+		if (datalen > 0) {
+			TCPNODE_READ_AGAIN(node) = 1;
 			LEAVE_FUNC();
 			return datalen ;
 		}
@@ -462,7 +463,7 @@ RESEND:
 	}
 	data_len = ndlbuf_datalen(pbuf); 
 	if (data_len > 0) {
-		if (1 == nd_socket_wait_writablity(conn_node->fd, 100)) {
+		if (1 == nd_socket_wait_writablity(conn_node->fd, 50)) {
 			goto RESEND;
 		}
 	}

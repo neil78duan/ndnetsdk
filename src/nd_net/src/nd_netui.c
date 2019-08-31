@@ -36,7 +36,7 @@ int nd_connector_update(nd_netui_handle net_handle,ndtime_t timeout)
 RE_READ:
 
 	//read_len = socket_node->recv_data((nd_handle)socket_node, timeout);
-	read_len = nd_netobj_recv(net_handle, timeout);
+	read_len = nd_netobj_packet_recv(net_handle, timeout);
 	if (-1 == read_len) {
 		LEAVE_FUNC();
 		return -1;
@@ -541,7 +541,7 @@ TCP_REWAIT:
 		waittime = tmout;
 	}
 
-	ret = nd_netobj_recv(net_handle, waittime);
+	ret = nd_netobj_packet_recv(net_handle, waittime);
 	if (ret <= 0) {
 		if (net_handle->myerrno == NDERR_WOULD_BLOCK) {
 			if (nd_netobj_update((nd_handle)net_handle) == -1) {
