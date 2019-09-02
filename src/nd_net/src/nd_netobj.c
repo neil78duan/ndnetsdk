@@ -560,7 +560,7 @@ ndport_t nd_net_peer_getport(nd_handle h)
 }
 
 
-//ÉèÖÃÍøÂçÊý¾Ý´¦Àíº¯Êý
+//è®¾ç½®ç½‘ç»œæ•°æ®å¤„ç†å‡½æ•°
 data_in_entry nd_hook_data(nd_handle h, data_in_entry data_entry) 
 {
 	data_in_entry ret = NULL ;
@@ -576,7 +576,7 @@ data_in_entry nd_hook_data(nd_handle h, data_in_entry data_entry)
 	return ret ;
 }
 
-//ÉèÖÃND¸ñÊ½µÄ·â°ü´¦Àíº¯Êý
+//è®¾ç½®NDæ ¼å¼çš„å°åŒ…å¤„ç†å‡½æ•°
 net_msg_entry nd_hook_packet(nd_handle h, net_msg_entry msg_entry) 
 {
 	net_msg_entry ret = NULL ;
@@ -592,12 +592,12 @@ net_msg_entry nd_hook_packet(nd_handle h, net_msg_entry msg_entry)
 
 }
 
-//ÉèÖÃµ±½ÓÊÕµ½Ã»ÓÐ×¢²áµÄÏûÏ¢Ê±ÊÇ·ñ¹Ø±ÕÁ¬½Ó
+//è®¾ç½®å½“æŽ¥æ”¶åˆ°æ²¡æœ‰æ³¨å†Œçš„æ¶ˆæ¯æ—¶æ˜¯å¦å…³é—­è¿žæŽ¥
 void nd_net_set_unregmsg_handler(nd_handle h, int isclosed) 
 {
 	((nd_netui_handle)h)->unreg_msg_close = isclosed ? 1: 0 ;
 }
-//ÉèÖÃµ±½ÓÊÕµ½Ã»ÓÐÊÚÈ¨µÄÏûÏ¢Ê±ÊÇ·ñ¹Ø±ÕÁ¬½Ó
+//è®¾ç½®å½“æŽ¥æ”¶åˆ°æ²¡æœ‰æŽˆæƒçš„æ¶ˆæ¯æ—¶æ˜¯å¦å…³é—­è¿žæŽ¥
 void nd_net_set_unauthorize_handler(nd_handle h, int isclosed) 
 {
 	((nd_netui_handle)h)->error_privilage_close = isclosed ? 1: 0 ;
