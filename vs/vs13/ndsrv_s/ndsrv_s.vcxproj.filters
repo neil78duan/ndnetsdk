@@ -375,6 +375,9 @@
     <ClInclude Include="..\..\..\include\nd_common\_source_trace.h">
       <Filter>include\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_vartype.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
@@ -645,6 +648,9 @@
       <Filter>src\common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp">
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_vartype.cpp">
       <Filter>src\ndapplib</Filter>
     </ClCompile>
   </ItemGroup>
