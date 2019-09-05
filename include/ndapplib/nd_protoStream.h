@@ -14,6 +14,7 @@
 #define _ND_PROTO_STREAM_H_
 
 #include "nd_common/nd_common.h"
+#include "ndapplib/nd_vartype.h"
 
 #define NET_STREAM_WITH_FORMAT_MARKER 1		//do not user format marker in net message stream
 #define NET_STREAM_STRUCT_END_MARK 0xff
@@ -62,6 +63,7 @@ public:
 	int WriteStream(char *stream_buf, size_t dataLen);
 
 	int WriteIp(ndip_t&);
+	int WriteVar(const NDVarType &value);
 
 	void SkipStructEndMark();
 	void EnableStructEndMark();
@@ -108,6 +110,7 @@ public:
 	int Read(short &a);
 	int Read(NDProtoWriteStream &omsg);		//read all left data to omsg
 	int ReadIp(ndip_t &a);
+	int ReadVar(NDVarType &var);
 	size_t Read(NDUINT8 *buf, size_t size);
 	size_t Read(char *buf, size_t size) { return	 Read((NDUINT8 *)buf, size); }
 	size_t ReadBin(void *buf, size_t size_buf);

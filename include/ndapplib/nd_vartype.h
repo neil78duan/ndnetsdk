@@ -56,7 +56,7 @@ public:
 	NDVarType(const char* text);
 	NDVarType(void *bindata, size_t size);
 
-	NDVTYPE_ELEMENT_TYPE getDataType() { return m_type; }
+	NDVTYPE_ELEMENT_TYPE getDataType()const { return m_type; }
 
 	NDVarType &operator =(int a);
 	NDVarType &operator =(NDUINT8 a);
@@ -91,9 +91,9 @@ public:
 	//std::string getString()const;
 	void *getBin()const;
 	size_t getBinSize()const;
+	bool initSet(void *bindata, size_t size);
 protected:
 	bool initSet(const char*);
-	bool initSet(void *bindata, size_t size);
 	void destroy();
 	NDVTYPE_ELEMENT_TYPE m_type;
 	ndvtype_data m_data;

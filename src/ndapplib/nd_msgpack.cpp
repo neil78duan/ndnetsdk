@@ -132,7 +132,7 @@ size_t NDSendMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(_packet); }
 
 void NDSendMsg::onWriteStream(size_t size)
 {
-	MsgLength() += size;
+	MsgLength() += (NDUINT16 ) size;
 }
 
 #if 0
