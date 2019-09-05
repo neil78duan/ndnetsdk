@@ -215,6 +215,7 @@
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_protoStream.cpp" />
     <ClCompile Include="..\..\..\src\ndclient\nd_client.cpp" />
     <ClCompile Include="..\..\..\src\ndclient\nd_exch_key.cpp" />
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c" />

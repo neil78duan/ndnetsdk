@@ -43,6 +43,9 @@
     <Filter Include="src\nd_cli">
       <UniqueIdentifier>{2f0f10e7-5387-4922-84dd-3022d8726f59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ndapplib">
+      <UniqueIdentifier>{34884302-e6ea-40e9-896f-1c9a2feeb24a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -194,9 +197,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
       <Filter>src\common</Filter>
     </ClCompile>
@@ -375,13 +375,19 @@
       <Filter>src\nd_cli</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp">
-      <Filter>src</Filter>
+      <Filter>src\ndapplib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp">
-      <Filter>src</Filter>
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp">
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp">
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_protoStream.cpp">
+      <Filter>src\ndapplib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

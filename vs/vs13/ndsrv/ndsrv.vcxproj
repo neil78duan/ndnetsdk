@@ -162,6 +162,7 @@ copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
     <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_objmgr.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_privkey.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_protoStream.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_session.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_stlalloc.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_sysmsg.cpp" />

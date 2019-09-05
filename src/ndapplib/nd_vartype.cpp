@@ -269,6 +269,7 @@ const char *NDVarType::getText()const
 		return NULL;
 	}
 }
+#if 0
 std::string NDVarType::getString()const
 {
 	char tmpbuf[32];
@@ -310,6 +311,8 @@ std::string NDVarType::getString()const
 	}
 	return retval;
 }
+#endif 
+
 void *NDVarType::getBin()const
 {
 	if (m_type == NDVarType::ND_VT_BINARY && m_data.bin_val) {
@@ -425,14 +428,46 @@ NDVarType &NDVarType::operator/=(const NDVarType &r)
 NDVarType  NDVarType::operator+(const char *text) const
 {
 	if (m_type == ND_VT_STRING) {
-		std::string str1;
+		size_t size = 0;
+		size_t s1 = 0;
+		size_t s2 = 0;
+		char *p = NULL;
 		if (m_data.str_val && *m_data.str_val) {
-			str1 = m_data.str_val;
+			s1 = strlen(m_data.str_val);
+			size += s1;
 		}
 		if (text && text) {
-			str1 += text;
+			s2 = strlen(text);
+			size += s2;
 		}
-		return NDVarType(str1.c_str());
+
+		if (size==0) {
+			return NDVarType("");
+		}
+
+		p = (char*)malloc(size + 1);
+		if (!p) { 
+			return NDVarType(""); 
+		}
+		if (s1) {
+			strncpy(p, m_data.str_val, s1+1);
+		}
+		if (s2) {
+			strncpy(p+s1, text, s2 + 1);
+		}
+		NDVarType ret;
+		ret.m_type = ND_VT_STRING;
+		ret.m_data.str_val = p;
+		return ret;
+
+// 		std::string str1;
+// 		if (m_data.str_val && *m_data.str_val) {
+// 			str1 = m_data.str_val;
+// 		}
+// 		if (text && text) {
+// 			str1 += text;
+// 		}
+// 		return NDVarType(str1.c_str());
 	}
 	return NDVarType(text);
 }

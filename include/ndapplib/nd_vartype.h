@@ -11,7 +11,7 @@
 #include "nd_common/nd_export_def.h"
 #include "nd_common/nd_define.h"
 
-#include <string>
+//#include <string>
 
 struct ndvtype_bin
 {
@@ -88,7 +88,7 @@ public:
 	bool getBool()const;
 	float getFloat()const;
 	const char *getText()const;
-	std::string getString()const;
+	//std::string getString()const;
 	void *getBin()const;
 	size_t getBinSize()const;
 protected:
