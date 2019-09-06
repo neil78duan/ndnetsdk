@@ -478,3 +478,30 @@ NDVarType &NDVarType::operator+=(const char *text)
 	*this = val + text;
 	return *this;
 }
+
+bool  NDVarType::operator <(const NDVarType &r) const
+{
+	return m_data.i64_val < r.m_data.i64_val;
+}
+
+bool  NDVarType::operator >(const NDVarType &r) const
+{
+	return m_data.i64_val > r.m_data.i64_val;
+}
+bool  NDVarType::operator ==(const NDVarType &r) const
+{
+	return m_data.i64_val == r.m_data.i64_val;
+}
+
+bool  NDVarType::operator >=(const NDVarType &r) const
+{
+	return m_data.i64_val >= r.m_data.i64_val;
+}
+bool  NDVarType::operator <=(const NDVarType &r) const
+{
+	return m_data.i64_val <= r.m_data.i64_val;
+}
+bool  NDVarType::operator !=(const NDVarType &r) const
+{
+	return m_data.i64_val != r.m_data.i64_val;
+}

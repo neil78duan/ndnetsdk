@@ -80,6 +80,15 @@ public:
 	NDVarType  operator+(const char *text) const;
 	NDVarType &operator+=(const char *text);
 
+	bool  operator <(const NDVarType &r) const;
+	bool  operator >(const NDVarType &r) const;
+	bool  operator ==(const NDVarType &r) const;
+	bool  operator >=(const NDVarType &r) const;
+	bool  operator <=(const NDVarType &r) const;
+	bool  operator !=(const NDVarType &r) const;
+
+	operator float() const { return getFloat(); }
+	operator int() const { return getFloat(); }
 
 	int getInt()const;
 	NDUINT8 getInt8()const;
