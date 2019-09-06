@@ -160,6 +160,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ndapplib\nd_msgpacket.h" />
+    <ClInclude Include="..\..\..\include\ndapplib\nd_protoStream.h" />
+    <ClInclude Include="..\..\..\include\ndapplib\nd_vartype.h" />
     <ClInclude Include="..\..\..\include\ndcli\nd_api_c.h" />
     <ClInclude Include="..\..\..\include\ndcli\nd_iconn.h" />
     <ClInclude Include="..\..\..\include\ndlib.h" />
@@ -213,6 +215,8 @@
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_protoStream.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_vartype.cpp" />
     <ClCompile Include="..\..\..\src\ndclient\nd_client.cpp" />
     <ClCompile Include="..\..\..\src\ndclient\nd_exch_key.cpp" />
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c" />

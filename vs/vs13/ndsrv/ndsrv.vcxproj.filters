@@ -183,6 +183,12 @@
     <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp">
       <Filter>Source Files\ndapplib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_protoStream.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_vartype.cpp">
+      <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\ndapplib\Makefile">
@@ -489,6 +495,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\nd_vm\nd_vm.h">
       <Filter>Header Files\ndvm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_vartype.h">
+      <Filter>Header Files\ndapplib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

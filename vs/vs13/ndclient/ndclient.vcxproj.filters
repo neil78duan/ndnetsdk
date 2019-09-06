@@ -43,14 +43,17 @@
     <Filter Include="src\nd_cli">
       <UniqueIdentifier>{2f0f10e7-5387-4922-84dd-3022d8726f59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ndapplib">
+      <UniqueIdentifier>{4e7d0c1c-b9fb-48be-9074-67bf531e0f66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ndapplib">
+      <UniqueIdentifier>{116a584d-9ec2-4a53-b39d-7796318c9538}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\ndapplib\nd_msgpacket.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ndcli\nd_api_c.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -180,9 +183,6 @@
     <ClInclude Include="..\..\..\include\nd_crypt\tea.h">
       <Filter>include\nd_crypt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ndlib.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\nd_time.h">
       <Filter>include\common</Filter>
     </ClInclude>
@@ -192,11 +192,20 @@
     <ClInclude Include="..\..\..\include\nd_common\nd_logger.h">
       <Filter>include\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_msgpacket.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_vartype.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndlib.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\nd_protoStream.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nd_common\src\bintree.c">
       <Filter>src\common</Filter>
     </ClCompile>
@@ -375,13 +384,22 @@
       <Filter>src\nd_cli</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp">
-      <Filter>src</Filter>
+      <Filter>src\ndapplib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp">
-      <Filter>src</Filter>
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp">
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp">
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_protoStream.cpp">
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\nd_vartype.cpp">
+      <Filter>src\ndapplib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

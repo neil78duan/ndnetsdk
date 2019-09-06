@@ -11,7 +11,7 @@
 #include "nd_common/nd_export_def.h"
 #include "nd_common/nd_define.h"
 
-#include <string>
+//#include <string>
 
 struct ndvtype_bin
 {
@@ -56,7 +56,7 @@ public:
 	NDVarType(const char* text);
 	NDVarType(void *bindata, size_t size);
 
-	NDVTYPE_ELEMENT_TYPE getDataType() { return m_type; }
+	NDVTYPE_ELEMENT_TYPE getDataType()const { return m_type; }
 
 	NDVarType &operator =(int a);
 	NDVarType &operator =(NDUINT8 a);
@@ -80,6 +80,15 @@ public:
 	NDVarType  operator+(const char *text) const;
 	NDVarType &operator+=(const char *text);
 
+	bool  operator <(const NDVarType &r) const;
+	bool  operator >(const NDVarType &r) const;
+	bool  operator ==(const NDVarType &r) const;
+	bool  operator >=(const NDVarType &r) const;
+	bool  operator <=(const NDVarType &r) const;
+	bool  operator !=(const NDVarType &r) const;
+
+	operator float() const { return getFloat(); }
+	operator int() const { return getFloat(); }
 
 	int getInt()const;
 	NDUINT8 getInt8()const;
@@ -88,12 +97,12 @@ public:
 	bool getBool()const;
 	float getFloat()const;
 	const char *getText()const;
-	std::string getString()const;
+	//std::string getString()const;
 	void *getBin()const;
 	size_t getBinSize()const;
+	bool initSet(void *bindata, size_t size);
 protected:
 	bool initSet(const char*);
-	bool initSet(void *bindata, size_t size);
 	void destroy();
 	NDVTYPE_ELEMENT_TYPE m_type;
 	ndvtype_data m_data;

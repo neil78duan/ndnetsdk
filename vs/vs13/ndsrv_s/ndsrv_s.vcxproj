@@ -190,6 +190,7 @@
     <ClInclude Include="..\..\..\include\ndapplib\nd_msgpacket.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_object.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_objmgr.h" />
+    <ClInclude Include="..\..\..\include\ndapplib\nd_protoStream.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_session.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_sysmsg.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_vartype.h" />
@@ -295,6 +296,7 @@
     <ClCompile Include="..\..\..\src\ndapplib\nd_object.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_objmgr.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_privkey.cpp" />
+    <ClCompile Include="..\..\..\src\ndapplib\nd_protoStream.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_session.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_stlalloc.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_sysmsg.cpp" />
