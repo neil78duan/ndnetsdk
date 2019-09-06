@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07079A5B231FEED1001F6983 /* nd_vartype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07079A5A231FEED1001F6983 /* nd_vartype.cpp */; };
+		07079A5C231FEED1001F6983 /* nd_vartype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07079A5A231FEED1001F6983 /* nd_vartype.cpp */; };
 		071780B11C05A00B00C47A99 /* libiconv.2.4.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 071780B01C05A00B00C47A99 /* libiconv.2.4.0.tbd */; };
 		07272F1B2137FCE700D66BB0 /* nd_logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 07272F1A2137FCE700D66BB0 /* nd_logger.c */; };
 		07272F1F2137FD3900D66BB0 /* _source_trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 07272F1C2137FD3900D66BB0 /* _source_trace.h */; };
@@ -222,6 +224,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		07079A5A231FEED1001F6983 /* nd_vartype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_vartype.cpp; sourceTree = "<group>"; };
 		071780B01C05A00B00C47A99 /* libiconv.2.4.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.4.0.tbd; path = usr/lib/libiconv.2.4.0.tbd; sourceTree = SDKROOT; };
 		07272F1A2137FCE700D66BB0 /* nd_logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_logger.c; sourceTree = "<group>"; };
 		07272F1C2137FD3900D66BB0 /* _source_trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _source_trace.h; sourceTree = "<group>"; };
@@ -401,6 +404,7 @@
 		075C580A22983F2F00A89A1E /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				07079A5A231FEED1001F6983 /* nd_vartype.cpp */,
 				075C580B22983F2F00A89A1E /* nd_object.cpp */,
 				075C582422983F2F00A89A1E /* nd_connector.cpp */,
 				075C582A22983F2F00A89A1E /* nd_msgpack.cpp */,
@@ -964,6 +968,7 @@
 				07A2685D19C7F4F000F51698 /* Makefile in Sources */,
 				07A2688C19C7F4F000F51698 /* nd_xml.c in Sources */,
 				07A268F119C7F4F000F51698 /* udt_socket.c in Sources */,
+				07079A5B231FEED1001F6983 /* nd_vartype.cpp in Sources */,
 				07A268F219C7F4F000F51698 /* udt_srv.c in Sources */,
 				07A2688A19C7F4F000F51698 /* nd_unix.c in Sources */,
 				07A268BA19C7F4F000F51698 /* nn.c in Sources */,
@@ -998,6 +1003,7 @@
 				07E1EC10230903A400AD5883 /* nd_msgpack.cpp in Sources */,
 				07E1EC11230903A400AD5883 /* nd_baseConn.cpp in Sources */,
 				07E1EC12230903A400AD5883 /* Makefile in Sources */,
+				07079A5C231FEED1001F6983 /* nd_vartype.cpp in Sources */,
 				07E1EC13230903A400AD5883 /* nd_logger.c in Sources */,
 				07E1EC14230903A400AD5883 /* nd_time.c in Sources */,
 				07E1EC15230903A400AD5883 /* nd_cmdline.c in Sources */,
