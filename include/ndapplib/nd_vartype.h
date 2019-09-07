@@ -50,6 +50,7 @@ public:
 
 	//init
 	//init set vale
+	NDVarType(const NDVarType &r);
 	NDVarType(int a);
 	NDVarType(NDUINT8 a);
 	NDVarType(NDUINT16 a);

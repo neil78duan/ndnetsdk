@@ -1204,7 +1204,7 @@ int NDProtoReadStream::ReadIp(ndip_t &a)
 
 #define READ_VAR(_type, _var,_ret) \
 {	\
-	NDUINT8 a; \
+	_type a; \
 	if (0 == Read(a)) {	var = a;_ret=0;}	\
 }
 int NDProtoReadStream::ReadVar(NDVarType &var)

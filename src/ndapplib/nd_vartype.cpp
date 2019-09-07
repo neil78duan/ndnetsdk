@@ -17,6 +17,14 @@ NDVarType::~NDVarType()
 {
 	destroy();
 }
+NDVarType::NDVarType(const NDVarType &r)
+{
+	m_type = ND_VT_INT;
+	m_data.i_val = 0;
+
+	*this = r;
+}
+
 //init
 //init set vale
 NDVarType::NDVarType(int a)
