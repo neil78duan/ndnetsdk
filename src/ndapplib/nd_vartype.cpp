@@ -183,6 +183,33 @@ NDVarType &NDVarType::operator =(const NDVarType&r)
 }
 
 
+bool NDVarType::checkValid()const
+{
+	switch (m_type)
+	{
+	case NDVarType::ND_VT_BINARY:		
+		if (m_data.bin_val && m_data.bin_val->size > 0) {
+			return true;
+		}
+		break;
+	case NDVarType::ND_VT_STRING:
+		if (m_data.str_val && *m_data.str_val) {
+			return true;
+		}
+		break;
+	default:
+		return 0 != m_data.i64_val;
+	}
+	return false;
+}
+bool NDVarType::isNumber()const
+{
+	if (m_type == NDVarType::ND_VT_BINARY || m_type == NDVarType::ND_VT_STRING) {
+		return false;
+	}
+	return true;
+}
+
 int NDVarType::getInt()const
 {
 	if (ND_VT_FLOAT == m_type) {
@@ -269,7 +296,8 @@ const char *NDVarType::getText()const
 		return NULL;
 	}
 }
-#if 0
+
+#if defined(ND_USE_STD_STRING)
 std::string NDVarType::getString()const
 {
 	char tmpbuf[32];
