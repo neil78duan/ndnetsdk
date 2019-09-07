@@ -11,7 +11,10 @@
 #include "nd_common/nd_export_def.h"
 #include "nd_common/nd_define.h"
 
-//#include <string>
+#define ND_USE_STD_STRING 1
+#ifdef ND_USE_STD_STRING
+#include <string>
+#endif 
 
 struct ndvtype_bin
 {
@@ -43,10 +46,11 @@ public:
 	};
 
 	NDVarType();
-	virtual ~NDVarType();
+	~NDVarType();
 
 	//init
 	//init set vale
+	NDVarType(const NDVarType &r);
 	NDVarType(int a);
 	NDVarType(NDUINT8 a);
 	NDVarType(NDUINT16 a);
@@ -88,7 +92,11 @@ public:
 	bool  operator !=(const NDVarType &r) const;
 
 	operator float() const { return getFloat(); }
-	operator int() const { return getFloat(); }
+	operator int() const { return getInt(); }
+	operator const char*() const { return getText(); }
+
+	bool checkValid()const;// check value is unzero
+	bool isNumber()const;
 
 	int getInt()const;
 	NDUINT8 getInt8()const;
@@ -97,7 +105,10 @@ public:
 	bool getBool()const;
 	float getFloat()const;
 	const char *getText()const;
-	//std::string getString()const;
+
+#ifdef ND_USE_STD_STRING
+	std::string getString()const;
+#endif 
 	void *getBin()const;
 	size_t getBinSize()const;
 	bool initSet(void *bindata, size_t size);
