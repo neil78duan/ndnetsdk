@@ -63,6 +63,7 @@ public:
 
     
     void InitType(NDVarType::NDVTYPE_ELEMENT_TYPE type);
+    void destroy();
 	NDVTYPE_ELEMENT_TYPE getDataType()const { return m_type; }
 
 	NDVarType &operator =(int a);
@@ -117,7 +118,6 @@ public:
 	bool initSet(void *bindata, size_t size);
 protected:
 	bool initSet(const char*);
-	void destroy();
 	NDVTYPE_ELEMENT_TYPE m_type;
 	ndvtype_data m_data;
 };
