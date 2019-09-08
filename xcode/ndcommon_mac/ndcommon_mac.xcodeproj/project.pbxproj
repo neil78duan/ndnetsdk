@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		070414182324A92600D18672 /* nd_protoStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070414162324A92600D18672 /* nd_protoStream.cpp */; };
+		070414192324A92600D18672 /* nd_vartype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070414172324A92600D18672 /* nd_vartype.cpp */; };
+		0704141B2324A93A00D18672 /* nd_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0704141A2324A93A00D18672 /* nd_version.cpp */; };
 		07272F232137FDCE00D66BB0 /* nd_logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 07272F222137FDCE00D66BB0 /* nd_logger.c */; };
 		0757AA3521A7D5B8001BAE36 /* nd_logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 07272F222137FDCE00D66BB0 /* nd_logger.c */; };
 		0757AA3621A7D5B8001BAE36 /* bintree.c in Sources */ = {isa = PBXBuildFile; fileRef = 077B89F4207C6BE800090DFD /* bintree.c */; };
@@ -144,6 +147,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		070414162324A92600D18672 /* nd_protoStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nd_protoStream.cpp; path = ndapplib/nd_protoStream.cpp; sourceTree = "<group>"; };
+		070414172324A92600D18672 /* nd_vartype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nd_vartype.cpp; path = ndapplib/nd_vartype.cpp; sourceTree = "<group>"; };
+		0704141A2324A93A00D18672 /* nd_version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nd_version.cpp; path = ndapplib/nd_version.cpp; sourceTree = "<group>"; };
 		07272F222137FDCE00D66BB0 /* nd_logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_logger.c; sourceTree = "<group>"; };
 		0757AA3121A7D4E1001BAE36 /* libndcommon.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libndcommon.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0757AA6221A7D5F6001BAE36 /* libiconv.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.tbd; path = usr/lib/libiconv.2.tbd; sourceTree = SDKROOT; };
@@ -260,6 +266,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		070414152324A8F700D18672 /* ndapplib */ = {
+			isa = PBXGroup;
+			children = (
+				0704141A2324A93A00D18672 /* nd_version.cpp */,
+				070414162324A92600D18672 /* nd_protoStream.cpp */,
+				070414172324A92600D18672 /* nd_vartype.cpp */,
+			);
+			name = ndapplib;
+			sourceTree = "<group>";
+		};
 		0757AA6121A7D5F6001BAE36 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -373,6 +389,7 @@
 		077B89D7207C6BE800090DFD /* src */ = {
 			isa = PBXGroup;
 			children = (
+				070414152324A8F700D18672 /* ndapplib */,
 				077B89D8207C6BE800090DFD /* build-lib */,
 				077B89D9207C6BE800090DFD /* Makefile */,
 				077B89DA207C6BE800090DFD /* nd_common */,
@@ -699,9 +716,11 @@
 				077B8B92207C6BE800090DFD /* prime.c in Sources */,
 				077B8B72207C6BE800090DFD /* nd_trace.c in Sources */,
 				077B8B4D207C6BE800090DFD /* Makefile in Sources */,
+				0704141B2324A93A00D18672 /* nd_version.cpp in Sources */,
 				077B8B9A207C6BE800090DFD /* nd_cryptfile.c in Sources */,
 				077B8B9D207C6BE800090DFD /* ndrsa.c in Sources */,
 				077B8BDF207C6BE800090DFD /* nd_vmdbg.c in Sources */,
+				070414182324A92600D18672 /* nd_protoStream.cpp in Sources */,
 				077B8B6F207C6BE800090DFD /* nd_str.c in Sources */,
 				077B8BE0207C6BE800090DFD /* nd_vmmain.c in Sources */,
 				077B8B73207C6BE800090DFD /* nd_unix.c in Sources */,
@@ -715,6 +734,7 @@
 				077B8BDC207C6BE800090DFD /* nd_asm.c in Sources */,
 				077B8B6B207C6BE800090DFD /* nd_iconv.c in Sources */,
 				077B8B71207C6BE800090DFD /* nd_timer.c in Sources */,
+				070414192324A92600D18672 /* nd_vartype.cpp in Sources */,
 				077B8B66207C6BE800090DFD /* callstack.c in Sources */,
 				077B8B9B207C6BE800090DFD /* nd_pubkey.c in Sources */,
 				077B8B65207C6BE800090DFD /* bintree.c in Sources */,

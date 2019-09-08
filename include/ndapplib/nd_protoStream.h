@@ -62,7 +62,7 @@ public:
 	int WriteBin(void *data, size_t size);
 	int WriteStream(char *stream_buf, size_t dataLen);
 
-	int WriteIp(ndip_t&);
+	//int WriteIp(ndip_t&);
 	int WriteVar(const NDVarType &value);
 
 	void SkipStructEndMark();
@@ -109,11 +109,12 @@ public:
 	int Read(int &a);
 	int Read(short &a);
 	int Read(NDProtoWriteStream &omsg);		//read all left data to omsg
-	int ReadIp(ndip_t &a);
+	//int ReadIp(ndip_t &a);
 	int ReadVar(NDVarType &var);
 	size_t Read(NDUINT8 *buf, size_t size);
 	size_t Read(char *buf, size_t size) { return	 Read((NDUINT8 *)buf, size); }
 	size_t ReadBin(void *buf, size_t size_buf);
+    size_t ReadStream(void *streamBuff, size_t readlen) ;
 
 	int  PeekBinSize(); //return -1 error
 	eNDnetStreamMarker PeekDataType();

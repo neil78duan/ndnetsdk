@@ -51,6 +51,7 @@ public:
 	//init
 	//init set vale
 	NDVarType(const NDVarType &r);
+    NDVarType(NDVarType::NDVTYPE_ELEMENT_TYPE type);
 	NDVarType(int a);
 	NDVarType(NDUINT8 a);
 	NDVarType(NDUINT16 a);
@@ -60,6 +61,8 @@ public:
 	NDVarType(const char* text);
 	NDVarType(void *bindata, size_t size);
 
+    
+    void InitType(NDVarType::NDVTYPE_ELEMENT_TYPE type);
 	NDVTYPE_ELEMENT_TYPE getDataType()const { return m_type; }
 
 	NDVarType &operator =(int a);

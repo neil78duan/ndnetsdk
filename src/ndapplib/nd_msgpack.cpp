@@ -127,6 +127,25 @@ size_t NDSendMsg::GetSerialBin(void *buf, size_t bufsize)
 	return len ;
 }
 
+int NDSendMsg::WriteIp(ndip_t& a)
+{
+    int ret = -1 ;
+    if (a.sin_family == AF_INET) {
+        if (-1 == _writeMarker(ENDSTREAM_MARKER_IP, 4)) {
+            return -1;
+        }
+        ret = WriteStream((char*)&a.ip, sizeof(a.ip)) ;
+    }
+    else {
+        if (-1 == _writeMarker(ENDSTREAM_MARKER_IP6, 0xf)) {
+            return -1;
+        }
+        
+        ret =WriteStream((char*)&a.ip, sizeof(a.ip6)) ;
+        
+    }
+    return ret;
+}
 size_t NDSendMsg::GetDataLen()	{ return ND_USERMSG_DATALEN(_packet); }
 
 
@@ -665,6 +684,32 @@ void NDRecvMsg::Init(nd_usermsgbuf_t *pmsg)
 
 }
 
+int NDRecvMsg::ReadIp(ndip_t &a)
+{
+    eNDnetStreamMarker type;
+    NDUINT8 size;
+    m_bStruckEndMarker = false;
+    if (-1 == _ReadTypeSize(type, size) || m_bStruckEndMarker) {
+        return -1;
+    }
+    size_t readlen = 4;
+    if (type == ENDSTREAM_MARKER_IP)    {
+        a.sin_family = AF_INET;
+        readlen = sizeof(a.ip);
+    }
+    else if (type == ENDSTREAM_MARKER_IP6) {
+        a.sin_family = AF_INET6;
+        readlen = sizeof(a.ip6);
+    }
+    else {
+        return -1;
+    }
+    
+    if(ReadStream(a.ip6, readlen) >0) {
+        return 0;
+    }
+    return -1;
+}
 int NDRecvMsg::ToFile(const char *file)const
 {
 	return _write_file(file, recv_packet);

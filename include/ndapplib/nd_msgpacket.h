@@ -62,6 +62,8 @@ public:
 	size_t GetSerialBin(void *buf, size_t bufsize) ;	//get all message data as stream-data	
 	size_t GetDataLen();
 
+    int WriteIp(ndip_t& ) ;
+    
 	int ToFile(const char *file)const;
 	int FromFile(const char *file);
 
@@ -153,6 +155,7 @@ public:
 	inline char *MsgData() {return recv_packet->data ;}
 	inline nd_usermsgbuf_t *GetMsgAddr() {return recv_packet ;}
 	
+    int ReadIp(ndip_t &a) ;
 	size_t GetDataLen();
 	size_t GetSerialBin(void *buf, size_t bufsize);	
 protected:

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0704140F2324986C00D18672 /* nd_protoStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0704140E2324986B00D18672 /* nd_protoStream.cpp */; };
+		070414122324988B00D18672 /* nd_protoStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 070414102324988B00D18672 /* nd_protoStream.h */; };
+		070414132324988B00D18672 /* nd_vartype.h in Headers */ = {isa = PBXBuildFile; fileRef = 070414112324988B00D18672 /* nd_vartype.h */; };
+		0704141423249F0D00D18672 /* nd_protoStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0704140E2324986B00D18672 /* nd_protoStream.cpp */; };
 		07079A57231FEE0B001F6983 /* nd_vartype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07079A56231FEE0B001F6983 /* nd_vartype.cpp */; };
 		07079A5D231FEF00001F6983 /* nd_vartype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07079A56231FEE0B001F6983 /* nd_vartype.cpp */; };
 		07108C9A20905CFE0028321B /* nd_iBaseObj.h in Headers */ = {isa = PBXBuildFile; fileRef = 07108C9920905CFE0028321B /* nd_iBaseObj.h */; };
@@ -300,6 +304,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0704140E2324986B00D18672 /* nd_protoStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_protoStream.cpp; sourceTree = "<group>"; };
+		070414102324988B00D18672 /* nd_protoStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_protoStream.h; sourceTree = "<group>"; };
+		070414112324988B00D18672 /* nd_vartype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_vartype.h; sourceTree = "<group>"; };
 		07079A56231FEE0B001F6983 /* nd_vartype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_vartype.cpp; sourceTree = "<group>"; };
 		07108C9920905CFE0028321B /* nd_iBaseObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_iBaseObj.h; sourceTree = "<group>"; };
 		071156BE1AD415BB003B3B46 /* session.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = session.c; sourceTree = "<group>"; };
@@ -746,6 +753,7 @@
 		07EBCF1019A8DFCD00802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				0704140E2324986B00D18672 /* nd_protoStream.cpp */,
 				07079A56231FEE0B001F6983 /* nd_vartype.cpp */,
 				075C58012297971C00A89A1E /* nd_baseConn.cpp */,
 				07728B4F20BE8947006CDB04 /* nd_sysmsg.cpp */,
@@ -894,6 +902,8 @@
 		07EBD01119A8E01500802576 /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				070414102324988B00D18672 /* nd_protoStream.h */,
+				070414112324988B00D18672 /* nd_vartype.h */,
 				0749E863229D2D9F00630782 /* nd_objfactory.h */,
 				075C57FF2297900200A89A1E /* nd_baseConn.h */,
 				07728B5120BE895C006CDB04 /* nd_sysmsg.h */,
@@ -954,6 +964,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				070414132324988B00D18672 /* nd_vartype.h in Headers */,
 				07EBD06619A8E01500802576 /* nd_threadsrv.h in Headers */,
 				07EBD07419A8E01500802576 /* readcfg.h in Headers */,
 				07EBD05F19A8E01500802576 /* nd_udthdr.h in Headers */,
@@ -1000,6 +1011,7 @@
 				07EBD06C19A8E01500802576 /* nd_containerXL.h in Headers */,
 				07EBD03219A8E01500802576 /* nd_common.h in Headers */,
 				07EBD04219A8E01500802576 /* nd_crypt.h in Headers */,
+				070414122324988B00D18672 /* nd_protoStream.h in Headers */,
 				07EBD06B19A8E01500802576 /* nd_connector.h in Headers */,
 				07EBD05319A8E01500802576 /* nd_msgentry.h in Headers */,
 				07EBD07D19A8E01500802576 /* nd_stlset.h in Headers */,
@@ -1137,6 +1149,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0704141423249F0D00D18672 /* nd_protoStream.cpp in Sources */,
 				07079A5D231FEF00001F6983 /* nd_vartype.cpp in Sources */,
 				075C58032297C20600A89A1E /* nd_baseConn.cpp in Sources */,
 				0757AAB521A7D72D001BAE36 /* nd_sysmsg.cpp in Sources */,
@@ -1312,6 +1325,7 @@
 				07EBCF9919A8DFCD00802576 /* srvcore.c in Sources */,
 				07EBCF7919A8DFCD00802576 /* r_keygen.c in Sources */,
 				07EBCF6A19A8DFCD00802576 /* nd_xml.c in Sources */,
+				0704140F2324986C00D18672 /* nd_protoStream.cpp in Sources */,
 				07EBCF8F19A8DFCD00802576 /* udt_socket.c in Sources */,
 				07EBCF9A19A8DFCD00802576 /* thread_srv.c in Sources */,
 				078966C7207F068900A38013 /* nd_httpListener.cpp in Sources */,

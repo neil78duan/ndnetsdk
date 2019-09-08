@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0704140C2324985300D18672 /* nd_protoStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0704140B2324985300D18672 /* nd_protoStream.cpp */; };
+		0704140D2324985300D18672 /* nd_protoStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0704140B2324985300D18672 /* nd_protoStream.cpp */; };
 		07079A5B231FEED1001F6983 /* nd_vartype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07079A5A231FEED1001F6983 /* nd_vartype.cpp */; };
 		07079A5C231FEED1001F6983 /* nd_vartype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07079A5A231FEED1001F6983 /* nd_vartype.cpp */; };
 		071780B11C05A00B00C47A99 /* libiconv.2.4.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 071780B01C05A00B00C47A99 /* libiconv.2.4.0.tbd */; };
@@ -224,6 +226,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0704140B2324985300D18672 /* nd_protoStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_protoStream.cpp; sourceTree = "<group>"; };
 		07079A5A231FEED1001F6983 /* nd_vartype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_vartype.cpp; sourceTree = "<group>"; };
 		071780B01C05A00B00C47A99 /* libiconv.2.4.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.2.4.0.tbd; path = usr/lib/libiconv.2.4.0.tbd; sourceTree = SDKROOT; };
 		07272F1A2137FCE700D66BB0 /* nd_logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_logger.c; sourceTree = "<group>"; };
@@ -404,6 +407,7 @@
 		075C580A22983F2F00A89A1E /* ndapplib */ = {
 			isa = PBXGroup;
 			children = (
+				0704140B2324985300D18672 /* nd_protoStream.cpp */,
 				07079A5A231FEED1001F6983 /* nd_vartype.cpp */,
 				075C580B22983F2F00A89A1E /* nd_object.cpp */,
 				075C582422983F2F00A89A1E /* nd_connector.cpp */,
@@ -989,6 +993,7 @@
 				07A2688919C7F4F000F51698 /* nd_trace.c in Sources */,
 				07A268C419C7F4F000F51698 /* nd_pubkey.c in Sources */,
 				07A268C119C7F4F000F51698 /* r_stdlib.c in Sources */,
+				0704140C2324985300D18672 /* nd_protoStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1006,6 +1011,7 @@
 				07079A5C231FEED1001F6983 /* nd_vartype.cpp in Sources */,
 				07E1EC13230903A400AD5883 /* nd_logger.c in Sources */,
 				07E1EC14230903A400AD5883 /* nd_time.c in Sources */,
+				0704140D2324985300D18672 /* nd_protoStream.cpp in Sources */,
 				07E1EC15230903A400AD5883 /* nd_cmdline.c in Sources */,
 				07E1EC16230903A400AD5883 /* nd_iconv.c in Sources */,
 				07E1EC17230903A400AD5883 /* bintree.c in Sources */,

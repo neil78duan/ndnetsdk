@@ -34,6 +34,13 @@ OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_msgpack.o
 OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_baseConn.o
 OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_object.o
 OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_connector.o
+OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_vartype.o
+OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_protoStream.o
+OBJ_CLIENT += $(TOPDIR)/src/ndapplib/obj/nd_version.o
+
+OBJ_COMMON += $(TOPDIR)/src/ndapplib/obj/nd_vartype.o
+OBJ_COMMON += $(TOPDIR)/src/ndapplib/obj/nd_protoStream.o
+OBJ_COMMON += $(TOPDIR)/src/ndapplib/obj/nd_version.o
 
 ##############set flag
 

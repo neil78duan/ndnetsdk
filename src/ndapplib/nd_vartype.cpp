@@ -25,6 +25,11 @@ NDVarType::NDVarType(const NDVarType &r)
 	*this = r;
 }
 
+NDVarType::NDVarType(NDVarType::NDVTYPE_ELEMENT_TYPE type)
+{
+    destroy();
+    m_type = type;
+}
 //init
 //init set vale
 NDVarType::NDVarType(int a)
@@ -69,6 +74,11 @@ NDVarType::NDVarType(void *bindata, size_t size)
 	initSet(bindata, size);
 }
 
+void NDVarType::InitType(NDVarType::NDVTYPE_ELEMENT_TYPE type)
+{
+    destroy();
+    m_type = type;
+}
 
 void NDVarType::destroy()
 {
