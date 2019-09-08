@@ -9,6 +9,40 @@
 #include "nd_common/nd_str.h"
 #include <stdlib.h>
 
+static const char* _varTypeName[] = {
+    "int" , "float", "string", "int8", "int16", "long", "binary"
+} ;
+
+
+
+NDVarType::NDVTYPE_ELEMENT_TYPE NDVarType::getTypeByName(const char *name)
+{
+    if(name && *name){
+        for (int i=0; i<ND_ELEMENTS_NUM(_varTypeName); i++) {
+            if(0==ndstricmp(name, _varTypeName[i])) {
+                return (NDVarType::NDVTYPE_ELEMENT_TYPE)i ;
+            }
+        }
+    }
+    return NDVarType::ND_VT_FLOAT;
+}
+
+const char* NDVarType::getNameBytype(int type)
+{
+    if(type >= ND_ELEMENTS_NUM(_varTypeName) || type < 0) {
+        return _varTypeName[0] ;
+    }
+    return  _varTypeName[type] ;
+}
+
+bool NDVarType::isNumber(int type)
+{
+    if (type == NDVarType::ND_VT_BINARY || type == NDVarType::ND_VT_STRING) {
+        return false;
+    }
+    return true;
+}
+
 NDVarType::NDVarType() : m_type(ND_VT_INT)
 {
 	m_data.i64_val = 0;
@@ -220,13 +254,22 @@ bool NDVarType::checkValid()const
 	}
 	return false;
 }
-bool NDVarType::isNumber()const
-{
-	if (m_type == NDVarType::ND_VT_BINARY || m_type == NDVarType::ND_VT_STRING) {
-		return false;
-	}
-	return true;
-}
+//
+//bool NDVarType::isNumber(int type)
+//{
+//    if (type == NDVarType::ND_VT_BINARY || type == NDVarType::ND_VT_STRING) {
+//        return false;
+//    }
+//    return true;
+//}
+//
+//bool NDVarType::isNumber()const
+//{
+//    if (m_type == NDVarType::ND_VT_BINARY || m_type == NDVarType::ND_VT_STRING) {
+//        return false;
+//    }
+//    return true;
+//}
 
 int NDVarType::getInt()const
 {

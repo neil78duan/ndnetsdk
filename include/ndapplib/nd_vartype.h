@@ -42,7 +42,7 @@ public:
 		ND_VT_INT8 = 0x3,
 		ND_VT_INT16 = 0x4,
 		ND_VT_INT64 = 0x5,
-		ND_VT_BINARY = 0x7
+		ND_VT_BINARY = 0x6
 	};
 
 	NDVarType();
@@ -100,7 +100,7 @@ public:
 	operator const char*() const { return getText(); }
 
 	bool checkValid()const;// check value is unzero
-	bool isNumber()const;
+    bool isNumber()const {return NDVarType::isNumber(m_type);}
 
 	int getInt()const;
 	NDUINT8 getInt8()const;
@@ -109,6 +109,10 @@ public:
 	bool getBool()const;
 	float getFloat()const;
 	const char *getText()const;
+    
+    static NDVarType::NDVTYPE_ELEMENT_TYPE getTypeByName(const char *teypName) ;
+    static const char* getNameBytype(int type) ;
+    static bool isNumber(int type) ;
 
 #ifdef ND_USE_STD_STRING
 	std::string getString()const;
