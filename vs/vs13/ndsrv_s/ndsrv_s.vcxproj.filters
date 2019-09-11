@@ -551,9 +551,6 @@
     <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_listen.c">
       <Filter>src\srvcoe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_nodemgr.c">
-      <Filter>src\srvcoe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nd_srvcore\src\srvcore.c">
       <Filter>src\srvcoe</Filter>
     </ClCompile>

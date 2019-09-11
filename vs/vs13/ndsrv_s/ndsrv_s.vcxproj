@@ -363,7 +363,6 @@
     <ClCompile Include="..\..\..\src\nd_srvcore\src\session.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\srvcore.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_listen.c" />
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_nodemgr.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\thread_srv.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\udp_listen.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.c" />

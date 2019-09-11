@@ -9,9 +9,69 @@
 #define ND_IMPLEMENT_HANDLE
 typedef struct netui_info *nd_handle;
 
-//#include "nd_common/nd_common.h"
 #include "nd_srvcore/nd_srvlib.h"
-//#include "nd_net/nd_netlib.h"
+#if !defined(ND_UNIX) 
+#include "../win_iocp/nd_iocp.h"
+#endif 
+
+
+/*deal with received net message
+ * return -1 connect closed
+ * return 0 nothing to be done
+ * else return received data length
+ */
+int nd_do_netmsg(struct nd_client_map *cli_map, struct nd_srv_node *srv_node)
+{
+	ENTER_FUNC()
+		int read_len, ret = 0;
+	nd_assert(cli_map);
+	nd_assert(check_connect_valid(&(cli_map->connect_node)));
+	if (!nd_handle_checkvalid((nd_handle)cli_map, NDHANDLE_TCPNODE)) {
+		LEAVE_FUNC();
+		return -1;
+	}
+
+	if (NDERR_USER_BREAK == cli_map->connect_node.myerrno) {
+		//用户需要暂停消息处理
+		LEAVE_FUNC();
+		return 0;
+	}
+
+	cli_map->connect_node.myerrno = NDERR_SUCCESS;
+
+RE_READ:
+	read_len = nd_tcpnode_read(&(cli_map->connect_node));
+
+	if (-1 == read_len) {
+		if (cli_map->connect_node.myerrno == NDERR_WOULD_BLOCK) {
+			LEAVE_FUNC();
+			return 0;
+		}
+		else {
+			LEAVE_FUNC();
+			return -1;		//need closed
+		}
+	}
+	else if (read_len > 0) {
+
+		ret += read_len;
+		if (-1 == handle_recv_data((nd_netui_handle)cli_map, (nd_handle)srv_node)) {
+			LEAVE_FUNC();
+			return -1;
+		}
+		if (TCPNODE_READ_AGAIN(&(cli_map->connect_node)) && cli_map->connect_node.myerrno == NDERR_SUCCESS) {
+			/*read buf is to small , after parse data , read again*/
+			goto RE_READ;
+		}
+
+	}
+	if (NDERR_USER_BREAK == cli_map->connect_node.myerrno) {
+		cli_map->connect_node.myerrno = NDERR_SUCCESS;
+	}
+	LEAVE_FUNC();
+	return ret;
+
+}
 
 
 int tcp_client_close(struct nd_client_map* cli_map, int force)
@@ -180,3 +240,96 @@ int _tcp_session_update(nd_session_handle handle)
 	return ret ;
 }
 
+
+
+#define INIT_SESSION_BUFF(session) \
+	(session)->connect_node.send_buffer.is_alloced = 0 ;	\
+	(session)->connect_node.recv_buffer.is_alloced = 0 ;	\
+	(session)->connect_node.send_buffer.__buf = (session)->__sendbuf ;	\
+	(session)->connect_node.recv_buffer.__buf = (session)->__recvbuf ;	\
+	(session)->connect_node.send_buffer.buf_capacity = sizeof((session)->__sendbuf );	\
+	(session)->connect_node.recv_buffer.buf_capacity = sizeof((session)->__recvbuf );	\
+	ndlbuf_reset(&((session)->connect_node.send_buffer)) ;				\
+	ndlbuf_reset(&((session)->connect_node.recv_buffer)) 
+
+void nd_tcpcm_init(struct nd_client_map *client_map, nd_handle h_listen)
+{
+	memset(client_map, 0, sizeof(struct nd_client_map));
+	_tcp_connector_init(&(client_map->connect_node));
+	//init buff
+	INIT_SESSION_BUFF(client_map);
+
+	INIT_LIST_HEAD(&(client_map->map_list));
+	client_map->connect_node.is_session = 1;
+	client_map->connect_node.size = sizeof(struct nd_client_map);
+
+	client_map->connect_node.disconn_timeout = ((struct listen_contex*)h_listen)->operate_timeout;
+	client_map->connect_node.close_entry = (nd_close_callback)tcp_client_close;
+
+	client_map->connect_node.msg_entry = ((struct nd_srv_node*)h_listen)->msg_entry;
+
+	client_map->connect_node.data_entry = ((struct nd_srv_node*)h_listen)->data_entry;
+	client_map->connect_node.update_entry = (net_update_entry)_tcp_session_update;
+}
+void nd_client_map_destroy(struct nd_client_map *client_map)
+{
+	ndlbuf_destroy(&client_map->connect_node.send_buffer);
+	ndlbuf_destroy(&client_map->connect_node.recv_buffer);
+}
+
+void udt_clientmap_init(struct nd_udtcli_map *node, nd_handle h_listen)
+{
+	memset(node, 0, sizeof(*node));
+	_udt_connector_init(&node->connect_node);
+
+	INIT_SESSION_BUFF(node);
+
+	INIT_LIST_HEAD(&(node->map_list));
+	node->connect_node.is_session = 1;
+	node->connect_node.size = sizeof(struct nd_udtcli_map);
+
+	node->connect_node.disconn_timeout = ((struct listen_contex*)h_listen)->operate_timeout;
+	node->connect_node.close_entry = (nd_close_callback)udt_close;
+
+	node->connect_node.data_entry = ((struct nd_srv_node*)h_listen)->data_entry;
+
+	node->connect_node.msg_entry = ((struct nd_srv_node*)h_listen)->msg_entry;
+	//node->connect_node.update_entry = (net_update_entry)_tcp_session_update ;
+}
+
+/* get client header size*/
+size_t nd_getclient_hdr_size(int iomod)
+{
+	size_t ret;
+	switch (iomod)
+	{
+		//case ND_LISTEN_UDT_DATAGRAM:
+	case ND_LISTEN_UDT_STREAM:
+		ret = sizeof(struct nd_udtcli_map);
+		break;
+	case ND_LISTEN_OS_EXT:
+#if !defined(ND_UNIX)
+		ret = sizeof(struct nd_client_map_iocp);
+		break;
+#endif
+	case 	ND_LISTEN_COMMON:
+	default:
+		ret = sizeof(struct nd_client_map);
+		break; ;
+	}
+	return ret;
+}
+
+
+void *nd_session_getdata(nd_netui_handle session)
+{
+	size_t size = session->size;
+	if (size & 7) {
+		size += 8;
+		size &= ~7;
+	}
+#ifdef ND_DEBUG
+	//nd_assert(nd_session_valid(session)) ;
+#endif
+	return (void*)(((char*)session) + size);
+}

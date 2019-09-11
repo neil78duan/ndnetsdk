@@ -280,64 +280,6 @@ void host_congest(ndsocket_t fd)
 	nd_socket_close(fd) ;
 }
 
-/*deal with received net message
- * return -1 connect closed
- * return 0 nothing to be done 
- * else return received data length
- */
-int nd_do_netmsg(struct nd_client_map *cli_map,struct nd_srv_node *srv_node) 
-{
-	ENTER_FUNC()	
-	int read_len,ret = 0;
-	nd_assert(cli_map) ;
-	nd_assert(check_connect_valid(& (cli_map->connect_node))) ;
-	if (!nd_handle_checkvalid((nd_handle)cli_map,NDHANDLE_TCPNODE)){
-		LEAVE_FUNC();
-		return -1;
-	}
-
-	if (NDERR_USER_BREAK == cli_map->connect_node.myerrno){
-		//用户需要暂停消息处理
-		LEAVE_FUNC();
-		return 0 ;
-	}
-
-	cli_map->connect_node.myerrno = NDERR_SUCCESS ;
-
-RE_READ:
-	read_len = nd_tcpnode_read(& (cli_map->connect_node)) ;
-	
-	if(-1== read_len) {
-		if(cli_map->connect_node.myerrno==NDERR_WOULD_BLOCK) {
-			LEAVE_FUNC();
-			return 0 ;
-		}
-		else {
-			LEAVE_FUNC();
-			return -1 ;		//need closed
-		}
-	}
-	else if(read_len > 0) {
-		
-		ret += read_len ;
-		if(-1==handle_recv_data((nd_netui_handle)cli_map,(nd_handle)srv_node) ) {
-			LEAVE_FUNC();
-			return -1 ;
-		}
-		if(TCPNODE_READ_AGAIN(&(cli_map->connect_node)) && cli_map->connect_node.myerrno==NDERR_SUCCESS) {
-			/*read buf is to small , after parse data , read again*/
-			goto RE_READ;
-		}
-	
-	}
-	if (NDERR_USER_BREAK == cli_map->connect_node.myerrno){
-		cli_map->connect_node.myerrno = NDERR_SUCCESS ;
-	}
-	LEAVE_FUNC();
-	return ret ;
-	
-}
-
 nd_handle nd_listensrv_get_cmallocator(struct listen_contex * handle) 
 {
 	return   nd_srv_get_allocator(&handle->tcp) ;
