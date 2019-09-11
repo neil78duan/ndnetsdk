@@ -19,9 +19,6 @@
     <Filter Include="Source Files\ndapplib">
       <UniqueIdentifier>{bec50d46-e9b7-48ac-b767-50a217c5a4da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\srvcore">
-      <UniqueIdentifier>{885a4d3a-e40c-40cf-b449-16ba3137abe8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\nd_net">
       <UniqueIdentifier>{b04dfeb0-f353-4852-8ef5-7312e3389350}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,9 @@
     </Filter>
     <Filter Include="Header Files\ndvm">
       <UniqueIdentifier>{75b0f86c-7db0-482b-898a-97185dda8905}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\srvcoe">
+      <UniqueIdentifier>{74b34401-3a97-4da3-916c-b667ffadce91}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -144,42 +144,6 @@
     <ClCompile Include="..\..\..\src\ndapplib\unix_sig.c">
       <Filter>Source Files\ndapplib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\client_map.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_netthread.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thmsg.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thpoolio.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\session.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_listen.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_nodemgr.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srvcore.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\thread_srv.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\udp_listen.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\thread_iocp.c">
-      <Filter>Source Files\srvcore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp">
       <Filter>Source Files\ndapplib</Filter>
     </ClCompile>
@@ -188,6 +152,33 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_vartype.cpp">
       <Filter>Source Files\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thmsg.c">
+      <Filter>Source Files\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\session.c">
+      <Filter>Source Files\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\udp_listen.c">
+      <Filter>Source Files\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.c">
+      <Filter>Source Files\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\thread_iocp.c">
+      <Filter>Source Files\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_srvobj.c">
+      <Filter>Source Files\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_listenth.c">
+      <Filter>Source Files\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_srvlib.c">
+      <Filter>Source Files\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thread.c">
+      <Filter>Source Files\srvcoe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -498,6 +489,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\ndapplib\nd_vartype.h">
       <Filter>Header Files\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.h">
+      <Filter>Source Files\srvcoe</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

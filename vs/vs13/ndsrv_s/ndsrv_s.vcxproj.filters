@@ -539,22 +539,7 @@
     <ClCompile Include="..\..\..\src\ndapplib\unix_sig.c">
       <Filter>src\ndapplib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\client_map.c">
-      <Filter>src\srvcoe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thmsg.c">
-      <Filter>src\srvcoe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thpoolio.c">
-      <Filter>src\srvcoe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_listen.c">
-      <Filter>src\srvcoe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srvcore.c">
-      <Filter>src\srvcoe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\thread_srv.c">
       <Filter>src\srvcoe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\nd_srvcore\src\udp_listen.c">
@@ -632,9 +617,6 @@
     <ClCompile Include="..\..\..\src\ndapplib\httpParser.cpp">
       <Filter>src\ndapplib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_netthread.c">
-      <Filter>src\srvcoe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\nd_common\src\cJSON.c">
       <Filter>src\common</Filter>
     </ClCompile>
@@ -655,6 +637,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_protoStream.cpp">
       <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_srvobj.c">
+      <Filter>src\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_listenth.c">
+      <Filter>src\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_srvlib.c">
+      <Filter>src\srvcoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thread.c">
+      <Filter>src\srvcoe</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

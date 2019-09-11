@@ -183,15 +183,12 @@ copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
     <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c" />
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\client_map.c" />
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_netthread.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_listenth.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_srvlib.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_srvobj.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thmsg.c" />
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thpoolio.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_thread.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\session.c" />
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srvcore.c" />
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_listen.c" />
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\srv_nodemgr.c" />
-    <ClCompile Include="..\..\..\src\nd_srvcore\src\thread_srv.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\udp_listen.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\win_iocp\thread_iocp.c" />
@@ -301,6 +298,7 @@ copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin</Command>
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadmsgid.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadsrv.h" />
     <ClInclude Include="..\..\..\include\nd_vm\nd_vm.h" />
+    <ClInclude Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
