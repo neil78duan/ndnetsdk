@@ -10,36 +10,12 @@
 #define _ND_THPOOL_H_
 
 //#include "nd_common/nd_common.h"
-#include "nd_srvcore/client_map.h"
 #include "nd_srvcore/nd_session.h"
-#include "nd_srvcore/nd_listensrv.h"
+#include "nd_srvcore/nd_srvobj.h"
 
 #define USE_NEW_MODE_LISTEN_THREAD 1 
 
-#if !defined (USE_NEW_MODE_LISTEN_THREAD)
-#pragma  warning(push)
-#pragma warning (disable : 4200 )
-struct thread_pool_info 
-{
-	ndthread_t thid ;
-	HANDLE iopc_handle ;
-	struct listen_contex *lh;
-	struct list_head list ;
-	int max_sessions ;
-	int session_num ;
-	struct node_root  *connector_hub ;			//connector manager
-	NDUINT16 sid_buf[0] ;
-
-};
-#pragma  warning(pop)
-
-int nd_srvnode_create(struct node_root *root, int max_num, size_t node_size, NDUINT16 start_id, nd_handle mmpool);
-void nd_srvnode_destroy(struct node_root *root);
-
-#else 
-#include "nd_srvcore/nd_netthread.h"
-#define thread_pool_info nd_netth_context 
-#endif
+#define thread_pool_info nd_netth_context
 
 #ifdef ND_DEBUG
 #define SESSION_IN_THREAD_LOW_NUM 4 //if session number in current thread more than this , it will be switch to other thread 

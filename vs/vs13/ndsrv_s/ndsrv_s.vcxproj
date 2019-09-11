@@ -268,15 +268,13 @@
     <ClInclude Include="..\..\..\include\nd_net\nd_udp.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_udt.h" />
     <ClInclude Include="..\..\..\include\nd_net\nd_udthdr.h" />
-    <ClInclude Include="..\..\..\include\nd_srvcore\client_map.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_epoll.h" />
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_listensrv.h" />
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_netthread.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_session.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_srvlib.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_srvobj.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_thpool.h" />
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_thread.h" />
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadmsgid.h" />
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadsrv.h" />
     <ClInclude Include="..\..\..\include\nd_vm\nd_vm.h" />
     <ClInclude Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.h" />
   </ItemGroup>

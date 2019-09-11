@@ -13,8 +13,8 @@
 //#define USER_THREAD_POLL		//是否使用线程模式
 
 #define IOCP_DELAY_CLOSE_TIME		(10*1000)	//延迟10秒关闭
-#include "nd_srvcore/client_map.h"
-#include "nd_srvcore/nd_listensrv.h"
+#include "nd_srvcore/nd_session.h"
+#include "nd_srvcore/nd_srvobj.h"
 //#include "nd_srvcore/nd_srvlib.h"
 typedef BOOL (WINAPI *BindIoCPCallback)(
 	HANDLE FileHandle,                         // handle to file

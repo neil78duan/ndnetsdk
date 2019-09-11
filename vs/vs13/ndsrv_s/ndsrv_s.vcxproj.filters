@@ -213,13 +213,7 @@
     <ClInclude Include="..\..\..\include\nd_crypt\rsah\rsaref.h">
       <Filter>include\crypt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\client_map.h">
-      <Filter>include\srvcore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_epoll.h">
-      <Filter>include\srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_listensrv.h">
       <Filter>include\srvcore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_session.h">
@@ -232,9 +226,6 @@
       <Filter>include\srvcore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadmsgid.h">
-      <Filter>include\srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadsrv.h">
       <Filter>include\srvcore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\ndapplib\applib.h">
@@ -351,9 +342,6 @@
     <ClInclude Include="..\..\..\include\ndapplib\httpParser.h">
       <Filter>include\ndapplib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_netthread.h">
-      <Filter>include\srvcore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\cJSON.h">
       <Filter>include\common</Filter>
     </ClInclude>
@@ -380,6 +368,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\ndapplib\nd_protoStream.h">
       <Filter>include\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_thread.h">
+      <Filter>include\srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_srvobj.h">
+      <Filter>include\srvcore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

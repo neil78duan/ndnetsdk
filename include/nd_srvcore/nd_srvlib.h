@@ -10,12 +10,10 @@
 #include "nd_common/nd_common.h"
 #include "nd_net/nd_netlib.h"
 
-
-#include "nd_srvcore/nd_threadsrv.h"
+#include "nd_srvcore/nd_thread.h"
 #include "nd_srvcore/nd_thpool.h"
-#include "nd_srvcore/client_map.h"
 #include "nd_srvcore/nd_session.h"
-#include "nd_srvcore/nd_listensrv.h"
+#include "nd_srvcore/nd_srvobj.h"
 #include "nd_srvcore/nd_threadmsgid.h"
 
 ND_SRV_API int nd_srvcore_init(void);
