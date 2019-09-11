@@ -22,9 +22,6 @@
     <Filter Include="Header Files\nd_net">
       <UniqueIdentifier>{b04dfeb0-f353-4852-8ef5-7312e3389350}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\nd_srvcore">
-      <UniqueIdentifier>{6740ee62-b4b0-4471-9a37-6376c84a97b5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\ndapplib">
       <UniqueIdentifier>{82dc41d2-8422-47e2-9235-c610e79d25dd}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,9 @@
     </Filter>
     <Filter Include="Source Files\srvcoe">
       <UniqueIdentifier>{74b34401-3a97-4da3-916c-b667ffadce91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\srvcore">
+      <UniqueIdentifier>{f7fa491c-05f8-4119-b55d-4786130f4118}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -234,33 +234,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\nd_net\nd_udthdr.h">
       <Filter>Header Files\nd_net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\client_map.h">
-      <Filter>Header Files\nd_srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_epoll.h">
-      <Filter>Header Files\nd_srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_listensrv.h">
-      <Filter>Header Files\nd_srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_netthread.h">
-      <Filter>Header Files\nd_srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_session.h">
-      <Filter>Header Files\nd_srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_srvlib.h">
-      <Filter>Header Files\nd_srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_thpool.h">
-      <Filter>Header Files\nd_srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadmsgid.h">
-      <Filter>Header Files\nd_srvcore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadsrv.h">
-      <Filter>Header Files\nd_srvcore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\ndapplib\applib.h">
       <Filter>Header Files\ndapplib</Filter>
@@ -492,6 +465,27 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\nd_srvcore\win_iocp\nd_iocp.h">
       <Filter>Source Files\srvcoe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_epoll.h">
+      <Filter>Header Files\srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_session.h">
+      <Filter>Header Files\srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_srvlib.h">
+      <Filter>Header Files\srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_srvobj.h">
+      <Filter>Header Files\srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_thpool.h">
+      <Filter>Header Files\srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_thread.h">
+      <Filter>Header Files\srvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nd_srvcore\nd_threadmsgid.h">
+      <Filter>Header Files\srvcore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
