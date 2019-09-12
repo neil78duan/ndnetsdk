@@ -35,7 +35,7 @@ static int _check_session_valid_async(nd_handle session, NDUINT16 sid, struct li
 }
 
 // send message to client whatever the session is belone self-thread or other
-int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle,int encrypt) 
+int nd_session_send_id(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_handle,int encrypt) 
 {
 	int ret =0 ;
 	ndthread_t thid ;
@@ -47,7 +47,7 @@ int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle list
 		return -1 ;
 	}
 	else if(0==sessionid) {
-		return nd_sendto_all_ex(data, listen_handle, 0,encrypt) ;
+		return nd_session_send_all(data, listen_handle, 0,encrypt) ;
 	}
 	
 	thid = nd_node_get_owner(pmanger,sessionid ) ;
@@ -82,7 +82,7 @@ int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle list
 	return ret ;
 }
 
-int nd_sendto_all_ex(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level,int encrypt)
+int nd_session_send_all(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_level,int encrypt)
 {
 	NDUINT8 ver ;
 	int ret = 0;	
@@ -267,7 +267,7 @@ int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid)
 	if (thid == aimid) {
 		return 0 ;
 	}
-	pthinfo = get_thread_poolinf(h,thid) ;
+	pthinfo = nd_thpool_get_info(h,thid) ;
 	if(!pthinfo) {
 		return -1 ;
 	}

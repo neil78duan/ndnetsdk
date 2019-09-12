@@ -151,10 +151,6 @@ static __INLINE__ int nd_listener_get_empty_timeout(nd_listen_handle h)
 }
 
 
-//create listen thread
-//ND_SRV_API nd_thsrvid_t nd_listener_th_open(nd_listen_handle h);
-//ND_SRV_API int nd_listener_th_close(nd_listen_handle h,nd_thsrvid_t thid);
-
 //attach connector to listener 
 ND_SRV_API NDUINT16 nd_listener_attach(nd_listen_handle h_listen, nd_handle h_connector, nd_thsrvid_t thid) ;
 ND_SRV_API int nd_listener_deattach(nd_listen_handle h_listen, nd_handle h_connector,nd_thsrvid_t thid) ;

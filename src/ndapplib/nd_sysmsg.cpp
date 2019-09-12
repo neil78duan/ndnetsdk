@@ -72,7 +72,7 @@ MSG_ENTRY_INSTANCE(nd_transfer_to_client)
 	NDOStreamMsg omsg(inmsg.MsgMaxid(), inmsg.MsgMinid());
 	inmsg.Read(omsg);
 
-	if (-1 == nd_send_tocliet(sid, (nd_usermsghdr_t*)omsg.GetMsgAddr(), h_listen)) {
+	if (-1 == nd_session_msg_send_id(sid, (nd_usermsghdr_t*)omsg.GetMsgAddr(), h_listen)) {
 		nd_logmsg("nd_netmsg_handle() to %d error\n", sid);
 	}
 	return 0;

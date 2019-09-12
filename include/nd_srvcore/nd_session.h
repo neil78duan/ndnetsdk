@@ -99,6 +99,22 @@ static __INLINE__ int nd_sessionmsg_sendex(nd_handle session_handle,nd_usermsghd
 #define nd_sessionmsg_writebuf(session,msg) nd_sessionmsg_sendex((nd_handle)(session),(nd_usermsghdr_t*)(msg),ESF_WRITEBUF) 
 #define nd_sessionmsg_send_urgen(session,msg) nd_sessionmsg_sendex((nd_handle)(session),(nd_usermsghdr_t*)(msg),ESF_URGENCY) 
 #define nd_sessionmsg_post(session,msg) nd_sessionmsg_sendex((nd_handle)(session),(nd_usermsghdr_t*)(msg),ESF_POST)
+
+
+ND_SRV_API int nd_session_send_id(NDUINT16 sessionid, nd_usermsghdr_t *data, nd_handle listen_handle, int encrypt);
+ND_SRV_API int nd_session_send_all(nd_usermsghdr_t *data, nd_handle listen_handle, int priv_level, int encrypt);
+
+static __INLINE__ int nd_session_msg_send_id(NDUINT16 sessionid, nd_usermsghdr_t *data, nd_handle listen_handle)
+{
+	return nd_session_send_id(sessionid, data, listen_handle, 0);
+}
+//send to all , implement not like broadcast 
+static __INLINE__ int nd_session_msg_send_all(nd_usermsghdr_t *data, nd_handle listen_handle, int priv_level)
+{
+	return nd_session_send_all(data, listen_handle, priv_level, 0);
+}
+
+
 #define nd_session_valid nd_connector_valid
 ND_SRV_API int nd_session_flush_sendbuf(nd_handle session_handle, int flag)  ;
 #define nd_session_flush(session)		nd_session_flush_sendbuf((nd_handle)session,0)

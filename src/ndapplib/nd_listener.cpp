@@ -368,7 +368,7 @@ ndthread_t NDListener::GetListenThid()
 
 ndthread_t NDListener::OpenListenThread(int session_num) 
 {
-	return nd_open_listen_thread((nd_listen_handle) GetHandle(),session_num)  ;
+	return nd_listener_thread_create((nd_listen_handle) GetHandle(),session_num)  ;
 }
 int NDListener::SwitchTothread(NDBaseSession *session, ndthread_t aimth)
 {
@@ -377,7 +377,7 @@ int NDListener::SwitchTothread(NDBaseSession *session, ndthread_t aimth)
 
 int NDListener::GetClientsInThreads(ndthread_t *threadid_buf, int *count_buf, int size) 
 {
-	return nd_fetch_sessions_in_thread((nd_listen_handle)GetHandle(), threadid_buf, count_buf, size) ;
+	return nd_listener_fetch_sessions((nd_listen_handle)GetHandle(), threadid_buf, count_buf, size) ;
 }
 
 

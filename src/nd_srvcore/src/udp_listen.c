@@ -37,7 +37,7 @@ int accept_udt(nd_handle hsrv, nd_udt_node *socket_node, SOCKADDR_IN *addr)
 {
 	struct listen_contex* root = (struct listen_contex*)hsrv;
 
-	struct thread_pool_info * thpool = get_thread_poolinf((nd_listen_handle)hsrv, nd_thread_self());
+	struct thread_pool_info * thpool = nd_thpool_get_info((nd_listen_handle)hsrv, nd_thread_self());
 	if (!thpool) {
 		release_dead_node(socket_node, 0);
 		return -1;

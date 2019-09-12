@@ -68,7 +68,7 @@ ND_APPLIB_API int set_mp() ;
 #define ND_CLOSE(nethandle, flag, h_listen)		nd_session_close(nethandle, flag ) 
 //#define ND_INSTALL_HANDLER						nd_msgentry_install
 #define SET_CRYPT( sid, k,  size, h)			nd_connector_set_crypt( sid, k,  size)
-#define ND_BROAD_CAST(h_listen, msg) nd_sendto_all((nd_usermsghdr_t *)msg, h_listen,0)
+#define ND_BROAD_CAST(h_listen, msg) nd_session_msg_send_all((nd_usermsghdr_t *)msg, h_listen,0)
 #define ND_SET_ONCONNECT_ENTRY(h, in,  out)		nd_listener_set_callback(h, (accept_callback)in,  (deaccept_callback)out)
 
 #define USER_NETMSG_FUNC	nd_usermsg_func		

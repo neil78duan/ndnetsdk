@@ -90,7 +90,7 @@ int nd_session_tcp_close(struct nd_session_tcp* cli_map, int force)
 		root->connect_out_callback(cli_map,(nd_handle)root) ;
 	nd_tcpnode_close(&(cli_map->connect_node) , force) ;		//关闭socket
 	
-	thpi = get_thread_poolinf((nd_listen_handle) root, 0) ;
+	thpi = nd_thpool_get_info((nd_listen_handle) root, 0) ;
 	if (thpi) {
 		delfrom_thread_pool(cli_map, thpi) ;
 	}

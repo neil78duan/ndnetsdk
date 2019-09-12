@@ -13,12 +13,12 @@ extern int listen_thread_createex(struct thread_pool_info *ic);
 
 extern int listen_thread_createex(struct thread_pool_info *ic);
 //打开一个线程服务器
-nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h, int session_num)
+nd_thsrvid_t nd_listener_thread_create(nd_listen_handle h, int session_num)
 {
 	struct listen_contex * lc = (struct listen_contex *) h;
 	struct nd_netth_context  *piocp;
 
-	if (nd_listen_get_threads(h) >= ND_MAX_THREAD_NUM) {
+	if (nd_listener_get_threads(h) >= ND_MAX_THREAD_NUM) {
 		nd_object_seterror(h, NDERR_LIMITED);
 		nd_assert(0);
 		return 0;
@@ -174,7 +174,7 @@ int create_listen_thread_pool(struct listen_contex *handle, int pre_thnum, int s
 	struct list_head *pos ;
 
 	for(i=0; i<pre_thnum; i++) {
-		if(0==nd_open_listen_thread((nd_listen_handle) handle, session_num) ) {
+		if(0==nd_listener_thread_create((nd_listen_handle) handle, session_num) ) {
 			break ;
 		}
 	}
@@ -262,9 +262,9 @@ int listen_thread_create(struct thread_pool_info *ic,nd_threadsrv_entry th_func)
 	return 0;
 }
 
-int nd_close_listen_thread(nd_listen_handle h,nd_thsrvid_t sid)  
+int nd_listener_thread_destroy(nd_listen_handle h,nd_thsrvid_t sid)  
 {
-	struct thread_pool_info  *piocp =get_thread_poolinf( h,  sid);
+	struct thread_pool_info  *piocp =nd_thpool_get_info( h,  sid);
 	if (!piocp){
 		return -1;
 	}
@@ -438,7 +438,7 @@ int _nd_thpool_sub(struct thread_pool_info *thip)
 	return 0 ;
 }
 
-struct thread_pool_info *get_thread_poolinf(nd_listen_handle h, nd_thsrvid_t thid)
+struct thread_pool_info *nd_thpool_get_info(nd_listen_handle h, nd_thsrvid_t thid)
 {
 	struct thread_pool_info *pthinfo = NULL;
 	struct list_head *pos ;
@@ -462,7 +462,7 @@ struct thread_pool_info *get_thread_poolinf(nd_listen_handle h, nd_thsrvid_t thi
 }
 
 
-int nd_listen_get_threads(nd_listen_handle h) 
+int nd_listener_get_threads(nd_listen_handle h) 
 {
 	int num = 0 ;
 	struct thread_pool_info *node = NULL;
@@ -474,7 +474,7 @@ int nd_listen_get_threads(nd_listen_handle h)
 	return  num ;
 }
 
-int nd_fetch_sessions_in_thread(nd_listen_handle h, ndthread_t *threadid_buf, int *count_buf, int size)
+int nd_listener_fetch_sessions(nd_listen_handle h, ndthread_t *threadid_buf, int *count_buf, int size)
 {
 	int num = 0 ;
 	struct thread_pool_info *node = NULL;
