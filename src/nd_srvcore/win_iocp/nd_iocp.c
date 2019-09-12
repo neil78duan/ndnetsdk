@@ -84,12 +84,12 @@ int pre_accept(struct nd_srv_node *srv_node)
 	
 
 	for (i=0; i<listen_nums; i++){
-		struct nd_client_map_iocp *iocp_map;
-		struct nd_client_map *client =
-			(struct nd_client_map *)srv_node->conn_manager.alloc (nd_srv_get_allocator(srv_node)) ;
+		struct nd_session_iocp *iocp_map;
+		struct nd_session_tcp *client =
+			(struct nd_session_tcp *)srv_node->conn_manager.alloc (nd_srv_get_allocator(srv_node)) ;
 		if(!client)
 			break ;
-		iocp_map = list_entry(client, struct nd_client_map_iocp,__client_map) ;
+		iocp_map = list_entry(client, struct nd_session_iocp,__client_map) ;
 		if(srv_node->conn_manager.init ) {
 			srv_node->conn_manager.init (client, (nd_handle)srv_node) ;
 		}
@@ -110,11 +110,11 @@ int check_repre_accept(struct listen_contex *listen_info)
 }
 
 //初始化IOCP的节点函数,外部函数使用的
-int nd_iocp_node_init(struct nd_client_map_iocp *iocp_map,nd_handle h_listen)
+int nd_iocp_node_init(struct nd_session_iocp *iocp_map,nd_handle h_listen)
 {
 	struct listen_contex *lc = (struct listen_contex*) h_listen ;
-	nd_tcpcm_init(&iocp_map->__client_map,h_listen) ;
-	iocp_map->__client_map.connect_node.size = sizeof(struct nd_client_map_iocp) ;
+	nd_session_tcp_init(&iocp_map->__client_map,h_listen) ;
+	iocp_map->__client_map.connect_node.size = sizeof(struct nd_session_iocp) ;
 	iocp_map->__client_map.connect_node.close_entry = (nd_close_callback ) iocp_session_handle_close ;
 
 	iocp_map->__client_map.connect_node.msg_entry =lc->tcp.msg_entry ;
@@ -124,7 +124,7 @@ int nd_iocp_node_init(struct nd_client_map_iocp *iocp_map,nd_handle h_listen)
 	iocp_map->in_sending = 0 ;
 	return 0 ;
 }
-int nd_init_iocp_client_map(struct nd_client_map_iocp *iocp_map,int listen_fd)
+int nd_init_iocp_client_map(struct nd_session_iocp *iocp_map,int listen_fd)
 {
 	ndsocket_t fd = INVALID_SOCKET;
 	DWORD dwBytesRecvd;
@@ -132,7 +132,7 @@ int nd_init_iocp_client_map(struct nd_client_map_iocp *iocp_map,int listen_fd)
 	
 	nd_atomic_set(&TCPNODE_STATUS(iocp_map),ETS_DEAD) ;
 
-	iocp_map->__client_map.connect_node.size = sizeof(struct nd_client_map_iocp) ;
+	iocp_map->__client_map.connect_node.size = sizeof(struct nd_session_iocp) ;
 	
 	iocp_map->total_send = 0;		//write buf total
 	iocp_map->send_len = 0;				// had been send length
@@ -198,7 +198,7 @@ void CALLBACK iocp_callback(DWORD dwErrorCode, DWORD dwByteCount,LPOVERLAPPED lp
 {
 	ENTER_FUNC()
 	struct ND_OVERLAPPED_PLUS *ov = (struct ND_OVERLAPPED_PLUS *)lpOverlapped ;
-	struct nd_client_map_iocp *pclient ;
+	struct nd_session_iocp *pclient ;
 
 	if(ov==NULL || nd_host_check_exit())  {
 		LEAVE_FUNC();
@@ -264,7 +264,7 @@ void CALLBACK iocp_callback(DWORD dwErrorCode, DWORD dwByteCount,LPOVERLAPPED lp
 
 	LEAVE_FUNC();
 }
-int data_income(struct nd_client_map_iocp *pclient, DWORD dwRecvBytes )
+int data_income(struct nd_session_iocp *pclient, DWORD dwRecvBytes )
 {
 	int read_len ;
 	struct iocp_lock_info lockinfo ;
@@ -316,7 +316,7 @@ int data_income(struct nd_client_map_iocp *pclient, DWORD dwRecvBytes )
 //return bytes of send
 // return zero no data send or overlapped
 // -1 error
-int iocp_write(struct nd_client_map_iocp *iocp_map)
+int iocp_write(struct nd_session_iocp *iocp_map)
 {
 	ENTER_FUNC()
 	int ret ;
@@ -377,7 +377,7 @@ int iocp_write(struct nd_client_map_iocp *iocp_map)
  * 这里使用的异步重叠接受数据,实际上这里只是进行一次异步接受的投递
  * 即便是返回了接受到的数据,依然会在callback函数中被通知 
  */
-int iocp_read(struct nd_client_map_iocp *iocp_map)
+int iocp_read(struct nd_session_iocp *iocp_map)
 {
 	int ret ;
 	size_t space_len ;
@@ -437,15 +437,15 @@ int iocp_read(struct nd_client_map_iocp *iocp_map)
 int iocp_session_handle_close(nd_handle h, int force)
 {
 	if(force) {
-		return iocp_close_client((struct nd_client_map_iocp *)h , force) ;
+		return iocp_close_client((struct nd_session_iocp *)h , force) ;
 	}
 	else {
-		struct nd_client_map_iocp *client = (struct nd_client_map_iocp *)h ;
+		struct nd_session_iocp *client = (struct nd_session_iocp *)h ;
 		nd_netbuf_t * send_buf = iocp_send_buf(client) ;
 		size_t data_len = ndlbuf_datalen(send_buf) ;
 
 		if(0==iocp_unnotified_length(client) &&0==data_len) {
-			return iocp_close_client((struct nd_client_map_iocp *)h , 0) ;
+			return iocp_close_client((struct nd_session_iocp *)h , 0) ;
 		}
 		else {
 			if(data_len && TCPNODE_CHECK_OK(client)) {
@@ -459,7 +459,7 @@ int iocp_session_handle_close(nd_handle h, int force)
 	}
 }
 
-int iocp_close_client(struct nd_client_map_iocp *iocp_map, int force)
+int iocp_close_client(struct nd_session_iocp *iocp_map, int force)
 {
 	struct nd_srv_node *srv_node =(struct nd_srv_node *) iocp_map->__client_map.connect_node.srv_root ;
 	nd_assert(srv_node) ;
@@ -479,7 +479,7 @@ int iocp_close_client(struct nd_client_map_iocp *iocp_map, int force)
 		return 0;
 	}
 	else {
-		tcp_client_close(&iocp_map->__client_map, force);
+		nd_session_tcp_close(&iocp_map->__client_map, force);
 		nd_atomic_set(&TCPNODE_STATUS(iocp_map), ETS_DEAD) ;
 		if(-1==force)
 			return 0;
@@ -491,7 +491,7 @@ int iocp_close_client(struct nd_client_map_iocp *iocp_map, int force)
 	return 0 ;
 }
 
-int iocp_accept(struct nd_client_map_iocp *node)
+int iocp_accept(struct nd_session_iocp *node)
 {
 	NDUINT16 session_id;
 	int local_len, remote_len ;
@@ -568,7 +568,7 @@ int iocp_accept(struct nd_client_map_iocp *node)
 }
 
 //发送格式化数据
-int nd_iocp_sendmsg(struct nd_client_map_iocp *iocp_map,nd_packhdr_t *msg_buf, int flag) 
+int nd_iocp_sendmsg(struct nd_session_iocp *iocp_map,nd_packhdr_t *msg_buf, int flag) 
 {
 	struct netui_info *socket_addr = (struct netui_info* )& iocp_map->__client_map.connect_node;
     size_t s =  socket_addr->get_pack_size((nd_handle)socket_addr, &msg_buf) ;
@@ -577,7 +577,7 @@ int nd_iocp_sendmsg(struct nd_client_map_iocp *iocp_map,nd_packhdr_t *msg_buf, i
 }
 
 //发送流式数据
-int iocp_socket_write(struct nd_client_map_iocp *iocp_map, void *data, size_t send_len) 
+int iocp_socket_write(struct nd_session_iocp *iocp_map, void *data, size_t send_len) 
 {
 	int ret = 0 ;
 	nd_netbuf_t  *send_buf = iocp_send_buf(iocp_map) ;
@@ -604,7 +604,7 @@ int iocp_socket_write(struct nd_client_map_iocp *iocp_map, void *data, size_t se
 }
 
 
-int iocp_cm_lock(struct nd_client_map_iocp *pclient, struct iocp_lock_info *lockinfo)
+int iocp_cm_lock(struct nd_session_iocp *pclient, struct iocp_lock_info *lockinfo)
 {
 	NDUINT16 session_id =iocp_session_id(pclient);
 	struct nd_srv_node *srv_node;
@@ -638,7 +638,7 @@ int update_iocp_cm(struct listen_contex *ls_info)
 {
 	int ret = 0;
 	cmlist_iterator_t cm_iterator ;
-	struct nd_client_map_iocp *client;
+	struct nd_session_iocp *client;
 	struct nd_srv_node *srv_root = &(ls_info->tcp) ;
 	struct cm_manager *pmanger = &srv_root->conn_manager ;
 	

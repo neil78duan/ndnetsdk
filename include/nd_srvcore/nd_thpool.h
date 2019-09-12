@@ -30,8 +30,8 @@ int _utd_main_thread(struct thread_pool_info *thip);
 
 int close_session_in_thread(struct thread_pool_info *thpi);
 int update_session_in_thread(struct cm_manager *pmanger, struct thread_pool_info *thpi);
-int addto_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo);
-int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo);
+int addto_thread_pool(struct nd_session_tcp *client, struct thread_pool_info * pthinfo);
+int delfrom_thread_pool(struct nd_session_tcp *client, struct thread_pool_info * pthinfo);
 ND_SRV_API nd_thsrvid_t nd_open_listen_thread(nd_listen_handle h, int session_num);
 ND_SRV_API int nd_fetch_sessions_in_thread(nd_listen_handle h, ndthread_t *threadid_buf, int *count_buf, int size);
 int listen_thread_create(struct thread_pool_info *ic, nd_threadsrv_entry th_func);
@@ -40,8 +40,8 @@ int listen_thread_create(struct thread_pool_info *ic, nd_threadsrv_entry th_func
 void init_netthread_msg( nd_handle  thhandle);
 int thpoolex_destroy(struct listen_contex *handle) ;
 
-int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_map) ;
-int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *client_map)  ;
+int attach_to_listen(struct thread_pool_info *thip,struct nd_session_tcp *client_map) ;
+int deattach_from_listen(struct thread_pool_info *thip , struct nd_session_tcp *client_map)  ;
 
 int _nd_thpool_main(struct thread_pool_info *listen_info);
 int _nd_thpool_sub(struct thread_pool_info *listen_info);

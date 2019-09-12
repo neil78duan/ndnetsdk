@@ -27,14 +27,14 @@ static DWORD WINAPI WorkerThread(LPVOID lpParam);
 static void DeInitialize();
 WSAOVERLAPPED g_overlapped ;
 //把节点acceptEx好之后放到完成端口句柄中
-static struct nd_client_map_iocp * _pre_accept(struct listen_contex *listen_info)
+static struct nd_session_iocp * _pre_accept(struct listen_contex *listen_info)
 {
-	struct nd_client_map_iocp *iocp_map;
-	struct nd_client_map *client = (struct nd_client_map *)
+	struct nd_session_iocp *iocp_map;
+	struct nd_session_tcp *client = (struct nd_session_tcp *)
 		listen_info->tcp.conn_manager.alloc(listen_info->tcp.cm_alloctor) ;
 	if(!client)
 		return NULL ;
-	iocp_map = list_entry(client, struct nd_client_map_iocp,__client_map) ;
+	iocp_map = list_entry(client, struct nd_session_iocp,__client_map) ;
 
 	if(-1==nd_init_iocp_client_map(iocp_map, get_listen_fd(listen_info)) )
 		return NULL ;
@@ -46,7 +46,7 @@ int thread_iocp_entry(struct listen_contex *listen_info)
 	ndsocket_t listen_fd;
 	int ret = -1;
 	nd_handle context ;
-//	struct nd_client_map_iocp *acc_client;
+//	struct nd_session_iocp *acc_client;
 
 	nd_assert(listen_info) ;
 	

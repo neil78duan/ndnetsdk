@@ -39,7 +39,7 @@ void nd_listen_contex_init(nd_listen_handle handle)
 #if !defined (USE_NEW_MODE_LISTEN_THREAD)
 	nd_node_preinit(&handle->tcp.conn_manager, nd_srvnode_create, nd_srvnode_destroy);
 #endif
-	nd_srv_set_cm_init(&handle->tcp,(cm_init )nd_tcpcm_init) ;
+	nd_srv_set_cm_init(&handle->tcp,(cm_init )nd_session_tcp_init) ;
 	
 	INIT_LIST_HEAD(&handle->list_ext_ports) ;
 }
@@ -116,7 +116,7 @@ int nd_listensrv_session_info(nd_listen_handle handle, int max_client,size_t ses
 {
 	handle->tcp.myerrno = NDERR_SUCCESS;
 	if(0==session_size) {
-		session_size = nd_getclient_hdr_size(handle->io_mod) ;
+		session_size = nd_session_hdr_size(handle->io_mod) ;
 	}
 
 	return cm_listen(&handle->tcp.conn_manager, max_client, (int)session_size);
@@ -189,7 +189,7 @@ void nd_listensrv_set_entry(nd_listen_handle handle, accept_callback income, dea
 
 
 /* accept incoming  connect*/
-struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info, ndsocket_t sock_fd)
+struct nd_session_tcp * accetp_client_connect(struct listen_contex *listen_info, ndsocket_t sock_fd)
 {
 	ENTER_FUNC()
 	NDUINT16  session_id ;
@@ -197,7 +197,7 @@ struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info, 
 	socklen_t cli_len ;				/* client socket lenght */
 	struct sockaddr_in6 client_addr ;
 	
-	struct nd_client_map *client_map ;
+	struct nd_session_tcp *client_map ;
 	struct cm_manager *pmanger  = nd_listensrv_get_cmmamager(listen_info) ;
 
 	//cli_len = sizeof(*client_map);
@@ -217,7 +217,7 @@ struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info, 
 	}
 	
 	//alloc a connect node struct 	
-	client_map =(struct nd_client_map*) pmanger->alloc (pmanger->node_alloctor) ;
+	client_map =(struct nd_session_tcp*) pmanger->alloc (pmanger->node_alloctor) ;
 	if(!client_map){
 		host_congest(newconnect_fd) ;
 		LEAVE_FUNC();
@@ -226,7 +226,7 @@ struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info, 
 	if(pmanger->init )
 		pmanger->init (client_map, (nd_handle)listen_info) ;
 	else 
-		nd_tcpcm_init(client_map,(nd_handle)listen_info);
+		nd_session_tcp_init(client_map,(nd_handle)listen_info);
 
 	if(-1== nd_socket_nonblock(newconnect_fd,1)) {
 		nd_socket_close(newconnect_fd);
@@ -425,7 +425,7 @@ int nd_listensrv_deattach(nd_listen_handle h_listen, nd_handle h_connector,nd_th
 int nd_close_all_session(nd_listen_handle listen_info)
 {
 	int ret = 0;
-	struct nd_client_map  *client;
+	struct nd_session_tcp  *client;
 	struct nd_srv_node *srv_root = &(listen_info->tcp) ;
 	struct cm_manager *pmanger = &srv_root->conn_manager ;
 

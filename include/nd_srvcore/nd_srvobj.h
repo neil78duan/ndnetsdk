@@ -129,13 +129,13 @@ static __INLINE__ ndsocket_t get_listen_fd(struct listen_contex * handle)
 	return handle->tcp.fd;
 }
 
-struct nd_client_map * accetp_client_connect(struct listen_contex *listen_info,ndsocket_t sock_fd) ;
+struct nd_session_tcp * accetp_client_connect(struct listen_contex *listen_info,ndsocket_t sock_fd) ;
 
 
 /*deal with received net message*/
-/*ND_SRV_API*/ int nd_do_netmsg(struct nd_client_map *cli_map,struct nd_srv_node *srv_node) ;
+/*ND_SRV_API*/ int nd_do_netmsg(struct nd_session_tcp *cli_map,struct nd_srv_node *srv_node) ;
 
-ND_SRV_API void udt_clientmap_init(struct nd_udtcli_map *node, nd_handle h_listen ) ; 
+ND_SRV_API void udt_clientmap_init(struct nd_session_udt *node, nd_handle h_listen ) ; 
 
 static __INLINE__ void nd_set_connection_timeout(nd_listen_handle h, int second)
 {

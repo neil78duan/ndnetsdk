@@ -42,7 +42,7 @@ static ndatomic_t __current_num = 0 ;
 //}
 static  int _check_session_valid(nd_handle session)
 {
-	NDObject *pobj = (NDObject *)nd_session_getdata((nd_netui_handle)session);
+	NDObject *pobj = (NDObject *)nd_session_getdata((nd_handle)session);
 	if (pobj){
 		if (dynamic_cast<NDBaseSession*>(pobj)) {
 			return 1;
@@ -63,7 +63,7 @@ static int on_accept_entry(nd_handle nethandle, SOCKADDR_IN *addr, nd_handle h_l
 
 	int old_num ;
 	((nd_netui_handle )nethandle)->level = EPL_CONNECT ;		//set privilage
-	void * session_addr = nd_session_getdata((nd_netui_handle )nethandle) ;
+	void * session_addr = nd_session_getdata(nethandle) ;
 
 	nd_assert(session_addr) ;
 	newSession = pListener->ConstructSession(session_addr);
@@ -189,7 +189,7 @@ NDBaseSession *NDListener::GetSession(NDUINT16 sessionId)
 
 NDBaseSession *NDListener::htoSession(nd_handle h_session)
 {
-	return static_cast<NDBaseSession*>(nd_session_getdata((nd_netui_handle)h_session));
+	return static_cast<NDBaseSession*>(nd_session_getdata(h_session));
 }
 
 int NDListener::Create(const char *listen_name, int session_num, size_t session_size)
@@ -203,7 +203,7 @@ int NDListener::Create(const char *listen_name, int session_num, size_t session_
 		return -1 ;
 	}
 
-	ss = session_size + nd_getclient_hdr_size(((struct listen_contex*)listen_handle)->io_mod)  + 8;
+	ss = session_size + nd_session_hdr_size(((struct listen_contex*)listen_handle)->io_mod)  + 8;
 
 	if(-1==nd_listensrv_session_info(listen_handle, session_num, ss) ) {
 		nd_logfatal((char*)"create client map allocator!\n") ;

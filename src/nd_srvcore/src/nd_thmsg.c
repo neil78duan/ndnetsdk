@@ -258,7 +258,7 @@ int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid)
 
 	struct thread_pool_info *pthinfo ;
 	struct cm_manager *pmanger;
-	struct nd_client_map *client;
+	struct nd_session_tcp *client;
 
 	nd_assert(h) ;
 	nd_assert(sessionid) ;
@@ -275,7 +275,7 @@ int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid)
 	pmanger = nd_listensrv_get_cmmamager(h) ;
 	if(!pmanger) 
 		return -1 ;	
-	client = (struct nd_client_map *) pmanger->lock(pmanger,sessionid) ;
+	client = (struct nd_session_tcp *) pmanger->lock(pmanger,sessionid) ;
 	if(!client) {
 		return -1 ;
 	}
@@ -312,7 +312,7 @@ int session_add_handler(nd_thsrv_msg *msg)
 		return -1 ;//»Áπ˚≤ªƒ‹lockæÕ±£¡Ù“ªœ¬¥Àœ˚œ¢
 	}	
 	pmanger->unlock(pmanger,sessionid);
-	addto_thread_pool((struct nd_client_map *)client,pthinfo) ;
+	addto_thread_pool((struct nd_session_tcp *)client,pthinfo) ;
 	return 0;
 }
 
@@ -335,7 +335,7 @@ int session_deattach_handler(nd_thsrv_msg *msg)
 		return 0 ;
 	}	
 	pmanger->unlock(pmanger,sessionid);
-	delfrom_thread_pool((struct nd_client_map *)client,pthinfo) ;
+	delfrom_thread_pool((struct nd_session_tcp *)client,pthinfo) ;
 	return 0;
 }
 
@@ -425,7 +425,7 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 #else 
 			struct list_head *pos, *next;
 			list_for_each_safe(pos, next, &pthinfo->sessions_list) {
-				struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);				
+				struct nd_session_tcp  *client = list_entry(pos, struct nd_session_tcp, map_list);				
 				if (nd_connect_level_get((nd_handle)client) >= priv_level && nd_connector_valid((nd_netui_handle)client))	{
 					nd_sessionmsg_sendex((nd_handle)client, &net_msg->msg_hdr, flag);
 				}
@@ -495,7 +495,7 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 #else 
 		struct list_head *pos, *next;
 		list_for_each_safe(pos, next, &pthinfo->sessions_list) {
-			struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
+			struct nd_session_tcp  *client = list_entry(pos, struct nd_session_tcp, map_list);
 			if (nd_connect_level_get((nd_handle)client) >= priv_level && nd_connector_valid((nd_netui_handle)client))	{
 				client->connect_node.msg_entry((nd_handle)client, (nd_packhdr_t*)net_msg, (nd_handle)lc);
 			}
@@ -569,7 +569,7 @@ static void _walk_all_session(struct node_root *pmanger, NDUINT16 session_id, vo
 {
 	//nd_listen_handle listen_info = (nd_listen_handle)param;
 
-	struct nd_client_map *client = pmanger->lock(pmanger, session_id);
+	struct nd_session_tcp *client = pmanger->lock(pmanger, session_id);
 
 	if (client) {
 		NDUINT16 interval = rand();

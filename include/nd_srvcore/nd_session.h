@@ -14,7 +14,7 @@
 #define ND_NAME_SIZE 40
 
 /*client connect map on server*/
-struct nd_client_map
+struct nd_session_tcp
 {
 	struct nd_tcp_node connect_node;		//socket connect node 
 	struct list_head map_list;
@@ -23,7 +23,7 @@ struct nd_client_map
 };
 
 /*client connect map is server*/
-struct nd_udtcli_map
+struct nd_session_udt
 {
 	nd_udt_node connect_node;		//socket connect node 
 	struct list_head map_list;
@@ -36,20 +36,19 @@ struct nd_udtcli_map
 #if _MSC_VER < 1300 // 1200 == VC++ 6.0
 #else 
 #include "winsock2.h"
-
 #endif
 
-struct nd_client_map_iocp;
+struct nd_session_iocp;
 
 struct ND_OVERLAPPED_PLUS
 {
 	WSAOVERLAPPED overlapped;
-	struct nd_client_map_iocp* client_addr; //Pointer to client
+	struct nd_session_iocp* client_addr; //Pointer to client
 };
 
-struct nd_client_map_iocp
+struct nd_session_iocp
 {
-	struct nd_client_map  __client_map;		//common client map ,MUST in first 	
+	struct nd_session_tcp  __client_map;		//common client map ,MUST in first 	
 	size_t			total_send;				//write buf total
 	size_t			send_len;				// had been send length
 	int				__wait_buffers;		//waiting sending buffer number
@@ -65,37 +64,29 @@ struct nd_client_map_iocp
 
 
 //typedef void *nd_cli_handle;
-typedef struct netui_info *nd_climap_handle;
+//typedef struct netui_info *nd_climap_handle;
+//typedef struct netui_info  *nd_session_handle;
+typedef struct nd_session_tcp  *nd_session_handle;
 
+//ND_SRV_API struct list_head *get_self_list(nd_session_handle cli_handle);
 
-ND_SRV_API struct list_head *get_self_list(nd_climap_handle cli_handle);
-
-ND_SRV_API  void nd_tcpcm_init(struct nd_client_map *client_map, nd_handle h_listen);
-ND_SRV_API void nd_client_map_destroy(struct nd_client_map *client_map);
-
-ND_SRV_API size_t nd_getclient_hdr_size(int iomod);
-
-ND_SRV_API void *nd_session_getdata(nd_netui_handle session);
-//-----------------end client map file
-
-/*
- * we called client map as session
- */
-
-typedef struct netui_info  *nd_session_handle ;
+ND_SRV_API  void nd_session_tcp_init(struct nd_session_tcp* tcp_session, nd_handle h_listen);
+ND_SRV_API void nd_session_tcp_destroy(struct nd_session_tcp* tcp_session);
+ND_SRV_API size_t nd_session_hdr_size(int iomod);
+ND_SRV_API void *nd_session_getdata(nd_handle session);
 
 //close tcp connect
-int tcp_client_close(struct nd_client_map* cli_map, int force) ;
+int nd_session_tcp_close(struct nd_session_tcp* tcp_session, int force) ;
 
 
-#define tcp_release_death_node(c, f) tcp_client_close((struct nd_client_map*)c, f) 
+#define tcp_release_death_node(c, f) nd_session_tcp_close((struct nd_session_tcp*)c, f) 
 /* close connect*/
 ND_SRV_API int nd_session_close(nd_handle session_handle, int force);
 ND_SRV_API int nd_session_closeex(NDUINT16 session_id,nd_handle listen_handle);
 
 static __INLINE__ NDUINT16  nd_session_getid(nd_handle session_handle) 
 {
-	return ((nd_session_handle)session_handle)->session_id ; 
+	return ((nd_session_handle)session_handle)->connect_node.session_id ;
 }
 //send message 
 static __INLINE__ int  nd_session_sendex(nd_handle session_handle,nd_packhdr_t  *msg_buf, int flag) 
@@ -138,6 +129,6 @@ static __INLINE__ nd_handle nd_session_getlisten(nd_handle session_handle)
 /* check connection is timeout return 1 timeout need to be close*/
 int check_operate_timeout(nd_handle nethandle, ndtime_t tmout) ;
 
-int tryto_close_tcpsession(nd_session_handle nethandle, ndtime_t connect_tmout ) ;
-int _tcp_session_update(nd_session_handle handle);
+int tryto_close_tcpsession(nd_handle nethandle, ndtime_t connect_tmout ) ;
+int _tcp_session_update(nd_handle handle);
 #endif

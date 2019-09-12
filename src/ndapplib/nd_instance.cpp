@@ -162,7 +162,7 @@ int NDInstanceBase::Create(int argc, const char *argv[])
 }
 int NDInstanceBase::_create()
 {
-	int i ;
+	//int i ;
 	const char *logfileName = NULL ;
 	if (m_bCreated)	{
 		return 0;
@@ -354,7 +354,7 @@ bool NDInstanceBase::CheckReliableHost(ndip_t& peerip)
 	for(int i=0; i<m_config.reliable_num; i++) {
 		if (0 == nd_sock_cmp_ip(m_config.reliable_hosts[i], peerip, m_config.reliable_ipmask[i])){
 #ifdef ND_DEBUG
-			char reliable_buf[20],peer_buf[20], mask_buf[20];
+			char reliable_buf[20],peer_buf[20]/*, mask_buf[20]*/;
 			ND_INET_NTOA(m_config.reliable_hosts[i], reliable_buf);
 			ND_INET_NTOA(peerip, peer_buf);
 			//nd_inet_ntoa(m_config.reliable_ipmask[i], mask_buf);

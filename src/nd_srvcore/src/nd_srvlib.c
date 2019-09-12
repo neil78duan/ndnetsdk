@@ -10,8 +10,8 @@
 
 #if !defined(ND_UNIX) 
 
-extern int nd_iocp_node_init(struct nd_client_map_iocp *iocp_map,nd_handle h_listen) ;
-extern int iocp_close_client(struct nd_client_map_iocp *iocp_map, int force) ; 
+extern int nd_iocp_node_init(struct nd_session_iocp *iocp_map,nd_handle h_listen) ;
+extern int iocp_close_client(struct nd_session_iocp *iocp_map, int force) ; 
 #endif 
 
 extern void nd_listen_contex_init(nd_listen_handle handle) ;

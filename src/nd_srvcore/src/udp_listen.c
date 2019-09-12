@@ -43,7 +43,7 @@ int accept_udt(nd_handle hsrv, nd_udt_node *socket_node, SOCKADDR_IN *addr)
 		return -1;
 	}
 
-	addto_thread_pool((struct nd_client_map *)socket_node, thpool);
+	addto_thread_pool((struct nd_session_tcp *)socket_node, thpool);
 
 	if ( root->udt.base.connect_in_callback) {
 		//socket_node->start_time = nd_time() ;
@@ -220,11 +220,11 @@ int update_udt_sessions(struct cm_manager *pmanger, struct nd_netth_context *thp
 	//struct listen_contex *lc = (struct listen_contex *)(thpi->lh);
 
 	list_for_each_safe(pos, next, &thpi->sessions_list) {
-		struct nd_udtcli_map  *client = list_entry(pos, struct nd_udtcli_map, map_list);
+		struct nd_session_udt  *client = list_entry(pos, struct nd_session_udt, map_list);
 
 		if (udt_is_reset ((nd_udt_node*)client) ) {
 
-			delfrom_thread_pool((struct nd_client_map *)client, thpi);
+			delfrom_thread_pool((struct nd_session_tcp *)client, thpi);
 			release_dead_node((nd_udt_node*)client, 1);
 		}
 		else if (-1 == update_udt_session((nd_udt_node*)client)) {

@@ -32,7 +32,7 @@ NDBaseSession::NDBaseSession()
 NDBaseSession::~NDBaseSession()
 {
 	if (m_objhandle &&m_handle_update) {
-		((nd_session_handle)m_objhandle)->update_entry = m_handle_update;
+		((nd_netui_handle)m_objhandle)->update_entry = m_handle_update;
 		m_handle_update = 0;
 	}
 	NDAlarm::Destroy();
@@ -124,7 +124,7 @@ void NDBaseSession::Initilize(nd_handle hsession, nd_handle listen)
 {
 	ND_TRACE_FUNC();
 	m_objhandle = hsession;
-	nd_session_handle hs =  (nd_session_handle)hsession ;
+	nd_netui_handle hs =  (nd_netui_handle)hsession ;
 	m_handle_update = hs->update_entry;
 	hs->update_entry = _session_update;
 	
@@ -139,7 +139,7 @@ void NDBaseSession::Initilize(nd_handle hsession, nd_handle listen)
 int NDBaseSession::Close(int flag)
 {
 	if (m_handle_update) {
-		((nd_session_handle)m_objhandle)->update_entry = m_handle_update;
+		((nd_netui_handle)m_objhandle)->update_entry = m_handle_update;
 		m_handle_update = 0;
 	}
 	NDAlarm::Destroy(flag);

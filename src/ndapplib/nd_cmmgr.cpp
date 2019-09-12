@@ -15,7 +15,7 @@ static inline NDBaseSession* GetSessionFromHandle(nd_netui_handle handle)
 {
 	if(!handle)
 		return NULL;
-	return static_cast<NDBaseSession*>(nd_session_getdata(handle));
+	return static_cast<NDBaseSession*>(nd_session_getdata((nd_handle)handle));
 }
 
 NDBaseSession* NDSessionMgr::GetObject(NDObjectMgrBase::iterator &it)
@@ -108,14 +108,14 @@ NDThreadSessionIterator& NDThreadSessionIterator::operator ++ ()
 	if (!h)	{
 		return *this;
 	}
-	struct nd_client_map *client = (struct nd_client_map *) h;
+	struct nd_session_tcp *client = (struct nd_session_tcp *) h;
 	struct list_head *pos = client->map_list.next;
 	if (pos == &m_tpi->sessions_list)	{
 		first = NULL;
 		second = NULL;
 	}
 	else {
-		client = list_entry(pos, struct nd_client_map, map_list);
+		client = list_entry(pos, struct nd_session_tcp, map_list);
 		second = GetSessionFromHandle((nd_netui_handle)client);
 		first = &client->connect_node.session_id;
 	}
@@ -173,7 +173,7 @@ NDThreadSessionMgr::iterator NDThreadSessionMgr::begin()
 	if (pos == &m_tpi->sessions_list)	{
 		return iterator(NULL, NULL, m_tpi);
 	}
-	struct nd_client_map *client = list_entry(pos, struct nd_client_map, map_list);
+	struct nd_session_tcp *client = list_entry(pos, struct nd_session_tcp, map_list);
 	
 	NDBaseSession *ps = (NDBaseSession*) GetSessionFromHandle((nd_netui_handle)client);
 	NDUINT16 *p = &client->connect_node.session_id ;

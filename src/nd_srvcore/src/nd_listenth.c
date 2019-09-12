@@ -71,7 +71,7 @@ int close_session_in_thread(struct nd_netth_context *thpi)
 	struct list_head *pos, *next;
 
 	list_for_each_safe(pos, next, &thpi->sessions_list) {
-		struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
+		struct nd_session_tcp  *client = list_entry(pos, struct nd_session_tcp, map_list);
 		nd_session_close((nd_handle)client, 1);
 		++ret;
 	}
@@ -85,13 +85,13 @@ int update_session_in_thread(struct cm_manager *pmanger, struct nd_netth_context
 	struct listen_contex *lc = (struct listen_contex *)(thpi->lh);
 
 	list_for_each_safe(pos, next, &thpi->sessions_list) {
-		struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
+		struct nd_session_tcp  *client = list_entry(pos, struct nd_session_tcp, map_list);
 
 		if (!client || !nd_handle_checkvalid((nd_handle)client, NDHANDLE_TCPNODE)) {
 			nd_session_close((nd_handle)client, 1);
 			continue;
 		}
-		if (0 == tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout)) {
+		if (0 == tryto_close_tcpsession((nd_handle)client, client->connect_node.disconn_timeout)) {
 			++sleep;
 		}
 		else {
@@ -100,7 +100,7 @@ int update_session_in_thread(struct cm_manager *pmanger, struct nd_netth_context
 				++sleep;
 			}
 			else if (-1 == ret) {
-				//tcp_client_close(client,1) ;
+				//nd_session_tcp_close(client,1) ;
 				nd_session_close((nd_handle)client, 1);
 				++sleep;
 			}
@@ -108,7 +108,7 @@ int update_session_in_thread(struct cm_manager *pmanger, struct nd_netth_context
 	}
 
 	list_for_each_safe(pos, next, &thpi->sessions_list) {
-		struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
+		struct nd_session_tcp  *client = list_entry(pos, struct nd_session_tcp, map_list);
 
 		if (nd_connector_valid((nd_netui_handle)client)) {
 			_tcpnode_push_sendbuf(&client->connect_node);
@@ -122,11 +122,11 @@ int update_session_in_thread(struct cm_manager *pmanger, struct nd_netth_context
 
 
 //把sessio添加到线程池中
-int addto_thread_pool(struct nd_client_map *client, struct nd_netth_context * pthinfo)
+int addto_thread_pool(struct nd_session_tcp *client, struct nd_netth_context * pthinfo)
 {
 	pthinfo->session_num++;
 	if (client->connect_node.type == NDHANDLE_UDPNODE) {
-		struct nd_udtcli_map *udtcli = (struct nd_udtcli_map *) client;
+		struct nd_session_udt *udtcli = (struct nd_session_udt *) client;
 		list_add_tail(&udtcli->map_list, &pthinfo->sessions_list);
 	}
 	else {
@@ -142,11 +142,11 @@ int addto_thread_pool(struct nd_client_map *client, struct nd_netth_context * pt
 	return 0;
 }
 
-int delfrom_thread_pool(struct nd_client_map *client, struct thread_pool_info * pthinfo)
+int delfrom_thread_pool(struct nd_session_tcp *client, struct thread_pool_info * pthinfo)
 {
 
 	if (client->connect_node.type == NDHANDLE_UDPNODE) {
-		struct nd_udtcli_map *udtcli = (struct nd_udtcli_map *) client;
+		struct nd_session_udt *udtcli = (struct nd_session_udt *) client;
 		list_del_init(&udtcli->map_list);
 	}
 	else {
@@ -349,7 +349,7 @@ int _nd_thpool_main(struct thread_pool_info *thip)
 		if (listen_info->close_accept==0){
 			ret =nd_socket_wait_read(listen_info->tcp.fd,0) ;
 			if(ret> 0) {
-				struct nd_client_map*accepted = accetp_client_connect(listen_info,get_listen_fd(listen_info)) ;
+				struct nd_session_tcp*accepted = accetp_client_connect(listen_info,get_listen_fd(listen_info)) ;
 				if(accepted) {
 					addto_thread_pool(accepted, thip) ;
 					sleep = 0 ;
@@ -362,7 +362,7 @@ int _nd_thpool_main(struct thread_pool_info *thip)
 					
 					ret =nd_socket_wait_read(node->fd,0) ;
 					if(ret> 0) {
-						struct nd_client_map*accepted = accetp_client_connect(listen_info,node->fd) ;
+						struct nd_session_tcp*accepted = accetp_client_connect(listen_info,node->fd) ;
 						if(accepted) {
 							addto_thread_pool(accepted, thip) ;
 							sleep = 0 ;
