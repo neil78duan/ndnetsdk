@@ -76,4 +76,8 @@ ND_SRV_API int nd_listen_get_threads(nd_listen_handle h) ;
 ND_SRV_API struct thread_pool_info *get_thread_poolinf(nd_listen_handle h, nd_thsrvid_t thid);
 ND_SRV_API int nd_fetch_sessions_in_thread(nd_listen_handle h,  ndthread_t *threadid_buf, int *count_buf, int size);
 
+// set session number of thread listener
+ND_SRV_API int nd_thpool_set_capacity(nd_listen_handle h, int num_per_session);
+ND_SRV_API int nd_thpool_get_capacity(nd_listen_handle h);
+
 #endif

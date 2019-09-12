@@ -154,7 +154,7 @@ int NDHttpSession::getWaitTimeout()
 	if (inst) {
 		nd_handle hlisten =inst->GetDeftListener()->GetHandle();
 		if (hlisten) {
-			return nd_listensrv_get_empty_conntimeout(hlisten);
+			return nd_listener_get_empty_timeout(hlisten);
 		}
 	}
 	return 60;

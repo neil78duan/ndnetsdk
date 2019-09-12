@@ -44,10 +44,10 @@ void nd_listen_contex_init(nd_listen_handle handle)
 	INIT_LIST_HEAD(&handle->list_ext_ports) ;
 }
 
-int nd_listensrv_close(nd_listen_handle handle, int flag) 
+int nd_listener_close(nd_listen_handle handle, int flag) 
 {
 	ENTER_FUNC()
-	if (! nd_listensrv_checkvalid(handle)){
+	if (! nd_listener_checkvalid(handle)){
 		LEAVE_FUNC() ;
 		return 0;
 	}
@@ -70,10 +70,10 @@ int nd_listensrv_close(nd_listen_handle handle, int flag)
 	
 	destroy_listen_thread_pool(handle,0);
 
-	nd_close_all_session(handle) ;
+	nd_listener_close_all(handle) ;
 	nd_srv_close(&handle->tcp) ;
 
-	cm_destroy(nd_listensrv_get_cmmamager(handle)) ;
+	cm_destroy(nd_listener_get_session_mgr(handle)) ;
 	
 	if (handle->connector_hub){
 		nd_node_destroy(handle->connector_hub);
@@ -85,7 +85,7 @@ int nd_listensrv_close(nd_listen_handle handle, int flag)
 	return 0 ;
 }
 
-int nd_listensrv_add_port(nd_listen_handle handle , int port, const char* bindip )
+int nd_listener_add_port(nd_listen_handle handle , int port, const char* bindip )
 {
 	struct listen_port_node *node = malloc(sizeof(struct listen_port_node)) ;
 	if (!node) {
@@ -108,11 +108,11 @@ int nd_listensrv_add_port(nd_listen_handle handle , int port, const char* bindip
 	
 }
 
-int nd_listensrv_checkvalid(nd_listen_handle handle) 
+int nd_listener_checkvalid(nd_listen_handle handle) 
 {
 	return get_listen_fd((struct listen_contex *)handle) ;
 }
-int nd_listensrv_session_info(nd_listen_handle handle, int max_client,size_t session_size) 
+int nd_listener_set_capacity(nd_listen_handle handle, int max_client,size_t session_size) 
 {
 	handle->tcp.myerrno = NDERR_SUCCESS;
 	if(0==session_size) {
@@ -123,20 +123,20 @@ int nd_listensrv_session_info(nd_listen_handle handle, int max_client,size_t ses
 
 }
 
-session_valid_func nd_listensrv_set_valid_func(nd_listen_handle h_listen, session_valid_func func)
+session_valid_func nd_listener_set_valid_func(nd_listen_handle h_listen, session_valid_func func)
 {
 	session_valid_func ret = h_listen->check_valid_func;
 	h_listen->check_valid_func = func;
 	return ret;
 }
 
-int nd_listensrv_set_update(nd_listen_handle h_listen,listen_thread_update pre_entry, listen_thread_update end_entry) 
+int nd_listener_set_update(nd_listen_handle h_listen,listen_thread_update pre_entry, listen_thread_update end_entry) 
 {
 	h_listen->pre_update = pre_entry ;
 	h_listen->end_update = end_entry ;
 	return 0;
 }
-int nd_listensrv_open(int is_ipv6, int port, nd_listen_handle handle, int thread_num, const char* bindip)
+int nd_listener_open(int is_ipv6, int port, nd_listen_handle handle, int thread_num, const char* bindip)
 {
 	int ret ,io_mode;
 	nd_assert(handle) ;
@@ -173,11 +173,11 @@ int nd_listensrv_open(int is_ipv6, int port, nd_listen_handle handle, int thread
 	}
 #endif
 
-	return create_listen_thread_pool( handle,thread_num? thread_num: nd_getcpu_num(),nd_listensrv_capacity(handle)) ;
+	return create_listen_thread_pool( handle,thread_num? thread_num: nd_getcpu_num(),nd_listener_get_capacity(handle)) ;
 
 }
 
-void nd_listensrv_set_entry(nd_listen_handle handle, accept_callback income, deaccept_callback outcome) 
+void nd_listener_set_callback(nd_listen_handle handle, accept_callback income, deaccept_callback outcome) 
 {	
 	if(income)
 		handle->tcp.connect_in_callback = income ;
@@ -198,7 +198,7 @@ struct nd_session_tcp * accetp_client_connect(struct listen_contex *listen_info,
 	struct sockaddr_in6 client_addr ;
 	
 	struct nd_session_tcp *client_map ;
-	struct cm_manager *pmanger  = nd_listensrv_get_cmmamager(listen_info) ;
+	struct cm_manager *pmanger  = nd_listener_get_session_mgr(listen_info) ;
 
 	//cli_len = sizeof(*client_map);
 
@@ -280,29 +280,29 @@ void host_congest(ndsocket_t fd)
 	nd_socket_close(fd) ;
 }
 
-nd_handle nd_listensrv_get_cmallocator(struct listen_contex * handle) 
+nd_handle nd_listener_get_session_allocator(struct listen_contex * handle) 
 {
 	return   nd_srv_get_allocator(&handle->tcp) ;
 }
 
 //得到连接管理器
-struct cm_manager *nd_listensrv_get_cmmamager(struct listen_contex * handle) 
+struct cm_manager *nd_listener_get_session_mgr(struct listen_contex * handle) 
 {
 	return &(handle->tcp.conn_manager );
 }
 
-nd_thsrvid_t nd_listensrv_getowner(struct listen_contex * handle, nd_handle session) 
+nd_thsrvid_t nd_listener_getowner(struct listen_contex * handle, nd_handle session) 
 {
-	struct cm_manager *pmmr = nd_listensrv_get_cmmamager(handle) ;
+	struct cm_manager *pmmr = nd_listener_get_session_mgr(handle) ;
 	return nd_node_get_owner(pmmr,nd_session_getid(session)) ;
 }
 
-int nd_listensrv_freenum(struct listen_contex * handle) 
+int nd_listener_freenum(struct listen_contex * handle) 
 {
 	return handle->tcp.conn_manager.free_num(&handle->tcp.conn_manager) ;
 }
 //在监听器上建立定时器
-ndtimer_t nd_listensrv_timer(nd_listen_handle h_listen,nd_timer_entry func,void *param,ndtime_t interval, int run_type ) 
+ndtimer_t nd_listener_add_timer(nd_listen_handle h_listen,nd_timer_entry func,void *param,ndtime_t interval, int run_type ) 
 {
 	if(h_listen->listen_id) {
 		return nd_thsrv_timer(h_listen->listen_id, func, param, interval, run_type) ;
@@ -310,7 +310,7 @@ ndtimer_t nd_listensrv_timer(nd_listen_handle h_listen,nd_timer_entry func,void 
 	return -1 ;
 }
 
-void nd_listensrv_del_timer(nd_listen_handle h_listen, ndtimer_t timer_id ) 
+void nd_listener_del_timer(nd_listen_handle h_listen, ndtimer_t timer_id ) 
 {
 	if(h_listen->listen_id) {
 		nd_thsrv_del_timer(h_listen->listen_id, timer_id) ;
@@ -318,7 +318,7 @@ void nd_listensrv_del_timer(nd_listen_handle h_listen, ndtimer_t timer_id )
 }
 
 //把一个连接器添加中监听器中,让监听器来处理网络事件
-NDUINT16 nd_listensrv_attach(nd_listen_handle h_listen, nd_handle h_connector, nd_thsrvid_t thid)
+NDUINT16 nd_listener_attach(nd_listen_handle h_listen, nd_handle h_connector, nd_thsrvid_t thid)
 {
 	struct node_root **mgr_addr = NULL;
 	struct node_root  *mgr ;
@@ -373,7 +373,7 @@ NDUINT16 nd_listensrv_attach(nd_listen_handle h_listen, nd_handle h_connector, n
 	return conn_node->session_id ;
 }
 
-int nd_listensrv_set_connector_close(nd_listen_handle h_listen,connector_close_entry ce) 
+int nd_listener_set_connector_close(nd_listen_handle h_listen,connector_close_entry ce) 
 {
 	if(!h_listen->connector_hub) {
 		return -1 ;
@@ -381,7 +381,7 @@ int nd_listensrv_set_connector_close(nd_listen_handle h_listen,connector_close_e
 	h_listen->connector_hub->alloc = (node_alloc)ce ;
 	return 0 ;
 }
-int nd_listensrv_deattach(nd_listen_handle h_listen, nd_handle h_connector,nd_thsrvid_t thid) 
+int nd_listener_deattach(nd_listen_handle h_listen, nd_handle h_connector,nd_thsrvid_t thid) 
 {
 	struct node_root **mgr_addr = NULL;
 	struct node_root  *mgr =NULL;
@@ -422,7 +422,7 @@ int nd_listensrv_deattach(nd_listen_handle h_listen, nd_handle h_connector,nd_th
 	return 0 ;
 }
 
-int nd_close_all_session(nd_listen_handle listen_info)
+int nd_listener_close_all(nd_listen_handle listen_info)
 {
 	int ret = 0;
 	struct nd_session_tcp  *client;

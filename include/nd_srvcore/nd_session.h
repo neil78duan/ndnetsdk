@@ -62,22 +62,13 @@ struct nd_session_iocp
 
 #endif
 
-
-//typedef void *nd_cli_handle;
-//typedef struct netui_info *nd_climap_handle;
-//typedef struct netui_info  *nd_session_handle;
 typedef struct nd_session_tcp  *nd_session_handle;
-
-//ND_SRV_API struct list_head *get_self_list(nd_session_handle cli_handle);
 
 ND_SRV_API  void nd_session_tcp_init(struct nd_session_tcp* tcp_session, nd_handle h_listen);
 ND_SRV_API void nd_session_tcp_destroy(struct nd_session_tcp* tcp_session);
 ND_SRV_API size_t nd_session_hdr_size(int iomod);
 ND_SRV_API void *nd_session_getdata(nd_handle session);
-
-//close tcp connect
 int nd_session_tcp_close(struct nd_session_tcp* tcp_session, int force) ;
-
 
 #define tcp_release_death_node(c, f) nd_session_tcp_close((struct nd_session_tcp*)c, f) 
 /* close connect*/
@@ -109,26 +100,24 @@ static __INLINE__ int nd_sessionmsg_sendex(nd_handle session_handle,nd_usermsghd
 #define nd_sessionmsg_send_urgen(session,msg) nd_sessionmsg_sendex((nd_handle)(session),(nd_usermsghdr_t*)(msg),ESF_URGENCY) 
 #define nd_sessionmsg_post(session,msg) nd_sessionmsg_sendex((nd_handle)(session),(nd_usermsghdr_t*)(msg),ESF_POST)
 #define nd_session_valid nd_connector_valid
-
 ND_SRV_API int nd_session_flush_sendbuf(nd_handle session_handle, int flag)  ;
-
-//broadcast netmessage 
-// @send_sid session id of sender 
-//ND_SRV_API int nd_session_broadcast(nd_handle listen_handle, nd_usermsghdr_t *msg) ;
-
 #define nd_session_flush(session)		nd_session_flush_sendbuf((nd_handle)session,0)
 #define nd_session_flush_force(session)	nd_session_flush_sendbuf((nd_handle)session,1)
 #define nd_session_tryto_flush(session)	nd_session_flush_sendbuf((nd_handle)session,2)
-
 static __INLINE__ nd_handle nd_session_getlisten(nd_handle session_handle)
 {
 	return (nd_handle) (((struct netui_info*)session_handle)->srv_root );
 }
-
 
 /* check connection is timeout return 1 timeout need to be close*/
 int check_operate_timeout(nd_handle nethandle, ndtime_t tmout) ;
 
 int tryto_close_tcpsession(nd_handle nethandle, ndtime_t connect_tmout ) ;
 int _tcp_session_update(nd_handle handle);
+
+/*deal with received net message*/
+/*ND_SRV_API*/ int nd_do_netmsg(struct nd_session_tcp *cli_map, struct nd_srv_node *srv_node);
+
+ND_SRV_API void nd_session_udt_init(struct nd_session_udt *node, nd_handle h_listen);
+
 #endif

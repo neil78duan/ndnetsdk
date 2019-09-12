@@ -272,7 +272,7 @@ int NDInstanceBase::Open(int session_size )
 
     //set listen config 
 	if (m_config.l_cfg.connected_tmout){
-		nd_set_connection_timeout(pListen->GetHandle(),m_config.l_cfg.connected_tmout) ;
+		nd_listener_set_timeout(pListen->GetHandle(),m_config.l_cfg.connected_tmout) ;
 	}
     
     if (m_config.l_cfg.empty_close_tmout){
@@ -481,7 +481,7 @@ int NDInstanceBase::AddSysTimer(nd_timer_entry tmfunc, void *param, ndtime_t int
 	if (!hl){
 		return -1 ;
 	}
-	return nd_listensrv_timer(hl,tmfunc,param,interval,ETT_LOOP ) ? 0 : -1;
+	return nd_listener_add_timer(hl,tmfunc,param,interval,ETT_LOOP ) ? 0 : -1;
 }
 void NDInstanceBase::DelSysTimer(int timerid)
 {
@@ -489,7 +489,7 @@ void NDInstanceBase::DelSysTimer(int timerid)
 	if (!hl){
 		return ;
 	}
-	nd_listensrv_del_timer(hl,timerid );
+	nd_listener_del_timer(hl,timerid );
 }
 
 

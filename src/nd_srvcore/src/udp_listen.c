@@ -78,7 +78,7 @@ static int data_handle(nd_handle hsrv, struct udt_packet_info* pack_buf)
 {
 	NDUINT16 localport = pack_buf->packet.pocket.local_port;
 	int ret = 0;
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)hsrv);
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)hsrv);
 	nd_udt_node *socket_node = pmanger->lock(pmanger, localport);
 	
 	if (socket_node) {		
@@ -110,7 +110,7 @@ int _utd_main_thread(struct thread_pool_info *thip)
 
 	nd_handle context = nd_thsrv_gethandle(0);
 	nd_assert(context);
-	pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info);
+	pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_info);
 
 	listen_info->udt.data_proc = data_handle;
 	listen_info->udt.accept_proc = accept_udt;
@@ -175,7 +175,7 @@ int _udt_sub_thread(struct thread_pool_info *thip)
 
 	nd_handle context = nd_thsrv_gethandle(0);
 	nd_assert(context);
-	pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info);
+	pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_info);
 
 	while (!nd_thsrv_isexit(context)) {
 		int sleep = LISTEN_INTERVAL;

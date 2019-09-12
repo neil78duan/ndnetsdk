@@ -41,7 +41,7 @@ NDSessionMgr::NDSessionMgr(NDListener *listener)
 	if(listener){
 		nd_handle hl = listener->GetHandle() ;
 		if(hl) {
-			SetMgr(nd_listensrv_get_cmmamager(hl) ) ;
+			SetMgr(nd_listener_get_session_mgr(hl) ) ;
 		}
 	}
 }
@@ -52,7 +52,7 @@ NDSessionMgr::NDSessionMgr(NDInstanceBase *inst)
 		if(plis) {
 			nd_handle hl = plis->GetHandle() ;
 			if(hl) {
-				SetMgr(nd_listensrv_get_cmmamager(hl)) ;
+				SetMgr(nd_listener_get_session_mgr(hl)) ;
 			}
 		}
 	}
@@ -94,7 +94,7 @@ bool NDThreadSessionIterator::operator != (const NDThreadSessionIterator &r)
 NDThreadSessionIterator& NDThreadSessionIterator::operator ++ () 
 {
 #if !defined (USE_NEW_MODE_LISTEN_THREAD)
-	struct cm_manager * pcmmgr = nd_listensrv_get_cmmamager((nd_listen_handle)m_tpi->lh);
+	struct cm_manager * pcmmgr = nd_listener_get_session_mgr((nd_listen_handle)m_tpi->lh);
 	nd_assert(pcmmgr) ;
 	pcmmgr->unlock(pcmmgr,*first) ;
 	++first ;
@@ -142,7 +142,7 @@ NDThreadSessionMgr::~NDThreadSessionMgr()
 
 NDBaseSession *NDThreadSessionMgr::Search(OBJECTID_T sessionid)
 {
-	struct cm_manager * pcmmgr = nd_listensrv_get_cmmamager((nd_listen_handle)m_tpi->lh);
+	struct cm_manager * pcmmgr = nd_listener_get_session_mgr((nd_listen_handle)m_tpi->lh);
 	nd_assert(pcmmgr) ;
 	void *p = pcmmgr->lock(pcmmgr,sessionid) ;
 	if (p){
@@ -160,7 +160,7 @@ NDThreadSessionMgr::iterator NDThreadSessionMgr::begin()
 	NDUINT16 *p = m_tpi->sid_buf ;
 
 	if (m_tpi->session_num > 0) {
-		struct cm_manager * pcmmgr = nd_listensrv_get_cmmamager((nd_listen_handle)m_tpi->lh);
+		struct cm_manager * pcmmgr = nd_listener_get_session_mgr((nd_listen_handle)m_tpi->lh);
 		nd_assert(pcmmgr) ;
 		void *addr = pcmmgr->lock(pcmmgr,*p) ;
 		nd_assert(addr) ;

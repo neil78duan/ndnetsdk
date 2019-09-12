@@ -205,13 +205,13 @@ int NDListener::Create(const char *listen_name, int session_num, size_t session_
 
 	ss = session_size + nd_session_hdr_size(((struct listen_contex*)listen_handle)->io_mod)  + 8;
 
-	if(-1==nd_listensrv_session_info(listen_handle, session_num, ss) ) {
+	if(-1==nd_listener_set_capacity(listen_handle, session_num, ss) ) {
 		nd_logfatal((char*)"create client map allocator!\n") ;
 		return -1 ;
 	}
 
-	nd_listensrv_set_entry(listen_handle,(accept_callback)on_accept_entry,(deaccept_callback)on_close_entry) ;
-	nd_listensrv_set_valid_func(listen_handle, _check_session_valid);
+	nd_listener_set_callback(listen_handle,(accept_callback)on_accept_entry,(deaccept_callback)on_close_entry) ;
+	nd_listener_set_valid_func(listen_handle, _check_session_valid);
 	
 	OnCreate() ;
 	
@@ -221,7 +221,7 @@ int NDListener::Create(const char *listen_name, int session_num, size_t session_
 
 	//((struct nd_srv_node *)m_objhandle)->user_data = this ;
 	((struct nd_srv_node *)m_objhandle)->msg_caller = this ;
-	m_session_mgr.SetMgr(nd_listensrv_get_cmmamager(listen_handle));
+	m_session_mgr.SetMgr(nd_listener_get_session_mgr(listen_handle));
 	
 	nd_logmsg("Create %s listen object success %d sessions in buffer list \n", listen_name, session_num);
 	return 0 ;
@@ -257,7 +257,7 @@ int NDListener::Open(int port, int thNum, const char *bindIp , int isIpv6)
 {
 	ND_TRACE_FUNC();
 	nd_assert(m_objhandle) ;
-	if(-1==nd_listensrv_open(isIpv6, port, m_objhandle, thNum,bindIp)  ) {
+	if(-1==nd_listener_open(isIpv6, port, m_objhandle, thNum,bindIp)  ) {
 		nd_logfatal((char*)"open port!\n") ;
 		return -1 ;
 	}	
@@ -270,8 +270,8 @@ int NDListener::Open(int port, int thNum, const char *bindIp , int isIpv6)
 int NDListener::Close(int force)
 {
 	ND_TRACE_FUNC();
-	if (m_objhandle && nd_listensrv_checkvalid(m_objhandle)) {
-		int ret = nd_listensrv_close(m_objhandle, force);
+	if (m_objhandle && nd_listener_checkvalid(m_objhandle)) {
+		int ret = nd_listener_close(m_objhandle, force);
 		if(0==ret) {
 			OnClose() ;
 		}
@@ -285,7 +285,7 @@ int NDListener::GetAllocatorCapacity()
 	ND_TRACE_FUNC();
 
 	nd_assert(m_objhandle) ;
-	return nd_listensrv_capacity(m_objhandle) ;
+	return nd_listener_get_capacity(m_objhandle) ;
 }
 
 int NDListener::CloseAllConnects() 
@@ -293,22 +293,22 @@ int NDListener::CloseAllConnects()
 	ND_TRACE_FUNC();
 
 	nd_assert(m_objhandle) ;
-	return nd_close_all_session(m_objhandle) ;
+	return nd_listener_close_all(m_objhandle) ;
 }
 void NDListener::SetEmptyConnTimeout(int seconds) 
 {
 	nd_assert(m_objhandle) ;
-	nd_listensrv_set_empty_conntimeout(m_objhandle,  seconds) ; 
+	nd_listener_set_empty_timeout(m_objhandle,  seconds) ; 
 }
 
 void NDListener::SetAccept(int bClose) 
 {
-	nd_listensrv_set_accept(m_objhandle, bClose) ;
+	nd_listener_set_accept(m_objhandle, bClose) ;
 }
 int NDListener::GetAllocatorFreenum()
 {
 	nd_assert(m_objhandle) ;
-	return nd_listensrv_freenum(m_objhandle) ;
+	return nd_listener_freenum(m_objhandle) ;
 
 }
 
@@ -331,10 +331,10 @@ int NDListener::Attach(NDObject &conn, nd_thsrvid_t thid )
 {
 	ND_TRACE_FUNC();
 	if (m_objhandle) {
-		if((NDUINT16)-1==nd_listensrv_attach(m_objhandle,conn.GetHandle(),thid) ) {
+		if((NDUINT16)-1==nd_listener_attach(m_objhandle,conn.GetHandle(),thid) ) {
 			return -1 ;
 		}
-		nd_listensrv_set_connector_close(m_objhandle,on_connector_closed) ;
+		nd_listener_set_connector_close(m_objhandle,on_connector_closed) ;
 		return 0 ;
 	}
 	return -1 ;
@@ -343,7 +343,7 @@ int NDListener::Deattach(NDObject &conn,nd_thsrvid_t thid)
 {
 	ND_TRACE_FUNC();
 	if (m_objhandle) {
-		return nd_listensrv_deattach(m_objhandle,conn.GetHandle(), thid) ;
+		return nd_listener_deattach(m_objhandle,conn.GetHandle(), thid) ;
 	}
 	return -1 ;
 }
@@ -351,7 +351,7 @@ int NDListener::Deattach(NDObject &conn,nd_thsrvid_t thid)
 
 int NDListener::AttachPort(int port, const char* bindIP)
 {
-	if(-1==nd_listensrv_add_port((nd_listen_handle) m_objhandle, port, bindIP) ) {
+	if(-1==nd_listener_add_port((nd_listen_handle) m_objhandle, port, bindIP) ) {
 		return -1 ;
 	}
 	return 0;

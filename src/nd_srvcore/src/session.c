@@ -133,7 +133,7 @@ int nd_session_closeex(NDUINT16 session_id,nd_handle listen_handle)
 	struct listen_contex *lc = (struct listen_contex*)listen_handle ;
 	struct cm_manager *pmanger  ;
 
-	pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc) ;
+	pmanger = nd_listener_get_session_mgr((nd_listen_handle)lc) ;
 	if (!pmanger){
 		return -1 ;
 	}
@@ -277,7 +277,7 @@ void nd_session_tcp_destroy(struct nd_session_tcp *client_map)
 	ndlbuf_destroy(&client_map->connect_node.recv_buffer);
 }
 
-void udt_clientmap_init(struct nd_session_udt *node, nd_handle h_listen)
+void nd_session_udt_init(struct nd_session_udt *node, nd_handle h_listen)
 {
 	memset(node, 0, sizeof(*node));
 	_udt_connector_init(&node->connect_node);

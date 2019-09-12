@@ -284,7 +284,7 @@ int nd_session_loadbalancing(nd_listen_handle h,NDUINT16 sessionid)
 	struct list_head *pos ;
 	struct listen_contex *handle = (struct listen_contex *)h;
 	
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager(h) ;	
+	struct cm_manager *pmanger = nd_listener_get_session_mgr(h) ;	
 	
 	pos = handle->list_thread.next ;
 	
@@ -328,7 +328,7 @@ int _nd_thpool_main(struct thread_pool_info *thip)
 	
 	nd_handle context = nd_thsrv_gethandle(0) ;
 	nd_assert(context) ;
-	pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;	
+	pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_info) ;	
 	
 	while (!nd_thsrv_isexit(context)){
 		int sleep = LISTEN_INTERVAL;
@@ -401,7 +401,7 @@ int _nd_thpool_sub(struct thread_pool_info *thip)
 
 	nd_handle context = nd_thsrv_gethandle(0) ;
 	nd_assert(context) ;
-	pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;	
+	pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_info) ;	
 
 	while (!nd_thsrv_isexit(context)){
 		int sleep = LISTEN_INTERVAL;

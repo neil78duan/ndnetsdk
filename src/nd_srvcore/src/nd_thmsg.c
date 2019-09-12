@@ -39,7 +39,7 @@ int nd_send_toclient_ex(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle list
 {
 	int ret =0 ;
 	ndthread_t thid ;
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_handle) ;	
 	
 	//check_thread_switch(lc) ;
 	
@@ -89,7 +89,7 @@ int nd_sendto_all_ex(nd_usermsghdr_t *data, nd_handle listen_handle,int priv_lev
 	NDUINT32  size = ND_USERMSG_LEN(data) ;
 	
 	struct list_head *pos ;
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_handle) ;	
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 	
 	if(pmanger->connect_num < 1 ) { //low requirment 
@@ -132,7 +132,7 @@ int nd_netmsg_handle(NDUINT16 sessionid,nd_usermsghdr_t *data, nd_handle listen_
 	ndthread_t thid ;
 	//struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_handle) ;	
 	NDUINT32  size = ND_USERMSG_LEN(data) ;
 	
 	if(size==0 || size>ND_PACKET_SIZE) 
@@ -188,7 +188,7 @@ int nd_netmsg_2all_handle(nd_usermsghdr_t *data, nd_handle listen_handle,int pri
 	NDUINT32  size = ND_USERMSG_LEN(data) ;
 	
 	struct list_head *pos ;
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_handle) ;	
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 	
 	if(pmanger->connect_num < 1 ) { //low requirment 
@@ -224,7 +224,7 @@ int _session_addto(NDUINT16 sessionid, nd_handle listen_handle,ndthread_t thid)
 {
 	struct listen_contex *lc = (struct listen_contex *)listen_handle ;
 	nd_netui_handle client ;
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_handle) ;	
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_handle) ;	
 	
 	check_thread_switch(lc) ;
 	
@@ -272,7 +272,7 @@ int nd_session_switch(nd_listen_handle h,NDUINT16 sessionid, nd_thsrvid_t aimid)
 		return -1 ;
 	}
 	
-	pmanger = nd_listensrv_get_cmmamager(h) ;
+	pmanger = nd_listener_get_session_mgr(h) ;
 	if(!pmanger) 
 		return -1 ;	
 	client = (struct nd_session_tcp *) pmanger->lock(pmanger,sessionid) ;
@@ -304,7 +304,7 @@ int session_add_handler(nd_thsrv_msg *msg)
 	
 	sessionid = *(NDUINT16*)(msg->data);
 
-	pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc) ;	
+	pmanger = nd_listener_get_session_mgr((nd_listen_handle)lc) ;	
 	if(!pmanger) 
 		return 0 ;	
 	client = (nd_netui_handle) pmanger->trylock(pmanger,sessionid) ;
@@ -327,7 +327,7 @@ int session_deattach_handler(nd_thsrv_msg *msg)
 
 	sessionid = *(NDUINT16*)(msg->data);
 
-	pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc) ;	
+	pmanger = nd_listener_get_session_mgr((nd_listen_handle)lc) ;	
 	if(!pmanger) 
 		return 0 ;	
 	client = (nd_netui_handle) pmanger->lock(pmanger,sessionid) ;
@@ -350,7 +350,7 @@ int session_close_handler(nd_thsrv_msg *msg)
 
 	sessionid = *(NDUINT16*)(msg->data);
 
-	pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc) ;	
+	pmanger = nd_listener_get_session_mgr((nd_listen_handle)lc) ;	
 	if(!pmanger) 
 		return 0 ;	
 	client = (nd_netui_handle) pmanger->lock(pmanger,sessionid) ;
@@ -374,7 +374,7 @@ int msg_sendto_client_handler(nd_thsrv_msg *msg)
 	struct thread_pool_info *pthinfo =(struct thread_pool_info *) msg->th_userdata ;
 	struct listen_contex *lc = (struct listen_contex *)pthinfo->lh ;
 
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc) ;		
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)lc) ;		
 	nd_usermsgbuf_t *net_msg ;
 
 	if(!pmanger) 
@@ -450,7 +450,7 @@ int netmsg_recv_handler(nd_thsrv_msg *msg)
 	struct thread_pool_info *pthinfo =(struct thread_pool_info *) msg->th_userdata ;
 	struct listen_contex *lc = (struct listen_contex *)pthinfo->lh ;
 
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc) ;		
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)lc) ;		
 	nd_usermsgbuf_t *net_msg ;
 	
 	if(!pmanger) 
@@ -521,7 +521,7 @@ int msg_udt_packate_handler(nd_thsrv_msg *msg)
 	struct thread_pool_info *pthinfo = (struct thread_pool_info *) msg->th_userdata;
 	struct listen_contex *lc = (struct listen_contex *)pthinfo->lh;
 
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)lc);
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)lc);
 	
 	struct udt_packet_info* pack_buf;
 

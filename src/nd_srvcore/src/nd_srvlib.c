@@ -65,7 +65,7 @@ static void srv_udt_init(struct  listen_contex *lc)
 
 	lc->tcp.sock_type = SOCK_DGRAM ;
 	INIT_LIST_HEAD(&lc->list_thread) ;
-	nd_srv_set_cm_init(&lc->tcp,(cm_init )udt_clientmap_init) ;
+	nd_srv_set_cm_init(&lc->tcp,(cm_init )nd_session_udt_init) ;
 }
 
 int register_listensrv(void)
@@ -73,7 +73,7 @@ int register_listensrv(void)
 	int ret ;
 	struct nd_handle_reginfo reginfo ;
 	reginfo.object_size = sizeof(struct  listen_contex ) ;
-	reginfo.close_entry = (nd_close_callback )nd_listensrv_close ;
+	reginfo.close_entry = (nd_close_callback )nd_listener_close ;
 	
 	//tcp connector register 
 	reginfo.init_entry = (nd_init_func )srv_tcp_init ;
