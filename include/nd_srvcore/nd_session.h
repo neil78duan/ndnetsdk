@@ -69,6 +69,7 @@ ND_SRV_API void nd_session_tcp_destroy(struct nd_session_tcp* tcp_session);
 ND_SRV_API size_t nd_session_hdr_size(int iomod);
 ND_SRV_API void *nd_session_getdata(nd_handle session);
 int nd_session_tcp_close(struct nd_session_tcp* tcp_session, int force) ;
+ND_SRV_API void nd_session_udt_init(struct nd_session_udt *node, nd_handle h_listen);
 
 #define tcp_release_death_node(c, f) nd_session_tcp_close((struct nd_session_tcp*)c, f) 
 /* close connect*/
@@ -132,8 +133,7 @@ int tryto_close_tcpsession(nd_handle nethandle, ndtime_t connect_tmout ) ;
 int _tcp_session_update(nd_handle handle);
 
 /*deal with received net message*/
-/*ND_SRV_API*/ int nd_do_netmsg(struct nd_session_tcp *cli_map, struct nd_srv_node *srv_node);
+/*ND_SRV_API*/ int tcp_session_do_msg(struct nd_session_tcp *cli_map, struct nd_srv_node *srv_node);
 
-ND_SRV_API void nd_session_udt_init(struct nd_session_udt *node, nd_handle h_listen);
 
 #endif

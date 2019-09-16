@@ -39,10 +39,6 @@ ND_SRV_API int nd_session_loadbalancing(nd_listen_handle h, NDUINT16 sessionid);
 ND_SRV_API int nd_listener_get_threads(nd_listen_handle h);
 ND_SRV_API struct thread_pool_info *nd_thpool_get_info(nd_listen_handle h, nd_thsrvid_t thid);
 
-// set session number of thread listener
-//ND_SRV_API int nd_thpool_set_capacity(nd_listen_handle h, int num_per_session);
-//ND_SRV_API int nd_thpool_get_capacity(nd_listen_handle h);
-
 
 int udt_session_data_handle(nd_udt_node *socket_node, struct udt_packet_info* pack_buf);
 int _udt_sub_thread(struct thread_pool_info *thip);

@@ -354,6 +354,7 @@
     <ClCompile Include="..\..\..\src\nd_net\src\udt_net.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_socket.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\udt_srv.c" />
+    <ClCompile Include="..\..\..\src\nd_srvcore\src\linux_listen.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_listenth.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_srvlib.c" />
     <ClCompile Include="..\..\..\src\nd_srvcore\src\nd_srvobj.c" />
