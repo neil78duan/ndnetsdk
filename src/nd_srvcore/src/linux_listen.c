@@ -5,11 +5,10 @@
  * 2007-10-22
  */
 
-#if defined(ND_UNIX)
 #include "nd_common/nd_common.h"
-
 #include "nd_srvcore/nd_srvlib.h"
 
+#if defined(ND_UNIX)
 
 #if defined( __ND_LINUX__ )
 #include <sys/epoll.h>
