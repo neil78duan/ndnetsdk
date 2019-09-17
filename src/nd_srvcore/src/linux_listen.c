@@ -40,11 +40,11 @@ int epoll_main(struct thread_pool_info *thip)
 
 	nd_handle thread_handle = nd_thsrv_gethandle(0)  ;
 	struct listen_contex *listen_info = (struct listen_contex *)thip->lh ;
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_info) ;
 
 	nd_assert(thread_handle) ;
 	listen_fd = get_listen_fd(listen_info);
-	event_num = nd_listensrv_capacity((nd_listen_handle)thip->lh);
+	event_num = nd_listener_get_capacity((nd_listen_handle)thip->lh);
 
 	ev_buf = (struct epoll_event*)malloc(event_num * sizeof(*ev_buf)) ;
 	if(!ev_buf){
@@ -97,13 +97,13 @@ int epoll_main(struct thread_pool_info *thip)
 			if((ev_buf[i].data.u32 & 0xffff)==0) {
 				ndsocket_t fd = ev_buf[i].data.u32 >> 16 ;
 				
-				struct nd_client_map *client_map = accetp_client_connect(listen_info,fd) ;
+				struct nd_session_tcp *client_map = accetp_client_connect(listen_info,fd) ;
 				if(client_map && client_map->connect_node.session_id) {
 					nd_socket_nonblock(client_map->connect_node.fd, 1) ;
 					if (-1==addto_thread_pool(client_map,thip))	{
-						tcp_client_close(client_map,1) ;
+						nd_session_tcp_close(client_map,1) ;
 					}
-					client_map->connect_node.close_entry =(nd_close_callback ) tcp_client_close ;
+					client_map->connect_node.close_entry =(nd_close_callback ) nd_session_tcp_close ;
 				}
 			}
 			else {
@@ -136,11 +136,11 @@ int epoll_sub(struct thread_pool_info *thip)
 	struct epoll_event  *ev_buf ;
 	nd_handle thread_handle = nd_thsrv_gethandle(0)  ;
 	struct listen_contex *listen_info = (struct listen_contex *)thip->lh ;
-	struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;
+	struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_info) ;
 
 	nd_assert(thread_handle) ;
 	//event_num = thip->max_sessions + 1;
-	event_num = nd_listensrv_capacity((nd_listen_handle)thip->lh);
+	event_num = nd_listener_get_capacity((nd_listen_handle)thip->lh);
 	
 	ev_buf = (struct epoll_event*)malloc(event_num * sizeof(*ev_buf)) ;
 	if(!ev_buf){
@@ -188,7 +188,7 @@ LISTEN_EXIT:
 void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,struct thread_pool_info *thip)
 {
 	ENTER_FUNC() ;
-	struct nd_client_map *client_map;
+	struct nd_session_tcp *client_map;
 	//int fd_tmp =(ev_node->data.u32 >> 16) & 0xffff;
 	NDUINT16 session_id =(NDUINT16) (ev_node->data.u32) & 0xffff;
 
@@ -200,13 +200,13 @@ void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,s
 	}
 
 	if(TCPNODE_CHECK_CLOSED(client_map)|| !check_connect_valid(& (client_map->connect_node))) {
-		tcp_client_close(client_map,1) ;
+		nd_session_tcp_close(client_map,1) ;
 	}
 #ifdef __LINUX__
 	else  if(ev_node->events & EPOLLIN){
 		int ret = nd_do_netmsg(client_map, &thip->lh->tcp) ;
 		if(ret ==-1){
-			tcp_client_close(client_map,1) ;
+			nd_session_tcp_close(client_map,1) ;
 		}
 		else if(ret>0){
 			nd_tcpnode_flush_sendbuf(&(client_map->connect_node)) ;
@@ -217,7 +217,7 @@ void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,s
 	}
 	else if(ev_node->events & (EPOLLERR + EPOLLHUP) ) {
 		if (ETS_DEAD!=TCPNODE_STATUS(client_map) )	{
-			tcp_client_close(client_map,1) ;
+			nd_session_tcp_close(client_map,1) ;
 		}
 		else {
 			delfrom_thread_pool(client_map,thip) ;
@@ -227,7 +227,7 @@ void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,s
 	else  {
 		int ret = nd_do_netmsg(client_map, &thip->lh->tcp) ;
 		if(ret ==-1){
-			tcp_client_close(client_map,1) ;
+			nd_session_tcp_close(client_map,1) ;
 		}
 		else if(ret>0){
 			nd_tcpnode_flush_sendbuf((nd_netui_handle)&(client_map->connect_node)) ;
@@ -240,7 +240,7 @@ void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,s
 }
 
 
-int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_map)
+int attach_to_listen(struct thread_pool_info *thip,struct nd_session_tcp *client_map)
 {
 	struct epoll_event ev_listen;
 
@@ -252,7 +252,7 @@ int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_
 	return 0 ;
 }
 
-int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *client_map)
+int deattach_from_listen(struct thread_pool_info *thip , struct nd_session_tcp *client_map)
 {
 	struct epoll_event ev_listen;
 	epoll_ctl(thip->iopc_handle, EPOLL_CTL_DEL, client_map->connect_node.fd, &ev_listen);
@@ -279,7 +279,7 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
 //{
 //	ENTER_FUNC()
 //	
-//    struct nd_client_map *client_map;
+//    struct nd_session_tcp *client_map;
 //    NDUINT32 udata = (NDUINT32) ev_node->udata ;
 //    intptr_t len = ev_node->data;
 //
@@ -310,7 +310,7 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
 //}
 //
 //
-//int attach_to_listen(struct thread_pool_info *thip,struct nd_client_map *client_map)
+//int attach_to_listen(struct thread_pool_info *thip,struct nd_session_tcp *client_map)
 //{
 //    //struct epoll_event ev_listen;
 //    void *data =(NDUINT32)(client_map->connect_node.session_id) |(client_map->connect_node.fd)<<16 ;
@@ -318,7 +318,7 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
 //
 //}
 //
-//int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *client_map)
+//int deattach_from_listen(struct thread_pool_info *thip , struct nd_session_tcp *client_map)
 //{
 //    int fd = client_map->connect_node.fd ;
 //    struct kevent changes[1];
@@ -381,7 +381,7 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
 //            //intptr_t data = ev_buf[i].data;
 //
 //            if(sock==listen_fd) {
-//                struct nd_client_map *client_map = accetp_client_connect(listen_info) ;
+//                struct nd_session_tcp *client_map = accetp_client_connect(listen_info) ;
 //                if(client_map && client_map->connect_node.session_id) {
 //                    nd_socket_nonblock(client_map->connect_node.fd, 1) ;
 //                    if (-1==addto_thread_pool(client_map,thip))	{
@@ -516,7 +516,7 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_client_map *c
 int listen_thread_createex(struct thread_pool_info *ic)
 {
     int epoll_fd;
-    epoll_fd = create_event_fd(nd_listensrv_capacity((nd_listen_handle)ic->lh)) ;
+    epoll_fd = create_event_fd(nd_listener_get_capacity((nd_listen_handle)ic->lh)) ;
 	
 	
     if(epoll_fd<=0) {
@@ -536,10 +536,10 @@ int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thp
 	
 	//flush send buffer
 #if !defined (USE_NEW_MODE_LISTEN_THREAD)
-	struct nd_client_map  *client;
+	struct nd_session_tcp  *client;
 	for (i=thpi->session_num-1; i>=0;i-- ) {
 		NDUINT16 session_id = thpi->sid_buf[i];
-		client =(struct nd_client_map*) pmanger->lock(pmanger,session_id) ;
+		client =(struct nd_session_tcp*) pmanger->lock(pmanger,session_id) ;
 		if (!client)
 			continue ;
 		if (0==tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout )){
@@ -555,8 +555,8 @@ int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thp
 #else
 	struct list_head *pos, *next;
 	list_for_each_safe(pos, next, &thpi->sessions_list) {
-		struct nd_client_map  *client = list_entry(pos, struct nd_client_map, map_list);
-		if (0==tryto_close_tcpsession((nd_session_handle)client, client->connect_node.disconn_timeout )){
+		struct nd_session_tcp  *client = list_entry(pos, struct nd_session_tcp, map_list);
+		if (0==tryto_close_tcpsession((nd_handle)client, client->connect_node.disconn_timeout )){
 			++sleep ;
 		}
 		else if (TCPNODE_IS_OK(client)){
