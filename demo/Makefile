@@ -17,9 +17,9 @@ release:
 
 dll:
 	echo "make dll success!"
-dll_debug:
+dll-debug:
 	echo "make dll-debug success!"
-dll_release:
+dll-release:
 	echo "make dll-release success!"
 	
 clean:
