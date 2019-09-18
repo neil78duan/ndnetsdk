@@ -95,7 +95,7 @@ int update_session_in_thread(struct cm_manager *pmanger, struct nd_netth_context
 			++sleep;
 		}
 		else {
-			ret = nd_do_netmsg(client, &lc->tcp);
+			ret = tcp_session_do_msg(client, &lc->tcp);
 			if (ret > 0) {
 				++sleep;
 			}

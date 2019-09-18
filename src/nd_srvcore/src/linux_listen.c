@@ -6,9 +6,9 @@
  */
 
 #include "nd_common/nd_common.h"
-
 #include "nd_srvcore/nd_srvlib.h"
 
+#if defined(ND_UNIX)
 
 #if defined( __ND_LINUX__ )
 #include <sys/epoll.h>
@@ -204,7 +204,7 @@ void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,s
 	}
 #ifdef __LINUX__
 	else  if(ev_node->events & EPOLLIN){
-		int ret = nd_do_netmsg(client_map, &thip->lh->tcp) ;
+		int ret = tcp_session_do_msg(client_map, &thip->lh->tcp) ;
 		if(ret ==-1){
 			nd_session_tcp_close(client_map,1) ;
 		}
@@ -225,7 +225,7 @@ void update_epoll_event(struct epoll_event* ev_node,struct cm_manager *pmanger,s
 	}
 #else 
 	else  {
-		int ret = nd_do_netmsg(client_map, &thip->lh->tcp) ;
+		int ret = tcp_session_do_msg(client_map, &thip->lh->tcp) ;
 		if(ret ==-1){
 			nd_session_tcp_close(client_map,1) ;
 		}
@@ -296,7 +296,7 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_session_tcp *
 //        tcp_client_close(client_map,1) ;
 //    }
 //    else  {
-//        int ret = nd_do_netmsg(client_map, &thip->lh->tcp) ;
+//        int ret = tcp_session_do_msg(client_map, &thip->lh->tcp) ;
 //        if(ret ==-1){
 //            tcp_client_close(client_map,1) ;
 //        }
@@ -574,3 +574,4 @@ int epoll_update_session(struct cm_manager *pmanger,struct thread_pool_info *thp
 
 #endif
 
+#endif 

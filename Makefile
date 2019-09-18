@@ -20,9 +20,9 @@ release:
 dll: dll-debug
 
 dll-debug:
-	for n in $(SUBDIRS); do $(MAKE) -C $$n dll_debug || exit 1; done
+	for n in $(SUBDIRS); do $(MAKE) -C $$n dll-debug || exit 1; done
 dll-release:
-	for n in $(SUBDIRS); do $(MAKE) -C $$n dll_release || exit 1; done
+	for n in $(SUBDIRS); do $(MAKE) -C $$n dll-release || exit 1; done
 
 
 clean-dll:

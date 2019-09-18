@@ -66,7 +66,7 @@ $(DLLPROJS): $(OBJS)
 #.cpp.o:
 #	$(GPP) $(INCLUDE) $(CFLAGS) -o $(OBJDIR)/$*.o $<
 
-clean_dll:
+clean-dll:
 	rm -f $(DLLPROJS) $(PathOBJS)
 
 clean:

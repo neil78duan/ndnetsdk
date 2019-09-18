@@ -40,7 +40,7 @@ static inline void  operator delete(void *, void *)
 #endif
 #define __new_throw
 #else 
-#define __new_throw throw (std::bad_alloc)
+#define __new_throw //throw (std::bad_alloc)
 #endif 
 
 #ifdef ND_OVER_RIDE_NEW

@@ -20,7 +20,7 @@ typedef struct netui_info *nd_handle;
  * return 0 nothing to be done
  * else return received data length
  */
-int nd_do_netmsg(struct nd_session_tcp *cli_map, struct nd_srv_node *srv_node)
+int tcp_session_do_msg(struct nd_session_tcp *cli_map, struct nd_srv_node *srv_node)
 {
 	ENTER_FUNC()
 		int read_len, ret = 0;
