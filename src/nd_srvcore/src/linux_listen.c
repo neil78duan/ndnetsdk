@@ -293,12 +293,12 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_session_tcp *
 //        return ;
 //	}
 //    if(0==len || TCPNODE_CHECK_CLOSED(client_map)|| !check_connect_valid(& (client_map->connect_node))) {
-//        tcp_client_close(client_map,1) ;
+//        nd_session_tcp_close(client_map,1) ;
 //    }
 //    else  {
 //        int ret = tcp_session_do_msg(client_map, &thip->lh->tcp) ;
 //        if(ret ==-1){
-//            tcp_client_close(client_map,1) ;
+//            nd_session_tcp_close(client_map,1) ;
 //        }
 //        else if(ret>0){
 //            nd_tcpnode_flush_sendbuf((nd_netui_handle)&(client_map->connect_node)) ;
@@ -338,7 +338,7 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_session_tcp *
 //
 //    nd_handle thread_handle = nd_thsrv_gethandle(0)  ;
 //    struct listen_contex *listen_info = (struct listen_contex *)thip->lh ;
-//    struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;
+//    struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_info) ;
 //
 //    nd_assert(thread_handle) ;
 //    listen_fd = get_listen_fd(listen_info);
@@ -385,9 +385,9 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_session_tcp *
 //                if(client_map && client_map->connect_node.session_id) {
 //                    nd_socket_nonblock(client_map->connect_node.fd, 1) ;
 //                    if (-1==addto_thread_pool(client_map,thip))	{
-//                        tcp_client_close(client_map,1) ;
+//                        nd_session_tcp_close(client_map,1) ;
 //                    }
-//                    client_map->connect_node.close_entry =(nd_close_callback ) tcp_client_close ;
+//                    client_map->connect_node.close_entry =(nd_close_callback ) nd_session_tcp_close ;
 //                }
 //            }
 //            else {
@@ -420,7 +420,7 @@ int deattach_from_listen(struct thread_pool_info *thip , struct nd_session_tcp *
 //    struct kevent  *ev_buf ;
 //    nd_handle thread_handle = nd_thsrv_gethandle(0)  ;
 //    struct listen_contex *listen_info = (struct listen_contex *)thip->lh ;
-//    struct cm_manager *pmanger = nd_listensrv_get_cmmamager((nd_listen_handle)listen_info) ;
+//    struct cm_manager *pmanger = nd_listener_get_session_mgr((nd_listen_handle)listen_info) ;
 //
 //    nd_assert(thread_handle) ;
 //    event_num = thip->max_sessions + 1;
