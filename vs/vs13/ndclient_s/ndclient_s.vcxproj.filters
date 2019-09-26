@@ -54,9 +54,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\ndcli\nd_api_c.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ndcli\nd_iconn.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -202,6 +199,9 @@
       <Filter>include\ndapplib</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\ndapplib\nd_protoStream.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\httpParser.h">
       <Filter>include\ndapplib</Filter>
     </ClInclude>
   </ItemGroup>
@@ -399,6 +399,9 @@
       <Filter>src\ndapplib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_vartype.cpp">
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\httpParser.cpp">
       <Filter>src\ndapplib</Filter>
     </ClCompile>
   </ItemGroup>

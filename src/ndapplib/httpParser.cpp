@@ -6,8 +6,10 @@
 //  Copyright (c) 2015 duanxiuyun. All rights reserved.
 //
 
-#include "ndapplib/applib.h"
+#include "nd_net/nd_netlib.h"
+#include "nd_common/nd_common.h"
 #include "ndapplib/httpParser.h"
+#include "ndstl/nd_utility.h"
 
 char *parser_valid( char *src, int size)
 {
@@ -162,6 +164,68 @@ int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc
 }
 
 
+
+static bool _getHttp(HttpConnector &conn, const char *host, int port, const char*path, const char*reqData)
+{
+	if (-1 == conn.Open(host, port)) {
+		nd_logerror("open %s:%d\n", host, port);
+		return false;
+	}
+	NDHttpRequest req;
+	if (reqData) {
+		req.setBody(reqData);
+	}
+
+	if (conn.SendRequest(req, host, port, path) < 0) {
+		nd_logerror("send request error\n");
+		return false;
+	}
+	return true;
+}
+
+bool NDHttpGet(HttpConnector &conn, const char *url)
+{
+	int port = 80;
+	const char *p = url;
+	char buf[1024];
+	char * paim = (char*)ndstristr(p, "http://");
+	if (paim) {
+		p = paim + 7;
+	}
+	//get host 
+	p = ndstr_nstr_end(p, buf, '/', sizeof(buf));
+
+	paim = ndstrchr(buf, ':');
+	if (paim) {
+		++paim;
+		port = atoi(paim);
+		*--paim = 0;
+	}
+
+	if (!p || !*p) {
+		return _getHttp(conn, buf, port, NULL, NULL);
+	}
+
+	if (*p == '/') {
+		++p;
+	}
+
+	std::string host = buf;
+	std::string path = "";
+
+	paim = (char*)ndstrchr(p, '?');
+	if (paim) {
+		buf[0] = 0;
+		p = ndstr_nstr_end(p, buf, '?', sizeof(buf));
+		path = buf;
+		if (*p && *p == '?') {
+			++p;
+		}
+	}
+	return _getHttp(conn, host.c_str(), port, path.c_str(), p);
+}
+
+///////////////////////////////////
 static unsigned char bits4ToHex(unsigned char x)
 {
 	return  x > 9 ? x + 55 : x + 48;
@@ -1190,9 +1254,14 @@ void HttpConnector::Destroy(int flag)
 int HttpConnector::SendRequest(NDHttpRequest &request, const char *host, int port, const char *path)
 {
 	ND_TRACE_FUNC();
-	m_lastRequestPath = path;
-	std::string pathUrl = NDHttpParser::textToURLcode(path);
-	return _sendHttpRequest(m_objhandle, &request, pathUrl.c_str(), host, port,m_bLongConnection);
+	if (path && *path) {
+		m_lastRequestPath = path;
+		std::string pathUrl = NDHttpParser::textToURLcode(path);
+		return _sendHttpRequest(m_objhandle, &request, pathUrl.c_str(), host, port, m_bLongConnection);
+	}
+	else {
+		return _sendHttpRequest(m_objhandle, &request, "", host, port, m_bLongConnection);
+	}
 }
 
 int HttpConnector::Recv(char *buf, int size, int timeout)

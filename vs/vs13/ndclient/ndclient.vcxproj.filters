@@ -49,17 +49,14 @@
     <Filter Include="include\ndapplib">
       <UniqueIdentifier>{116a584d-9ec2-4a53-b39d-7796318c9538}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\ndcli">
+      <UniqueIdentifier>{8d10b4e1-72ca-42f3-84e4-6403e025050b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\ndcli\nd_api_c.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\ndcli\nd_iconn.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nd_common\list.h">
       <Filter>include\common</Filter>
     </ClInclude>
@@ -203,6 +200,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\ndapplib\nd_protoStream.h">
       <Filter>include\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndapplib\httpParser.h">
+      <Filter>include\ndapplib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ndcli\nd_iconn.h">
+      <Filter>include\ndcli</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -399,6 +402,9 @@
       <Filter>src\ndapplib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ndapplib\nd_vartype.cpp">
+      <Filter>src\ndapplib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ndapplib\httpParser.cpp">
       <Filter>src\ndapplib</Filter>
     </ClCompile>
   </ItemGroup>

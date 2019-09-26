@@ -10,9 +10,11 @@
 #define __roborts__httpParser__
 
 
-#include "nd_net/nd_netlib.h"
+//#include "nd_net/nd_netlib.h"
 #include "nd_common/nd_common.h"
-#include "ndapplib/applib.h"
+//#include "ndapplib/applib.h"
+#include "nd_common/nd_export_def.h"
+#include "ndapplib/nd_object.h"
 #include <string>
 #include <vector>
 #include <map>
@@ -195,6 +197,7 @@ public:
 	bool CheckValid();
 	virtual void onResponse(NDHttpResponse *response);
 	void setLast(const char *path){ m_lastRequestPath = path; }
+	bool CheckResponsed() {	return m_responseOk;}
 	//nd_handle getHandle(){ return m_conn; }
 protected:
 	void setResponseSuccess() { m_responseOk = true; }
@@ -206,5 +209,7 @@ protected:
 	NDHttpResponse m_response;
 };
 int _sendHttpResponse(nd_handle h, NDHttpResponse *reques, const char *errorDesc,const char *serverInfo=NULL);
+
+ND_APPLIB_API bool NDHttpGet(HttpConnector &conn, const char *url);
 
 #endif /* defined(__roborts__httpParser__) */

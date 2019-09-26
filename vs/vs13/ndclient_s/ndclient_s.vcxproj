@@ -159,10 +159,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\ndapplib\httpParser.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_msgpacket.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_protoStream.h" />
     <ClInclude Include="..\..\..\include\ndapplib\nd_vartype.h" />
-    <ClInclude Include="..\..\..\include\ndcli\nd_api_c.h" />
     <ClInclude Include="..\..\..\include\ndcli\nd_iconn.h" />
     <ClInclude Include="..\..\..\include\ndlib.h" />
     <ClInclude Include="..\..\..\include\nd_common\list.h" />
@@ -211,6 +211,7 @@
     <ClInclude Include="..\..\..\include\nd_net\nd_udthdr.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\ndapplib\httpParser.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_baseConn.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_connector.cpp" />
     <ClCompile Include="..\..\..\src\ndapplib\nd_msgpack.cpp" />
