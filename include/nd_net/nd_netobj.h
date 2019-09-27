@@ -86,6 +86,7 @@ typedef int(*wait_message_entry)(nd_handle  handle, ndtime_t tmout);
 	nd_handle 	msg_handle ;	\
 	nd_handle 	srv_root;		\
 	nd_userdata_t 		user_data ;	\
+	void				*ssl ;	\
 	nd_mutex			*send_lock;		\
 	socket_sys_entry    sys_sock_read;	\
 	socket_sys_entry    sys_sock_write;	\

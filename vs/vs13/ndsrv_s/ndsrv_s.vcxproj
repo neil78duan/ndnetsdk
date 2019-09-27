@@ -347,6 +347,7 @@
     <ClCompile Include="..\..\..\src\nd_net\src\nd_netobj.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\nd_netui.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\nd_socket.c" />
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_ssl_socket.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\nd_tcp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\nd_udp.c" />
     <ClCompile Include="..\..\..\src\nd_net\src\net_srv.c" />

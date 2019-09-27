@@ -647,5 +647,8 @@
     <ClCompile Include="..\..\..\src\nd_srvcore\src\linux_listen.c">
       <Filter>src\srvcoe</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\nd_net\src\nd_ssl_socket.c">
+      <Filter>src\net</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
