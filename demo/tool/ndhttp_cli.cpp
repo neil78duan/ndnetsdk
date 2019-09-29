@@ -7,6 +7,15 @@
 
 #include "ndcli/nd_iconn.h"
 #include "ndapplib/httpParser.h"
+#include "nd_ssl_socket.h"
+
+
+#if defined(_MSC_VER) 
+
+#pragma comment(lib,"libcrypto-41.lib")
+#pragma comment(lib,"libssl-43.lib")
+#endif 
+
 //#include "nd_common/nd_common.h"
 // 
 // 
@@ -69,6 +78,27 @@
 // 	}
 // 	return requestHttp(conn, host.c_str(), port,path.c_str(), p);
 //
+class MyHttp : public HttpConnector
+{
+public:
+	MyHttp() :HttpConnector()
+	{
+
+	}
+	virtual ~MyHttp()
+	{
+
+	}
+
+	virtual void OnInitilize()
+	{
+		if (getHttps())	{
+			if (-1 == nd_ssl_connect(m_objhandle)) {
+				nd_logerror("ssl_connect error\n");
+			}
+		}
+	}
+};
 int main(int argc, char *argv[])
 {
 	if (argc < 2) {
@@ -77,8 +107,9 @@ int main(int argc, char *argv[])
 	}
 
 	ndInitNet();
+	nd_ssl_root_init();
 
-	HttpConnector httpConn;
+	MyHttp httpConn;
 
 	httpConn.Create("httpConnector");
 	
@@ -91,6 +122,7 @@ int main(int argc, char *argv[])
 	httpConn.Close(0);
 	httpConn.Destroy(0);
 
+	nd_ssl_root_destroy();
 	ndDeinitNet();
 	getch();
 	return 0;

@@ -21,7 +21,7 @@
  */
 enum ND_IOCTRL_CMD
 {
-	NDIOCTL_SET_BLOCK = 1 ,		//set block/unblock
+	NDIOCTL_SET_BLOCK = 1 ,		//set block/unblock 0 is block, 1 is block
 	NDIOCTL_GET_BLOCK  ,		//get block/unblocc status
 	NDIOCTL_SET_SENDVBUF,		// set send buffer
 	NDIOCTL_GET_SENDBUF,		//

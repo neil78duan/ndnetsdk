@@ -186,26 +186,5 @@ static __INLINE__  int nd_connector_del_close_callback(nd_handle handle,nd_objec
 	return nd_object_del_destroy_cb(handle, callback, param) ;
 }
 
-////////////////
-//ssl
-#ifdef ND_SUPPORT_SSL
-ND_NET_API int nd_ssl_root_init();
-ND_NET_API void nd_ssl_root_destroy();
-ND_NET_API int nd_ssl_connect(nd_handle conn);
-ND_NET_API int nd_ssl_accept(nd_handle conn);
-ND_NET_API int nd_ssl_load_cert(const char*cert_file, const char *priv_key);
-#else 
-
-static __INLINE__  int nd_ssl_root_init()
-{
-	nd_logerror("not implemented this function\n");
-	return 0;
-}
-static __INLINE__  void nd_ssl_root_destroy()
-{
-	nd_logerror("not implemented this function\n");
-}
-#endif 
-
 #endif 
 

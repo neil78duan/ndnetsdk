@@ -198,11 +198,14 @@ public:
 	virtual void onResponse(NDHttpResponse *response);
 	void setLast(const char *path){ m_lastRequestPath = path; }
 	bool CheckResponsed() {	return m_responseOk;}
+	void setHttps(bool enable = false) { m_bSSL = enable; }
+	bool getHttps() { return m_bSSL; }
 	//nd_handle getHandle(){ return m_conn; }
 protected:
 	void setResponseSuccess() { m_responseOk = true; }
 	bool m_responseOk;
 	bool m_bLongConnection;
+	bool m_bSSL;
 	int m_port;
 	std::string m_host;
 	std::string m_lastRequestPath;

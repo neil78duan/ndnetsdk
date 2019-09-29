@@ -370,12 +370,12 @@ int nd_net_ioctl(nd_netui_handle  socket_node, int cmd, void *val, int *size)
 		break ;
 		
 
-	case NDIOCTL_SET_BLOCK:
-		ret = nd_socket_nonblock(socket_node->fd, 0) ;
-		break ;
-	case NDIOCTL_GET_BLOCK:
-		ret = nd_socket_nonblock(socket_node->fd, 1) ;
-		break ;
+// 	case NDIOCTL_SET_BLOCK:
+// 		ret = nd_socket_nonblock(socket_node->fd, 0) ;
+// 		break ;
+// 	case NDIOCTL_GET_BLOCK:
+// 		ret = nd_socket_nonblock(socket_node->fd, 1) ;
+// 		break ;
 
 	case NDIOCTL_GET_RECV_PACK_NUM:
 		if (socket_node->type ==NDHANDLE_TCPNODE|| socket_node->type ==NDHANDLE_UDPNODE ){

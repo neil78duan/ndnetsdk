@@ -178,7 +178,7 @@ ndsocket_t nd_socket_openport_ex(int af_netType, int port, int type, int protoco
 	//char port_buf[20];
 	int re_usr_addr = 1;
 
-	listen_fd = socket(af_netType, type, 0);
+	listen_fd = (ndsocket_t) socket(af_netType, type, 0);
 	if (listen_fd == -1)
 		return -1;
 

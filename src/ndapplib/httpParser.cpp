@@ -192,6 +192,14 @@ bool NDHttpGet(HttpConnector &conn, const char *url)
 	if (paim) {
 		p = paim + 7;
 	}
+	else {
+		paim = (char*)ndstristr(p, "https://");
+		if (paim) {
+			p = paim + 8;
+			conn.setHttps(true);
+			port = 443;
+		}
+	}
 	//get host 
 	p = ndstr_nstr_end(p, buf, '/', sizeof(buf));
 
@@ -1171,7 +1179,7 @@ static int _http_connector_data_handler(nd_handle sessionHandler, void *data, si
 	return pConn->onDataRecv((char*)data, len);
 }
 
-HttpConnector::HttpConnector(bool bLongConnect) : m_port(0), m_bLongConnection(bLongConnect), m_responseOk(false)
+HttpConnector::HttpConnector(bool bLongConnect) : m_port(0), m_bLongConnection(bLongConnect), m_responseOk(false), m_bSSL(false)
 {
 	
 }
@@ -1224,7 +1232,8 @@ int HttpConnector::Open(const char *host, int port)
 		return -1;
 	}
 	nd_hook_data(m_objhandle, _http_connector_data_handler);
-	
+
+	OnInitilize();
 	return 0 ;
 	
 }
