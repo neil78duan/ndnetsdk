@@ -113,6 +113,8 @@
 		07647B501A3FDBBE00A96620 /* nd_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = 07647B4F1A3FDBBE00A96620 /* nd_cmdline.c */; };
 		07728B5020BE8947006CDB04 /* nd_sysmsg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07728B4F20BE8947006CDB04 /* nd_sysmsg.cpp */; };
 		07728B5220BE895C006CDB04 /* nd_sysmsg.h in Headers */ = {isa = PBXBuildFile; fileRef = 07728B5120BE895C006CDB04 /* nd_sysmsg.h */; };
+		07762399233F0789007FB5C7 /* nd_ssl_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 07762398233F0789007FB5C7 /* nd_ssl_socket.c */; };
+		0776239A233F0789007FB5C7 /* nd_ssl_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 07762398233F0789007FB5C7 /* nd_ssl_socket.c */; };
 		078966C7207F068900A38013 /* nd_httpListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 078966C6207F068900A38013 /* nd_httpListener.cpp */; };
 		078966C9207F069800A38013 /* nd_httpListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 078966C8207F069800A38013 /* nd_httpListener.h */; };
 		07BBB3F71AC683CB0099A4EC /* nd_epoll.h in Headers */ = {isa = PBXBuildFile; fileRef = 07BBB3F61AC683CB0099A4EC /* nd_epoll.h */; };
@@ -327,6 +329,7 @@
 		07647B641A4419B300A96620 /* _nderr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _nderr.h; sourceTree = "<group>"; };
 		07728B4F20BE8947006CDB04 /* nd_sysmsg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_sysmsg.cpp; sourceTree = "<group>"; };
 		07728B5120BE895C006CDB04 /* nd_sysmsg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_sysmsg.h; sourceTree = "<group>"; };
+		07762398233F0789007FB5C7 /* nd_ssl_socket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nd_ssl_socket.c; sourceTree = "<group>"; };
 		078966C6207F068900A38013 /* nd_httpListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nd_httpListener.cpp; sourceTree = "<group>"; };
 		078966C8207F069800A38013 /* nd_httpListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_httpListener.h; sourceTree = "<group>"; };
 		07BBB3F61AC683CB0099A4EC /* nd_epoll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nd_epoll.h; sourceTree = "<group>"; };
@@ -670,6 +673,7 @@
 		07EBCEE019A8DFCD00802576 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				07762398233F0789007FB5C7 /* nd_ssl_socket.c */,
 				07EBCEE119A8DFCD00802576 /* ipraw.c */,
 				07EBCEE219A8DFCD00802576 /* nd_msgentry.c */,
 				07EBCEE319A8DFCD00802576 /* nd_net.c */,
@@ -1153,6 +1157,7 @@
 				0757AAC221A7D72D001BAE36 /* nd_object.cpp in Sources */,
 				0757AAC321A7D72D001BAE36 /* nd_objmgr.cpp in Sources */,
 				0757AAC421A7D72D001BAE36 /* nd_privkey.cpp in Sources */,
+				0776239A233F0789007FB5C7 /* nd_ssl_socket.c in Sources */,
 				0757AAC521A7D72D001BAE36 /* nd_session.cpp in Sources */,
 				0757AAC621A7D72D001BAE36 /* nd_stlalloc.cpp in Sources */,
 				0757AAC721A7D72D001BAE36 /* readcfg.cpp in Sources */,
@@ -1273,6 +1278,7 @@
 				07EBCF7F19A8DFCD00802576 /* ndcrypt.c in Sources */,
 				07EBCF8319A8DFCD00802576 /* ipraw.c in Sources */,
 				07EBCF5E19A8DFCD00802576 /* bintree.c in Sources */,
+				07762399233F0789007FB5C7 /* nd_ssl_socket.c in Sources */,
 				07EBCFB419A8DFCD00802576 /* nd_objmgr.cpp in Sources */,
 				07EBCF6119A8DFCD00802576 /* nd_handle.c in Sources */,
 				07EBCF5F19A8DFCD00802576 /* callstack.c in Sources */,
@@ -1430,6 +1436,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__ND_MAC__,
+					ND_SUPPORT_SSL,
 					ND_DEBUG,
 					"$(inherited)",
 				);
@@ -1470,7 +1477,10 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREPROCESSOR_DEFINITIONS = "__ND_MAC__ ";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					__ND_MAC__,
+					ND_SUPPORT_SSL,
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
