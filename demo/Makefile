@@ -4,7 +4,7 @@ VPATH = .
 
 include $(NDHOME)/src/Rules.make
 
-SUBDIRS =  srvDemo ndclient tool test
+SUBDIRS =  srvDemo ndclient tool 
 
 
 all: debug

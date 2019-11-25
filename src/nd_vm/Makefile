@@ -69,3 +69,4 @@ $(DLLPROJS): $(OBJS)
 
 clean:
 	rm -f $(PROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
+	rm -rf $(OBJDIR)

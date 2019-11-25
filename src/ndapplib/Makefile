@@ -72,4 +72,5 @@ $(PROJ_CLIENT):$(OBJDIR)/nd_msgpack.o $(OBJDIR)/nd_datatransfer.o
 
 clean:
 	rm -f $(PROJS) $(DLLPROJS) $(PathOBJS)  $(PathOBJS:.o=.d)
+	rm -rf $(OBJDIR)
 	
