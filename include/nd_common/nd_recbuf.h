@@ -164,7 +164,9 @@ static __INLINE__ void ndlbuf_auto_inc_disable(struct nd_linebuf *pbuf)
 
 static __INLINE__ void ndlbuf_set_zero_tail(struct nd_linebuf *pbuf)
 {
-	*(pbuf->__end) = 0;
+	if (pbuf->__end < pbuf->__buf + pbuf->buf_capacity) {
+		*(pbuf->__end) = 0;
+	}
 }
 
 ND_COMMON_API void _lbuf_add_data(struct nd_linebuf *pbuf,size_t len);

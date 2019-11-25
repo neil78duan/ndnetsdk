@@ -6,7 +6,6 @@
  * 2019.9.27
  */
 
-#ifdef ND_SUPPORT_SSL
 
 #include <openssl/bio.h>
 #include <openssl/err.h>
@@ -16,7 +15,7 @@
 typedef struct netui_info *nd_handle;
 #include "nd_net/nd_netlib.h"
 #include "nd_net/nd_netui.h"
-
+#include "nd_ssl_socket.h"
 
 static SSL_CTX *g_ssl_ctx;
 void ShowCerts(SSL * ssl)
@@ -91,10 +90,12 @@ static int nd_ssl_close(nd_handle conn, int flag)
 	return nd_tcpnode_close((struct nd_tcp_node *)conn, flag);
 }
 
-static int nd_ssl_read(struct nd_tcp_node *node, void *buf, size_t len)
+static int nd_ssl_read(nd_handle node, void *buf, size_t len)
 {
+	int ret;
 	ENTER_FUNC();
-	int ret = SSL_write(node->fd, buf, len);
+	nd_assert(node->ssl);
+	ret = (int) SSL_read(node->ssl, buf, len);
 	if (ret > 0) {
 		node->recv_len += ret;
 		node->last_recv = nd_time();
@@ -116,11 +117,12 @@ static int nd_ssl_read(struct nd_tcp_node *node, void *buf, size_t len)
 	LEAVE_FUNC();
 	return ret;
 };
-static int nd_ssl_write(struct nd_tcp_node *node, void *data, size_t len)
+static int nd_ssl_write(nd_handle node, void *data, size_t len)
 {
 	ENTER_FUNC();
 	int ret;
-	ret = (int)SSL_read(node->fd, data, len);
+	nd_assert(node->ssl);
+	ret = (int)SSL_write(node->ssl, data, len);
 	if (ret > 0) {
 		node->send_len += ret;
 		node->last_push = nd_time();
@@ -145,6 +147,8 @@ static int nd_ssl_write(struct nd_tcp_node *node, void *data, size_t len)
 int nd_ssl_connect(nd_handle conn)
 {
 	SSL *ssl = SSL_new(g_ssl_ctx);
+
+	nd_socket_nonblock(conn->fd, 0);
 	SSL_set_fd(ssl, conn->fd);
 
 	if (SSL_connect(ssl) == -1) {
@@ -161,6 +165,7 @@ int nd_ssl_connect(nd_handle conn)
 int nd_ssl_accept(nd_handle conn)
 {
 	SSL *ssl = SSL_new(g_ssl_ctx);
+	nd_socket_nonblock(conn->fd, 0);
 	SSL_set_fd(ssl, conn->fd);
 	if (SSL_accept(ssl) == -1) {
 		ERR_print_errors_fp(stderr);
@@ -173,4 +178,3 @@ int nd_ssl_accept(nd_handle conn)
 	conn->sys_sock_close = nd_ssl_close;
 	return 0;
 }
-#endif
