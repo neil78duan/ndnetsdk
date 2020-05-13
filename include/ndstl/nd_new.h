@@ -21,7 +21,7 @@ CPPAPI void _destroy_pool_for_new() ;
 #pragma optimize( "", off )
 #pragma auto_inline (off)
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #ifndef __PLACEMENT_NEW_INLINE
 #define __PLACEMENT_NEW_INLINE
 static inline void * operator new(size_t, void *&_P)
@@ -39,8 +39,10 @@ static inline void  operator delete(void *, void *)
 }
 #endif
 #define __new_throw
-#else 
-#define __new_throw //throw (std::bad_alloc)
+#elif defined(__ND_LINUX__)
+#define __new_throw throw (std::bad_alloc)
+#else
+#define __new_throw 
 #endif 
 
 #ifdef ND_OVER_RIDE_NEW
