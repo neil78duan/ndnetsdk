@@ -104,10 +104,10 @@ int nd_run_cmdline(struct nd_cmdline_root *root, int argc, const char *argv[] )
 			if(ret == -1) {
 				ndfprintf(stderr, "bad command: %s\n", buf ) ;
 			}
+			root->last_retval =ret ;
 			if (root->exit_stat) {
 				break ;
 			}
-			root->last_retval =ret ;
 			
 			ndfprintf(stdout, ">%s>", root->tips ) ;
 			fflush(stdout) ;	
