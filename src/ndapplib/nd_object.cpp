@@ -32,7 +32,7 @@ NDObject *NDObject::FromHandle(nd_handle h)
 
 NDObject::NDObject() :m_objhandle(NULL)//,m_userData(NULL)
 {
-    m_bPoolOwner = NULL;
+    m_bPoolOwner = 0;
     m_pool = 0;
 }
 

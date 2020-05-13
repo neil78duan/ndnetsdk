@@ -367,11 +367,6 @@ void pthread_sleep(NDUINT32 msec)
     mythread_cond_timewait(&_cond,&_mutex, msec) ;
 }
 
-int _unix_sem_timewait(nd_sem_name_t pSem , NDUINT32 waittime)
-{
-	return _sys_sem_timewait(pSem->_sem, waittime) ;
-	
-}
 
 int _sys_sem_timewait(sem_t *sem , NDUINT32 waittime)
 {
@@ -414,6 +409,11 @@ int _sys_sem_timewait(sem_t *sem , NDUINT32 waittime)
 	
 }
 
+int _unix_sem_timewait(nd_sem_name_t pSem , NDUINT32 waittime)
+{
+	return _sys_sem_timewait(pSem->_sem, waittime) ;
+	
+}
 
 #endif
 
