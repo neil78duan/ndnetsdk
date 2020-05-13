@@ -318,7 +318,7 @@ int nd_tcpnode_read(struct nd_tcp_node *node)
 		space_len = ndlbuf_freespace(&(node->recv_buffer)) ;
 		addr = ndlbuf_tail(&(node->recv_buffer));
 	}
-	read_len = node->sys_sock_read(node, addr, space_len);
+	read_len = node->sys_sock_read((nd_handle)node, addr, space_len);
 	if (read_len > 0) {
 		ndlbuf_add_data(&(node->recv_buffer), (size_t)read_len);
 		if (read_len >= space_len) { TCPNODE_READ_AGAIN(node) = 1; }
@@ -368,7 +368,7 @@ int _tcpnode_wait_msg(struct nd_tcp_node *node, ndtime_t tmout)
 	ENTER_FUNC()
 	int ret,read_len;
 	if(tmout) {
-		ret = node->wait_readable(node, tmout);
+		ret = node->wait_readable((nd_handle)node, tmout);
 		if (ret <= 0) {
 			LEAVE_FUNC();
 			return ret;

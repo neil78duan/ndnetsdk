@@ -145,7 +145,7 @@ nd_handle nd_timer_create(nd_handle pallocator)
 	root->num = 0 ;
 	nd_mutex_init(&root->list_lock) ;
 	INIT_LIST_HEAD(&root->list) ;					//node list
-	bzero(root->del_buf, sizeof(root->del_buf)) ;
+	bzero((void*)root->del_buf, sizeof(root->del_buf)) ;
 	return (nd_handle) root ;
 }
 

@@ -145,7 +145,7 @@ void udt_reset(nd_udt_node* socket_node, int issend_reset)
 
 int read_packet_from_socket(nd_udt_node *socket_node, char *buf, size_t size, ndtime_t tmout)
 {
-	int len = nd_udp_read((nd_handle)socket_node, buf, size, tmout);
+	int len = nd_udp_read((struct nd_udp_node*)socket_node, buf, size, tmout);
 	if (len <= 0) {
 		return len;
 	}
