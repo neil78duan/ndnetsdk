@@ -176,7 +176,7 @@
     <PostBuildEvent>
       <Command>copy /Y $(TargetPath)  ..\..\..\..\nodeflow\bin\editor_d;
 copy /Y  $(OutDir)$(TargetName).pdb  ..\..\..\..\nodeflow\bin;
-copy /Y $(TargetPath)  ..\..\..\..\apollolib\editor;</Command>
+copy /Y $(TargetPath)  ..\..\..\..\nfgamelib\editor;</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

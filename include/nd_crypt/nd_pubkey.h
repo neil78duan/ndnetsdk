@@ -12,5 +12,6 @@
 ND_CRYPT_API int nd_get_public_certificate_version(void);
 ND_CRYPT_API char* nd_calc_publickey_md5(char text[33]);
 ND_CRYPT_API R_RSA_PUBLIC_KEY *nd_get_publickey(void) ;
+ND_CRYPT_API void nd_set_publickey(const R_RSA_PUBLIC_KEY *key,int version);
 
 #endif 
