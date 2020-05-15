@@ -88,4 +88,7 @@ ErrorElement(ERR_PROGRAM_DATA_ERROR, "the program internal data error"),
 ErrorElement(ERR_OPERATE_FAILED_TRY_AGAIN, "operate failed try again"),
 ErrorElement(ERR_SKIP, "skip this error"),
 ErrorElement(ERR_BAD_FILE, "the file is bad"),
+
+ErrorElement(ERR_KEY_UNMATCH, "crypt key not match,need update program"),
+ErrorElement(ERR_INITIAL_ERROR, "program initialed error,restart program"),
 ErrorElement(ERR_UNKNOWN, "unknowwing error"),

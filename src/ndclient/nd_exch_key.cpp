@@ -42,7 +42,7 @@ static int _check_public_key(nd_handle nethandle)
 			return -1 ;
 		}
 		if ( nd_get_public_certificate_version() != ver_num) {
-			nd_object_seterror(nethandle, NDERR_VERSION) ;
+			nd_object_seterror(nethandle, NDERR_KEY_UNMATCH) ;
 			return -1 ;
 		}
 		size_t md5size = inmsg.Read(md5text,sizeof(md5text)) ;
@@ -51,7 +51,7 @@ static int _check_public_key(nd_handle nethandle)
 			return -1 ;
 		}
 		if(0!=strcmp((const char*)md5text,(const char*) nd_calc_publickey_md5((char*)mymd5) ) ) {
-			nd_object_seterror(nethandle, NDERR_VERSION) ;
+			nd_object_seterror(nethandle, NDERR_KEY_UNMATCH) ;
 			return  -1 ;
 		}
 	}
@@ -85,20 +85,20 @@ static int _get_public_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &output_key, cha
 		int keySize = sizeof(key_buf) ;
 
 		if(-1==rsa_pub_decrypt(key_buf, &keySize, (char*)recv_buf, size,embedKey) ){
-			nd_object_seterror(nethandle, NDERR_VERSION) ;
+			nd_object_seterror(nethandle, NDERR_INITIAL_ERROR) ;
 			return  -1 ;
 		}
 
 		//check public key md5
 		MD5Crypt16((char*)key_buf, keySize, keymd5) ;
 		if(MD5cmp(keymd5, srvmd5)) {
-			nd_object_seterror(nethandle, NDERR_BADPACKET) ;
+			nd_object_seterror(nethandle, NDERR_KEY_UNMATCH) ;
 			return  -1 ;
 		}
 		
 
 		if (-1== nd_rsa_read_key((R_RSA_PRIVATE_KEY*)&output_key, (const char*)key_buf, keySize, 0)) {
-			nd_object_seterror(nethandle, NDERR_BADPACKET) ;
+			nd_object_seterror(nethandle, NDERR_KEY_UNMATCH) ;
 			return  -1 ;
 		}
 		memcpy(output_md5, keymd5, sizeof(keymd5)) ;
@@ -132,7 +132,7 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 	int crypt_size = sizeof(key_crypt) ;
 
 	if(0!=rsa_pub_encrypt((char*)key_crypt, &crypt_size, (char*)&mykey, (int)sizeof(mykey), &pub_key) ) {
-		nd_object_seterror(nethandle, NDERR_VERSION) ;
+		nd_object_seterror(nethandle, NDERR_INITIAL_ERROR) ;
 		
 		nd_logdebug("rea encrypt symm-key error \n") ;
 		return -1;
@@ -157,7 +157,7 @@ static int _get_sym_key(nd_handle nethandle,R_RSA_PUBLIC_KEY &pub_key)
 			return -1 ;
 		}
 		if(0==client_sission) {
-			nd_object_seterror(nethandle, NDERR_BADPACKET) ;
+			nd_object_seterror(nethandle, NDERR_KEY_UNMATCH) ;
 			return -1 ;
 
 		}
